@@ -113,9 +113,10 @@ class Unit:
     speed: float = 0.0       # 話速の上書き(0=既定。深掘り②: 重要文は遅く・つなぎは速く)
     pitch: float = -0.03     # ピッチ(深掘り②: ナレーション基調は少し低め。ピークで持ち上げ)
     pause_scale: float = 1.1 # 句読点の間(深掘り②: AIの早口感を消す。タメは1.5〜1.7)
-    se: str | None = None    # 効果音 "pop"/"don"(強調箇所のみ。ループ6)
+    se: str | None = None    # 効果音 "pop"/"don"/"puchun"(強調箇所のみ。ループ6)
     se_at: float = 0.0       # ユニット頭からのSEオフセット秒(深掘り④: 着地に同期させる用)
     cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
+    blackout: float = 0.0    # ユニット冒頭の暗転秒数(スロットのフリーズ演出風。se="puchun"とセット)
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -269,16 +270,38 @@ def synth_bgm(duration: float, out_wav: Path, bpm: int = 86):
         f.writeframes(pcm.tobytes())
 
 
+SE_DIR = Path(__file__).resolve().parent / "assets" / "se"
+
+
+def _load_se_file(path: Path, sr: int, max_sec: float = 2.2):
+    """実ファイルSE(mp3/wav)をモノラルPCMに読み込む。末尾0.5秒はフェードアウト。"""
+    import numpy as np
+    raw = subprocess.run(
+        ["ffmpeg", "-v", "error", "-i", str(path), "-t", f"{max_sec}",
+         "-f", "s16le", "-ac", "1", "-ar", str(sr), "-"],
+        capture_output=True, check=True,
+    ).stdout
+    sig = np.frombuffer(raw, dtype="<i2").astype(float) / 32767.0
+    fade = min(int(0.5 * sr), len(sig))
+    if fade > 0:
+        sig[-fade:] *= np.linspace(1, 0, fade)
+    peak = np.abs(sig).max() or 1.0
+    return sig / peak
+
+
 def synth_se_track(events: list[tuple[float, str]], duration: float, out_wav: Path):
     """効果音トラック(ループ6)。events=[(秒, 種類)]。強調箇所のみ・入れすぎ禁止。
 
     pop: テロップ・数字表示のポップ音(短い上昇ブリップ)
     don: オチ・ピーク用の低いドン
+    puchun: 電源断音(暗転=スロットのフリーズ演出とセット)
+    その他: production/assets/se/<種類>.mp3|wav があれば実ファイルを使う(例: impact)
     """
     import numpy as np
     sr = 44100
     n = int(sr * (duration + 0.5))
     track = np.zeros(n)
+    file_cache: dict[str, object] = {}
     for t0, kind in events:
         i0 = int(t0 * sr)
         if kind == "pop":
@@ -291,12 +314,31 @@ def synth_se_track(events: list[tuple[float, str]], duration: float, out_wav: Pa
             ts = np.arange(int(dur * sr)) / sr
             f = 130 * np.exp(-ts * 7) + 46
             sig = 0.9 * np.sin(2 * np.pi * f * ts) * np.exp(-ts * 11)
+        elif kind == "puchun":
+            # 電源断・ブラウン管OFF風「プチュン」(スロットのフリーズ演出)。
+            # 高音から一気に落ちるスイープ+冒頭の断線ノイズ
+            dur = 0.34
+            ts = np.arange(int(dur * sr)) / sr
+            f = 60 + 3400 * np.exp(-ts * 22)
+            phase = 2 * np.pi * np.cumsum(f) / sr
+            sig = 0.85 * np.sin(phase) * np.exp(-ts * 15)
+            nz = np.random.default_rng(7).normal(0, 1, len(ts)) * np.exp(-ts * 90) * 0.22
+            sig = sig + nz
         else:
-            continue
+            if kind not in file_cache:
+                hit = next((SE_DIR / f"{kind}{ext}" for ext in (".wav", ".mp3")
+                            if (SE_DIR / f"{kind}{ext}").exists()), None)
+                file_cache[kind] = _load_se_file(hit, sr) * 0.9 if hit else None
+            if file_cache[kind] is None:
+                continue
+            sig = file_cache[kind]
         i1 = min(i0 + len(sig), n)
         track[i0:i1] += sig[: i1 - i0]
-    peak = np.abs(track).max() or 1.0
-    track = track / peak * 0.5
+    # 相対音量を保ったまま過大のみ抑える(1本の大きいSEで全体が痩せないように)
+    peak = np.abs(track).max()
+    if peak > 1.0:
+        track = track / peak
+    track = track * 0.5
     pcm = (track * 32767).astype("<i2")
     with wave.open(str(out_wav), "wb") as f:
         f.setnchannels(1)
@@ -652,10 +694,16 @@ def style_axes(ax):
     ax.set_axisbelow(True)
 
 
-def save_frame(fig, path: Path):
+def save_frame(fig, path: Path, facecolor: str = SURFACE):
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=DPI, facecolor=SURFACE)
+    fig.savefig(path, dpi=DPI, facecolor=facecolor)
     plt.close(fig)
+
+
+def save_black_frame(path: Path):
+    """暗転フレーム(スロットのフリーズ演出風。プチュンSEとセットで使う)。"""
+    fig = plt.figure(figsize=FIGSIZE, dpi=DPI)
+    save_frame(fig, path, facecolor="#000000")
 
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
@@ -684,6 +732,9 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         padded.append(pw)
         if u.se:
             se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
+        if u.blackout > 0.01:
+            # 暗転開始に「プチュン」を自動で鳴らす(u.seはリベール側=暗転明けに使える)
+            se_events.append((elapsed + (0.07 if u.cover else 0.0), "puchun"))
 
         def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0,
                  painter=None, with_subtitle: bool = True):
@@ -698,6 +749,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             return f
 
         anim = min(u.anim, d_total)
+        head = 0.07 if u.cover else 0.0
         if u.cover:
             # フィードの静止表示・サムネ用(ループ7)。専用構図 <scene>__cover があれば
             # 字幕なしのサムネ設計で描く(深掘り⑨)
@@ -705,17 +757,25 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             cf = emit(1.0, 990, 0.07, painter=cover_painter,
                       with_subtitle=(cover_painter is None))
             thumbnail = cf
-            anim = min(anim, d_total - 0.07)
+        # 暗転(スロットのフリーズ演出風)。SE(プチュン)はユニット頭=暗転開始に鳴る
+        blackout = u.blackout if 0.01 < u.blackout < d_total - head - 0.5 else 0.0
+        if blackout:
+            bf = workdir / f"frame_{i:02d}_985.png"
+            save_black_frame(bf)
+            frames.append(bf)
+            durations.append(blackout)
+            head += blackout
+        anim = min(anim, d_total - head)
         if anim > 0:
             n = max(2, int(anim * u.fps))
             for k in range(n):
                 t = (k + 1) / n
                 emit(t, k, anim / n, pop=(1.06 if k == 0 else 1.0))
-            hold = d_total - anim - (0.07 if u.cover else 0.0)
+            hold = d_total - anim - head
             if hold > 0.01:
                 emit(1.0, n, hold)
         else:
-            emit(1.0, 0, d_total - (0.07 if u.cover else 0.0))
+            emit(1.0, 0, d_total - head)
         elapsed += d_total
 
     out_mp4 = outdir / out_name
