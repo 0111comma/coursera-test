@@ -342,21 +342,42 @@ SCENES = {
 }
 
 UNITS = [
-    Unit("hero_count", "【411万円】。", anim=1.2, cover=True, se="pop", intonation=1.15),
-    Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8),
-    Unit("stacked_principal", "『意味ない』はずが、払ったのは【240万円】だけ。", anim=2.2),
-    Unit("stacked_full", "残りの【171万円】は、勝手に増えたのだ。", anim=1.8),
-    Unit("snowball", "正体は、利息が利息を生む【雪だるま】なのだ。", anim=2.4),
-    Unit("predict", "なら10年目は、ちょうど半分と思うのだ?", anim=1.6),
-    Unit("reveal", "違って、10年目はまだ【155万円】なのだ。", anim=1.8, se="don", intonation=1.1),
-    Unit("accel", "でも後半の10年で、一気に【+256万円】。", anim=1.6),
-    Unit("compare2", "控えめな3%でも、【328万円】なのだ。", anim=1.4),
-    Unit("compare0", "何もしなければ、増えは【ゼロ】なのだ。", anim=1.4),
-    Unit("lever", "あなたが選べるのは、【積立額】なのだ。", anim=1.2, pad=0.35),
-    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don", intonation=1.15),
-    Unit("coin", "月1万円なら、1日たった【333円】。", anim=0.8),
-    Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop"),
-    Unit("chips", "コメントで教えてほしいのだ。", anim=1.4, pad=1.0),
+    # 演出意図: 冒頭は宣言(ゆっくり・張る)
+    Unit("hero_count", "【411万円】。", anim=1.2, cover=True, se="pop",
+         speed=1.05, intonation=1.2, pitch=0.0),
+    Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8, speed=1.2),
+    Unit("stacked_principal", "『意味ない』はずが、払ったのは【240万円】だけ。", anim=2.2,
+         speed=1.2, intonation=1.15),
+    Unit("stacked_full", "残りの【171万円】は、勝手に増えたのだ。", anim=1.8,
+         speed=1.15, intonation=1.2),
+    Unit("snowball", "正体は、利息が利息を生む【雪だるま】なのだ。", anim=2.4,
+         speed=1.15, intonation=1.15),
+    # フリは問いかけ(語尾が自然に上がる)
+    Unit("predict", "なら10年目は、ちょうど半分と思うのだ?", anim=1.6,
+         speed=1.15, intonation=1.25),
+    # オチはゆっくり低く(タメて落とす)
+    Unit("reveal", "違って、10年目はまだ【155万円】なのだ。", anim=1.8, se="don",
+         speed=1.1, intonation=1.2, pitch=-0.06, pause_scale=1.4),
+    # 爆発は速く高く(興奮)。「+」は「プラス」と読ませる
+    Unit("accel", "でも後半の10年で、一気に【+256万円】。", anim=1.6,
+         narration="でも後半の10年で、一気にプラス256万円。",
+         speed=1.25, intonation=1.3, pitch=0.0),
+    Unit("compare2", "控えめな3%でも、【328万円】なのだ。", anim=1.4, speed=1.2),
+    # 損失は低くゆっくり(重み)
+    Unit("compare0", "何もしなければ、増える分は【ゼロ】なのだ。", anim=1.4,
+         speed=1.1, intonation=1.05, pitch=-0.08),
+    # アハ(発見の明るさ)
+    Unit("lever", "あなたが選べるのは、【積立額】なのだ。", anim=1.2, pad=0.35,
+         speed=1.15, intonation=1.2),
+    # ピークはタメてから張る
+    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don",
+         narration="月3万円にすると…、1233万円なのだ。",
+         speed=1.1, intonation=1.3, pitch=0.0, pause_scale=1.7),
+    Unit("coin", "月1万円なら、1日たった【333円】。", anim=0.8, speed=1.2, intonation=1.15),
+    Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop", speed=1.2),
+    # 締めは親しみ(少しゆっくり)
+    Unit("chips", "コメントで教えてほしいのだ。", anim=1.4, pad=1.0,
+         speed=1.15, intonation=1.15),
 ]
 
 if __name__ == "__main__":

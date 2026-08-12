@@ -101,7 +101,10 @@ class Unit:
     pad: float = 0.2         # ナレーション後の間(秒)
     anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)
     fps: int = 20            # アニメーション部分のfps
-    intonation: float = 1.0  # 抑揚(強調ユニットは1.1〜1.15。ループ4)
+    intonation: float = 1.1  # 抑揚(深掘り②: 一律1.0は単調。文脈で1.05〜1.3)
+    speed: float = 0.0       # 話速の上書き(0=既定。深掘り②: 重要文は遅く・つなぎは速く)
+    pitch: float = -0.03     # ピッチ(深掘り②: ナレーション基調は少し低め。ピークで持ち上げ)
+    pause_scale: float = 1.1 # 句読点の間(深掘り②: AIの早口感を消す。タメは1.5〜1.7)
     se: str | None = None    # ユニット頭の効果音 "pop"/"don"(強調箇所のみ。ループ6)
     cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
 
@@ -132,12 +135,15 @@ def voicevox_alive() -> bool:
 
 
 def tts_voicevox(text: str, out_wav: Path, speaker: int = DEFAULT_SPEAKER, speed: float = DEFAULT_SPEED,
-                 intonation: float = 1.0):
+                 intonation: float = 1.0, pitch: float = 0.0, pause_scale: float = 1.0):
     q = urllib.parse.quote(text)
     query = _http(f"{VOICEVOX_URL}/audio_query?text={q}&speaker={speaker}", data=b"")
     qj = json.loads(query)
     qj["speedScale"] = speed
     qj["intonationScale"] = intonation
+    qj["pitchScale"] = pitch
+    if "pauseLengthScale" in qj:
+        qj["pauseLengthScale"] = pause_scale
     qj["prePhonemeLength"] = 0.05
     qj["postPhonemeLength"] = 0.08
     wav = _http(
@@ -171,7 +177,9 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
     for i, u in enumerate(units):
         w = workdir / f"seg_{i:02d}.wav"
         if use_vv:
-            tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation)
+            tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation,
+                         speed=(u.speed or DEFAULT_SPEED), pitch=u.pitch,
+                         pause_scale=u.pause_scale)
         else:
             tts_openjtalk(u.tts_text(), w)
         wavs.append(w)
