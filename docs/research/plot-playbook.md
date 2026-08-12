@@ -93,6 +93,59 @@
 | D21 | フリオチ | 視聴者の予測を立てさせてから裏切るビートがある |
 | D22 | 物語性 | 裸のデータポイントがない(すべての事実が物語のビートに載っている) |
 
+## パートE: 第2弾深掘り(2026-08-12。エンディング/ペイオフ/クイズ/ユーモア/物語化)
+
+プロット特化の6並列調査で追加した基準。E=エンディング・ペイオフ、Q=クイズ、H=ユーモア、N=物語化。
+確信度: ★=複数の実証データ/メタ分析、☆=実務通説・推論(自チャンネルのAPV/維持率でA/B検証する)。
+
+### E. エンディングとペイオフ配置
+
+**E1. 二層ペイオフ★** — 冒頭0〜3秒に結論の「見出し」(数字フック)、本当のペイオフ(最大の意外性・具体計算)は尺の70〜85%に置く。「結論先出し」と「答えは終盤」は矛盾しない(見出しと実額の二層)。
+**E2. エスカレーション必須☆** — micro-payoff(小さな種明かし)は8〜12秒ごと。必ず意外性・金額が増す順に並べ、最後のmicro-payoffが最大でない台本は不合格。
+**E3. リベール後2秒ルール★** — メインのペイオフ後は2秒以内に終えるか、冒頭接続のループ文1つで締める。「まとめ」「いかがでしたか」等の消化パートは禁止(post-payoffの離脱猶予は1〜2秒。Jenny Hoyos「約束を果たしたら即終了」)。
+**E4. 終了の合図禁止☆** — 定型の締め文・フェードアウト・音楽の終止感を出さない。**全動画で同じ締め方をしない**(連続視聴で量産型に見える)。
+**E5. ナラティブループ☆** — 最終文を冒頭文に文法的・意味的に接続させる(「最終行→第1行」と音読して違和感がないか照合)。落語のサゲ=マクラの回収と同型。
+**E6. ビジュアルループ☆** — 最終フレーム≒冒頭フレーム(同一シーン関数を再利用)。ループ2周目が「答え合わせ」になる設計。判定指標はAPV(平均再生率)100%超。
+**E7. CTAは終端に置かない☆** — 質問・4択チップはループ点の5〜8秒前に前倒し。音声での登録誘導・URL誘導はしない。回答の受け皿は固定コメント。
+**E8. 8秒無情報禁止★** — 新情報(数字・新事実・画面変化)ゼロのまま8秒を超えるタメは離脱を生む。
+
+### Q. クイズビート(プリテスト効果 g=0.54)
+
+**Q1. 核の数字だけをクイズにする★** — プリテスト効果は出題項目に限定され周辺への波及はほぼゼロ(g=0.04)。1本1クイズ、一番覚えてほしい数字に張る。
+**Q2. 問い→答えは8〜15秒★** — 間は空白でなく前提・根拠で埋める(好奇心の待ち時間中は周辺情報の記憶も上がる: Gruber 2014)。「答えはCMの後」型の引き延ばしは信頼毀損。
+**Q3. 答えの直後に復唱1拍★** — 高確信エラーは時間が経つと再発する(hypercorrection研究)。「つまり◯◯円」の1拍で再固定。
+**Q4. 自信を持って間違える問題を選ぶ★** — 高確信エラーほど訂正後の記憶が強い。「簡単そうで直感が外れる」数値(手取り・実質利回り)が最適。見当もつかない超難問は予測が生まれず効果ゼロ(S004の教訓: 候補を見せてから問う)。
+**Q5. 「多くの人はAと答える」は誤解訂正フレームで★** — 期待違反は記憶を強化するが、「みんなやってない」を規範として見せると不作為を正当化する(Cialdiniのブーメラン効果)。誤答の正常化はOK(「9割が外す」)、不作為の正常化はNG。
+**Q6. オープン質問は30秒尺・3択は45秒超☆** — 3択なら誤答ルアーは2つまで+即時に正解明示(負の暗示効果はフィードバックで消える)。
+
+### H. ユーモア(関連ユーモアはEEGレベルで学習効果あり)
+
+**H1. ボケは関連ユーモアのみ★** — ボケ行にその動画の数字・制度・お金の行動が含まれること。雑談・無関係あるあるは学習を害する(seductive details g=−0.16)。
+**H2. 量は2〜3箇所/60秒、行数の2割以下☆** — 解説系は「茶番少なめ・内容濃いめ」が好まれる。
+**H3. 配置は構造点☆** — フック直後/一番重い数字の直後/締め直前。「衝撃数字→過剰リアクション(大げさな絶望)」を1箇所必ず入れる。
+**H4. 事実行とボケ行を分離★** — 出典の付く文にふざけを混ぜない(不適切ユーモアは有能さの知覚を下げる: Bitterly 2017)。ボケの直後にフォロー(正情報への復帰)1文。
+**H5. 自虐は「欲望のダメ人間あるある」型のみ★** — 「ボクなら3日で使う自信があるのだ」はOK、「難しくてボクも分からないのだ」(知識の自虐)は禁止(無能の自白に読まれる)。1動画1箇所まで。
+**H6. ツッコミ対象は制度・仕組み・過去の自分のみ★** — 個人・業者・視聴者・世代は対象にしない(良性違反理論+戦略§6)。
+**H7. 落差ボケ☆** — 丁寧な解説の直後に俗な本音を「なのだ」で言う期待違反(「つまり、寝てるだけでいいのだ」)。かわいい声×俗な本音はずんだもんミームの中核。
+**H8. 不幸ネタは金額の損まで☆** — ずんだもんの不憫は公式公認のお約束だが、痛めつけ・人格の貶めはずん虐(権利者禁止)。
+**H9. エッジは感想の断定で★** — 事実は出典付きで正確に、感想は強く断言(「正直、知らないのは損だと思うのだ」)。事実の断定はゼロを維持(戦略§6と両立)。
+
+### N. 物語化(全面物語化はしない。「物語的ラッピング」まで)
+
+**N1. 2人称会話調ベース★** — personalization効果 d=1.11(11/11実験)。「あなた」を最低1回、書き言葉の硬さを排する。
+**N2. 具体シーンで開くのも可☆** — 感情関与が高いトピック(病気・老後)は「あなたに起きうる場面+数字」で開く(心的イメージ→感情反応の実証は強い)。手続き的トピックは数字フックのまま。
+**N3. 人物は1人・視聴者と同属性・3文以内☆** — 属性が離れた「Aさん」は同一化の壁になる。背景描写は削り、出来事と金額だけ。
+**N4. 装飾エピソード禁止★** — 削っても結論の理解が変わらないエピソードはseductive detail(g=−0.16)。物語は必ず計算・制度説明を運ぶ器にする。
+**N5. 数値・条件の説明はexpositoryのまま★** — 物語化の実証リターンは情意面(興味・完走)で、知識伝達は差がない。制度説明を無理にドラマ化しない(expositoryの方が「信じられる」)。
+**N6. 疑問の代弁1回☆** — 会話劇(フェルミの生徒役)の優位性の核は質問役。単独ナレーションでは自問自答で内包する(「え、じゃあ◯◯の場合は?と思うのだ?」)。
+**N7. のだ/なのだの文法運用☆** — 「んです」に置換可能→「のだ」、「である」に置換可能→「なのだ」。語尾の正確さはキャラ運用の信頼シグナル。
+
+### 第2弾で改訂された既存基準
+
+- **D15(エンド)改訂**: 「力を渡して終わる+低ハードル質問」→「質問はループ点の5〜8秒前(E7)。最終ユニットは冒頭接続のループ文+冒頭同一ビジュアル(E5/E6)。全動画で異なる締め方(E4)」
+- **D17(口調)強化**: 「軽いユーモア1箇所」→ H1〜H9に準拠した関連ユーモア2〜3箇所
+- **D21(フリオチ)強化**: クイズビートはQ1〜Q6に準拠(復唱・誤解訂正フレーム・当てられる出題)
+
 ## 出典(主要なもの)
 
 - フック型のデータ: [OpusClip: Hook Formulas](https://www.opus.pro/blog/youtube-shorts-hook-formulas), [PreAlgo: Hook archetypes](https://prealgo.com/blog/hook-archetypes-2026)
@@ -115,3 +168,12 @@
 - アハ体験の神経科学: [fMRI Insights on Insight(PubMed)](https://pubmed.ncbi.nlm.nih.gov/29665228/), [NeuroLaunch: Aha Moment](https://neurolaunch.com/aha-moment-psychology/)
 - 没入と説得: [Narrative transportation: systematic review](https://www.researchgate.net/publication/380344826_Narrative_transportation_A_systematic_literature_review_and_future_research_agenda)
 - SUCCESs: [Heath Brothers: Made to Stick](https://heathbrothers.com/made-to-stick-introduction/)
+
+### パートE(第2弾)の出典
+
+- ペイオフ配置: [Subscribr: Scripting Shorts](https://subscribr.ai/youtube-strategy/scripting-youtube-shorts-engagement), [Aibrify: Retention Curve Playbook](https://aibrify.com/blog/youtube-shorts-retention-curve-playbook), [OpusClip: TikTok Length(早期ペイオフ+20%)](https://www.opus.pro/blog/tiktok-length-format-retention-data), [Jenny Hoyos Playbook](https://www.marketingexamined.com/blog/jenny-hoyos-short-form-video-playbook)
+- ループ/視聴回数定義変更(2025-03-31): [TubeBuddy](https://www.tubebuddy.com/blog/youtube-shorts-view-count-update-what-creators-need-to-know-about-the-new-metrics/), [Virvid: Looping Structure](https://virvid.ai/blog/looping-structure-shorts-retention-2026), [HERO'ZZ(日本語・ループ台本)](https://herozz.co.jp/blog/short-video-goes-viral/), [Deskgram: Perfect Loop](https://deskgram.co/the-perfect-loop-technique-how-to-make-people-watch-3-times/)
+- プリテスト効果: [メタ分析 g=0.54(Psychonomic Bulletin & Review)](https://link.springer.com/article/10.3758/s13423-023-02353-8), [Prequestioning Review 2023](https://link.springer.com/article/10.1007/s10648-023-09814-5), [Gruber 2014(好奇心とドーパミン)](https://www.cell.com/neuron/fulltext/S0896-6273(14)00804-6), [hypercorrection(Butterfield & Metcalfe)](https://www.researchgate.net/publication/11641193_Errors_Committed_with_High_Confidence_Are_Hypercorrected), [負の暗示効果とフィードバック](https://link.springer.com/article/10.3758/MC.36.3.604), [Cialdiniブーメラン効果](https://www.tandfonline.com/doi/abs/10.1080/15534510500181459)
+- ユーモア: [IHPT(Wanzer 2010)](https://www.tandfonline.com/doi/abs/10.1080/03634520903367238), [EEG研究2025(動画講義の関連ユーモア)](https://link.springer.com/article/10.1007/s12144-025-08405-7), [Bitterly 2017: Risky Business(JPSP)](https://www.ncbi.nlm.nih.gov/pubmed/27831701), [UGA 2025(科学者のユーモアと信頼)](https://news.uga.edu/using-humor-in-communication-helps-scientist-connect/), [seductive detailsメタ分析](https://link.springer.com/article/10.1007/s10648-020-09522-4), [ずんだもん公式設定(不幸属性)](https://dic.pixiv.net/a/%E3%81%9A%E3%82%93%E3%81%A0%E3%82%82%E3%82%93)
+- 物語化: [Mayer personalization d=1.11](https://www.researchgate.net/publication/232481296_A_Personalization_Effect_in_Multimedia_Learning_Students_Learn_Better_When_Words_Are_in_Conversational_Style_Rather_Than_Formal_Style), [narrative vs expositoryメタ分析2024](https://www.researchgate.net/publication/384420142_Impact_of_Narrative_versus_Expository_Instruction_in_Science_Education_on_Recall_Understanding_and_Transfer_A_Meta-Analysis), [Stanford金融教育の物語研究(+17〜18pt)](https://news.stanford.edu/stories/2025/05/study-financial-literacy-education-storytelling), [知識ゲインは形式間で差なし(2025)](https://www.sciencedirect.com/org/science/article/pii/S1935787725000863), [対話傍聴のvicarious learning](https://journals.sagepub.com/doi/10.2190/Q8CM-FH7L-6HJU-DT9W)
+- 国内成功例: [両学長の冒頭分析](https://nabe-hiro.com/2024/09/06/ryogakutyo/), [フェルミ漫画大学(対話形式)](https://dic.nicovideo.jp/a/%E3%83%95%E3%82%A7%E3%83%AB%E3%83%9F%E6%BC%AB%E7%94%BB%E5%A4%A7%E5%AD%A6), [ずんだもん語尾の運用規範](https://note.com/dempa_exe/n/n001a7583381c), [量産型規制と生存条件](https://note.com/machosuke/n/nf4463c75c937)
