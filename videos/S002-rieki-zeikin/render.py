@@ -44,7 +44,7 @@ TAX30 = GAIN30 * TAX_RATE                       # 959,393円
 
 assert round(TAX_RATE, 5) == 0.20315
 assert round(TAX171 / 1000) == 347 and round(NET_MAN) == 136
-assert round(fv(240) - 2_400_000 - 337) == GAIN - 337 + 0  # 厳密値1,710,337との整合
+assert round((fv(240) - 2_400_000) / 1000) == 1710  # 厳密値1,710,337 ≒ 宣言値171万円
 assert round(GAIN30 / 10_000) == 472 and round(TAX30 / 10_000) == 96, "verify.pyと不一致"
 
 TABLE_GAINS = [50, 100, 171, 300, 500]          # 万円
