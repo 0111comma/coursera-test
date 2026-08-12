@@ -54,6 +54,9 @@ def main(video_dir: Path) -> int:
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
     check("仮定バッジの描画", "draw_badge" in src, "利回り等の仮定明示")
+    # 利回り等の仮定に基づく数字を扱う動画は、動画内に元本リスクの打消し表示が必要(ループ⑫)
+    if "draw_badge" in src:
+        check("動画内リスク表示(元本)", "元本" in src, "打消し表示: 消費者庁実態調査準拠")
 
     # 3. script.md の必須要素
     sp = video_dir / "script.md"

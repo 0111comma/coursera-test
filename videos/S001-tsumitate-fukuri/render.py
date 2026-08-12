@@ -61,16 +61,18 @@ def scene_hero_count(fig, t):
     scale = 0.25 + 0.75 * appear
     value = round(FV20_5 * ease_out(clamp01(t * 1.15)))
     draw_glow_text(fig, 0.5, 0.62, f"{value}万円", 118 * max(scale, 0.05))
+    draw_badge(fig, "年利5%と仮定の計算")  # 打消し表示は強調表示(411万)と同一画面に(ループ⑫)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_hero_full(fig, t):
     _hero(fig, round(FV20_5), "月1万円 × 20年", sub_alpha=clamp01(t))
+    draw_badge(fig, "年利5%と仮定の計算")
 
 
 def scene_hero_loop(fig, t):
     _hero(fig, round(FV3MAN * ease_out(t)), "月3万円 × 20年なら")
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
 
 
 # ---- 貯金箱 vs 投資(深掘り⑧: 前提を絵で明示する) ----
@@ -123,7 +125,7 @@ def scene_invest(fig, t):
         ax.text(1.47, (FV20_5 + PIGGY) / 2, f"+{round(GAIN20)}万円", color=EMPH,
                 fontsize=27, va="center", ha="center", alpha=a, rotation=90)
     fig.text(0.5, 0.90, "投資で運用した場合", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
@@ -138,7 +140,7 @@ def scene_assume(fig, t):
              bbox=dict(boxstyle="round,pad=0.6", facecolor=SURFACE,
                        edgecolor=EMPH, linewidth=2.5, alpha=a))
     fig.text(0.5, 0.90, "投資で運用した場合", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
@@ -166,12 +168,13 @@ def scene_snowball(fig, t):
     ax.text(8.0, 7.2, "さらに…", ha="center", color=INK_2, fontsize=26, alpha=clamp01(t * 3 - 2))
     fig.text(0.5, 0.90, "複利(ふくり)のしくみ", ha="center", color=INK, fontsize=40,
              path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
 def _curve_axes(fig):
-    ax = fig.add_axes([0.14, 0.44, 0.74, 0.40])
+    # 高さ0.37: 20年ラベル(グラフ上端)が拡大後バッジ(下端y=0.810)と重ならない高さ(ループ⑫)
+    ax = fig.add_axes([0.14, 0.44, 0.74, 0.37])
     style_axes(ax)
     ax.set_xlim(0, 23.5)
     ax.set_ylim(0, 480)
@@ -200,7 +203,7 @@ def scene_predict(fig, t):
     ax.annotate("半分なら 約205万円?", (10, HALF_LINEAR), xytext=(1.8, HALF_LINEAR + 65),
                 color=INK, fontsize=27, alpha=a2)
     fig.text(0.5, 0.90, "クイズ: 10年目はいくら?", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
@@ -220,7 +223,7 @@ def scene_reveal(fig, t):
         ax.annotate("実際は 155万円", (10, FV10_5), xytext=(10.6, FV10_5 - 60),
                     color=INK, fontsize=27)
     fig.text(0.5, 0.90, "正解", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
@@ -247,7 +250,7 @@ def scene_accel(fig, t):
         ax.text(15, 396, f"+{round(FV20_5 - FV10_5)}万円", ha="center", color=EMPH, fontsize=30,
                 alpha=a2, path_effects=stroke_fx(EMPH, outline=outline_for(30), fatten=2))
     fig.text(0.5, 0.90, "伸びは後半に集中する", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "年利5%と仮定")
+    draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
 
@@ -282,7 +285,7 @@ def scene_compare2(fig, t):
     _bar(ax, 0, FV20_5, 1.0, color=MUTED)
     _bar(ax, 1, FV20_3, t, color=GOLD)
     fig.text(0.5, 0.90, "20年後の残高くらべ", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "利回りは仮定値")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
@@ -292,7 +295,7 @@ def scene_compare0(fig, t):
     _bar(ax, 1, FV20_3, 1.0, color=MUTED)
     _bar(ax, 2, PIGGY, t, label="240万円(+0円)", color=SERIES_1)
     fig.text(0.5, 0.90, "20年後の残高くらべ", ha="center", color=INK_2, fontsize=34)
-    draw_badge(fig, "利回りは仮定値")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
@@ -307,7 +310,7 @@ def scene_lever(fig, t):
              path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2))
     fig.text(0.70, 0.53, "◯", ha="center", va="center", color=EMPH, fontsize=64, alpha=a)
     fig.text(0.70, 0.492, "選べる", ha="center", color=EMPH, fontsize=22, alpha=a)
-    draw_badge(fig, "利回りは仮定値")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
@@ -338,15 +341,16 @@ def scene_table_big(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.82, 0.795, "スクショ用", ha="right", color=EMPH, fontsize=24, alpha=clamp01(t))
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
     _table(fig, 0.70)
     fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=20)
-    draw_badge(fig, "利回りは仮定値")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
 def scene_chips(fig, t):
-    fig.text(0.5, 0.80, "あなたなら、月いくら?", ha="center", color=INK, fontsize=52,
+    # y=0.76: バッジ(下端0.810)と質問の「ら?」が重ならない位置(ループ⑫で衝突を実測修正)
+    fig.text(0.5, 0.76, "あなたなら、月いくら?", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=3))
     chips = ["5千円", "1万円", "3万円", "それ以上"]
     for i, c in enumerate(chips):
@@ -360,7 +364,7 @@ def scene_chips(fig, t):
                            edgecolor=EMPH, linewidth=2.5, alpha=a))
     fig.text(0.5, 0.44, "▼ コメントで教えて ▼", ha="center", color=INK_2, fontsize=34,
              alpha=clamp01(t * 3.2 - 3))
-    draw_badge(fig, "利回りは仮定値")
+    draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
@@ -371,6 +375,8 @@ def scene_hero_count__cover(fig, t):
     draw_glow_text(fig, 0.5, 0.615, "411万円", 132)
     fig.text(0.5, 0.435, "貯金箱なら 240万円", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
+    # サムネにも打消し表示(強調表示と同一画面の原則。ループ⑫)。⑨の3要素階層を崩さないようMUTED
+    fig.text(0.5, 0.88, "年利5%と仮定の計算", ha="center", va="center", color=MUTED, fontsize=24)
     draw_footer_brand(fig, BRAND)
 
 

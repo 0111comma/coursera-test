@@ -586,13 +586,15 @@ def draw_subtitle(fig, text: str, pop: float = 1.0):
 
 
 def draw_badge(fig, text: str):
-    """右上の注記バッジ(例:「年利5%と仮定」)。コンプライアンス表示(戦略§6)。
+    """右上の注記バッジ(例:「年利5%と仮定の計算」)。打消し表示(戦略§6)。
 
-    y=0.835: Shorts実機UIの安全域(深掘りループ⑩)。上部アイコン帯(上7%)の外、
+    y=0.83: Shorts実機UIの安全域(深掘りループ⑩)。上部アイコン帯(上7%)の外、
     かつ右ボタン列(上40%〜)より上。0.935だと検索・カメラアイコンと重なる。
+    fontsize=28: 動画の打消し表示は「強調表示の20〜30%未満の文字で2秒以下」だと
+    読まれない(消費者庁・打消し表示実態調査)。常時表示+字幕(52pt)の54%を確保(深掘りループ⑫)。
     """
     fig.text(
-        0.90, 0.835, text, ha="right", va="center", color=INK_2, fontsize=22,
+        0.90, 0.83, text, ha="right", va="center", color=INK_2, fontsize=28,
         bbox=dict(boxstyle="round,pad=0.5", facecolor=SURFACE, edgecolor=BASELINE, linewidth=1.5),
     )
 
