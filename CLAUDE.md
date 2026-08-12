@@ -3,16 +3,18 @@
 お金・金融リテラシーをテーマにした教育系YouTubeチャンネルの企画を管理するリポジトリ。
 チャンネル戦略は `docs/strategy.md`、テーマ選定の経緯は `docs/research/theme-candidates.md` を参照。
 
-## ワークフロー(企画 → 台本まで)
+## ワークフロー(企画 → 動画まで)
 
 ```
-/ideate       ネタ出し。戦略に沿ったネタを ideas/backlog.md に追加する
+/ideate        ネタ出し。戦略に沿ったネタを ideas/backlog.md に追加する
    ↓
-/plan-video   ネタ1つを選び、videos/<ID>-<slug>/plan.md(企画書)を作る
+/plan-video    ネタ1つを選び、videos/<ID>-<slug>/plan.md(企画書)を作る
    ↓
-/write-script 企画書から videos/<ID>-<slug>/script.md(台本)を作る
-   ↓          計算を含む場合は verify.py で数値を検証してから台本に反映
-(制作→投稿は別環境のパイプラインに台本を渡す)
+/write-script  企画書から videos/<ID>-<slug>/script.md(台本)を作る
+   ↓           計算を含む場合は verify.py で数値を検証してから台本に反映
+/produce-video 台本から videos/<ID>-<slug>/output/<ID>.mp4 をレンダリングする
+   ↓           (production/shortlib.py + VOICEVOX + ffmpeg。詳細はスキル参照)
+(投稿はユーザーのローカル環境から。このリポジトリの成果物はmp4まで)
 ```
 
 ## ディレクトリ構成
@@ -20,10 +22,13 @@
 - `docs/` — 戦略・調査ドキュメント
 - `ideas/backlog.md` — ネタのストック(ステータス管理付き)
 - `templates/` — 企画書・台本のテンプレート
+- `production/` — 制作パイプライン(shortlib.py=描画/TTS/結合、setup_voicevox.sh)
 - `videos/<ID>-<slug>/` — 動画1本ごとの作業ディレクトリ
   - `plan.md` — 企画書
-  - `script.md` — 台本(制作パイプラインへの受け渡し物)
+  - `script.md` — 台本
   - `verify.py` — 動画内の数値の検証スクリプト(計算を含む動画は必須)
+  - `render.py` — レンダリングスクリプト(shortlibを使用)
+  - `output/<ID>.mp4` — 完成動画(output/work/ は中間生成物でコミットしない)
 
 動画IDは `S001`(ショート)/ `L001`(解説動画)の連番。
 
