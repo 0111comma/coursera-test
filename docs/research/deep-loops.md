@@ -321,3 +321,40 @@ UIゾーン(上部アイコン帯・右ボタン列・下部情報帯+クロッ�
 バッジあり通常シーン/クイズ見出しシーン/早見表シーンの3フレームで作成し、衝突ゼロを目視確認。
 再レンダリング(54.2s)+自動チェック**ALL PASS**。
 → **SZ1〜SZ4合格。ループ⑩完了**
+
+---
+
+## 深掘りループ⑪ 概要欄・固定コメント設計
+
+実施: 2026-08-12。調査5件(公式ヘルプ2+国内3系統+海外SEO/CTA系)。
+前提の発見: **ショートの概要欄はデフォルト非表示**(タイトルタップか「︙→説明」で開く)
+→ 概要欄の役割は「検索インデックス+能動閲覧者への出典・免責提示」であり、
+CTAの主戦場は**コメント欄を開けば必ず最上部に見える固定コメント**になる。
+
+### 調査で得た基準(DC1〜DC7)
+
+| # | 基準 | 根拠 |
+|---|---|---|
+| DC1 | 概要欄1行目に、タイトルの言い換えでない検索語を自然に含める(冒頭約125字がインデックスとプレビューの重心) | [Hollyland: Shorts SEO](https://www.hollyland.com/blog/topics/youtube-shorts-seo-best-practices), [CRKLR](https://crklr.com/news/how-to-optimise-youtube-shorts-for-seo/), [TubeBuddy](https://www.tubebuddy.com/blog/youtube-video-descriptions) |
+| DC2 | 本文は要点2〜4行で簡潔に(水増しはSEO効果なし)。開いた人が知りたいのは数値の根拠と補足 | 同上+[アプリの鎖: ショート概要欄の見方](https://pc-chain.com/sns/youtube-description-short/)(デフォルト非表示の確認) |
+| DC3 | ハッシュタグは3〜5個(#shorts含む)を概要欄末尾に。61個以上で全タグ無効。タイトルには入れない(ショートのタイトルは下部UI帯で約20字で切れる) | [YouTube公式: ハッシュタグ](https://support.google.com/youtube/answer/6390658?hl=ja), [Monolit(データ準拠の推奨数)](https://monolit.sh/blog/how-many-hashtags-youtube-2026-data-backed-answer-founders) |
+| DC4 | 免責・仮定・計算方式・時点表記・VOICEVOXクレジットを概要欄に常設(戦略§6) | 戦略§6/CLAUDE.mdルール5 |
+| DC5 | 固定コメント=動画内CTAの単一質問を選択式で再掲(答えやすさ優先)。良質な固定コメントは返信を最大30%増、コメント増はおすすめ露出のシグナル | [YouTube公式: ショートのコメント活用](https://support.google.com/youtube/answer/11913117?hl=ja), [Unity Films: Comment Strategy](https://unityfilms.net/youtube-comment-strategy/), [AIR: Pinned Comment](https://air.io/en/youtube-hacks/what-to-write-in-your-youtube-pinned-comment-to-get-a-reaction-from-your-audience) |
+| DC6 | 固定コメント・コメント欄にURLを貼らない(URL入りコメントはスパム自動保留・削除の対象)。宣伝臭より「親切な補足」 | [kamosplan: URL自動削除の検証](https://kamosplan.com/archives/1932), [howtonote: リンク自動保留設定](https://www.howtonote.jp/youtube/comment/index6.html) |
+| DC7 | 投稿直後に固定コメントを設置し、初動1〜3時間は返信最優先(初動24〜48時間のエンゲージメントが露出を左右) | [snshelper: コメント返信](https://snshelper.com/jp/blog/respond-to-youtube-comments), [key-movie: アルゴリズム](https://key-movie.forfreelance.co.jp/blog/youtube/youtube-algorithm/) |
+
+### 検証結果と改善
+
+- **不合格1(DC5)**: 固定コメントの設計自体が存在しなかった → script.mdに「固定コメント」欄を新設。動画CTA「月いくら?」を四択+「数字だけの返信もOK」で再掲し、仮定(年5%)の親切な補足を添えるずんだもん口調文を作成
+- **不合格2(DC1)**: 概要欄1行目がタイトルの言い換えで、検索語(積立投資・複利・シミュレーション)ゼロ → 「月1万円を20年、積立投資したらいくらになる?複利の効果を…シミュレーションしました」に書き直し
+- **不合格3(DC3)**: タグ3個が投稿タイトル側にあり、下部UI帯の表示文字数(約20字)を圧迫するだけで表示されない → タイトルからタグを外し、概要欄末尾に4個(#shorts #お金の勉強 #複利 #積立投資)
+- **不合格4(DC4)**: 時点表記なし → 「※2026年8月時点の情報です。」を免責ブロックに追加
+- **不合格5(DC7)**: 初動運用が未定義 → script.md運用メモ+戦略§6.5に「投稿直後固定・1〜3時間返信最優先・URL禁止」を明文化
+- **合格**: 免責・計算方式出典・VOICEVOXクレジット(DC4の既存分)、本文の要点箇条書き化(DC2)、動画内CTAと概要欄の質問の一貫性
+
+### 再検証
+
+- 概要欄・タイトル・固定コメント案をDC1〜DC7に全数照合 → 全項目適合
+- テンプレート(templates/script-short.md)と戦略§6.5に一般化ルールを反映(次作以降・他ジャンルにも適用可能)
+- `check_video.py` 再実行 **ALL PASS**(#shorts・免責・クレジットの回帰なし)
+→ **DC1〜DC7合格。ループ⑪完了**(mp4の変更なし=メタデータのみの改善)
