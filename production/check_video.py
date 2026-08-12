@@ -92,6 +92,13 @@ def main(video_dir: Path) -> int:
                              "-show_entries", "stream=width,height", "-of", "csv=p=0", str(mp4)],
                             capture_output=True, text=True).stdout.strip()
         check("解像度 1080x1920", wh == "1080,1920", wh)
+        # ループ⑭: 末尾に0.4秒以上の無音が残っているとループの継ぎ目に死に時間が生まれる。
+        # 無音が動画末尾まで続くと silence_start だけ出て silence_end が出ないことを利用
+        sil = subprocess.run(["ffmpeg", "-v", "info", "-ss", str(max(dur - 2, 0)), "-i", str(mp4),
+                              "-af", "silencedetect=noise=-30dB:d=0.4", "-f", "null", "-"],
+                             capture_output=True, text=True).stderr
+        check("末尾の死に時間なし(ループ継ぎ目)", sil.count("silence_start") == sil.count("silence_end"),
+              "即切り0.15s(⑦/⑭)")
     else:
         check("output/*.mp4 存在", False)
     check("thumbnail.png 存在", (video_dir / "output" / "thumbnail.png").exists(), "カバーフレーム書き出し")

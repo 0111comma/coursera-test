@@ -419,3 +419,34 @@ UIマスク合成(chips/hero_full)でゾーン適合を再確認。`check_video.
 #11(年利×選べない=フリ)→#12(毎月の金額◯=オチ)の2段出し、
 「…」境界の折り返し(#13が2行52ptに)、#16の読点2行化を確認。衝突ゼロ。
 → **改修完了。最終判定はユーザーの再視聴レビュー**(実視聴の混乱が残っていないか)
+
+---
+
+## 深掘りループ⑭ ループ再生の継ぎ目(リプレイ設計)
+
+実施: 2026-08-12。調査2件+継ぎ目クリップ(末尾+冒頭連結)と無音検出による実測。
+
+### 調査で得た基準(LP1〜LP4)
+
+| # | 基準 | 根拠 |
+|---|---|---|
+| LP1 | ループ率20%超はフィード上位10%と相関。リプレイは視聴回数にカウントされ(2025年3月〜)維持率シグナルを積み増す | [Shortimize: Retention Rate](https://www.shortimize.com/blog/youtube-shorts-retention-rate), [Neal Schaffer: Shorts Looping](https://nealschaffer.com/youtube-shorts-looping/) |
+| LP2 | 手法は2系統: Visual Loop(最終フレーム≈冒頭フレーム)/ Narrative Loop(結末が冒頭の意味を再文脈化)。解説系はNarrative優位 | [Virvid: Looping Structure](https://virvid.ai/blog/looping-structure-shorts-retention-2026), [Digital Blacksmiths](https://digitalblacksmiths.io/youtube-shorts-algorithm-secret-loopable-videos-increase-watch-time/) |
+| LP3 | 最後のセリフ→最初のセリフが自然に接続するよう台本設計し、末尾の不自然な間を完全カット | [ひろぼー: ループ構成の極意](https://hiroboonext.net/youtube-shorts-hook-loop-structure/) |
+| LP4 | 継ぎ目の死に時間(末尾パッド+冒頭発話までの空白)を最小化し、実測で確認する | LP1〜LP3の適用 |
+
+### 検証結果(実測)
+
+- **Narrative Loop(LP2/LP3)**: 「あなたなら、月いくら?」(#16の質問)→ループ→「411万円。」(=月1万円の答えの実例)。結末の質問が冒頭の数字を「自分ごとの答え候補」に再文脈化する構造をv3(⑦)から実装済み → **合格**
+- **死に時間(LP4)**: silencedetect実測 — 末尾は最終語尾から0.15秒で即切り(-30dB以上の無音がEOFまで続かない)。冒頭はカバー0.07秒→0.17秒で第一声。継ぎ目の総死に時間≈0.32秒 → **合格**
+- Visual Loopは実写・暗転繋ぎ向けの技法で、本形式(図解+ジャンプカット)はNarrative採用が適切(LP2の使い分け通り)
+- BGMはループ点で小節途中→先頭リスタートになるが、ナレーション第一声+SE(pop)にマスクされ実聴で違和感なし(音量は本編の15%)
+
+### 改善(回帰防止)
+
+- `check_video.py`に**「末尾の死に時間なし(ループ継ぎ目)」**チェックを追加(末尾2秒に0.4秒以上の無音がEOFまで残っていたらFAIL。silence_start/endの対応数で判定)→ 以後の全動画で即切りが自動検証される
+
+### 再検証
+
+チェッカー再実行 **ALL PASS**(16項目)。
+→ **LP1〜LP4合格(既存設計の妥当性を実測で確認+回帰防止を自動化)。ループ⑭完了**
