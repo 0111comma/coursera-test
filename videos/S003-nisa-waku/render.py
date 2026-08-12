@@ -214,7 +214,7 @@ UNITS = [
          narration="答えは300年。江戸かられいわなのだ。",
          speed=1.1, intonation=1.25, pause_scale=1.3),
     Unit("m10", "月10万円に増やしても、【15年】かかる。", anim=1.2, speed=1.2),
-    Unit("mangaku", "満額、年間360万円でも、【5年】なのだ。", anim=1.2, speed=1.15),
+    Unit("mangaku", "満額の年間360万円でも、【5年】なのだ。", anim=1.2, speed=1.15),
     Unit("amaru", "つまり枠は、【余るほど】大きいのだ。", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("mukigen", "しかも非課税は、【無期限】なのだ。", anim=1.0, speed=1.15),
