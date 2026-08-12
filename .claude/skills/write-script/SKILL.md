@@ -7,6 +7,11 @@ description: 企画書(videos/<ID>-<slug>/plan.md)から台本(script.md)を作�
 
 企画書を、合成音声ナレーション+画面指示の台本に落とし込む。
 
+**最重要**: プロットは `docs/research/plot-playbook.md` の手順(パートC)で作り、
+チェックリスト(パートD、D1〜D22)を全項目照合してから台本を確定する。
+1つでも不合格なら書き直す。事実の羅列+小技はプロットではない(敵・賭け金・
+フリオチ・感情アークのない台本はボツ)。参考実装: videos/S001-tsumitate-fukuri/script.md(v3)
+
 ## 手順
 
 1. 対象の `videos/<ID>-<slug>/plan.md` を読む(引数でID指定。なければステータス「企画中」の最古のもの)
