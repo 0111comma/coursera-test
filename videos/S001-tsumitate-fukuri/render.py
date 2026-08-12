@@ -317,10 +317,10 @@ def scene_coin(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
-def _table(fig, y0, dx=0.19, dy=0.07, fs=32):
+def _table(fig, y0, dx=0.18, dy=0.07, fs=32):
     rates = [0.03, 0.05, 0.07]
     yearss = [10, 20, 30]
-    x0 = 0.36
+    x0 = 0.35  # 深掘り⑩: 右ボタン列(x>0.85)にスクショ枠ごと収めるため左寄せ
     for j, ys in enumerate(yearss):
         fig.text(x0 + dx * j, y0, f"{ys}年", ha="center", color=MUTED, fontsize=fs - 2)
     for i, rt in enumerate(rates):
@@ -334,13 +334,13 @@ def scene_table_big(fig, t):
     fig.text(0.5, 0.88, "月1万円積立の早見表", ha="center", color=INK, fontsize=38,
              path_effects=stroke_fx(INK, outline=outline_for(38), fatten=2))
     fig.patches.append(FancyBboxPatch(
-        (0.10, 0.42), 0.80, 0.36, boxstyle="round,pad=0.012",
+        (0.095, 0.42), 0.73, 0.36, boxstyle="round,pad=0.012",
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.86, 0.795, "スクショ用", ha="right", color=EMPH, fontsize=24, alpha=clamp01(t))
+    fig.text(0.82, 0.795, "スクショ用", ha="right", color=EMPH, fontsize=24, alpha=clamp01(t))
     _table(fig, 0.70)
-    fig.text(0.5, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=20)
+    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=20)
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)
 
