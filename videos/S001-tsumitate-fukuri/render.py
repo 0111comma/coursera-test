@@ -12,7 +12,7 @@ from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
     Unit, render_video, ease_out, ease_in_out, ease_out_back, stroke_fx, outline_for,
     style_axes, draw_badge, draw_footer_brand, draw_rich_text, draw_glow_text,
-    SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
+    SURFACE, INK, INK_2, MUTED, MUTED_BAR, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
 
 OUTDIR = Path(__file__).resolve().parent / "output"
@@ -114,7 +114,7 @@ def scene_piggy(fig, t):
 def scene_invest(fig, t):
     # 前提の種明かし: 世界中の株に積み立てていたから増えた(+171万の差を明示)
     ax = _duo_axes(fig)
-    _duo_bar(ax, 0, PIGGY, 1.0, MUTED)
+    _duo_bar(ax, 0, PIGGY, 1.0, MUTED_BAR)
     _duo_bar(ax, 1, FV20_5, t, GOLD)
     if t >= 0.85:
         a = clamp01((t - 0.85) / 0.15)
@@ -132,7 +132,7 @@ def scene_invest(fig, t):
 def scene_assume(fig, t):
     # 仮定の明示を音声+画面の両方で(コンプライアンス兼、理解の前提)
     ax = _duo_axes(fig)
-    _duo_bar(ax, 0, PIGGY, 1.0, MUTED)
+    _duo_bar(ax, 0, PIGGY, 1.0, MUTED_BAR)
     _duo_bar(ax, 1, FV20_5, 1.0, GOLD)
     a = clamp01(t * 2)
     fig.text(0.5, 0.345, "増え方の仮定: 年平均 5%", ha="center", va="center",
@@ -231,7 +231,7 @@ def scene_accel(fig, t):
     # 深掘り⑧P4: 前半と後半を色分け領域+両方のラベルで比較(何の比較か一目で分かる)
     ax = _curve_axes(fig)
     a = clamp01(t)
-    ax.axvspan(0, 10, color=MUTED, alpha=0.10)
+    ax.axvspan(0, 10, color=MUTED_BAR, alpha=0.10)
     ax.axvspan(10, 20, color=GOLD, alpha=0.16 * a)
     k = 121 + int((241 - 121) * ease_in_out(clamp01(t)))
     ax.plot(_YEARS[:k], _VALS[:k], color=SERIES_1, linewidth=4, solid_capstyle="round")
@@ -282,9 +282,9 @@ def _bar(ax, x, v, prog, label=None, color=SERIES_1, counter=True):
 
 def scene_compare2(fig, t):
     ax = _compare_axes(fig)
-    _bar(ax, 0, FV20_5, 1.0, color=MUTED)
+    _bar(ax, 0, FV20_5, 1.0, color=MUTED_BAR)
     _bar(ax, 1, FV20_3, t, color=GOLD)
-    _bar(ax, 2, PIGGY, 1.0, color=MUTED)  # 貯金箱の基準線も文脈として表示(compare0廃止に伴い)
+    _bar(ax, 2, PIGGY, 1.0, color=MUTED_BAR)  # 貯金箱の基準線も文脈として表示(compare0廃止に伴い)
     fig.text(0.5, 0.90, "20年後の残高くらべ", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
