@@ -436,16 +436,22 @@ def draw_glow_text(fig, x: float, y: float, text: str, fontsize: float, color: s
              path_effects=[path_effects.Stroke(linewidth=30, foreground=color),
                            path_effects.Normal()])
     fig.text(x, y, text, ha="center", va="center", color=color, fontsize=fontsize,
-             path_effects=stroke_fx(color, outline=12, fatten=4))
+             path_effects=stroke_fx(color, outline=outline_for(fontsize) * 1.0, fatten=4))
 
 
 def stroke_fx(text_color: str, outline: float = 7.0, fatten: float = 2.0):
-    """R7: 黒縁取り+同色ストロークで太字化(IPAゴシックにボールドがないため)。"""
+    """R7: 黒縁取り+同色ストローク。縁取りは文字サイズの約10%が基準(深掘り⑥)。
+    呼び出し側は outline_for(fontsize) を使うこと。"""
     return [
         path_effects.Stroke(linewidth=outline, foreground="#000000"),
         path_effects.Stroke(linewidth=fatten, foreground=text_color),
         path_effects.Normal(),
     ]
+
+
+def outline_for(fontsize: float) -> float:
+    """縁取り太さ=文字サイズの10%(定石5〜10%の上限。深掘り⑥)。"""
+    return fontsize * 0.10
 
 
 _EMPH_RE = re.compile(r"【(.+?)】")
@@ -527,8 +533,10 @@ def wrap_rich(text: str, width: int) -> list[list[tuple[str, bool]]]:
 
 def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
-                   outline: float = 7.0, ha_center_x: float = 0.5,
+                   outline: float | None = None, ha_center_x: float = 0.5,
                    weight: str = "black"):
+    if outline is None:
+        outline = outline_for(fontsize)
     """強調色の混在する1行を中央揃えで描く(実測幅で並べる)。"""
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
@@ -549,7 +557,9 @@ def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
 
 def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
-                   outline: float = 7.0, wrap: int = 0, line_h: float = 0.034):
+                   outline: float | None = None, wrap: int = 0, line_h: float = 0.034):
+    if outline is None:
+        outline = outline_for(fontsize)
     """【】強調に対応したテキスト描画(中央揃え)。wrap>0で折り返し。"""
     lines = wrap_rich(text, wrap) if wrap else [parse_rich(text)]
     for i, segs in enumerate(lines):

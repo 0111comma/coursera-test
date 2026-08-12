@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / "production"))
 import numpy as np
 from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
-    Unit, render_video, ease_out, ease_in_out, ease_out_back, stroke_fx, style_axes,
+    Unit, render_video, ease_out, ease_in_out, ease_out_back, stroke_fx, outline_for, style_axes,
     draw_badge, draw_footer_brand, draw_rich_text, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
@@ -138,7 +138,7 @@ def scene_snowball(fig, t):
     ax.text(4.9, 7.6, "利息の利息", ha="center", color=INK_2, fontsize=26, alpha=clamp01(t * 3 - 1))
     ax.text(8.0, 7.2, "さらに…", ha="center", color=INK_2, fontsize=26, alpha=clamp01(t * 3 - 2))
     fig.text(0.5, 0.90, "複利(ふくり)", ha="center", color=INK, fontsize=40,
-             path_effects=stroke_fx(INK, outline=8, fatten=2))
+             path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
     draw_badge(fig, "年利5%と仮定")
     draw_footer_brand(fig, BRAND)
 
@@ -217,7 +217,7 @@ def scene_accel(fig, t):
         ax.plot([10, 21.6], [FV10_5, FV10_5], color=GRID, linewidth=1.5, linestyle=(0, (3, 3)))
         fig.text(0.5, 0.385, f"後半10年だけで +{round(FV20_5 - FV10_5)}万円",
                  ha="center", color=EMPH, fontsize=30,
-                 path_effects=stroke_fx(EMPH, outline=7, fatten=2))
+                 path_effects=stroke_fx(EMPH, outline=outline_for(30), fatten=2))
     fig.text(0.5, 0.90, "後半で爆発する", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定")
     draw_footer_brand(fig, BRAND)
@@ -272,11 +272,11 @@ def scene_lever(fig, t):
     # アハ: 選べるのは利回りじゃなく積立額
     fig.text(0.5, 0.90, "選べるのはどっち?", ha="center", color=INK_2, fontsize=34)
     fig.text(0.36, 0.68, "利回り", ha="center", color=INK, fontsize=52,
-             path_effects=stroke_fx(INK, outline=8, fatten=2))
+             path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
     fig.text(0.68, 0.68, "×", ha="center", va="center", color=MUTED, fontsize=64)
     a = clamp01(t * 2 - 0.6)
     fig.text(0.36, 0.55, "積立額", ha="center", color=EMPH, fontsize=52,
-             path_effects=stroke_fx(EMPH, outline=8, fatten=2), alpha=1.0)
+             path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2), alpha=1.0)
     fig.text(0.68, 0.55, "◯", ha="center", va="center", color=EMPH, fontsize=64, alpha=a)
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)
@@ -303,7 +303,7 @@ def _table(fig, y0, dx=0.19, dy=0.06, fs=28):
 
 def scene_table_big(fig, t):
     fig.text(0.5, 0.88, "月1万円積立の早見表", ha="center", color=INK, fontsize=38,
-             path_effects=stroke_fx(INK, outline=7, fatten=2))
+             path_effects=stroke_fx(INK, outline=outline_for(38), fatten=2))
     # スクショを促す点線フレーム
     fig.patches.append(FancyBboxPatch(
         (0.10, 0.42), 0.80, 0.36, boxstyle="round,pad=0.012",
@@ -320,7 +320,7 @@ def scene_table_big(fig, t):
 
 def scene_chips(fig, t):
     fig.text(0.5, 0.80, "あなたなら、月いくら?", ha="center", color=INK, fontsize=52,
-             path_effects=stroke_fx(INK, outline=9, fatten=3))
+             path_effects=stroke_fx(INK, outline=outline_for(52), fatten=3))
     chips = ["5千円", "1万円", "3万円", "それ以上"]
     for i, c in enumerate(chips):
         a = clamp01(t * 3.2 - i * 0.7)  # 順にポップ(V4)
