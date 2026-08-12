@@ -586,9 +586,13 @@ def draw_subtitle(fig, text: str, pop: float = 1.0):
 
 
 def draw_badge(fig, text: str):
-    """右上の注記バッジ(例:「年利5%と仮定」)。コンプライアンス表示(戦略§6)。"""
+    """右上の注記バッジ(例:「年利5%と仮定」)。コンプライアンス表示(戦略§6)。
+
+    y=0.835: Shorts実機UIの安全域(深掘りループ⑩)。上部アイコン帯(上7%)の外、
+    かつ右ボタン列(上40%〜)より上。0.935だと検索・カメラアイコンと重なる。
+    """
     fig.text(
-        0.90, 0.935, text, ha="right", va="center", color=INK_2, fontsize=22,
+        0.90, 0.835, text, ha="right", va="center", color=INK_2, fontsize=22,
         bbox=dict(boxstyle="round,pad=0.5", facecolor=SURFACE, edgecolor=BASELINE, linewidth=1.5),
     )
 
