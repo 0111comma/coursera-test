@@ -86,7 +86,7 @@ def _duo_axes(fig):
     ax.set_yticks([])
     ax.spines["left"].set_visible(False)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["貯金箱", "投資で運用"])
+    ax.set_xticklabels(["貯金箱", "世界中の株"])  # 資産クラスで具体化。商品名は出さない(§6-1)
     ax.tick_params(axis="x", labelsize=30, colors=INK_2)
     return ax
 
@@ -112,7 +112,7 @@ def scene_piggy(fig, t):
 
 
 def scene_invest(fig, t):
-    # 前提の種明かし: 投資で運用していたから増えた(+171万の差を明示)
+    # 前提の種明かし: 世界中の株に積み立てていたから増えた(+171万の差を明示)
     ax = _duo_axes(fig)
     _duo_bar(ax, 0, PIGGY, 1.0, MUTED)
     _duo_bar(ax, 1, FV20_5, t, GOLD)
@@ -124,7 +124,7 @@ def scene_invest(fig, t):
                     arrowprops=dict(arrowstyle="<->", color=EMPH, linewidth=3, alpha=a))
         ax.text(1.47, (FV20_5 + PIGGY) / 2, f"+{round(GAIN20)}万円", color=EMPH,
                 fontsize=27, va="center", ha="center", alpha=a, rotation=90)
-    fig.text(0.5, 0.90, "投資で運用した場合", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.90, "世界中の株で運用した場合", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
@@ -139,7 +139,7 @@ def scene_assume(fig, t):
              color=INK, fontsize=34, alpha=a,
              bbox=dict(boxstyle="round,pad=0.6", facecolor=SURFACE,
                        edgecolor=EMPH, linewidth=2.5, alpha=a))
-    fig.text(0.5, 0.90, "投資で運用した場合", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.90, "世界中の株で運用した場合", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
@@ -284,17 +284,20 @@ def scene_compare2(fig, t):
     ax = _compare_axes(fig)
     _bar(ax, 0, FV20_5, 1.0, color=MUTED)
     _bar(ax, 1, FV20_3, t, color=GOLD)
+    _bar(ax, 2, PIGGY, 1.0, color=MUTED)  # 貯金箱の基準線も文脈として表示(compare0廃止に伴い)
     fig.text(0.5, 0.90, "20年後の残高くらべ", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
 
-def scene_compare0(fig, t):
-    ax = _compare_axes(fig)
-    _bar(ax, 0, FV20_5, 1.0, color=MUTED)
-    _bar(ax, 1, FV20_3, 1.0, color=MUTED)
-    _bar(ax, 2, PIGGY, t, label="240万円(+0円)", color=SERIES_1)
-    fig.text(0.5, 0.90, "20年後の残高くらべ", ha="center", color=INK_2, fontsize=34)
+def scene_lever_no(fig, t):
+    # 橋渡し(フリ): 比較→操作の転換。年利は選べない、を先に言う(オチ=lever)
+    fig.text(0.5, 0.90, "自分で選べるのはどっち?", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2 - 0.3)
+    fig.text(0.34, 0.68, "年利", ha="center", color=INK, fontsize=52,
+             path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
+    fig.text(0.70, 0.68, "×", ha="center", va="center", color=MUTED, fontsize=64, alpha=a)
+    fig.text(0.70, 0.632, "選べない", ha="center", color=MUTED, fontsize=22, alpha=a)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
@@ -392,7 +395,7 @@ SCENES = {
     "reveal": scene_reveal,
     "accel": scene_accel,
     "compare2": scene_compare2,
-    "compare0": scene_compare0,
+    "lever_no": scene_lever_no,
     "lever": scene_lever,
     "hero_loop": scene_hero_loop,
     "coin": scene_coin,
@@ -407,9 +410,10 @@ UNITS = [
     Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8, speed=1.2),
     # 誰でも分かる基準線(貯金箱=利息ゼロ)を先に置く
     Unit("piggy", "貯金箱に入れてたら、【240万円】のはず。", anim=1.8, speed=1.15),
-    # 前提の種明かし: 投資で運用していたから増えた
-    Unit("invest", "でも【投資】で運用したら、+171万円。", anim=2.2,
-         narration="でも投資で運用したら、プラス171万円。",
+    # 前提の種明かし: 世界中の株(全世界株式インデックス)に積み立てていたから増えた。
+    # 「投資で運用」では曖昧(ユーザーレビュー第2弾)。商品名は出さない(戦略§6-1)
+    Unit("invest", "でも【世界中の株】なら、+171万円。", anim=2.2,
+         narration="でも世界中の株なら、プラス171万円。",
          speed=1.15, intonation=1.2),
     Unit("assume", "年5%で増えると【仮定】した計算なのだ。", anim=1.0, speed=1.15),
     Unit("snowball", "差の正体は、利息が利息を生む【雪だるま】。", anim=2.4,
@@ -423,8 +427,10 @@ UNITS = [
          narration="そこから後半の10年で、プラス256万円。",
          speed=1.25, intonation=1.3, pitch=0.0),
     Unit("compare2", "もし年利3%でも、【328万円】になるのだ。", anim=1.4, speed=1.2),
-    Unit("compare0", "貯金箱のままだと、増えは【ゼロ】。", anim=1.4,
-         speed=1.1, intonation=1.05, pitch=-0.08),
+    # 橋渡し(ユーザーレビュー第2弾): 結果の比較→操作できる変数へのフレーム転換を言語化。
+    # 「何%になるかは選べない」= 不確実性の明示(コンプラ的にも仮定バッジを補強)
+    Unit("lever_no", "何%になるかは、【選べない】のだ。", anim=1.2,
+         speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("lever", "選べるのは、【毎月の金額】なのだ。", anim=1.2, pad=0.35,
          speed=1.15, intonation=1.2),
     Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don",
