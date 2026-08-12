@@ -17,21 +17,22 @@ description: 台本済みの動画(videos/<ID>-<slug>/script.md)からmp4をレ�
 
 ## 手順
 
-1. 対象の `videos/<ID>-<slug>/script.md` と `plan.md` を読む
+1. 対象の `videos/<ID>-<slug>/script.md` と `plan.md` を読む。**制作ルールは docs/research/short-video-format.md(R1〜R14)**
 2. `verify.py` を実行し、台本の数値と一致することを確認する(不一致なら制作を止めて報告)
 3. `videos/<ID>-<slug>/render.py` を書く(既存の `videos/S001-tsumitate-fukuri/render.py` が参考実装):
-   - `production/shortlib.py` の `Unit` / `render_video` を使う
-   - 台本の表の1行 ≒ 1ユニット(長い行は文単位に分割してよい。字幕は15字で折り返される)
-   - シーン(画面指示)ごとに描画関数を書く。数値は台本からコピーせず、verify.pyと同じ式で計算して `assert` で照合する
-   - グラフの配色は shortlib のトークン(SERIES_1, SERIES_2, INK, ...)のみ使う(検証済みパレット)
+   - `production/shortlib.py` の `Unit` / `render_video` を使う。台本のユニット表の1行=1 `Unit`
+   - シーン描画関数は `painter(fig, t)`(tは0→1)。`anim` 秒数を指定してカウントアップ・バー成長・線描画などの動きを入れる(R2/R4: 3秒以上静止させない)
+   - 字幕の【】強調はそのまま渡す(黄色になる)。数値は台本からコピーせず、verify.pyと同じ式で計算して `assert` で照合する
+   - グラフの配色は shortlib のトークン(SERIES_1, SERIES_2, INK, ...)のみ。テロップ強調は EMPH
+   - BGMは自動で合成ミックスされる(R14)。話者は既定でずんだもん・話速1.2(R13/R5)
 4. `python3 videos/<ID>-<slug>/render.py` でレンダリングする
-5. **フレームを目視確認する**: `output/work/frame_*.png` をReadで開き、文字の重なり・はみ出し・字幕の変な折り返しがないかチェック。問題があれば直して再レンダリング
+5. **フレームを目視確認する**: `output/work/frame_*.png` をReadで開き(アニメ途中・最終フレームの両方)、文字の重なり・はみ出し・字幕の変な折り返しがないかチェック。問題があれば直して再レンダリング
 6. 音量を確認する: `ffmpeg -i output/<ID>.mp4 -af volumedetect -f null -`(mean が -20〜-14dB 程度)
 7. 完成したmp4をユーザーに送付し、`plan.md` と `ideas/backlog.md` のステータスを「制作済み」に更新する
 
 ## 守ること
 
-- 尺: ショートは60秒以内(ナレーション合計+間で55秒目安)
-- 音声のクレジット: VOICEVOX使用時は概要欄に「VOICEVOX:<キャラクター名>」を必ず入れる(既定は speaker=2 四国めたん)
+- 尺: ショートは30〜50秒(密度優先、水増し禁止)
+- 音声のクレジット: VOICEVOX使用時は概要欄に「VOICEVOX:<キャラクター名>」を必ず入れる(既定は speaker=3 ずんだもん)
 - Shortsのセーフエリア: 重要情報は画面の左右8%・上部12%・下部20%を避ける(shortlibのヘルパを使えば自動で収まる)
 - 動画内の数値は必ず verify.py と同じ計算式から生成する(手打ちコピーしない)
