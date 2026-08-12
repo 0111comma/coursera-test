@@ -535,18 +535,27 @@ def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
                    outline: float | None = None, ha_center_x: float = 0.5,
                    weight: str = "black"):
-    if outline is None:
-        outline = outline_for(fontsize)
-    """強調色の混在する1行を中央揃えで描く(実測幅で並べる)。"""
+    """強調色の混在する1行を中央揃えで描く(実測幅で並べ、幅超過なら自動縮小)。"""
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
-    widths = []
-    for s, _ in segs:
-        tmp = fig.text(0, -1, s, fontsize=fontsize, fontweight=weight)
-        ext = tmp.get_window_extent(renderer=renderer)
-        widths.append(ext.width / W)
-        tmp.remove()
+
+    def measure(fs):
+        ws = []
+        for s, _ in segs:
+            tmp = fig.text(0, -1, s, fontsize=fs, fontweight=weight)
+            ext = tmp.get_window_extent(renderer=renderer)
+            ws.append(ext.width / W)
+            tmp.remove()
+        return ws
+
+    widths = measure(fontsize)
     total = sum(widths)
+    if total > 0.86:  # 深掘り⑧: 見切れの根絶(画面幅86%に自動フィット)
+        fontsize = fontsize * 0.86 / total
+        widths = measure(fontsize)
+        total = sum(widths)
+    if outline is None:
+        outline = outline_for(fontsize)
     x = ha_center_x - total / 2
     for (s, emph), w in zip(segs, widths):
         color = emph_color if emph else base_color
