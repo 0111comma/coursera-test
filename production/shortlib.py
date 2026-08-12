@@ -346,10 +346,53 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
 
 # ---- 描画ヘルパ ----
 
+_BG_CACHE = None
+
+
+def _bg_image():
+    """背景のグラデーション+ビネット(深掘りループ①: 純ベタ黒はダサい/四隅暗で中央集中)。
+
+    中心やや上を「色を乗せた黒」で最も明るく、周辺へ沈める。平均は従来のSURFACE近傍を
+    保つ(テロップ・チャート色のコントラスト検証を壊さないため)。
+    """
+    global _BG_CACHE
+    if _BG_CACHE is None:
+        import numpy as np
+        h, w = 240, 135
+        y, x = np.mgrid[0:h, 0:w]
+        cx, cy = w / 2, h * 0.38
+        r = np.sqrt(((x - cx) / (w * 0.85)) ** 2 + ((y - cy) / (h * 0.85)) ** 2)
+        base = np.array([0x21, 0x20, 0x1d], float)   # 中心(わずかに暖色の黒)
+        edge = np.array([0x12, 0x12, 0x11], float)   # 周辺
+        t = np.clip(r, 0, 1)[..., None]
+        img = base * (1 - t) + edge * t
+        vin = 1 - 0.10 * np.clip((r - 0.72) / 0.38, 0, 1)   # ビネット
+        img = img * vin[..., None]
+        _BG_CACHE = (img / 255).clip(0, 1)
+    return _BG_CACHE
+
+
 def new_canvas():
     fig = plt.figure(figsize=FIGSIZE, dpi=DPI)
     fig.patch.set_facecolor(SURFACE)
+    bg = fig.add_axes([0, 0, 1, 1], zorder=-10)
+    bg.imshow(_bg_image(), extent=[0, 1, 0, 1], aspect="auto", interpolation="bicubic")
+    bg.axis("off")
     return fig
+
+
+def draw_glow_text(fig, x: float, y: float, text: str, fontsize: float, color: str = EMPH):
+    """ヒーロー数字用: 影+グロー+縁取りの3層で立体感を出す(深掘りループ①)。"""
+    fig.text(x, y - 0.007, text, ha="center", va="center", color="#000000",
+             fontsize=fontsize, alpha=0.5,
+             path_effects=[path_effects.Stroke(linewidth=12, foreground="#000000"),
+                           path_effects.Normal()])
+    fig.text(x, y, text, ha="center", va="center", color=color, fontsize=fontsize,
+             alpha=0.28,
+             path_effects=[path_effects.Stroke(linewidth=30, foreground=color),
+                           path_effects.Normal()])
+    fig.text(x, y, text, ha="center", va="center", color=color, fontsize=fontsize,
+             path_effects=stroke_fx(color, outline=12, fatten=4))
 
 
 def stroke_fx(text_color: str, outline: float = 7.0, fatten: float = 2.0):
@@ -492,7 +535,7 @@ def draw_footer_brand(fig, text: str):
 
 
 def style_axes(ax):
-    ax.set_facecolor(SURFACE)
+    ax.set_facecolor("none")  # 背景グラデーションを透かす
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     for s in ("left", "bottom"):

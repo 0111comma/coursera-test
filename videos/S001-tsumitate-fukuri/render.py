@@ -11,7 +11,7 @@ import numpy as np
 from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
     Unit, render_video, ease_out, ease_in_out, stroke_fx, style_axes,
-    draw_badge, draw_footer_brand, draw_rich_text,
+    draw_badge, draw_footer_brand, draw_rich_text, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
 
@@ -48,8 +48,7 @@ assert round(FV20_3) == 328 and round(FV3MAN) == 1233 and round(DAILY) == 333, "
 # ---- シーン(painter(fig, t)) ----
 
 def _hero(fig, value_man: int, sub: str | None, sub_alpha=1.0):
-    fig.text(0.5, 0.62, f"{value_man}万円", ha="center", va="center",
-             color=EMPH, fontsize=118, path_effects=stroke_fx(EMPH, outline=12, fatten=4))
+    draw_glow_text(fig, 0.5, 0.62, f"{value_man}万円", 118)
     if sub:
         fig.text(0.5, 0.52, sub, ha="center", va="center",
                  color=INK_2, fontsize=40, alpha=clamp01(sub_alpha))
@@ -270,8 +269,7 @@ def scene_lever(fig, t):
 
 
 def scene_coin(fig, t):
-    fig.text(0.5, 0.64, "1日 333円", ha="center", va="center", color=EMPH, fontsize=96,
-             path_effects=stroke_fx(EMPH, outline=11, fatten=3))
+    draw_glow_text(fig, 0.5, 0.64, "1日 333円", 96)
     fig.text(0.5, 0.53, "= 月1万円 ÷ 30日", ha="center", color=INK_2, fontsize=36, alpha=clamp01(t))
     draw_footer_brand(fig, BRAND)
 
@@ -311,12 +309,16 @@ def scene_chips(fig, t):
              path_effects=stroke_fx(INK, outline=9, fatten=3))
     chips = ["5千円", "1万円", "3万円", "それ以上"]
     for i, c in enumerate(chips):
+        a = clamp01(t * 3.2 - i * 0.7)  # 順にポップ(V4)
+        if a <= 0:
+            continue
         x = 0.29 + (i % 2) * 0.42
         y = 0.66 - (i // 2) * 0.10
-        fig.text(x, y, c, ha="center", va="center", color=INK, fontsize=34,
+        fig.text(x, y, c, ha="center", va="center", color=INK, fontsize=34, alpha=a,
                  bbox=dict(boxstyle="round,pad=0.6", facecolor=SURFACE,
-                           edgecolor=EMPH, linewidth=2.5))
-    fig.text(0.5, 0.44, "▼ コメントで教えて ▼", ha="center", color=INK_2, fontsize=34)
+                           edgecolor=EMPH, linewidth=2.5, alpha=a))
+    fig.text(0.5, 0.44, "▼ コメントで教えて ▼", ha="center", color=INK_2, fontsize=34,
+             alpha=clamp01(t * 3.2 - 3))
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)
 
@@ -340,7 +342,7 @@ SCENES = {
 }
 
 UNITS = [
-    Unit("hero_count", "【411万円】。", anim=0.8, cover=True, se="pop", intonation=1.15),
+    Unit("hero_count", "【411万円】。", anim=1.2, cover=True, se="pop", intonation=1.15),
     Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8),
     Unit("stacked_principal", "『意味ない』はずが、払ったのは【240万円】だけ。", anim=2.2),
     Unit("stacked_full", "残りの【171万円】は、勝手に増えたのだ。", anim=1.8),
@@ -354,7 +356,7 @@ UNITS = [
     Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don", intonation=1.15),
     Unit("coin", "月1万円なら、1日たった【333円】。", anim=0.8),
     Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop"),
-    Unit("chips", "コメントで教えてほしいのだ。", pad=1.0),
+    Unit("chips", "コメントで教えてほしいのだ。", anim=1.4, pad=1.0),
 ]
 
 if __name__ == "__main__":
