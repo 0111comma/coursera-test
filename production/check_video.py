@@ -48,6 +48,16 @@ def main(video_dir: Path) -> int:
         if len(wrap_plain(plain, SUB_WRAP)) > 2:
             check(f"字幕2行以内: {plain[:14]}…", False)
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
+    # 字幕の安全幅(ループ⑫): 最長行が block_fit=0.70 に収まる際の縮小率が75%未満なら
+    # 読みにくくなるので文を書き直す(概算幅: 全角1.0/半角0.55/約物0.6)
+    def _w(ch):
+        return 0.6 if ch in "。、!?…" else (0.55 if ord(ch) < 0x100 else 1.0)
+    for u in units:
+        plain = u.replace("【", "").replace("】", "")
+        for line in wrap_plain(plain, SUB_WRAP):
+            frac = sum(_w(c) for c in line) * (52 / 72 * 100) / 1080
+            if 0.70 / max(frac, 1e-9) < 0.75:
+                check(f"字幕縮小75%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
     est = total_chars * 0.191 + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
     check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
     joined = "".join(units) + src

@@ -475,7 +475,7 @@ def wrap_plain(text: str, width: int) -> list[str]:
     phrases, cur = [], ""
     for ch in text:
         cur += ch
-        if ch in "、。!?":
+        if ch in "、。!?…":  # …も句境界(タメの後で折り返せるように。ループ⑫)
             phrases.append(cur)
             cur = ""
     if cur:
@@ -566,11 +566,30 @@ def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
 
 def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
-                   outline: float | None = None, wrap: int = 0, line_h: float = 0.034):
+                   outline: float | None = None, wrap: int = 0, line_h: float = 0.034,
+                   block_fit: float | None = None):
+    """【】強調に対応したテキスト描画(中央揃え)。wrap>0で折り返し。
+
+    block_fit: 最長行がこの幅(図の割合)に収まるようブロック全体を等縮小する。
+    行ごとの自動縮小(0.86)と違い、ユニット内で文字サイズが揃う(ループ⑫)。
+    """
     if outline is None:
         outline = outline_for(fontsize)
-    """【】強調に対応したテキスト描画(中央揃え)。wrap>0で折り返し。"""
     lines = wrap_rich(text, wrap) if wrap else [parse_rich(text)]
+    if block_fit:
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        worst = 0.0
+        for segs in lines:
+            total = 0.0
+            for s, _ in segs:
+                tmp = fig.text(0, -1, s, fontsize=fontsize, fontweight="black")
+                total += tmp.get_window_extent(renderer=renderer).width / W
+                tmp.remove()
+            worst = max(worst, total)
+        if worst > block_fit:
+            fontsize = fontsize * block_fit / worst
+            outline = outline_for(fontsize)
     for i, segs in enumerate(lines):
         draw_rich_line(fig, y - i * line_h * (fontsize / 40), segs, fontsize,
                        base_color=base_color, emph_color=emph_color,
@@ -581,8 +600,10 @@ def draw_subtitle(fig, text: str, pop: float = 1.0):
     """R6/R7/R8: ナレーション文そのものを縁取りテロップで。【】は黄色。
 
     pop>1 で表示直後の「ポン」(スケール収束)を表現する(ループ10)。
+    block_fit=0.70: 字幕はShorts右ボタン列(x>0.85)に掛けない(x 0.15〜0.85。ループ⑫)。
     """
-    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=0.036)
+    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=0.036,
+                   block_fit=0.70)
 
 
 def draw_badge(fig, text: str):

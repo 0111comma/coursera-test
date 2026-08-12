@@ -432,7 +432,7 @@ UNITS = [
          speed=1.1, intonation=1.3, pitch=0.0, pause_scale=1.7),
     Unit("coin", "月1万円は、1日たった【333円】。", anim=0.8, speed=1.2, intonation=1.15),
     Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで教えてほしいのだ。", anim=1.4, pad=0.15,  # 深掘り⑦: 即切りループ
+    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 深掘り⑦: 即切りループ。読点=字幕2行化(⑫)
          speed=1.15, intonation=1.15),
 ]
 
