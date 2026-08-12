@@ -222,7 +222,7 @@ UNITS = [
     Unit("tsuzuku", "2%が20年続くと、100万円は…", anim=1.6,
          speed=1.15, intonation=1.2, pause_scale=1.3),
     Unit("ochi", "約【67万円】ぶんの価値に、目減りするのだ。", anim=1.2,
-         blackout=0.34, se="impact", se_at=0.34,
+         puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("chokkin", "直近の物価上昇は、【年率1.6%】。", anim=1.0, speed=1.15),
     Unit("sore16", "それでも20年で、約【73万円】ぶんに。", anim=1.0, speed=1.15),

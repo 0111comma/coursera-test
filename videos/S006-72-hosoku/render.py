@@ -226,7 +226,7 @@ UNITS = [
     Unit("quiz", "では年1%の預金なら…【何年】?", anim=1.4,
          speed=1.15, intonation=1.25),
     Unit("ans72", "答えは【72年】。人生ほぼ一周なのだ。", anim=1.2,
-         blackout=0.34, se="impact", se_at=0.34,
+         puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.25, pause_scale=1.3),
     Unit("r3", "年3%なら、【24年】。", anim=1.0, speed=1.15),
     Unit("r7", "年7%なら、【約10年】なのだ。", anim=1.0, speed=1.15),

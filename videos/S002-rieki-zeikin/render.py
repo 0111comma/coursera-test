@@ -366,7 +366,7 @@ UNITS = [
     Unit("quiz", "171万の20%…【いくら】だと思うのだ?", anim=1.4,
          speed=1.15, intonation=1.25),
     Unit("answer", "答えは、【34万7千円】なのだ。", anim=1.2,
-         blackout=0.34, se="impact", se_at=0.34,
+         puchun=True, se="impact", se_at=0.34,
          speed=1.12, intonation=1.2, pitch=-0.06, pause_scale=1.25),
     Unit("tedori", "手取りは、【136万円】なのだ。", anim=1.4,
          speed=1.15, intonation=1.1, pitch=-0.06),

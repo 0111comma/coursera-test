@@ -422,7 +422,7 @@ UNITS = [
     Unit("predict", "では10年目は、半分くらいと思うのだ?", anim=1.6,
          speed=1.15, intonation=1.25),
     Unit("reveal", "実際は、まだ【155万円】しかないのだ。", anim=1.8,
-         blackout=0.34, se="impact", se_at=0.34,  # フリーズ演出: プチュン(暗転)→ドーン
+         puchun=True, se="impact", se_at=0.34,  # フリーズ演出: プチュン(暗転)→ドーン
          speed=1.1, intonation=1.2, pitch=-0.06, pause_scale=1.4),
     Unit("accel", "そこから後半の10年で、【+256万円】。", anim=1.6,
          narration="そこから後半の10年で、プラス256万円。",

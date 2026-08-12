@@ -116,7 +116,7 @@ class Unit:
     se: str | None = None    # 効果音 "pop"/"don"/"puchun"(強調箇所のみ。ループ6)
     se_at: float = 0.0       # ユニット頭からのSEオフセット秒(深掘り④: 着地に同期させる用)
     cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
-    blackout: float = 0.0    # ユニット冒頭の暗転秒数(スロットのフリーズ演出風。se="puchun"とセット)
+    puchun: bool = False     # ユニット頭に「プチュン」を鳴らす(音だけのフリーズ演出。映像の暗転はしない)
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -700,12 +700,6 @@ def save_frame(fig, path: Path, facecolor: str = SURFACE):
     plt.close(fig)
 
 
-def save_black_frame(path: Path):
-    """暗転フレーム(スロットのフリーズ演出風。プチュンSEとセットで使う)。"""
-    fig = plt.figure(figsize=FIGSIZE, dpi=DPI)
-    save_frame(fig, path, facecolor="#000000")
-
-
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
                  speaker: int = DEFAULT_SPEAKER, bgm: bool = True) -> dict:
     """ユニット列とシーン描画関数からmp4を作る。
@@ -732,8 +726,8 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         padded.append(pw)
         if u.se:
             se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
-        if u.blackout > 0.01:
-            # 暗転開始に「プチュン」を自動で鳴らす(u.seはリベール側=暗転明けに使える)
+        if u.puchun:
+            # ユニット頭に「プチュン」(u.seはリベール側=se_atで少し後に鳴らせる)
             se_events.append((elapsed + (0.07 if u.cover else 0.0), "puchun"))
 
         def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0,
@@ -757,14 +751,6 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             cf = emit(1.0, 990, 0.07, painter=cover_painter,
                       with_subtitle=(cover_painter is None))
             thumbnail = cf
-        # 暗転(スロットのフリーズ演出風)。SE(プチュン)はユニット頭=暗転開始に鳴る
-        blackout = u.blackout if 0.01 < u.blackout < d_total - head - 0.5 else 0.0
-        if blackout:
-            bf = workdir / f"frame_{i:02d}_985.png"
-            save_black_frame(bf)
-            frames.append(bf)
-            durations.append(blackout)
-            head += blackout
         anim = min(anim, d_total - head)
         if anim > 0:
             n = max(2, int(anim * u.fps))

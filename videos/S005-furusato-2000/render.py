@@ -238,7 +238,7 @@ UNITS = [
     Unit("quiz", "年収400万円の独身なら…【いくら】まで?", anim=1.4,
          speed=1.15, intonation=1.25),
     Unit("ans", "目安は、【4万2千円】なのだ。", anim=1.2,
-         blackout=0.34, se="impact", se_at=0.34,
+         puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pause_scale=1.3),
     Unit("wana", "超えた分は、控除なしの【ただの寄付】。", anim=1.4,
          speed=1.1, intonation=1.15, pitch=-0.04),
