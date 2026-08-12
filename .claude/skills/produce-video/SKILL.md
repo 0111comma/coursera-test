@@ -26,6 +26,7 @@ description: 台本済みの動画(videos/<ID>-<slug>/script.md)からmp4をレ�
    - グラフの配色は shortlib のトークン(SERIES_1, SERIES_2, INK, ...)のみ。テロップ強調は EMPH
    - BGMは自動で合成ミックスされる(R14)。話者は既定でずんだもん・話速1.2(R13/R5)
 4. `python3 videos/<ID>-<slug>/render.py` でレンダリングする
+4b. `python3 production/check_video.py videos/<ID>-<slug>` を実行し **ALL PASS** を確認する(不合格なら直して再実行)
 5. **フレームを目視確認する**: `output/work/frame_*.png` をReadで開き(アニメ途中・最終フレームの両方)、文字の重なり・はみ出し・字幕の変な折り返しがないかチェック。問題があれば直して再レンダリング
 6. 音量を確認する: `ffmpeg -i output/<ID>.mp4 -af volumedetect -f null -`(mean が -20〜-14dB 程度)
 7. 完成したmp4をユーザーに送付し、`plan.md` と `ideas/backlog.md` のステータスを「制作済み」に更新する

@@ -10,9 +10,9 @@ sys.path.insert(0, str(ROOT / "production"))
 import numpy as np
 from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
-    Unit, render_video, ease_out, stroke_fx, style_axes,
+    Unit, render_video, ease_out, ease_in_out, stroke_fx, style_axes,
     draw_badge, draw_footer_brand, draw_rich_text,
-    SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH,
+    SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
 
 OUTDIR = Path(__file__).resolve().parent / "output"
@@ -84,7 +84,7 @@ def _stacked_axes(fig):
 def scene_stacked_principal(fig, t):
     # 敵(思い込み)を画面に言語化しつつ、元本だけの現実を見せる
     ax = _stacked_axes(fig)
-    h = PRINCIPAL20 * ease_out(t)
+    h = PRINCIPAL20 * ease_in_out(t)
     ax.bar([0], [h], width=0.5, color=SERIES_1, edgecolor=SURFACE, linewidth=3)
     ax.text(0.30, max(h / 2, 30), "自分で払った\n240万円", color=INK, fontsize=30,
             va="center", alpha=clamp01(t))
@@ -95,9 +95,9 @@ def scene_stacked_principal(fig, t):
 
 def scene_stacked_full(fig, t):
     ax = _stacked_axes(fig)
-    g = GAIN20 * ease_out(t)
+    g = GAIN20 * ease_in_out(t)
     ax.bar([0], [PRINCIPAL20], width=0.5, color=SERIES_1, edgecolor=SURFACE, linewidth=3)
-    ax.bar([0], [g], bottom=[PRINCIPAL20], width=0.5, color=SERIES_2, edgecolor=SURFACE, linewidth=3)
+    ax.bar([0], [g], bottom=[PRINCIPAL20], width=0.5, color=GOLD, edgecolor=SURFACE, linewidth=3)
     ax.text(0.30, PRINCIPAL20 / 2, "自分で払った\n240万円", color=INK, fontsize=30, va="center")
     ax.text(0.30, PRINCIPAL20 + max(g / 2, 20), "勝手に増えた\n+171万円", color=INK, fontsize=30,
             va="center", alpha=clamp01(t))
@@ -178,7 +178,7 @@ def scene_reveal(fig, t):
     # オチ: 実際の曲線は予想線の下を這う(10年目155万)
     ax = _curve_axes(fig)
     _prediction_line(ax, alpha=0.7)
-    k = max(2, int(121 * clamp01(t)))  # 10年目まで描く
+    k = max(2, int(121 * ease_in_out(clamp01(t))))  # 10年目まで描く
     ax.plot(_YEARS[:k], _VALS[:k], color=SERIES_1, linewidth=4, solid_capstyle="round")
     if t >= 0.99:
         ax.plot([10], [FV10_5], marker="o", markersize=12, color=SERIES_1,
@@ -194,7 +194,7 @@ def scene_accel(fig, t):
     # 後半の爆発: 曲線が10年目から20年目まで伸び切る
     ax = _curve_axes(fig)
     _prediction_line(ax, alpha=0.4)
-    k = 121 + int((241 - 121) * clamp01(t))
+    k = 121 + int((241 - 121) * ease_in_out(clamp01(t)))
     ax.plot(_YEARS[:k], _VALS[:k], color=SERIES_1, linewidth=4, solid_capstyle="round")
     ax.plot([10], [FV10_5], marker="o", markersize=12, color=SERIES_1,
             markeredgecolor=SURFACE, markeredgewidth=2)
@@ -230,7 +230,7 @@ def _compare_axes(fig):
 def _bar(ax, x, v, prog, label=None):
     if prog <= 0:
         return
-    h = v * ease_out(clamp01(prog))
+    h = v * ease_in_out(clamp01(prog))
     ax.bar([x], [h], width=0.56, color=SERIES_1)
     if prog >= 1.0:
         ax.text(x, h + 12, label or f"{round(v)}万円", ha="center", color=INK, fontsize=30)
@@ -301,6 +301,7 @@ def scene_table_big(fig, t):
     fig.text(0.86, 0.795, "スクショ用", ha="right", color=EMPH, fontsize=24,
              alpha=clamp01(t))
     _table(fig, 0.70, dy=0.07, fs=32)
+    fig.text(0.5, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=20)
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)
 
@@ -339,20 +340,20 @@ SCENES = {
 }
 
 UNITS = [
-    Unit("hero_count", "【411万円】。", anim=0.8),
-    Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.3),
-    Unit("stacked_principal", "『意味ない』はずが、払ったのは【240万円】だけ。", anim=0.6),
-    Unit("stacked_full", "残りの【171万円】は、勝手に増えたのだ。", anim=0.6),
-    Unit("snowball", "正体は、利息が利息を生む【雪だるま】なのだ。", anim=0.9),
-    Unit("predict", "なら10年目は、ちょうど半分と思うのだ?", anim=0.5),
-    Unit("reveal", "違って、10年目はまだ【155万円】なのだ。", anim=0.6),
-    Unit("accel", "でも後半の10年で、一気に【+256万円】。", anim=0.8),
-    Unit("compare2", "控えめな3%でも、【328万円】なのだ。", anim=0.5),
-    Unit("compare0", "何もしなければ、増えは【ゼロ】なのだ。", anim=0.5),
-    Unit("lever", "あなたが選べるのは、【積立額】なのだ。", anim=0.4, pad=0.35),
-    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=0.8),
-    Unit("coin", "月1万円なら、1日たった【333円】。", anim=0.3),
-    Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.3),
+    Unit("hero_count", "【411万円】。", anim=0.8, cover=True, se="pop", intonation=1.15),
+    Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8),
+    Unit("stacked_principal", "『意味ない』はずが、払ったのは【240万円】だけ。", anim=2.2),
+    Unit("stacked_full", "残りの【171万円】は、勝手に増えたのだ。", anim=1.8),
+    Unit("snowball", "正体は、利息が利息を生む【雪だるま】なのだ。", anim=2.4),
+    Unit("predict", "なら10年目は、ちょうど半分と思うのだ?", anim=1.6),
+    Unit("reveal", "違って、10年目はまだ【155万円】なのだ。", anim=1.8, se="don", intonation=1.1),
+    Unit("accel", "でも後半の10年で、一気に【+256万円】。", anim=1.6),
+    Unit("compare2", "控えめな3%でも、【328万円】なのだ。", anim=1.4),
+    Unit("compare0", "何もしなければ、増えは【ゼロ】なのだ。", anim=1.4),
+    Unit("lever", "あなたが選べるのは、【積立額】なのだ。", anim=1.2, pad=0.35),
+    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don", intonation=1.15),
+    Unit("coin", "月1万円なら、1日たった【333円】。", anim=0.8),
+    Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop"),
     Unit("chips", "コメントで教えてほしいのだ。", pad=1.0),
 ]
 

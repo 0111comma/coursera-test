@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""公開前の自動チェック(ループ26)。使い方:
+    python3 production/check_video.py videos/S001-tsumitate-fukuri
+
+台本・レンダースクリプト・出力mp4を機械検証できる範囲で照合する。
+(物語面のチェックリストD1〜D22は docs/research/plot-playbook.md で人が照合する)
+"""
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from shortlib import SUB_WRAP, wrap_plain  # noqa: E402
+
+# 戦略§6(コンプライアンス): 断定・投資助言に当たる表現の禁止
+FORBIDDEN = ["儲かる", "必ず増え", "絶対に増え", "損しない", "買うべき", "おすすめの銘柄", "おすすめの証券"]
+
+def main(video_dir: Path) -> int:
+    fails, warns = [], []
+
+    def check(name, ok, detail=""):
+        print(f"  [{'PASS' if ok else 'FAIL'}] {name}" + (f" — {detail}" if detail else ""))
+        if not ok:
+            fails.append(name)
+
+    print(f"チェック対象: {video_dir}")
+
+    # 1. verify.py が通る
+    vp = video_dir / "verify.py"
+    if vp.exists():
+        r = subprocess.run(["python3", str(vp)], capture_output=True, text=True)
+        check("verify.py 実行", r.returncode == 0, (r.stderr or "").strip()[:80])
+    else:
+        check("verify.py 存在", False, "計算を含む動画は必須")
+
+    # 2. render.py のユニット文の長さ・折り返し・禁止語
+    rp = video_dir / "render.py"
+    src = rp.read_text() if rp.exists() else ""
+    units = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
+    check("render.py にユニット定義", len(units) > 0, f"{len(units)}ユニット")
+    total_chars = 0
+    for u in units:
+        plain = u.replace("【", "").replace("】", "")
+        total_chars += len(plain)
+        if len(plain) > 35:
+            check(f"1文35字以内: {plain[:14]}…", False, f"{len(plain)}字")
+        if len(wrap_plain(plain, SUB_WRAP)) > 2:
+            check(f"字幕2行以内: {plain[:14]}…", False)
+    check("ユニット文長(全体)", True, f"合計{total_chars}字")
+    check("推定尺 55秒以内", total_chars * 0.2 + len(units) * 0.2 <= 56, f"約{total_chars * 0.2 + len(units) * 0.2:.0f}秒")
+    joined = "".join(units) + src
+    bad = [w for w in FORBIDDEN if w in joined]
+    check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
+    check("仮定バッジの描画", "draw_badge" in src, "利回り等の仮定明示")
+
+    # 3. script.md の必須要素
+    sp = video_dir / "script.md"
+    smd = sp.read_text() if sp.exists() else ""
+    check("script.md 存在", bool(smd))
+    check("VOICEVOXクレジット", "VOICEVOX:" in smd, "キャラ利用ガイドライン必須")
+    check("#shorts タグ", "#shorts" in smd)
+    check("免責文", "投資助言ではありません" in smd)
+
+    # 4. 出力mp4の機械検証
+    mp4 = video_dir / "output" / next((p.name for p in (video_dir / "output").glob("*.mp4")), "none.mp4")
+    if mp4.exists():
+        dur = float(subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4)],
+            capture_output=True, text=True).stdout.strip())
+        check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
+        vd = subprocess.run(["ffmpeg", "-i", str(mp4), "-af", "volumedetect", "-f", "null", "-"],
+                            capture_output=True, text=True).stderr
+        m = re.search(r"mean_volume: ([-\d.]+) dB", vd)
+        mean = float(m.group(1)) if m else -99
+        check("平均音量 -18〜-11dB(≈-14LUFS)", -18 <= mean <= -11, f"{mean}dB")
+        wh = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0",
+                             "-show_entries", "stream=width,height", "-of", "csv=p=0", str(mp4)],
+                            capture_output=True, text=True).stdout.strip()
+        check("解像度 1080x1920", wh == "1080,1920", wh)
+    else:
+        check("output/*.mp4 存在", False)
+    check("thumbnail.png 存在", (video_dir / "output" / "thumbnail.png").exists(), "カバーフレーム書き出し")
+
+    print(f"\n結果: {'ALL PASS' if not fails else f'{len(fails)}件 FAIL'}")
+    return 1 if fails else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(Path(sys.argv[1])))

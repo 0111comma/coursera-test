@@ -47,32 +47,49 @@ SERIES_1 = "#3987e5"     # 青(スロット1)
 SERIES_2 = "#d95926"     # 橙(スロット2)
 # テロップ強調色(R8: 黄色+黒縁の定番)。チャートの系列色としては使わない
 EMPH = "#fab219"
+# お金・成功の系列色(ループ2: 金融は金がアクセント。青とのCVD/コントラスト検証済み)
+GOLD = "#c98500"
 
 # Shortsのセーフエリア(R9: 右端のボタン列・下部のUIを避ける)
 SAFE_L, SAFE_R = 0.08, 0.92
 SUBTITLE_Y = 0.24        # 字幕ブロックの上端(下から)
-SUB_FS = 40              # 字幕フォントサイズ
-SUB_WRAP = 14            # 字幕の折り返し文字数
+SUB_FS = 52              # 字幕フォントサイズ(ループ20: 画面高の約4%。スマホ最優先)
+SUB_WRAP = 12            # 字幕の折り返し文字数
 
+# ループ3: テロップの定番は源ノ角ゴシック(=Noto Sans CJK JP)。太ウェイトを実際に使う
 _JP_FONT_CANDIDATES = [
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc",
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
     "/usr/share/fonts/opentype/ipafont-gothic/ipagp.ttf",
     "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
 ]
 
 
 def setup_fonts():
+    name = None
     for p in _JP_FONT_CANDIDATES:
         if Path(p).exists():
-            font_manager.fontManager.addfont(p)
-            name = font_manager.FontProperties(fname=p).get_name()
-            plt.rcParams["font.family"] = name
-            return name
-    raise RuntimeError("日本語フォントが見つからない")
+            try:
+                font_manager.fontManager.addfont(p)
+                if name is None:
+                    name = font_manager.FontProperties(fname=p).get_name()
+            except Exception:
+                continue
+    if name is None:
+        raise RuntimeError("日本語フォントが見つからない")
+    plt.rcParams["font.family"] = name
+    plt.rcParams["font.weight"] = "bold"
+    return name
 
 
 def ease_out(t: float) -> float:
-    """カウントアップ・バー成長用のイージング。"""
+    """反応系(カウントアップの着地・ポップ)のイージング。"""
     return 1 - (1 - t) ** 3
+
+
+def ease_in_out(t: float) -> float:
+    """自動アニメーション(バー成長・線の描画)のイージング(ループ9)。"""
+    return 3 * t * t - 2 * t * t * t
 
 
 @dataclass
@@ -84,6 +101,9 @@ class Unit:
     pad: float = 0.2         # ナレーション後の間(秒)
     anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)
     fps: int = 20            # アニメーション部分のfps
+    intonation: float = 1.0  # 抑揚(強調ユニットは1.1〜1.15。ループ4)
+    se: str | None = None    # ユニット頭の効果音 "pop"/"don"(強調箇所のみ。ループ6)
+    cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -111,11 +131,13 @@ def voicevox_alive() -> bool:
         return False
 
 
-def tts_voicevox(text: str, out_wav: Path, speaker: int = DEFAULT_SPEAKER, speed: float = DEFAULT_SPEED):
+def tts_voicevox(text: str, out_wav: Path, speaker: int = DEFAULT_SPEAKER, speed: float = DEFAULT_SPEED,
+                 intonation: float = 1.0):
     q = urllib.parse.quote(text)
     query = _http(f"{VOICEVOX_URL}/audio_query?text={q}&speaker={speaker}", data=b"")
     qj = json.loads(query)
     qj["speedScale"] = speed
+    qj["intonationScale"] = intonation
     qj["prePhonemeLength"] = 0.05
     qj["postPhonemeLength"] = 0.08
     wav = _http(
@@ -149,7 +171,7 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
     for i, u in enumerate(units):
         w = workdir / f"seg_{i:02d}.wav"
         if use_vv:
-            tts_voicevox(u.tts_text(), w, speaker=speaker)
+            tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation)
         else:
             tts_openjtalk(u.tts_text(), w)
         wavs.append(w)
@@ -207,6 +229,42 @@ def synth_bgm(duration: float, out_wav: Path, bpm: int = 86):
         f.writeframes(pcm.tobytes())
 
 
+def synth_se_track(events: list[tuple[float, str]], duration: float, out_wav: Path):
+    """効果音トラック(ループ6)。events=[(秒, 種類)]。強調箇所のみ・入れすぎ禁止。
+
+    pop: テロップ・数字表示のポップ音(短い上昇ブリップ)
+    don: オチ・ピーク用の低いドン
+    """
+    import numpy as np
+    sr = 44100
+    n = int(sr * (duration + 0.5))
+    track = np.zeros(n)
+    for t0, kind in events:
+        i0 = int(t0 * sr)
+        if kind == "pop":
+            dur = 0.09
+            ts = np.arange(int(dur * sr)) / sr
+            f = 620 + 480 * (ts / dur)  # 上昇ブリップ
+            sig = 0.5 * np.sin(2 * np.pi * f * ts) * np.exp(-ts * 34)
+        elif kind == "don":
+            dur = 0.28
+            ts = np.arange(int(dur * sr)) / sr
+            f = 130 * np.exp(-ts * 7) + 46
+            sig = 0.9 * np.sin(2 * np.pi * f * ts) * np.exp(-ts * 11)
+        else:
+            continue
+        i1 = min(i0 + len(sig), n)
+        track[i0:i1] += sig[: i1 - i0]
+    peak = np.abs(track).max() or 1.0
+    track = track / peak * 0.5
+    pcm = (track * 32767).astype("<i2")
+    with wave.open(str(out_wav), "wb") as f:
+        f.setnchannels(1)
+        f.setsampwidth(2)
+        f.setframerate(sr)
+        f.writeframes(pcm.tobytes())
+
+
 # ---- 計測・結合(ffmpeg) ----
 
 def duration_of(path: Path) -> float:
@@ -225,28 +283,46 @@ def pad_wav(src: Path, dst: Path, pad_sec: float):
 
 
 def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path],
-             out_mp4: Path, workdir: Path, bgm: bool = True):
-    """フレーム列+ナレーション(+BGM)をmp4(1080x1920, 30fps)に結合する。"""
+             out_mp4: Path, workdir: Path, bgm: bool = True,
+             se_events: list[tuple[float, str]] | None = None):
+    """フレーム列+ナレーション(+BGM+SE)をmp4(1080x1920, 30fps)に結合する。"""
     alist = workdir / "audio.txt"
     alist.write_text("".join(f"file '{w.resolve()}'\n" for w in padded_wavs))
     narration = workdir / "narration.wav"
     subprocess.run(
         ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(alist),
-         "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", str(narration)],
+         "-af", "loudnorm=I=-14:TP=-1.0:LRA=11", str(narration)],
         check=True,
     )
     total = sum(durations)
     audio_in = narration
+    extra = []
+    filters = []
+    mix_labels = "[0:a]"
+    n_in = 1
     if bgm:
         bgm_wav = workdir / "bgm.wav"
         synth_bgm(total + 0.5, bgm_wav)
+        filters.append(f"[{n_in}:a]volume=0.5[bg]")
+        mix_labels += "[bg]"
+        extra.append(bgm_wav)
+        n_in += 1
+    if se_events:
+        se_wav = workdir / "se.wav"
+        synth_se_track(se_events, total, se_wav)
+        filters.append(f"[{n_in}:a]volume=0.55[se]")
+        mix_labels += "[se]"
+        extra.append(se_wav)
+        n_in += 1
+    if extra:
         mixed = workdir / "mixed.wav"
-        subprocess.run(
-            ["ffmpeg", "-y", "-v", "error", "-i", str(narration), "-i", str(bgm_wav),
-             "-filter_complex", "[1:a]volume=0.5[bg];[0:a][bg]amix=inputs=2:duration=first:normalize=0",
-             str(mixed)],
-            check=True,
-        )
+        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(narration)]
+        for e in extra:
+            cmd += ["-i", str(e)]
+        cmd += ["-filter_complex",
+                ";".join(filters) + f";{mix_labels}amix=inputs={n_in}:duration=first:normalize=0",
+                str(mixed)]
+        subprocess.run(cmd, check=True)
         audio_in = mixed
 
     vlist = workdir / "frames.txt"
@@ -364,13 +440,14 @@ def wrap_rich(text: str, width: int) -> list[list[tuple[str, bool]]]:
 
 def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
-                   outline: float = 7.0, ha_center_x: float = 0.5):
+                   outline: float = 7.0, ha_center_x: float = 0.5,
+                   weight: str = "black"):
     """強調色の混在する1行を中央揃えで描く(実測幅で並べる)。"""
     fig.canvas.draw()
     renderer = fig.canvas.get_renderer()
     widths = []
     for s, _ in segs:
-        tmp = fig.text(0, -1, s, fontsize=fontsize)
+        tmp = fig.text(0, -1, s, fontsize=fontsize, fontweight=weight)
         ext = tmp.get_window_extent(renderer=renderer)
         widths.append(ext.width / W)
         tmp.remove()
@@ -379,7 +456,7 @@ def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
     for (s, emph), w in zip(segs, widths):
         color = emph_color if emph else base_color
         fig.text(x, y, s, ha="left", va="center", color=color, fontsize=fontsize,
-                 path_effects=stroke_fx(color, outline=outline))
+                 fontweight=weight, path_effects=stroke_fx(color, outline=outline))
         x += w
 
 
@@ -394,9 +471,12 @@ def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                        outline=outline, ha_center_x=x)
 
 
-def draw_subtitle(fig, text: str):
-    """R6/R7/R8: ナレーション文そのものを縁取りテロップで。【】は黄色。"""
-    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS, wrap=SUB_WRAP, line_h=0.036)
+def draw_subtitle(fig, text: str, pop: float = 1.0):
+    """R6/R7/R8: ナレーション文そのものを縁取りテロップで。【】は黄色。
+
+    pop>1 で表示直後の「ポン」(スケール収束)を表現する(ループ10)。
+    """
+    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=0.036)
 
 
 def draw_badge(fig, text: str):
@@ -445,33 +525,48 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     wavs, engine = synthesize(units, workdir, speaker=speaker)
 
     frames, durations, padded = [], [], []
+    se_events: list[tuple[float, str]] = []
+    elapsed = 0.0
+    thumbnail = None
     for i, (u, w) in enumerate(zip(units, wavs)):
         pw = workdir / f"seg_{i:02d}_pad.wav"
         pad_wav(w, pw, u.pad)
         d_total = duration_of(pw)
         padded.append(pw)
+        if u.se:
+            se_events.append((elapsed + (0.07 if u.cover else 0.0), u.se))
 
-        def emit(t: float, sub_idx: int, dur: float):
+        def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0):
             fig = new_canvas()
             scene_painters[u.scene](fig, t)
-            draw_subtitle(fig, u.subtitle)
+            draw_subtitle(fig, u.subtitle, pop=pop)
             f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
             save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
+            return f
 
         anim = min(u.anim, d_total)
+        if u.cover:
+            # フィードの静止表示・サムネ用に完成形を一瞬先に見せる(ループ7)
+            cf = emit(1.0, 990, 0.07)
+            thumbnail = cf
+            anim = min(anim, d_total - 0.07)
         if anim > 0:
             n = max(2, int(anim * u.fps))
             for k in range(n):
                 t = (k + 1) / n
-                emit(t, k, anim / n)
-            hold = d_total - anim
+                emit(t, k, anim / n, pop=(1.06 if k == 0 else 1.0))
+            hold = d_total - anim - (0.07 if u.cover else 0.0)
             if hold > 0.01:
                 emit(1.0, n, hold)
         else:
-            emit(1.0, 0, d_total)
+            emit(1.0, 0, d_total - (0.07 if u.cover else 0.0))
+        elapsed += d_total
 
     out_mp4 = outdir / out_name
-    assemble(frames, durations, padded, out_mp4, workdir, bgm=bgm)
+    assemble(frames, durations, padded, out_mp4, workdir, bgm=bgm, se_events=se_events)
+    if thumbnail is not None:
+        import shutil
+        shutil.copy(thumbnail, outdir / "thumbnail.png")
     return {"mp4": out_mp4, "engine": engine, "total_sec": sum(durations)}
