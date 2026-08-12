@@ -78,3 +78,31 @@ S001が完成するまで次の企画に進まない。
 修正後ナレーションのカナ再取得で「プラス256万円」「…、(間)1233万円」を確認(A1合格)。
 再レンダリング: 53.7秒(緩急・タメで+2.8秒、55秒以内を維持)。自動チェック**ALL PASS**。
 → **A1〜A7全合格。ループ②完了**
+
+---
+
+## 深掘りループ③ SE・BGMの音色の質
+
+実施: 2026-08-12。調査3件+音源サイト到達性検証3件+フィルタグラフ実地検証。
+
+### 調査で得た基準(S1〜S6)
+
+| # | 基準 | 根拠 |
+|---|---|---|
+| S1 | BGMは発話中に自動で下がる(ダッキング、-2〜-4dB) | 動画ミックスの定石([Vook: オートダッキング](https://vook.vc/n/6493), [NEXUS: 音量基準まとめ](https://nexusmaterial.com/video-volume-standards-summary/)) |
+| S2 | lo-fiの質感: 7th/9thボイシング・スウィングハット(60〜74%)・ビニールノイズ・ローパス | [lofi hip hopの作り方](https://khufrudamonotes.com/how-to-make-lofi-hip-hop), [TRIVISION STUDIO](https://trivisionstudio.com/howtomake-lofi-hiphop/) |
+| S3 | 定番の入手先はDOVA-SYNDROME/甘茶の音楽工房/効果音ラボ | ゆっくり/ずんだもん系の定番([Yukkurigen](https://yukkurigen.com/blog/yukkuri-bgm-free-guide)) |
+| S4 | BGMはナレーション帯域を空ける(高次倍音を絞る) | S2と同根(ローパス=lo-fiの必須要素) |
+| S5 | SEは強調箇所のみ・表示の頭に同期(ループ6を継承) | — |
+| S6 | 素材差し替えが利く構造にする | 運用要件(本環境の制約) |
+
+### 検証結果と改善
+
+- **S3**: DOVA-SYNDROME・甘茶の音楽工房・効果音ラボはいずれも本環境から到達不可(接続テスト済み)→ **自作合成の質を定石に寄せる方針で確定**し、`production/assets/bgm.wav` を置けば実BGMに差し替わる仕組みを追加(S6対応。ローカル工程でDOVA等の楽曲に差し替え可)
+- **S1 不合格(ダッキングなし)** → ffmpegの`sidechaincompress`で発話中BGM自動減衰を実装(ratio=6, attack=8ms, release=300ms)。フィルタグラフはasplitでナレーションを分岐(検証済み)
+- **S2 不合格(スウィングなし・ノイズなし・9thなし)** → synth_bgm v2: Am9/Fmaj9/Cadd9/G9ボイシング、ハット66%スウィング、ビニールノイズ(ヒス+クラックル)、倍音を絞りナレーション帯域を確保、キック柔らかめ
+- **S5 合格**(ループ6の実装を維持)
+
+### 再検証
+
+レンダリング+自動チェック → 結果を追記。

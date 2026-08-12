@@ -188,47 +188,70 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
 
 # ---- BGM(R14: 小さく敷くだけの合成ループ。著作権フリー=自前生成) ----
 
+BGM_OVERRIDE = Path(__file__).resolve().parent / "assets" / "bgm.wav"
+
+
 def synth_bgm(duration: float, out_wav: Path, bpm: int = 86):
-    """lo-fi風の控えめな4コードループ(Am7→Fmaj7→Cadd9→G)+キック/ハット。"""
+    """lo-fi風BGM(深掘り③で定石に準拠)。
+
+    - 9th入りボイシング(Am9→Fmaj9→Cadd9→G9)
+    - ハットは約66%スウィング(裏拍を遅らせて跳ねさせる)
+    - ビニールノイズ(まばらなクラックル+微小ヒス)
+    - パッドはローパス相当(高次倍音を絞る)でナレーション帯域を空ける
+    production/assets/bgm.wav があればそちらを使う(ローカル工程で実BGMに差し替え可)。
+    """
     import numpy as np
+    if BGM_OVERRIDE.exists():
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-stream_loop", "-1",
+                        "-i", str(BGM_OVERRIDE), "-t", f"{duration:.2f}",
+                        "-ar", "44100", "-ac", "1", str(out_wav)], check=True)
+        return
     sr = 44100
     n = int(sr * duration)
     t = np.arange(n) / sr
     beat = 60.0 / bpm
     bar = beat * 4
+    rng = np.random.default_rng(20260812)
 
     chords = [
-        [110.00, 164.81, 196.00, 261.63],   # Am7
-        [87.31, 130.81, 174.61, 220.00],    # Fmaj7
-        [130.81, 196.00, 293.66, 329.63],   # Cadd9
-        [98.00, 146.83, 196.00, 246.94],    # G
+        [110.00, 164.81, 196.00, 261.63, 246.94],   # Am9 (A,E,G,C,B)
+        [87.31, 130.81, 174.61, 220.00, 196.00],    # Fmaj9 (F,C,F,A,G)
+        [130.81, 196.00, 293.66, 329.63, 246.94],   # Cadd9
+        [98.00, 146.83, 196.00, 246.94, 220.00],    # G9 (G,D,G,B,A)
     ]
     audio = np.zeros(n)
-    # パッド: 小節ごとにコードを切り替え、ゆっくり立ち上がる正弦波の重ね
     for bi in range(int(duration / bar) + 1):
         start = bi * bar
         seg = (t >= start) & (t < start + bar)
         if not seg.any():
             continue
         ts = t[seg] - start
-        env = np.minimum(ts / 0.6, 1.0) * np.exp(-ts / (bar * 1.4))
-        for f in chords[bi % 4]:
-            audio[seg] += 0.05 * env * np.sin(2 * np.pi * f * ts)
-            audio[seg] += 0.015 * env * np.sin(2 * np.pi * f * 2 * ts)
-    # キック(各拍)とハット(8分)
+        env = np.minimum(ts / 0.7, 1.0) * np.exp(-ts / (bar * 1.5))
+        for j, f in enumerate(chords[bi % 4]):
+            w = 0.045 if j < 4 else 0.028          # 9thは控えめ
+            audio[seg] += w * env * np.sin(2 * np.pi * f * ts)
+            audio[seg] += 0.008 * env * np.sin(2 * np.pi * f * 2 * ts)  # 倍音薄め=LPF相当
+    swing = 0.66  # ハットのスウィング(60〜74%圏)
     for k in range(int(duration / beat) + 1):
         start = k * beat
         seg = (t >= start) & (t < start + 0.12)
         ts = t[seg] - start
-        audio[seg] += 0.16 * np.exp(-ts * 40) * np.sin(2 * np.pi * 52 * ts)
-        for off in (0.0, beat / 2):
+        audio[seg] += 0.13 * np.exp(-ts * 42) * np.sin(2 * np.pi * 50 * ts)  # キック柔らかめ
+        for off in (0.0, beat * swing):            # 裏拍を66%位置に(跳ね)
             s2 = (t >= start + off) & (t < start + off + 0.03)
             m = int(s2.sum())
             if m:
-                noise = np.random.default_rng(k * 7 + int(off * 1000)).standard_normal(m)
-                audio[s2] += 0.015 * np.diff(np.concatenate([[0], noise])) * np.exp(-np.arange(m) / (0.008 * sr))
+                noise = rng.standard_normal(m)
+                amp = 0.012 if off else 0.016
+                audio[s2] += amp * np.diff(np.concatenate([[0], noise])) * np.exp(-np.arange(m) / (0.008 * sr))
+    # ビニールノイズ: 微小ヒス+まばらなクラックル
+    audio += 0.0035 * np.diff(np.concatenate([[0], rng.standard_normal(n)]))
+    n_crackle = int(duration * 9)
+    for pos in rng.integers(0, max(n - 900, 1), n_crackle):
+        ln = int(rng.integers(60, 700))
+        audio[pos:pos + ln] += rng.uniform(0.01, 0.05) * np.exp(-np.arange(ln) / 90) * rng.choice([-1, 1])
     peak = np.abs(audio).max() or 1.0
-    audio = audio / peak * 0.30  # 十分小さく
+    audio = audio / peak * 0.30
     pcm = (audio * 32767).astype("<i2")
     with wave.open(str(out_wav), "wb") as f:
         f.setnchannels(1)
@@ -311,8 +334,13 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
     if bgm:
         bgm_wav = workdir / "bgm.wav"
         synth_bgm(total + 0.5, bgm_wav)
-        filters.append(f"[{n_in}:a]volume=0.5[bg]")
-        mix_labels += "[bg]"
+        # 深掘り③: ダッキング(発話中はBGMが自動で下がる。動画ミックスの定石)
+        filters.append("[0:a]asplit=2[nara][narb]")
+        filters.append(
+            f"[{n_in}:a]volume=0.6[bgv];"
+            "[bgv][narb]sidechaincompress=threshold=0.015:ratio=6:attack=8:release=300:makeup=1[bg]"
+        )
+        mix_labels = "[nara][bg]"
         extra.append(bgm_wav)
         n_in += 1
     if se_events:
