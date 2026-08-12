@@ -625,6 +625,21 @@ def draw_footer_brand(fig, text: str):
     fig.text(0.5, 0.045, text, ha="center", va="center", color=MUTED, fontsize=20)
 
 
+def require_voicevox():
+    """レンダリング前のプリフライト。VOICEVOX未起動のままフォールバックTTSで
+    合成すると「声がずんだもんでないのにクレジットあり」の事故になるため、
+    本チャンネルの動画は必ずこれを呼んでから render_video する。"""
+    import urllib.request
+    try:
+        with urllib.request.urlopen("http://localhost:50021/version", timeout=5) as r:
+            r.read()
+    except Exception as e:
+        raise SystemExit(
+            f"VOICEVOXエンジンに接続できません({e})。"
+            "先に `bash production/setup_voicevox.sh` を実行してください。"
+        )
+
+
 def style_axes(ax):
     ax.set_facecolor("none")  # 背景グラデーションを透かす
     for s in ("top", "right"):

@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / "production"))
 import numpy as np
 from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
-    Unit, render_video, ease_out, ease_in_out, ease_out_back, stroke_fx, outline_for,
+    Unit, render_video, require_voicevox, ease_out, ease_in_out, ease_out_back, stroke_fx, outline_for,
     style_axes, draw_badge, draw_footer_brand, draw_rich_text, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, MUTED_BAR, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
@@ -443,6 +443,7 @@ UNITS = [
 ]
 
 if __name__ == "__main__":
+    require_voicevox()
     result = render_video(UNITS, SCENES, OUTDIR, "S001.mp4")
     print(f"engine: {result['engine']}")
     print(f"total: {result['total_sec']:.1f}s")
