@@ -48,7 +48,8 @@ def main(video_dir: Path) -> int:
         if len(wrap_plain(plain, SUB_WRAP)) > 2:
             check(f"字幕2行以内: {plain[:14]}…", False)
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
-    check("推定尺 55秒以内", total_chars * 0.2 + len(units) * 0.2 <= 56, f"約{total_chars * 0.2 + len(units) * 0.2:.0f}秒")
+    est = total_chars * 0.191 + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
+    check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))

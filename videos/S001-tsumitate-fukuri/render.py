@@ -391,7 +391,8 @@ UNITS = [
     # 誰でも分かる基準線(貯金箱=利息ゼロ)を先に置く
     Unit("piggy", "貯金箱に入れてたら、【240万円】のはず。", anim=1.8, speed=1.15),
     # 前提の種明かし: 投資で運用していたから増えた
-    Unit("invest", "でも【投資】で運用すると、171万円も多いのだ。", anim=2.2,
+    Unit("invest", "でも【投資】で運用したら、+171万円。", anim=2.2,
+         narration="でも投資で運用したら、プラス171万円。",
          speed=1.15, intonation=1.2),
     Unit("assume", "年5%で増えると【仮定】した計算なのだ。", anim=1.0, speed=1.15),
     Unit("snowball", "差の正体は、利息が利息を生む【雪だるま】。", anim=2.4,
@@ -407,7 +408,7 @@ UNITS = [
     Unit("compare2", "もし年利3%でも、【328万円】になるのだ。", anim=1.4, speed=1.2),
     Unit("compare0", "貯金箱のままだと、増えは【ゼロ】。", anim=1.4,
          speed=1.1, intonation=1.05, pitch=-0.08),
-    Unit("lever", "あなたが選べるのは、【毎月の金額】なのだ。", anim=1.2, pad=0.35,
+    Unit("lever", "選べるのは、【毎月の金額】なのだ。", anim=1.2, pad=0.35,
          speed=1.15, intonation=1.2),
     Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don",
          narration="月3万円にすると…、1233万円なのだ。",

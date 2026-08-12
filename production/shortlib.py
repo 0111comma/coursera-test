@@ -105,7 +105,7 @@ class Unit:
     scene: str
     subtitle: str            # 字幕=読み上げ文(R6)。【】で囲んだ語は黄色強調(R8)
     narration: str = ""      # 読み上げ用の上書き(省略時はsubtitleから【】を除いた文)
-    pad: float = 0.2         # ナレーション後の間(秒)
+    pad: float = 0.15        # ナレーション後の間(秒。深掘り⑦: 詰め気味が定石)
     anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)
     fps: int = 20            # アニメーション部分のfps
     intonation: float = 1.1  # 抑揚(深掘り②: 一律1.0は単調。文脈で1.05〜1.3)
