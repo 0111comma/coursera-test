@@ -307,12 +307,12 @@ def scene_lever(fig, t):
     fig.text(0.34, 0.68, "年利", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
     fig.text(0.70, 0.68, "×", ha="center", va="center", color=MUTED, fontsize=64)
-    fig.text(0.70, 0.632, "選べない", ha="center", color=MUTED, fontsize=22)
+    fig.text(0.70, 0.632, "選べない", ha="center", color=MUTED, fontsize=26)
     a = clamp01(t * 2 - 0.6)
     fig.text(0.34, 0.53, "毎月の金額", ha="center", color=EMPH, fontsize=52,
              path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2))
     fig.text(0.70, 0.53, "◯", ha="center", va="center", color=EMPH, fontsize=64, alpha=a)
-    fig.text(0.70, 0.492, "選べる", ha="center", color=EMPH, fontsize=22, alpha=a)
+    fig.text(0.70, 0.492, "選べる", ha="center", color=EMPH, fontsize=26, alpha=a)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
@@ -346,7 +346,7 @@ def scene_table_big(fig, t):
     ))
     fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
     _table(fig, 0.70)
-    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=20)
+    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=24)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 

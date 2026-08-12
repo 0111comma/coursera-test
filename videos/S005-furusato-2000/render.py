@@ -182,7 +182,7 @@ def scene_hayami(fig, t):
         fig.text(0.30, yy, m, ha="center", color=MUTED, fontsize=27)
         fig.text(0.64, yy, y_, ha="center", color=INK, fontsize=30)
     fig.text(0.46, 0.425, "総務省の目安(給与のみ・他の控除なし)", ha="center",
-             color=MUTED, fontsize=20)
+             color=MUTED, fontsize=24)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 

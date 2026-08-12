@@ -381,7 +381,7 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
          "-f", "concat", "-safe", "0", "-i", str(vlist),
          "-i", str(audio_in),
          "-vf", f"fps=30,scale={W}:{H}:flags=lanczos,format=yuv420p",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "20",
+         "-c:v", "libx264", "-preset", "medium", "-crf", "17",  # 細字の圧縮にじみ対策(文字潰れ指摘)
          "-c:a", "aac", "-b:a", "192k",
          "-movflags", "+faststart", "-shortest",
          str(out_mp4)],

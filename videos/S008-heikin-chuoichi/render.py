@@ -191,9 +191,9 @@ def scene_hayami(fig, t):
         yy = 0.655 - i * 0.08
         fig.text(0.22, yy, n, ha="center", color=MUTED, fontsize=27)
         fig.text(0.44, yy, a_, ha="center", color=INK, fontsize=31)
-        fig.text(0.72, yy, m, ha="center", color=GOLD, fontsize=31)
+        fig.text(0.72, yy, m, ha="center", color=INK, fontsize=31)
     fig.text(0.46, 0.455, "J-FLEC「家計の金融行動に関する世論調査」", ha="center",
-             color=MUTED, fontsize=19)
+             color=MUTED, fontsize=24)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 

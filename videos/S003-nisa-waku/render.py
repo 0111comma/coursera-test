@@ -156,7 +156,7 @@ def scene_hayami(fig, t):
         fig.text(0.32, yy, m, ha="center", color=MUTED, fontsize=27)
         fig.text(0.64, yy, y, ha="center", color=INK, fontsize=30)
     fig.text(0.46, 0.425, "満額(年間360万円)なら5年。枠は元本ベースで計算",
-             ha="center", color=MUTED, fontsize=20)
+             ha="center", color=MUTED, fontsize=24)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 

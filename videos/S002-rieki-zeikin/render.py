@@ -308,8 +308,8 @@ def scene_hayami(fig, t):
         y = 0.675 - i * 0.055
         fig.text(0.24, y, f"利益{g}万", ha="center", color=MUTED, fontsize=26)
         fig.text(0.52, y, f"-{tax}万", ha="center", color=INK, fontsize=30)
-        fig.text(0.76, y, "0円", ha="center", color=GOLD, fontsize=30)
-    fig.text(0.46, 0.425, "税率20.315%で計算(2026年8月時点)", ha="center", color=MUTED, fontsize=20)
+        fig.text(0.76, y, "0円", ha="center", color=INK, fontsize=30)
+    fig.text(0.46, 0.425, "税率20.315%で計算(2026年8月時点)", ha="center", color=MUTED, fontsize=24)
     draw_badge(fig, "2026年8月時点の税制・制度")
     draw_footer_brand(fig, BRAND)
 

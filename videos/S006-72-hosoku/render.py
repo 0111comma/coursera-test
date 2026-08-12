@@ -170,7 +170,7 @@ def scene_hayami(fig, t):
         fig.text(0.30, yy, f"{r}%", ha="center", color=MUTED, fontsize=24)
         fig.text(0.64, yy, disp, ha="center", color=INK, fontsize=26)
     fig.text(0.46, 0.385, "利回りは例。厳密値との誤差は4%未満(概要欄)", ha="center",
-             color=MUTED, fontsize=19)
+             color=MUTED, fontsize=24)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
