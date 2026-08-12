@@ -90,8 +90,8 @@ def scene_stacked_principal(fig, t):
     ax = _stacked_axes(fig)
     h = PRINCIPAL20 * ease_in_out(t)
     ax.bar([0], [h], width=0.5, color=SERIES_1, edgecolor=SURFACE, linewidth=3)
-    ax.text(0.30, max(h / 2, 30), "自分で払った\n240万円", color=INK, fontsize=30,
-            va="center", alpha=clamp01(t))
+    ax.text(0.30, max(h / 2, 30), f"自分で払った\n{round(PRINCIPAL20 * ease_in_out(clamp01(t)))}万円",
+            color=INK, fontsize=30, va="center", alpha=clamp01(t * 3))
     fig.text(0.5, 0.90, "『どうせ意味ない』?", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定")
     draw_footer_brand(fig, BRAND)
@@ -103,8 +103,8 @@ def scene_stacked_full(fig, t):
     ax.bar([0], [PRINCIPAL20], width=0.5, color=SERIES_1, edgecolor=SURFACE, linewidth=3)
     ax.bar([0], [g], bottom=[PRINCIPAL20], width=0.5, color=GOLD, edgecolor=SURFACE, linewidth=3)
     ax.text(0.30, PRINCIPAL20 / 2, "自分で払った\n240万円", color=INK, fontsize=30, va="center")
-    ax.text(0.30, PRINCIPAL20 + max(g / 2, 20), "勝手に増えた\n+171万円", color=INK, fontsize=30,
-            va="center", alpha=clamp01(t))
+    ax.text(0.30, PRINCIPAL20 + max(g / 2, 20), f"勝手に増えた\n+{round(g)}万円",
+            color=INK, fontsize=30, va="center", alpha=clamp01(t * 3))
     if t > 0.85:
         ax.text(0, PRINCIPAL20 + GAIN20 + 18, "計 411万円", color=INK, fontsize=40,
                 ha="center", alpha=clamp01((t - 0.85) / 0.15))
@@ -184,6 +184,9 @@ def scene_reveal(fig, t):
     _prediction_line(ax, alpha=0.7)
     k = max(2, int(121 * ease_in_out(clamp01(t))))  # 10年目まで描く
     ax.plot(_YEARS[:k], _VALS[:k], color=SERIES_1, linewidth=4, solid_capstyle="round")
+    if t < 0.99:  # 先端ドット(描かれている感)
+        ax.plot([_YEARS[k - 1]], [_VALS[k - 1]], marker="o", markersize=10, color=SERIES_1,
+                markeredgecolor=SURFACE, markeredgewidth=2)
     if t >= 0.99:
         ax.plot([10], [FV10_5], marker="o", markersize=12, color=SERIES_1,
                 markeredgecolor=SURFACE, markeredgewidth=2)
@@ -200,6 +203,9 @@ def scene_accel(fig, t):
     _prediction_line(ax, alpha=0.4)
     k = 121 + int((241 - 121) * ease_in_out(clamp01(t)))
     ax.plot(_YEARS[:k], _VALS[:k], color=SERIES_1, linewidth=4, solid_capstyle="round")
+    if t < 0.99:
+        ax.plot([_YEARS[k - 1]], [_VALS[k - 1]], marker="o", markersize=10, color=SERIES_1,
+                markeredgecolor=SURFACE, markeredgewidth=2)
     ax.plot([10], [FV10_5], marker="o", markersize=12, color=SERIES_1,
             markeredgecolor=SURFACE, markeredgewidth=2)
     if t >= 0.99:
@@ -231,19 +237,22 @@ def _compare_axes(fig):
     return ax
 
 
-def _bar(ax, x, v, prog, label=None):
+def _bar(ax, x, v, prog, label=None, color=SERIES_1, counter=True):
+    # 深掘り⑤: フォーカス1本だけアクセント色(他はグレー)+数値カウンター連動
     if prog <= 0:
         return
-    h = v * ease_in_out(clamp01(prog))
-    ax.bar([x], [h], width=0.56, color=SERIES_1)
-    if prog >= 1.0:
-        ax.text(x, h + 12, label or f"{round(v)}万円", ha="center", color=INK, fontsize=30)
+    e = ease_in_out(clamp01(prog))
+    h = v * e
+    ax.bar([x], [h], width=0.56, color=color)
+    if counter and prog > 0.15:
+        txt = label if (label and prog >= 1.0) else f"{round(v * e)}万円"
+        ax.text(x, h + 12, txt, ha="center", color=INK, fontsize=30)
 
 
 def scene_compare2(fig, t):
     ax = _compare_axes(fig)
-    _bar(ax, 0, FV20_5, 1.0)
-    _bar(ax, 1, FV20_3, t)
+    _bar(ax, 0, FV20_5, 1.0, color=MUTED)          # 文脈(グレーアウト)
+    _bar(ax, 1, FV20_3, t, color=GOLD)             # フォーカス: 3%でも増える
     fig.text(0.5, 0.90, "月1万円 × 20年", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)
@@ -251,9 +260,9 @@ def scene_compare2(fig, t):
 
 def scene_compare0(fig, t):
     ax = _compare_axes(fig)
-    _bar(ax, 0, FV20_5, 1.0)
-    _bar(ax, 1, FV20_3, 1.0)
-    _bar(ax, 2, PRINCIPAL20, t, label="240万円(増え +0円)")
+    _bar(ax, 0, FV20_5, 1.0, color=MUTED)
+    _bar(ax, 1, FV20_3, 1.0, color=MUTED)
+    _bar(ax, 2, PRINCIPAL20, t, label="240万円(増え +0円)", color=SERIES_1)  # フォーカス: 何もしない場合
     fig.text(0.5, 0.90, "月1万円 × 20年", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "利回りは仮定値")
     draw_footer_brand(fig, BRAND)

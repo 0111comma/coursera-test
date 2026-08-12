@@ -134,3 +134,29 @@ S001が完成するまで次の企画に進まない。
 
 再レンダリング(53.7秒)+自動チェック**ALL PASS**。パンチ途中フレーム(t≈0.17で既に等倍近く+オーバーシュート)を目視確認。
 → **H1〜H4全合格。ループ④完了**
+
+---
+
+## 深掘りループ⑤ グラフ演出の質
+
+実施: 2026-08-12。調査2件。
+
+### 調査で得た基準(G1〜G4)
+
+| # | 基準 | 根拠 |
+|---|---|---|
+| G1 | 強調したい1本だけアクセント色、他はグレー(フォーカス+グレーアウト) | データストーリーテリングの定石([Datawrapper](https://www.datawrapper.de/blog/emphasize-with-color-in-data-visualizations), [Tableau](https://www.tableau.com/blog/3-storytelling-color-tips-improve-your-data-visualization), [think-cell](https://www.think-cell.com/en/resources/content-hub/how-to-tell-a-better-data-story-one-slide-at-a-time)) |
+| G2 | バーの成長と数値カウントを連動(値ラベルが一緒に増える) | グラフ動画演出の定番([日経クロストレンド](https://xtrend.nikkei.com/atcl/contents/18/00508/00006/), [メディア博士](https://media-hakase.com/column/article/page_903.html)) |
+| G3 | 折れ線はドローオン+先端ドット(「描かれている」感) | インフォグラフィック動画の定番([BRISK](https://b-risk.jp/blog/2022/06/infographics/)) |
+| G4 | グリッド・軸は控えめ(recessive) | dataviz基準を継承 |
+
+### 検証結果と改善
+
+- **G1 不合格(比較バーが全部同色)** → compare2: 5%をグレーアウトし3%を金でフォーカス(「控えめでも増える」が主役)。compare0: 5%・3%をグレー、0%(何もしない)を青でフォーカス
+- **G2 不合格(ラベルは完成時のみ)** → 比較バー・積み上げバーとも、バーの伸びに合わせて数値ラベルがカウントアップ
+- **G3 部分不合格(先端ドットなし)** → reveal/accelのドローオン中、線の先端に追従ドットを追加
+- **G4 合格**
+
+### 再検証
+
+レンダリング+フレーム目視 → 結果を追記。
