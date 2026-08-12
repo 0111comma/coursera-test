@@ -249,7 +249,7 @@ UNITS = [
     Unit("med", "でも真ん中の人は、【100万円】なのだ。", anim=1.2,
          speed=1.1, intonation=1.2, pitch=-0.04),
     Unit("meimei", "この真ん中が、【中央値】。", anim=1.0, speed=1.15),
-    Unit("tane", "平均は、一部のお金持ちが【引き上げる】。", anim=1.4, speed=1.15),
+    Unit("tane", "平均は、お金持ちが【引き上げる】。", anim=1.4, speed=1.15),
     Unit("jitsu", "実データでも、単身の中央値は【130万円】。", anim=1.2, se="don",
          speed=1.1, intonation=1.15, pause_scale=1.2),
     Unit("nanabai", "平均919万との差は、【7倍】なのだ。", anim=1.4, speed=1.15, intonation=1.2),
