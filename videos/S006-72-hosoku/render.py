@@ -71,7 +71,7 @@ def scene_hero_full(fig, t):
 
 
 def scene_anzan(fig, t):
-    fig.text(0.5, 0.90, "実はこの数字", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.90, "電卓は、いらない", ha="center", color=INK_2, fontsize=34)
     a = clamp01(t * 2)
     fig.text(0.5, 0.60, "暗算で出せる", ha="center", va="center", color=EMPH,
              fontsize=62 * max(ease_out_back(a), 0.05), alpha=a,
@@ -217,7 +217,7 @@ UNITS = [
     Unit("hero_count", "【14年】。", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "年5%運用のお金が、【2倍】になる年数。", anim=0.8, speed=1.2),
-    Unit("anzan", "これ、電卓なしの【暗算】で出せるのだ。", anim=1.2, speed=1.15, intonation=1.2),
+    Unit("anzan", "実はこれ、【暗算】で出せるのだ。", anim=1.2, speed=1.15, intonation=1.2),
     Unit("num72", "使うのは、【72】という数字。", anim=1.0, speed=1.15),
     Unit("formula", "72÷金利で、2倍になる年数が出る。", anim=1.4,
          narration="72わる金利で、2倍になる年数が出る。", speed=1.15),
