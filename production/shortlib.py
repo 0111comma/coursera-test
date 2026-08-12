@@ -92,6 +92,13 @@ def ease_in_out(t: float) -> float:
     return 3 * t * t - 2 * t * t * t
 
 
+def ease_out_back(t: float) -> float:
+    """オーバーシュート付き(深掘り④: 突発的な出現=abrupt onsetが注意を捕捉する)。"""
+    c1 = 1.70158
+    c3 = c1 + 1
+    return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2
+
+
 @dataclass
 class Unit:
     """1ユニット = 1文(R5)。scene名で背景を選び、animで冒頭に動きを入れる(R2/R4)。"""
@@ -105,7 +112,8 @@ class Unit:
     speed: float = 0.0       # 話速の上書き(0=既定。深掘り②: 重要文は遅く・つなぎは速く)
     pitch: float = -0.03     # ピッチ(深掘り②: ナレーション基調は少し低め。ピークで持ち上げ)
     pause_scale: float = 1.1 # 句読点の間(深掘り②: AIの早口感を消す。タメは1.5〜1.7)
-    se: str | None = None    # ユニット頭の効果音 "pop"/"don"(強調箇所のみ。ループ6)
+    se: str | None = None    # 効果音 "pop"/"don"(強調箇所のみ。ループ6)
+    se_at: float = 0.0       # ユニット頭からのSEオフセット秒(深掘り④: 着地に同期させる用)
     cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
 
     def tts_text(self) -> str:
@@ -613,7 +621,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         d_total = duration_of(pw)
         padded.append(pw)
         if u.se:
-            se_events.append((elapsed + (0.07 if u.cover else 0.0), u.se))
+            se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
 
         def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0):
             fig = new_canvas()

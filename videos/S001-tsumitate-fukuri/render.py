@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT / "production"))
 import numpy as np
 from matplotlib.patches import Circle, FancyBboxPatch
 from shortlib import (
-    Unit, render_video, ease_out, ease_in_out, stroke_fx, style_axes,
+    Unit, render_video, ease_out, ease_in_out, ease_out_back, stroke_fx, style_axes,
     draw_badge, draw_footer_brand, draw_rich_text, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, GRID, BASELINE, SERIES_1, SERIES_2, EMPH, GOLD,
 )
@@ -56,7 +56,12 @@ def _hero(fig, value_man: int, sub: str | None, sub_alpha=1.0):
 
 
 def scene_hero_count(fig, t):
-    _hero(fig, round(FV20_5 * ease_out(t)), None)
+    # 深掘り④: 滑らかな成長ではなく「突発的な出現」(スケールパンチ+オーバーシュート)
+    appear = ease_out_back(clamp01(t * 3.4))
+    scale = 0.25 + 0.75 * appear
+    value = round(FV20_5 * ease_out(clamp01(t * 1.15)))
+    draw_glow_text(fig, 0.5, 0.62, f"{value}万円", 118 * max(scale, 0.05))
+    draw_footer_brand(fig, BRAND)
 
 
 def scene_hero_full(fig, t):
