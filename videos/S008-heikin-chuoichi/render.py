@@ -217,6 +217,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_ochikomi(fig, t):
+    # H6: 過去の自分へのツッコミ(平均と比べて落ち込んでいた)。7倍の直後(H3)
+    fig.text(0.5, 0.90, "ここだけの話", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "比べて損してた", ha="center", va="center", color=INK,
+             fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
+    fig.text(0.5, 0.51, "(919万と比べて落ち込んでいた過去のボク)", ha="center", va="center",
+             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の919万円でループ(→「919万円。」)
+    scene_hero_full(fig, t)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -232,7 +250,9 @@ SCENES = {
     "nanabai": scene_nanabai,
     "miru": scene_miru,
     "hayami": scene_hayami,
+    "ochikomi": scene_ochikomi,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -254,11 +274,17 @@ UNITS = [
     Unit("jitsu", "実データでも、単身の中央値は【130万円】。", anim=1.2, se="don",
          speed=1.1, intonation=1.15, pause_scale=1.2),
     Unit("nanabai", "平均919万との差は、【7倍】なのだ。", anim=1.4, speed=1.15, intonation=1.2),
+    # H6: 過去の自分へのツッコミ(緊張→緩和)
+    Unit("ochikomi", "919万と比べて、落ち込んで損したのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("miru", "比べるなら、【中央値】を見るのだ。", anim=1.2, pad=0.3,
          speed=1.15, intonation=1.2),
     Unit("hayami", "【早見表】で、平均と中央値を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    Unit("chips", "あなたはどっちと、比べてた?", anim=1.4, pad=0.15,  # E7+N1
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ=答え合わせ型ループ(→冒頭「919万円。」に接続)
+    Unit("loop_back", "では改めて、この数字を見るのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

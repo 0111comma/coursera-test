@@ -193,6 +193,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_edamame(fig, t):
+    # H1/H5: キャラ自虐(枝豆をタンスに隠す=現金退蔵の比喩)。命名の直後の緩和(H3)
+    fig.text(0.5, 0.90, "ここだけの話", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "枝豆もタンス派", ha="center", va="center", color=INK,
+             fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
+    fig.text(0.5, 0.51, "(ボクの貯蔵方法なのだ。豆は減らないが…)", ha="center", va="center",
+             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の67万円でループ(→「67万円。」)
+    scene_hero_full(fig, t)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -207,7 +225,9 @@ SCENES = {
     "meimei": scene_meimei,
     "kinri": scene_kinri,
     "hayami": scene_hayami,
+    "edamame": scene_edamame,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -228,10 +248,16 @@ UNITS = [
     Unit("sore16", "それでも20年で、約【73万円】ぶんに。", anim=1.0, speed=1.15),
     Unit("meimei", "これが、タンス預金の、【見えない目減り】。", anim=1.4, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04),
+    # H1/H5: キャラ自虐(緊張→緩和)。枝豆=タンス預金の比喩で本筋に接続
+    Unit("edamame", "ボクも枝豆を、タンスに隠す派なのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("kinri", "金利が物価より低いと、実質は【目減り】。", anim=1.4, pad=0.3, speed=1.15),
     Unit("hayami", "【早見表】で、年数別に見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    Unit("chips", "あなたは、現金派?", anim=1.4, pad=0.15,  # E7+N1
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ(→冒頭「67万円。」に接続)
+    Unit("loop_back", "そのまま20年たつと、こうなるのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

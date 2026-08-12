@@ -188,7 +188,7 @@ def scene_hayami(fig, t):
 
 
 def scene_chips(fig, t):
-    fig.text(0.5, 0.76, "ふるさと納税、やってる?", ha="center", color=INK, fontsize=44,
+    fig.text(0.5, 0.76, "自分の上限、知ってた?", ha="center", color=INK, fontsize=44,
              path_effects=stroke_fx(INK, outline=outline_for(44), fatten=3))
     chips = ["毎年やってる", "今年から", "まだ", "上限知らなかった"]
     for i, c in enumerate(chips):
@@ -206,6 +206,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_ii_hito(fig, t):
+    # H1/H3: 「超えた分はただの寄付」直後の過剰リアクション(関連ユーモア)
+    fig.text(0.5, 0.90, "上限を超えると…", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "ただの善意の人", ha="center", va="center", color=INK,
+             fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
+    fig.text(0.5, 0.51, "(返礼品はもらえるが控除はない)", ha="center", va="center",
+             color=MUTED, fontsize=25, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の2000円でループ(→「2000円。」)
+    scene_hero_full(fig, t)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -221,7 +239,9 @@ SCENES = {
     "kawaru": scene_kawaru,
     "kakunin": scene_kakunin,
     "hayami": scene_hayami,
+    "ii_hito": scene_ii_hito,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -242,12 +262,18 @@ UNITS = [
          speed=1.1, intonation=1.2, pause_scale=1.3),
     Unit("wana", "超えた分は、控除なしの【ただの寄付】。", anim=1.4,
          speed=1.1, intonation=1.15, pitch=-0.04),
+    # H1/H3: 損失ビート直後の緩和(過剰リアクション)
+    Unit("ii_hito", "うっかり、善意の人になるのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("kawaru", "上限は、年収や家族構成で【変わる】。", anim=1.4, speed=1.15),
     Unit("kakunin", "寄付の前に、自分の上限を【確認】なのだ。", anim=1.2, pad=0.3,
          speed=1.15, intonation=1.2),
     Unit("hayami", "【早見表】で、年収別の目安を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    Unit("chips", "あなたの上限、知ってる?", anim=1.4, pad=0.15,  # E7+N1
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ(→冒頭「2000円。」に接続)
+    Unit("loop_back", "確認すれば、負担はこれだけなのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

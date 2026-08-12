@@ -245,6 +245,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_sutete(fig, t):
+    # H5: ずぼら自虐(明細を見ない側だった)。知識の自虐ではない
+    fig.text(0.5, 0.90, "ここだけの話", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "見ずに捨ててた側", ha="center", va="center", color=INK,
+             fontsize=48 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(48), fatten=2))
+    fig.text(0.5, 0.51, "(過去のボクの話なのだ)", ha="center", va="center",
+             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の83万円でループ(→「83万円。」)
+    scene_hero_full(fig, t)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -260,7 +278,9 @@ SCENES = {
     "hosho": scene_hosho,
     "meisai": scene_meisai,
     "hayami": scene_hayami,
+    "sutete": scene_sutete,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -270,7 +290,7 @@ UNITS = [
     Unit("hero_full", "年収400万円から、引かれるお金。", anim=0.8, speed=1.2),
     Unit("tedori", "手取りは【317万円】、約8割なのだ。", anim=1.2, speed=1.15),
     Unit("bunkai", "引かれた83万円の、【中身】を見るのだ。", anim=1.2, speed=1.2),
-    Unit("quiz", "一番重いのは…【どれ】だと思うのだ?", anim=1.6,
+    Unit("quiz", "一番重いのは…【所得税】だと思うのだ?", anim=1.6,  # Q4/Q5: 高確信の誤答に張る
          speed=1.15, intonation=1.25),
     Unit("ans", "正解は【厚生年金】。36万6千円なのだ。", anim=1.4,
          puchun=True, se="impact", se_at=0.34,
@@ -282,10 +302,16 @@ UNITS = [
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("hosho", "そのぶん、年金や医療の【保障】つき。", anim=1.4, speed=1.15),
     Unit("meisai", "明細の【控除欄】に、全部あるのだ。", anim=1.4, pad=0.3,
+         speed=1.15, intonation=1.15),
+    # H5: ずぼら自虐(構造点=締めの手前)
+    Unit("sutete", "ボクは見ずに、捨ててた側なのだ。", anim=1.2,
          speed=1.1, intonation=1.15),
     Unit("hayami", "【早見表】で、内訳を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    Unit("chips", "あなたは明細、見る派?", anim=1.4, pad=0.15,  # E7+N1
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ(→冒頭「83万円。」に接続)
+    Unit("loop_back", "見ると最初に目が行くのが、これなのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

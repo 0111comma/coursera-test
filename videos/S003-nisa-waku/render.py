@@ -162,7 +162,7 @@ def scene_hayami(fig, t):
 
 
 def scene_chips(fig, t):
-    fig.text(0.5, 0.76, "あなたの年数は?", ha="center", color=INK, fontsize=52,
+    fig.text(0.5, 0.76, "あなたなら何年コース?", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=3))
     chips = ["15年以内", "30年", "50年", "それ以上"]
     for i, c in enumerate(chips):
@@ -180,6 +180,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_en(fig, t):
+    # H5: 財布事情の自虐(知識の自虐は禁止)。360万の直後(H3)
+    fig.text(0.5, 0.90, "年360万円…", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "縁のない金額", ha="center", va="center", color=INK,
+             fontsize=52 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
+    fig.text(0.5, 0.51, "(ボクの財布の話なのだ)", ha="center", va="center",
+             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, "2026年8月時点の制度")
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の50年でループ(→「50年。」)
+    _hero3(fig, "50年", "月3万円でNISAの枠がうまる年数", sub_alpha=clamp01(t * 2), size=132, sub_fs=34)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -195,7 +213,9 @@ SCENES = {
     "mukigen": scene_mukigen,
     "gimu": scene_gimu,
     "hayami": scene_hayami,
+    "en": scene_en,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ(S001/S002の視聴に依存しない)
@@ -216,14 +236,20 @@ UNITS = [
          speed=1.1, intonation=1.25, pause_scale=1.3),
     Unit("m10", "月10万円に増やしても、【15年】かかる。", anim=1.2, speed=1.2),
     Unit("mangaku", "満額の年間360万円でも、【5年】なのだ。", anim=1.2, speed=1.15),
+    # H5: 財布事情の自虐(360万の直後=H3の構造点)
+    Unit("en", "ボクには、縁のない金額なのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("amaru", "つまり枠は、【余るほど】大きいのだ。", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("mukigen", "しかも非課税は、【無期限】なのだ。", anim=1.0, speed=1.15),
     Unit("gimu", "枠を使い切る、義務はないのだ。", anim=1.0, pad=0.3,
          speed=1.1, intonation=1.15),
     Unit("hayami", "【早見表】で、自分の年数を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
+    Unit("chips", "あなたなら、何年コース?", anim=1.4, pad=0.15,  # E7: ループ点の手前+N1
          speed=1.15, intonation=1.15),
+# E5/E6: サゲ=マクラの回収(→冒頭「50年。」に接続)
+    Unit("loop_back", "で、月3万円なら何年かというと…", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.2, pause_scale=1.3),
 ]
 
 if __name__ == "__main__":

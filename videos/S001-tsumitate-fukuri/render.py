@@ -75,6 +75,25 @@ def scene_hero_loop(fig, t):
     draw_badge(fig, "利回りは仮定・元本保証なし")
 
 
+def scene_gaman(fig, t):
+    # H3/H5: 1233万の直後の本音(欲望の自虐)。数字を含む関連ユーモア(H1)
+    fig.text(0.5, 0.90, "ここだけの本音", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "月3千円で挫折しそう", ha="center", va="center", color=INK,
+             fontsize=44 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
+    fig.text(0.5, 0.51, "(ボクの意志力の問題なのだ)", ha="center", va="center",
+             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, "年利5%と仮定の計算")
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E6: ビジュアルループ(冒頭カバーと同構図の411万円)。2周目が答え合わせになる
+    _hero(fig, round(FV20_5), "月1万円 × 20年", sub_alpha=clamp01(t * 2))
+    draw_badge(fig, "年利5%と仮定の計算")
+
+
 # ---- 貯金箱 vs 投資(深掘り⑧: 前提を絵で明示する) ----
 
 def _duo_axes(fig):
@@ -398,9 +417,11 @@ SCENES = {
     "lever_no": scene_lever_no,
     "lever": scene_lever,
     "hero_loop": scene_hero_loop,
+    "gaman": scene_gaman,
     "coin": scene_coin,
     "table_big": scene_table_big,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # 深掘り⑧: 各文は「動画内で導入済みの情報+新情報1つ」だけで構成する(Given-New)
@@ -416,7 +437,7 @@ UNITS = [
          narration="でも世界中の株なら、プラス171万円。",
          speed=1.15, intonation=1.2),
     Unit("assume", "年5%で増えると【仮定】した計算なのだ。", anim=1.0, speed=1.15),
-    Unit("snowball", "差の正体は、利息が利息を生む【雪だるま】。", anim=2.4,
+    Unit("snowball", "正体は、利息が利息を生む【雪だるま】。", anim=2.4,
          speed=1.15, intonation=1.15),
     # クイズ(フリ→オチ)
     Unit("predict", "では10年目は、半分くらいと思うのだ?", anim=1.6,
@@ -424,23 +445,27 @@ UNITS = [
     Unit("reveal", "実際は、まだ【155万円】しかないのだ。", anim=1.8,
          puchun=True, se="impact", se_at=0.34,  # フリーズ演出: プチュン(暗転)→ドーン
          speed=1.1, intonation=1.2, pitch=-0.06, pause_scale=1.4),
-    Unit("accel", "そこから後半の10年で、【+256万円】。", anim=1.6,
-         narration="そこから後半の10年で、プラス256万円。",
+    Unit("accel", "後半の10年で、【+256万円】。", anim=1.6,
+         narration="後半の10年で、プラス256万円。",
          speed=1.25, intonation=1.3, pitch=0.0),
-    Unit("compare2", "もし年利3%でも、【328万円】になるのだ。", anim=1.4, speed=1.2),
-    # 橋渡し(ユーザーレビュー第2弾): 結果の比較→操作できる変数へのフレーム転換を言語化。
-    # 「何%になるかは選べない」= 不確実性の明示(コンプラ的にも仮定バッジを補強)
-    Unit("lever_no", "何%になるかは、【選べない】のだ。", anim=1.2,
-         speed=1.1, intonation=1.15, pitch=-0.04),
-    Unit("lever", "選べるのは、【毎月の金額】なのだ。", anim=1.2, pad=0.35,
+    # 橋渡し(ユーザーレビュー第2弾)を1文に圧縮(E3: 尾の圧縮): 不確実性の明示+操作変数への転換
+    Unit("lever", "利回りは選べない。選べるのは【金額】なのだ。", anim=1.2, pad=0.35,
          speed=1.15, intonation=1.2),
     Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don",
          narration="月3万円にすると…、1233万円なのだ。",
          speed=1.1, intonation=1.3, pitch=0.0, pause_scale=1.7),
-    Unit("coin", "月1万円は、1日たった【333円】。", anim=0.8, speed=1.2, intonation=1.15),
+    # H3+H5: 衝撃数字(1233万)直後の過剰リアクション+欲望の自虐(知識の自虐は禁止)
+    Unit("gaman", "ボクは月3千円で、挫折しそうなのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
+    # H4のフォロー(正情報への復帰)+B6の人間スケール換算を兼ねる
+    Unit("coin", "でも月1万円なら、1日【333円】。", anim=0.8, speed=1.2, intonation=1.15),
     Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 深掘り⑦: 即切りループ。読点=字幕2行化(⑫)
-         speed=1.15, intonation=1.15),
+    # E7: 質問はループ点の5〜8秒前+N1の2人称+視聴者の数字を聞く(㉖)
+    Unit("chips", "あなたなら、月いくらから始める?", anim=1.4, pad=0.15,
+         speed=1.15, intonation=1.2),
+    # E5/E6: ナラティブループ(→冒頭「411万円。」に接続)+ビジュアルループ(冒頭と同構図)
+    Unit("loop_back", "その20年後の答えが、これなのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

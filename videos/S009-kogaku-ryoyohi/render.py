@@ -279,6 +279,24 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_kakugo(fig, t):
+    # H1/H3: リベール直後の緩和(30万の覚悟が無駄になる=良い意味の期待違反)
+    fig.text(0.5, 0.90, "つまり…", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "30万円の覚悟が無駄", ha="center", va="center", color=INK,
+             fontsize=44 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
+    fig.text(0.5, 0.51, "(いちばん良い無駄なのだ)", ha="center", va="center",
+             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の9.3万円でループ(→「9万3千円。」)
+    scene_hero_full(fig, t)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
@@ -294,7 +312,9 @@ SCENES = {
     "hayami": scene_hayami,
     "taishogai": scene_taishogai,
     "maina": scene_maina,
+    "kakugo": scene_kakugo,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -311,15 +331,21 @@ UNITS = [
     Unit("ochi", "上限は、【9万2940円】なのだ。", anim=1.4,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("modoru", "上限を超えた分は、あとで【戻ってくる】のだ。", anim=1.6, speed=1.15),
+    Unit("modoru", "超えた分は、あとで【戻ってくる】のだ。", anim=1.6, speed=1.15),
+    # H1/H3: リベール直後の緩和
+    Unit("kakugo", "30万円の覚悟だけが、無駄になるのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("kaisei", "実は【今月】から、この上限が上がったのだ。", anim=1.2, se="don",
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("sengetsu", "先月までなら、【8万7430円】だったのだ。", anim=1.4, speed=1.15),
+    Unit("taishogai", "差額ベッド代と食事代は、【対象外】。", anim=1.4, speed=1.15),
+    Unit("maina", "マイナ保険証なら、窓口も【上限まで】なのだ。", anim=1.2, speed=1.15),
     Unit("hayami", "年収別の上限は、【早見表】で見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("taishogai", "差額ベッド代と食事代は、【対象外】なのだ。", anim=1.4, speed=1.15),
-    Unit("maina", "マイナ保険証なら、支払いも【上限まで】なのだ。", anim=1.2, speed=1.15),
-    Unit("chips", "この制度、知ってた?コメントで教えてなのだ。", anim=1.4, pad=0.15,  # 即切りループ
-         speed=1.15, intonation=1.15),
+    Unit("chips", "この制度、知ってた?", anim=1.4, pad=0.15,  # E7
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ(→冒頭「9万3千円。」に接続)
+    Unit("loop_back", "覚えるのは、この数字ひとつなのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

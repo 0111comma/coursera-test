@@ -315,9 +315,9 @@ def scene_hayami(fig, t):
 
 
 def scene_chips(fig, t):
-    fig.text(0.5, 0.76, "どっちで積立してる?", ha="center", color=INK, fontsize=52,
+    fig.text(0.5, 0.76, "NISA、もう使ってる?", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=3))
-    chips = ["NISA", "課税口座", "これから", "わからない"]
+    chips = ["使ってる", "課税口座のみ", "これから", "初めて知った"]
     for i, c in enumerate(chips):
         a = clamp01(t * 3.2 - i * 0.7)
         if a <= 0:
@@ -331,6 +331,26 @@ def scene_chips(fig, t):
              color=MUTED, fontsize=30, alpha=clamp01(t * 2 - 1.0))
     draw_badge(fig, "2026年8月時点の税制・制度")
     draw_footer_brand(fig, BRAND)
+
+
+def scene_kei(fig, t):
+    # H1/H3: 96万の直後の過剰リアクション(関連ユーモア: 金額の翻訳を兼ねる)
+    fig.text(0.5, 0.90, "96万円の大きさ", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "軽自動車ほぼ1台", ha="center", va="center", color=INK,
+             fontsize=48 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(48), fatten=2))
+    fig.text(0.5, 0.51, "が税金で消える計算", ha="center", va="center",
+             color=EMPH, fontsize=34, alpha=clamp01(t * 2 - 0.8),
+             path_effects=stroke_fx(EMPH, outline=outline_for(34), fatten=2))
+    draw_badge(fig, "利益は仮定・元本保証なし")
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の34万7千円でループ(→「34万7千円。」)
+    _hero2(fig, "34万7千円", "積立の利益から引かれる税金", sub_alpha=clamp01(t * 2))
+    draw_badge(fig, "利益は仮定・元本保証なし")
 
 
 SCENES = {
@@ -351,7 +371,9 @@ SCENES = {
     "tax96": scene_tax96,
     "waku": scene_waku,
     "hayami": scene_hayami,
+    "kei": scene_kei,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ(タイトル・S001視聴に依存しない)
@@ -363,29 +385,36 @@ UNITS = [
     Unit("stack_gain", "年5%仮定なら、利益は【171万円】。", anim=2.0, speed=1.15, intonation=1.15),
     Unit("stack_tax", "でも利益には、【約20%】の税金がかかる。", anim=1.8,
          speed=1.15, intonation=1.15, pitch=-0.04),
-    Unit("quiz", "171万の20%…【いくら】だと思うのだ?", anim=1.4,
+    Unit("quiz", "171万の20%…【いくら】だと思う?", anim=1.4,
          speed=1.15, intonation=1.25),
     Unit("answer", "答えは、【34万7千円】なのだ。", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.12, intonation=1.2, pitch=-0.06, pause_scale=1.25),
-    Unit("tedori", "手取りは、【136万円】なのだ。", anim=1.4,
+    Unit("tedori", "手取りは、【136万円】。", anim=1.4,
          speed=1.15, intonation=1.1, pitch=-0.06),
-    Unit("breakdown", "正確には、【20.315%】なのだ。", anim=2.0, speed=1.15, intonation=1.1),
+    Unit("breakdown", "正確には、【20.315%】。", anim=2.0, speed=1.15, intonation=1.1),
     Unit("nisa_zero", "でも【NISA】なら、税金ゼロ。", anim=1.8,
          narration="でもニーサなら、税金ゼロ。",  # エヌアイエスエー読み回避(kana照合済み)
          speed=1.15, intonation=1.25, pitch=0.0),
-    Unit("marugoto", "同じ利益でも、手取りは【171万円】。", anim=1.2, speed=1.15, intonation=1.2),
-    Unit("chishiki", "腕の差じゃなく、【知識の差】なのだ。", anim=1.2, pad=0.25,
-         speed=1.15, intonation=1.2),
+    Unit("marugoto", "同じ利益が、まるごと【手取り】に。", anim=1.2, speed=1.15, intonation=1.2),
+    # E2: エスカレーション(30年ケースの方が損失が大きい)をピークの前へ移動
     Unit("if472", "30年で、利益【472万円】なら?", anim=1.4, speed=1.2, intonation=1.25),
     Unit("tax96", "税金は、【約96万円】なのだ。", anim=1.2, se="don",
          speed=1.12, intonation=1.2, pitch=-0.04, pause_scale=1.2),
-    Unit("waku", "NISAの枠は、1人【1800万円】。", anim=1.2,
-         narration="ニーサの枠は、1人1800万円。",
-         speed=1.15, intonation=1.15),
+    # H1/H3: 衝撃数字の直後に過剰リアクション(金額の翻訳=関連ユーモア)
+    Unit("kei", "軽自動車ほぼ1台が、消えるのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
+    # ピーク(感情の頂点)を尾でなくここに(E1: 尺の70〜85%)
+    Unit("chishiki", "腕の差じゃなく、【知識の差】なのだ。", anim=1.2, pad=0.25,
+         speed=1.1, intonation=1.2, pitch=-0.04),
     Unit("hayami", "【早見表】で、税額を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    # E7: 質問はループ点の手前+N1(あなた)
+    Unit("chips", "あなたはもう、【NISA】使ってる?", anim=1.4, pad=0.15,
+         narration="あなたはもう、ニーサ使ってる?",
+         speed=1.15, intonation=1.2),
+    # E5/E6: ナラティブループ(→冒頭「34万7千円。」)
+    Unit("loop_back", "知らないままだと、この税金なのだ。", anim=0.8, pad=0.1,
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":

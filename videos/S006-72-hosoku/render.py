@@ -176,9 +176,9 @@ def scene_hayami(fig, t):
 
 
 def scene_chips(fig, t):
-    fig.text(0.5, 0.76, "この法則、知ってた?", ha="center", color=INK, fontsize=50,
+    fig.text(0.5, 0.76, "あなたは何年コース?", ha="center", color=INK, fontsize=50,
              path_effects=stroke_fx(INK, outline=outline_for(50), fatten=3))
-    chips = ["知ってた", "初めて知った", "使ってる", "今日覚えた"]
+    chips = ["10年コース", "24年コース", "72年コース", "360年仲間"]
     for i, c in enumerate(chips):
         a = clamp01(t * 3.2 - i * 0.7)
         if a <= 0:
@@ -192,6 +192,25 @@ def scene_chips(fig, t):
              color=MUTED, fontsize=30, alpha=clamp01(t * 2 - 1.0))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
+
+
+def scene_yokin02(fig, t):
+    # H5: 財布事情の自虐(0.2%の普通預金)。72÷0.2=360の実計算(H1: 関連ユーモア)
+    assert abs(72 / 0.2 - 360) < 1e-9
+    fig.text(0.5, 0.90, "ボクの普通預金(年0.2%)は", ha="center", color=INK_2, fontsize=32)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.62, "360年", ha="center", va="center", color=INK,
+             fontsize=76 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(76), fatten=3))
+    fig.text(0.5, 0.50, "72 ÷ 0.2 = 360(2倍になる年数)", ha="center", va="center",
+             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
+def scene_loop_back(fig, t):
+    # E5/E6: 冒頭と同構図の14年でループ(→「14年。」)
+    scene_hero_full(fig, t)
 
 
 SCENES = {
@@ -209,7 +228,9 @@ SCENES = {
     "gosa": scene_gosa,
     "inflation": scene_inflation,
     "hayami": scene_hayami,
+    "yokin02": scene_yokin02,
     "chips": scene_chips,
+    "loop_back": scene_loop_back,
 }
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
@@ -228,14 +249,21 @@ UNITS = [
     Unit("ans72", "答えは【72年】。人生ほぼ一周なのだ。", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.25, pause_scale=1.3),
+    # H5: 財布事情の自虐+エスカレーション(72年→360年)。0.2%は普通預金の例
+    Unit("yokin02", "ボクの預金だと、【360年】なのだ。", anim=1.2,
+         speed=1.1, intonation=1.3, pitch=0.02),
     Unit("r3", "年3%なら、【24年】。", anim=1.0, speed=1.15),
     Unit("r7", "年7%なら、【約10年】なのだ。", anim=1.0, speed=1.15),
     Unit("gosa", "この法則、誤差は【わずか】なのだ。", anim=1.4, speed=1.15),
     Unit("inflation", "逆に物価2%なら、36年で【価値半分】。", anim=1.4, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("hayami", "【早見表】で、年利別に見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "コメントで、教えてほしいのだ。", anim=1.4, pad=0.15,  # 即切りループ(⑦/⑭)
-         speed=1.15, intonation=1.15),
+    Unit("chips", "あなたのお金は、何年コース?", anim=1.4, pad=0.15,  # E7+N1
+         speed=1.15, intonation=1.2),
+    # E5/E6: サゲ(→冒頭「14年。」に接続)
+    Unit("loop_back", "たとえば年5%なら、こうなるのだ。", anim=0.8, pad=0.1,
+         narration="たとえば年率5%なら、こうなるのだ。",  # 年→トシ誤読回避(kana照合)
+         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":
