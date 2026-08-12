@@ -642,10 +642,12 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         if u.se:
             se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
 
-        def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0):
+        def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0,
+                 painter=None, with_subtitle: bool = True):
             fig = new_canvas()
-            scene_painters[u.scene](fig, t)
-            draw_subtitle(fig, u.subtitle, pop=pop)
+            (painter or scene_painters[u.scene])(fig, t)
+            if with_subtitle:
+                draw_subtitle(fig, u.subtitle, pop=pop)
             f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
             save_frame(fig, f)
             frames.append(f)
@@ -654,8 +656,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
 
         anim = min(u.anim, d_total)
         if u.cover:
-            # フィードの静止表示・サムネ用に完成形を一瞬先に見せる(ループ7)
-            cf = emit(1.0, 990, 0.07)
+            # フィードの静止表示・サムネ用(ループ7)。専用構図 <scene>__cover があれば
+            # 字幕なしのサムネ設計で描く(深掘り⑨)
+            cover_painter = scene_painters.get(f"{u.scene}__cover")
+            cf = emit(1.0, 990, 0.07, painter=cover_painter,
+                      with_subtitle=(cover_painter is None))
             thumbnail = cf
             anim = min(anim, d_total - 0.07)
         if anim > 0:

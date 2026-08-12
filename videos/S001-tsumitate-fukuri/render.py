@@ -364,8 +364,19 @@ def scene_chips(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_hero_count__cover(fig, t):
+    # 深掘り⑨: サムネ専用構図(字幕なし)。3〜5字のメイン+対比の一言で約束を伝える
+    fig.text(0.5, 0.795, "月1万円 × 20年", ha="center", va="center", color=INK_2,
+             fontsize=46, path_effects=stroke_fx(INK_2, outline=outline_for(46), fatten=1.5))
+    draw_glow_text(fig, 0.5, 0.615, "411万円", 132)
+    fig.text(0.5, 0.435, "貯金箱なら 240万円", ha="center", va="center", color=INK,
+             fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
+    draw_footer_brand(fig, BRAND)
+
+
 SCENES = {
     "hero_count": scene_hero_count,
+    "hero_count__cover": scene_hero_count__cover,
     "hero_full": scene_hero_full,
     "piggy": scene_piggy,
     "invest": scene_invest,
