@@ -144,9 +144,9 @@ def _stack_full(ax, tax_alpha=0.0, tax_label=None, net_label=None, dim_gain=Fals
     if tax_alpha > 0:  # 利益の上部=税の帯
         _seg(ax, PRINCIPAL_MAN + net, TAX_MAN, BASELINE, alpha=tax_alpha)
         if tax_label:
-            _seg_label(ax, PRINCIPAL_MAN + net + TAX_MAN / 2, tax_label, EMPH, fs=30)
+            _seg_label(ax, PRINCIPAL_MAN + net + TAX_MAN / 2, tax_label, EMPH, fs=28)
     if net_label:
-        _seg_label(ax, PRINCIPAL_MAN + net / 2, net_label, INK, fs=30)
+        _seg_label(ax, PRINCIPAL_MAN + net / 2, net_label, INK, fs=28)
 
 
 def scene_stack_tax(fig, t):
@@ -181,7 +181,7 @@ def scene_answer(fig, t):
 def scene_tedori(fig, t):
     ax = _stack_axes(fig)
     _stack_full(ax, tax_alpha=1.0, tax_label="税 -34万7千円",
-                net_label="手取りの利益 136万円" if t > 0.3 else None)
+                net_label="手取り 136万円" if t > 0.3 else None)  # 右端見切れ防止で短縮
     fig.text(0.5, 0.90, "手取りはこうなる", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "利益は仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
@@ -224,7 +224,7 @@ def _nisa_axes(fig):
     return ax
 
 
-def _nisa_bars(ax, t_nisa=1.0, dim_left=False, label_left=True):
+def _nisa_bars(ax, t_nisa=1.0, dim_left=False, label_left=True, nisa_label=True):
     net = GAIN_MAN - TAX_MAN
     la = 0.45 if dim_left else 1.0
     ax.bar([0], [net], width=0.5, color=GOLD, alpha=la)
@@ -234,7 +234,7 @@ def _nisa_bars(ax, t_nisa=1.0, dim_left=False, label_left=True):
     e = ease_in_out(clamp01(t_nisa))
     h = GAIN_MAN * e
     ax.bar([1], [h], width=0.5, color=GOLD)
-    if t_nisa > 0.2:
+    if nisa_label and t_nisa > 0.2:
         ax.text(1, h + 8, f"{round(h)}万円", ha="center", color=INK, fontsize=30)
 
 
@@ -248,9 +248,10 @@ def scene_nisa_zero(fig, t):
 
 def scene_marugoto(fig, t):
     ax = _nisa_axes(fig)
-    _nisa_bars(ax, t_nisa=1.0, dim_left=True)
+    _nisa_bars(ax, t_nisa=1.0, dim_left=True, nisa_label=False)
     a = clamp01(t * 2)
-    ax.text(1, GAIN_MAN + 26, "まるごと手取り", ha="center", color=EMPH, fontsize=28, alpha=a)
+    # y=GAIN+6: バッジ(下端y=0.810)の下に収める(+26だと重なって隠れる)
+    ax.text(1, GAIN_MAN + 6, "まるごと 171万円", ha="center", color=EMPH, fontsize=28, alpha=a)
     fig.text(0.5, 0.90, "同じ利益171万円でも", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "2026年8月時点の税制・制度")
     draw_footer_brand(fig, BRAND)
