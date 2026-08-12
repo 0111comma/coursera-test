@@ -121,8 +121,11 @@ def scene_quiz(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
-def _breakdown(fig, t, n_show, headline, recolor=False):
-    """内訳チャート: 名前(左)+比例バー+金額(右端固定=見切れなし)。1本ずつ開示"""
+def _breakdown(fig, t, n_show, headline, recolor=False, focal=None):
+    """内訳チャート: 名前(左)+比例バー+金額(右端固定=見切れなし)。1本ずつ開示。
+    focal: 金色にする行(省略時は最後に出た行。ナレーションの主題と揃えること)"""
+    if focal is None:
+        focal = n_show - 1
     fig.text(0.5, 0.90, headline, ha="center", color=INK_2, fontsize=34)
     for i, (name, v, social) in enumerate(ROWS[:n_show]):
         a = clamp01(t * 2.5) if i == n_show - 1 else 1.0
@@ -130,7 +133,7 @@ def _breakdown(fig, t, n_show, headline, recolor=False):
         if recolor:
             color = GOLD if social else MUTED_BAR
         else:
-            color = GOLD if i == n_show - 1 else MUTED_BAR
+            color = GOLD if i == focal else MUTED_BAR
         fig.text(0.34, y, name, ha="right", va="center", color=INK_2, fontsize=29, alpha=a)
         fig.add_artist(FancyBboxPatch(
             (0.37, y - 0.017), max(0.30 * (v / MAXV) * ease_out(a), 0.012), 0.034,
@@ -154,7 +157,8 @@ def scene_jumin(fig, t):
 
 
 def scene_shotoku(fig, t):
-    _breakdown(fig, clamp01(t * 1.4), 5, "83万円の中身")
+    # ナレーションの主題は所得税(i=3)なのでフォーカスもそこに(雇用ほかも同時開示)
+    _breakdown(fig, clamp01(t * 1.4), 5, "83万円の中身", focal=3)
 
 
 def scene_aha(fig, t):

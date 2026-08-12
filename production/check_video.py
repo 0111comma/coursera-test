@@ -75,7 +75,8 @@ def main(video_dir: Path) -> int:
     check("script.md 存在", bool(smd))
     check("VOICEVOXクレジット", "VOICEVOX:" in smd, "キャラ利用ガイドライン必須")
     check("#shorts タグ", "#shorts" in smd)
-    check("免責文", "投資助言ではありません" in smd)
+    # 投資系は「投資助言ではありません」、給与・制度系は「〜アドバイスではありません」等を許容
+    check("免責文", ("投資助言ではありません" in smd) or ("アドバイスではありません" in smd))
 
     # 4. 出力mp4の機械検証
     mp4 = video_dir / "output" / next((p.name for p in (video_dir / "output").glob("*.mp4")), "none.mp4")
