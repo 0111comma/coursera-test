@@ -730,9 +730,8 @@ def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0)
     from zunda import draw_zunda
     ax = fig.add_axes(CHARA_RECTS[pos])
     ax.axis("off")
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 13)
-    draw_zunda(ax, 5, 8 + dy, 10, mouth=mouth, eyes=eyes, expr=expr)
+    # dyは旧13スケール単位 → 表示範囲225pxに換算(呼吸0.1→1.7px、ジャンプ0.5→8.7px)
+    draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 225.0)
 
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,

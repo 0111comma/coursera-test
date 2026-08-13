@@ -1,4 +1,7 @@
-"""ずんだもん立ち絵エンジン(二次創作・ベクター描画)。
+"""ずんだもん立ち絵エンジン(VOICEVOX公式立ち絵+口パクパッチ合成)。
+
+立ち絵はVOICEVOX公式リソース(github.com/VOICEVOX/voicevox_resource)の公式イラスト
+(坂本アヒル様)。assets/zunda/README.md参照。
 
 権利: 東北ずん子・ずんだもんプロジェクトの二次創作ガイドライン準拠
 (個人チャンネルの広告収益は非商用の例外として許容。zunko.jp/guideline.html)。
@@ -32,101 +35,87 @@ EXPRESSIONS = ("normal", "surprised", "troubled", "happy", "smug")
 CHARA_FPS = 8  # 口パクの実効切替 ≤8Hz(アニメ3コマ@24fps相場と同等)
 
 
-def draw_zunda(ax, cx, cy, h, mouth=0, eyes="open", expr="normal"):
-    """立ち絵を描く。ax=専用オーバーレイaxes(aspect equal)。
-    cx,cy=頭の中心 / h=キャラ全体の高さ / mouth: 0閉・1半・2開 / eyes: open/closed
-    expr: normal/surprised/troubled/happy/smug
+# 公式立ち絵(VOICEVOX公式=坂本アヒル様。assets/zunda/README.md参照)
+ASSET_DIR = Path(__file__).resolve().parent / "assets" / "zunda"
+EXPR_FILES = {
+    "normal": "1.png",      # ノーマル
+    "surprised": "1.png",   # 驚きは通常顔+開口+驚き線+ジャンプで表現
+    "troubled": "76.png",   # ヘロヘロ(困り顔)
+    "happy": "22.png",      # セクシー(微笑)
+    "smug": "7.png",        # ツンツン(ジト目=ドヤ)
+}
+# 顔パーツのアンカー(portrait 255x500のピクセル座標。グリッド計測 2026-08-13)
+MOUTH = (118.5, 138.0)
+EYES = ((102.0, 127.5), (136.0, 126.5))
+SKIN = "#fdf4f0"
+MOUTH_DARK = "#8c3b30"
+MOUTH_TONGUE = "#e06a5a"
+LINE = "#7a4a42"
+# バストアップの表示範囲(portrait座標)
+VIEW = (40, 215, 55, 280)  # x0, x1, y0, y1
+
+_IMG_CACHE: dict[str, "np.ndarray"] = {}
+
+
+_SKIN_CACHE: dict[str, str] = {}
+
+
+def _img(expr: str):
+    fn = EXPR_FILES.get(expr, "1.png")
+    if fn not in _IMG_CACHE:
+        from PIL import Image
+        im = Image.open(ASSET_DIR / fn).convert("RGBA")
+        im = im.resize((im.width * 3, im.height * 3), Image.LANCZOS)  # 表示スケール向けに先行拡大
+        arr = np.asarray(im)
+        _IMG_CACHE[fn] = arr
+        # 口の直上(あご上部)の肌色をサンプリング → パッチが陰影に馴染む
+        mx, my = MOUTH
+        region = arr[int((my - 7) * 3):int((my - 4) * 3), int((mx - 5) * 3):int((mx + 5) * 3), :3]
+        med = np.median(region.reshape(-1, 3), axis=0).astype(int)
+        _SKIN_CACHE[fn] = "#{:02x}{:02x}{:02x}".format(*med)
+    return _IMG_CACHE[fn]
+
+
+def _skin(expr: str) -> str:
+    fn = EXPR_FILES.get(expr, "1.png")
+    _img(expr)
+    return _SKIN_CACHE[fn]
+
+
+def draw_zunda(ax, mouth=0, eyes="open", expr="normal", dy_px: float = 0.0):
+    """公式立ち絵のバストアップ+口パッチ合成。ax=専用オーバーレイaxes。
+    mouth: 0閉/1半/2開(口元のみ描き替え) / eyes: open/closed(まぶたパッチ)
+    dy_px: 呼吸・ジャンプの上下(portrait px)
     """
-    u = h / 10.0
-    head_r = 2.6 * u
-    # 体(チビキャラのバストアップ)
-    body_w, body_h = 3.4 * u, 3.0 * u
-    ax.add_patch(FancyBboxPatch((cx - body_w / 2, cy - head_r - body_h * 0.92), body_w, body_h,
-                                boxstyle="round,pad=0.02",
-                                facecolor=OUTFIT, edgecolor=EDAMAME, linewidth=2))
-    ax.add_patch(Polygon([(cx - 0.9 * u, cy - head_r - 0.1 * u), (cx + 0.9 * u, cy - head_r - 0.1 * u),
-                          (cx, cy - head_r - 1.1 * u)], closed=True,
-                         facecolor=EDAMAME, edgecolor=EDAMAME_DARK, linewidth=1.5))
-    # 髪(後ろ)→顔→前髪
-    ax.add_patch(Circle((cx, cy + 0.15 * u), head_r * 1.12, facecolor=HAIR_SHADE, edgecolor="none"))
-    ax.add_patch(Circle((cx, cy), head_r, facecolor=SKIN, edgecolor=SKIN_EDGE, linewidth=1.5))
-    n_bang = 7
-    bang_pts = [(cx - head_r * 1.05, cy + 0.3 * u)]
-    for i in range(n_bang + 1):
-        x = cx - head_r * 1.05 + (2 * head_r * 1.05) * i / n_bang
-        bang_pts.append((x, cy + (0.30 if i % 2 == 0 else 0.62) * head_r))
-    bang_pts.append((cx + head_r * 1.05, cy + 0.3 * u))
-    top = [(cx + head_r * 1.05, cy + 0.3 * u), (cx + head_r * 0.9, cy + head_r * 0.95),
-           (cx, cy + head_r * 1.18), (cx - head_r * 0.9, cy + head_r * 0.95),
-           (cx - head_r * 1.05, cy + 0.3 * u)]
-    ax.add_patch(Polygon(bang_pts + top[::-1], closed=True, facecolor=HAIR,
-                         edgecolor=HAIR_SHADE, linewidth=1.5))
-    # 枝豆ヘッドピース(傾けた莢+豆3粒)
-    pod_cx, pod_cy = cx + 0.3 * u, cy + head_r * 1.30
-    tr = mtrans.Affine2D().rotate_deg_around(pod_cx, pod_cy, -14) + ax.transData
-    ax.add_patch(Ellipse((pod_cx, pod_cy), 2.4 * u, 1.0 * u, facecolor=EDAMAME,
-                         edgecolor=EDAMAME_DARK, linewidth=2, transform=tr))
-    for dx in (-0.65, 0, 0.65):
-        ax.add_patch(Circle((pod_cx + dx * u, pod_cy + (0.16 if dx == 0 else 0.06) * u), 0.34 * u,
-                            facecolor="#8cc763", edgecolor=EDAMAME_DARK, linewidth=1.2, transform=tr))
-    # もみあげ
-    for sx in (-1, 1):
-        ax.add_patch(Polygon([(cx + sx * head_r * 0.98, cy + 0.2 * u), (cx + sx * head_r * 1.25, cy - 1.4 * u),
-                              (cx + sx * head_r * 0.72, cy - 0.4 * u)], closed=True,
-                             facecolor=HAIR, edgecolor=HAIR_SHADE, linewidth=1.2))
-    # 目
-    ey = cy + 0.1 * u
-    ex = head_r * 0.45
-    if eyes == "open":
-        we, he_ = 0.62 * u, (1.3 if expr == "surprised" else 1.05) * u
-        for sx in (-1, 1):
-            ax.add_patch(Ellipse((cx + sx * ex, ey), we, he_, facecolor=EYE, edgecolor=LINE, linewidth=1.2))
-            ax.add_patch(Ellipse((cx + sx * ex - 0.1 * u, ey + he_ * 0.22), we * 0.32, he_ * 0.3,
-                                 facecolor="#ffffff", edgecolor="none"))
-    else:
-        for sx in (-1, 1):
-            ax.add_patch(Arc((cx + sx * ex, ey), 0.7 * u, 0.5 * u, theta1=200, theta2=340,
-                             color=LINE, linewidth=2.2))
-    # 眉
-    for sx in (-1, 1):
-        if expr == "troubled":
-            ang = -18 * sx
-        elif expr == "surprised":
-            ang = 0
-        elif expr == "smug":
-            ang = 14 * sx
-        else:
-            ang = 6 * sx
-        bx = cx + sx * ex
-        dx = 0.3 * u * np.cos(np.radians(ang))
-        dy = 0.3 * u * np.sin(np.radians(ang))
-        yy = ey + 0.85 * u + (0.25 * u if expr == "surprised" else 0)
-        ax.plot([bx - dx, bx + dx], [yy - dy * sx, yy + dy * sx],
-                color=LINE, linewidth=2.2, solid_capstyle="round")
-    # ほっぺ
-    cheek_a = 0.85 if expr in ("happy", "smug") else 0.45
-    for sx in (-1, 1):
-        ax.add_patch(Ellipse((cx + sx * head_r * 0.62, cy - 0.5 * u), 0.7 * u, 0.42 * u,
-                             facecolor="#ffb0a0", edgecolor="none", alpha=cheek_a))
-    # 口(3枚: 閉/半/開)
-    my = cy - 0.85 * u
+    arr = _img(expr)
+    x0, x1, y0, y1 = VIEW
+    ax.imshow(arr, extent=[0, arr.shape[1] / 3, arr.shape[0] / 3, 0],
+              interpolation="bilinear", aspect="auto")
+    ax.set_xlim(x0, x1)
+    ax.set_ylim(y1 - dy_px, y0 - dy_px)  # yは下向き(origin upper相当)
+    ax.autoscale(False)
+    mx, my = MOUTH
+    # surprisedは常時開口を最低ラインに(驚き顔の代替)
+    if expr == "surprised" and mouth < 1:
+        mouth = 1
+    # 口パッチ: 元の口を肌色で覆ってから状態別の口を描く
+    ax.add_patch(Ellipse((mx, my - 0.5), 15, 11, facecolor=_skin(expr), edgecolor="none"))
     if mouth == 0:
+        # y軸反転座標系: theta25〜155が「にっこり(∪)」、200〜340が「への字」
         if expr == "troubled":
-            ax.add_patch(Arc((cx, my - 0.1 * u), 0.8 * u, 0.5 * u, theta1=20, theta2=160,
-                             color=LINE, linewidth=2.2))
+            ax.add_patch(Arc((mx, my), 7.5, 4.5, theta1=200, theta2=340, color=LINE, linewidth=1.6))
         else:
-            ax.add_patch(Arc((cx, my + 0.1 * u), 0.8 * u, 0.5 * u, theta1=200, theta2=340,
-                             color=LINE, linewidth=2.2))
+            ax.add_patch(Arc((mx, my - 1.0), 7.5, 4.5, theta1=25, theta2=155, color=LINE, linewidth=1.6))
     elif mouth == 1:
-        ax.add_patch(Ellipse((cx, my), 0.5 * u, 0.35 * u, facecolor="#8c3b30", edgecolor=LINE, linewidth=1.5))
+        ax.add_patch(Ellipse((mx, my), 5.5, 4.0, facecolor=MOUTH_DARK, edgecolor=LINE, linewidth=0.7))
     else:
-        ax.add_patch(Ellipse((cx, my), 0.75 * u, 0.75 * u, facecolor="#8c3b30", edgecolor=LINE, linewidth=1.5))
-        ax.add_patch(Ellipse((cx, my - 0.18 * u), 0.45 * u, 0.25 * u, facecolor="#e06a5a", edgecolor="none"))
+        ax.add_patch(Ellipse((mx, my), 8.0, 7.5, facecolor=MOUTH_DARK, edgecolor=LINE, linewidth=0.8))
+        ax.add_patch(Ellipse((mx, my + 1.8), 4.6, 2.6, facecolor=MOUTH_TONGUE, edgecolor="none"))
+    # まばたきは公式立ち絵モードでは行わない(まぶたパッチは絵の完全性を損なうため。㉙改)
     # 驚き線
     if expr == "surprised":
-        for dx, dy in [(-1.4, 1.5), (-1.7, 0.9), (-1.15, 1.05)]:
-            ax.plot([cx + dx * head_r * 0.8, cx + dx * head_r * 0.95],
-                    [cy + dy * u * 1.9, cy + dy * u * 2.25], color=LINE, linewidth=2)
+        for ddx, ddy in ((-30, -26), (-34, -18), (-26, -21)):
+            ax.plot([mx + ddx, mx + ddx - 5], [my + ddy, my + ddy - 6], color="#4a3b30", linewidth=1.6)
 
 
 def mouth_track(wav_path: Path, fps: int = CHARA_FPS) -> list[int]:
