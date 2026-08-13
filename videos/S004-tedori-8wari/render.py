@@ -220,7 +220,7 @@ def scene_hayami(fig, t):
         c = EMPH if name in ("合計", "手取り") else (MUTED if i < 5 else INK)
         fig.text(0.30, y, name, ha="center", color=MUTED if i < 5 else EMPH, fontsize=28)
         fig.text(0.64, y, v, ha="center", color=INK if i < 5 else EMPH, fontsize=28)
-    fig.text(0.46, 0.40, "2026年度・東京・独身・40歳未満の概算", ha="center",
+    fig.text(0.60, 0.40, "2026年度・東京・独身・40歳未満の概算", ha="center",
              color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)

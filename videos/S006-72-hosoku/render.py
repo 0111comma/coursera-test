@@ -169,7 +169,7 @@ def scene_hayami(fig, t):
         disp = f"{v:.0f}年" if v == int(v) else f"約{v:.1f}年"
         fig.text(0.30, yy, f"{r}%", ha="center", color=INK_2, fontsize=28)
         fig.text(0.64, yy, disp, ha="center", color=INK, fontsize=28)
-    fig.text(0.46, 0.385, "利回りは例。厳密値との誤差は4%未満(概要欄)", ha="center",
+    fig.text(0.60, 0.385, "利回りは例。厳密値との誤差は4%未満(概要欄)", ha="center",
              color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)

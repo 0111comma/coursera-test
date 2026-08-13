@@ -168,7 +168,7 @@ def scene_hayami(fig, t):
         yy = 0.66 - i * 0.07
         fig.text(0.30, yy, n, ha="center", color=INK_2, fontsize=28)
         fig.text(0.64, yy, v, ha="center", color=INK, fontsize=32)
-    fig.text(0.46, 0.44, "物価が年率2%で上がり続けた場合の例", ha="center",
+    fig.text(0.60, 0.44, "物価が年率2%で上がり続けた場合の例", ha="center",
              color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)

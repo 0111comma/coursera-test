@@ -239,7 +239,7 @@ def scene_hayami(fig, t):
         fig.text(0.28, yy, n, ha="center", color=INK_2 if focal else MUTED, fontsize=28)
         fig.text(0.67, yy, v, ha="center", color=INK, fontsize=29,
                  path_effects=stroke_fx(INK, outline=outline_for(29), fatten=1.5) if focal else None)
-    fig.text(0.46, 0.38, "「+1%」は医療費に応じた加算(概要欄参照)", ha="center",
+    fig.text(0.60, 0.38, "「+1%」は医療費に応じた加算(概要欄参照)", ha="center",
              color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)

@@ -721,8 +721,8 @@ def save_frame(fig, path: Path, facecolor: str = SURFACE):
 
 # 立ち絵のオーバーレイ位置(deep-loops ㉙: 字幕の上・セーフエリア内。字幕=最前面のZ順)
 CHARA_RECTS = {
-    "bl": [0.012, 0.245, 0.30, 0.22],
-    "br": [0.688, 0.245, 0.30, 0.22],
+    "bl": [0.000, 0.245, 0.342, 0.22],
+    "br": [0.658, 0.245, 0.342, 0.22],
 }
 
 
@@ -730,8 +730,8 @@ def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0)
     from zunda import draw_zunda
     ax = fig.add_axes(CHARA_RECTS[pos])
     ax.axis("off")
-    # dyは旧13スケール単位 → 表示範囲225pxに換算(呼吸0.1→1.7px、ジャンプ0.5→8.7px)
-    draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 225.0)
+    # dyは13スケール単位 → 素材915pxに換算(呼吸±0.10→7px、ジャンプ0.5→35px)
+    draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 915.0)
 
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
