@@ -762,6 +762,8 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     workdir.mkdir(parents=True, exist_ok=True)
     for old in workdir.glob("frame_*.png"):
         old.unlink()
+    for old in workdir.glob("seg_*.wav"):  # ユニット数が減った再レンダリングでの残留を防ぐ(㊲)
+        old.unlink()
 
     wavs, engine = synthesize(units, workdir, speaker=speaker)
 
