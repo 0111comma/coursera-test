@@ -58,10 +58,13 @@ SCENES = {
                      main_size=56),
     "balance": sc.card("それでも", "利益非課税は大きい", "(弱点も知った上で使うのだ)", BADGE, BRAND,
                        main_size=50),
-    "hayami": sc.hayami("損したときの違い", [
-        ("課税口座", "相殺OK・繰越3年"),
-        ("NISA口座", "どちらも不可"),
-    ], "利益への非課税はNISAだけの強み", BADGE, BRAND, focal=1),
+    "hayami": sc.hayami("NISAの損は、税金に使えない", [
+        ("相殺(課税口座)", "できる"),
+        ("繰越(課税口座)", "3年できる"),
+        ("相殺(NISA)", "できない"),
+        ("繰越(NISA)", "できない"),
+        ("損50万の税差", "10万1575円"),
+    ], "金融庁・国税庁No.1474(2026年8月時点)", BADGE, BRAND, focal=4),
     "chips": sc.chips("この弱点、知ってた?", ["知ってた", "初めて知った", "NISA使ってる", "これから調べる"], BADGE, BRAND),
     "loop_back": sc.hero("10万1575円", "「NISAの弱点」で消せなくなる税金(例)", BADGE, BRAND,
                          size=96, sub_fs=28),

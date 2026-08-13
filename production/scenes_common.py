@@ -8,6 +8,7 @@ from shortlib import (
     stroke_fx, outline_for, draw_badge, draw_footer_brand, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, MUTED_BAR, EMPH, GOLD, SERIES_1,
 )
+import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 
 
@@ -102,32 +103,39 @@ def reveal(main: str, sub: str, formula: str, badge: str, brand: str, size: int 
 
 def hayami(title: str, rows: list, note: str, badge: str, brand: str,
            col1: str = "", col2: str = "", focal: int | None = None):
-    """スクショ枠つき早見表。rows=[(名前, 値), ...] 最大5行。"""
+    """まとめ表(ループ㊱で再設計。調査36ソース)。rows=[(名前, 値), ...] 5行推奨。
+
+    - タイトルは名詞句でなく「結論を述べる文」(Assertion-Evidence法)
+    - 枠・「スクショ用」ラベルは廃止(非データインク/ベイト構文)。密度と出典で保存価値を作る
+    - 値は右揃え・太字・ラベルの約1.4倍(桁比較の定石)。強調はfocalの1セルのみ
+    - 行はナレーションに合わせ順に点灯(セグメント化原理)
+    - note には出典・時点(・仮定)を必ず入れる(スクショは単独で流通するため)
+    """
     def painter(fig, t):
-        fig.text(0.5, 0.88, title, ha="center", color=INK, fontsize=34,
-                 path_effects=stroke_fx(INK, outline=outline_for(34), fatten=2))
-        top = 0.80
-        h = 0.075 + 0.062 * len(rows) + (0.05 if note else 0.0) + 0.04
-        fig.patches.append(FancyBboxPatch(
-            (0.075, top - h), 0.77, h, boxstyle="round,pad=0.012",
-            transform=fig.transFigure, fill=False, edgecolor=INK_2,
-            linewidth=2.5, linestyle=(0, (6, 5))))
-        fig.text(0.095, top + 0.015, "スクショ用", ha="left", color=EMPH,
-                 fontsize=24, alpha=clamp01(t))
-        y = top - 0.045
-        if col1 or col2:
-            fig.text(0.30, y, col1, ha="center", color=MUTED, fontsize=27)
-            fig.text(0.66, y, col2, ha="center", color=MUTED, fontsize=27)
-            y -= 0.062
+        fig.text(0.5, 0.885, title, ha="center", color=INK, fontsize=40,
+                 path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
+        y0 = 0.795
+        dy = 0.066
+        xl, xr = 0.14, 0.86
         for i, (n, v) in enumerate(rows):
+            a = clamp01(t * 2.4 - i * 0.35)
+            if a <= 0:
+                continue
+            y = y0 - i * dy
             f = (focal == i)
-            fig.text(0.30, y, n, ha="center", color=INK_2 if f else MUTED, fontsize=27)
-            fig.text(0.66, y, v, ha="center", color=INK, fontsize=29,
-                     path_effects=stroke_fx(INK, outline=outline_for(29), fatten=1.5) if f else None)
-            y -= 0.062
+            fig.text(xl, y, n, ha="left", va="center", alpha=a,
+                     color=INK if f else INK_2, fontsize=29)
+            fig.text(xr, y, v, ha="right", va="center", alpha=a,
+                     color=EMPH if f else INK, fontsize=40,
+                     path_effects=stroke_fx(EMPH if f else INK,
+                                            outline=outline_for(40), fatten=2) if f else None)
+            if i < len(rows) - 1:
+                fig.add_artist(plt.Line2D([xl, xr], [y - dy / 2, y - dy / 2],
+                                          transform=fig.transFigure, color=MUTED,
+                                          linewidth=1, alpha=0.35 * a))
         if note:
-            fig.text(0.60, y + 0.01, note, ha="center", color=INK_2, fontsize=26)
-        draw_badge(fig, badge)
+            fig.text(0.5, y0 - len(rows) * dy - 0.005, note, ha="center",
+                     color=INK_2, fontsize=26, alpha=clamp01(t * 2.4 - len(rows) * 0.35))
         draw_footer_brand(fig, brand)
     return painter
 

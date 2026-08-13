@@ -37,6 +37,11 @@ def scene_rank(fig, t):
         fig.text(0.78, y, fee, ha="center", color=INK, alpha=a,
                  fontsize=34 if i == 2 else 28,
                  path_effects=stroke_fx(INK, outline=outline_for(34), fatten=2) if i == 2 else None)
+    a2 = sc.clamp01(t * 2.4 - 3 * 0.55)
+    fig.text(0.5, 0.72 - 3 * 0.105, "週1のコンビニATMだけで 年1万1440円", ha="center",
+             color=EMPH, fontsize=29, alpha=a2)
+    fig.text(0.5, 0.72 - 3 * 0.105 - 0.05, "大手銀行の公表手数料・2026年8月時点", ha="center",
+             color=INK_2, fontsize=26, alpha=a2)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 

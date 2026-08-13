@@ -60,11 +60,13 @@ SCENES = {
     "edamame": sc.card("ここだけの話", "ボクの老後、枝豆だけでは無理", "(1階だけの見込みなのだ)", BADGE, BRAND, main_size=40),
     "huufu": sc.hero("月23万7279円", "夫婦2人のモデル(会社員+専業)", BADGE, BRAND, size=88),
     "teikibin": sc.card("自分の見込み額は", "ねんきん定期便", "(毎年誕生月に届くハガキ)", BADGE, BRAND, main_size=52),
-    "hayami": sc.hayami("年金の月額(2026年度)", [
+    "hayami": sc.hayami("年金の月額は、働き方で倍違う", [
         ("国民年金だけ", "7万608円"),
         ("会社員の平均", "約14万7千円"),
         ("夫婦モデル", "23万7279円"),
-    ], "平均は令和5年度の実績統計", BADGE, BRAND, focal=0),
+        ("毎月の保険料", "17,920円"),
+        ("満額の年額", "84万7296円"),
+    ], "厚労省・日本年金機構(2026年8月時点)", BADGE, BRAND, focal=0),
     "chips": sc.chips("あなたは何階建て?", ["1階だけ", "2階建て", "iDeCoで3階", "わからない"], BADGE, BRAND),
     "loop_back": sc.hero("月7万608円", "国民年金(満額)の1ヶ月分", BADGE, BRAND, size=100),
 }
@@ -88,7 +90,7 @@ UNITS = [
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("huufu", "夫婦のモデルなら、月23万7279円。", anim=1.0, se="don", speed=1.15),
     Unit("teikibin", "自分の見込みは、【ねんきん定期便】で見る。", anim=1.2, speed=1.15),
-    Unit("hayami", "3つの数字を、【早見表】にしたのだ。", anim=0.8, se="pop", speed=1.2),
+    Unit("hayami", "大事な数字を、【早見表】にしたのだ。", anim=0.8, se="pop", speed=1.2),
     Unit("chips", "あなたの年金は、何階建て?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "そして1階だけの満額が、これなのだ。", anim=0.8, pad=0.1, face="smug",
