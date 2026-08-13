@@ -22,6 +22,7 @@ MODEL_HUFU = 237_279
 HEIKIN = 147_000
 assert KOKUMIN_M * 12 == 847_296 and 96_063 + KOKUMIN_M * 2 == MODEL_HUFU, "verify.pyと不一致"
 assert HEIKIN - KOKUMIN_M == 76_392, "verify.pyと不一致"
+assert 17_920 * 12 == 215_040, "verify.pyと不一致"  # 保険料(2026年度)月額×12
 
 
 def scene_nikai(fig, t):
@@ -49,7 +50,7 @@ SCENES = {
     "hero_count__cover": sc.cover("国民年金だけの場合", "月7万608円", "会社員との差は?",
                                   "2026年度の満額・厚労省", BRAND, main_size=104),
     "hero_full": sc.hero("月7万608円", "国民年金(満額)の1ヶ月分", BADGE, BRAND, size=100),
-    "genjitsu": sc.card("40年払いつづけて", "満額でこの金額", "(未納があるとさらに減る)", BADGE, BRAND, main_size=48),
+    "genjitsu": sc.card("毎月の保険料", "17,920円 × 40年", "(2026年度の保険料。未納があると減る)", BADGE, BRAND, main_size=48),
     "nen85": sc.hero("年85万円", "70,608円 × 12ヶ月 = 847,296円", BADGE, BRAND, size=100),
     "quiz": sc.quiz("クイズ", "会社員がもらう年金は", "平均でいくら?", "(厚生年金+国民年金)", BADGE, BRAND),
     "kaisha": sc.reveal("月14万7千円", "厚生年金をもらう人の平均", "厚労省の実績統計(基礎年金込み)", BADGE, BRAND, size=92),
@@ -72,7 +73,7 @@ UNITS = [
     Unit("hero_count", "【7万608円】。", anim=1.2, cover=True, se="pop", face="surprised",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "65歳からもらう、国民年金の満額。", anim=0.8, speed=1.2),
-    Unit("genjitsu", "40年まじめに払って、この金額なのだ。", anim=1.2, speed=1.1,
+    Unit("genjitsu", "保険料は月1万8千円。40年でこの額なのだ。", anim=1.2, speed=1.1,
          face="troubled", intonation=1.15, pitch=-0.04),
     Unit("nen85", "1年分でも、約85万円なのだ。", anim=1.0, speed=1.15),
     Unit("quiz", "では会社員の年金は、いくらだと思う?", anim=1.4, face="troubled",

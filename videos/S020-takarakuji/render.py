@@ -78,7 +78,7 @@ UNITS = [
     Unit("kotae", "答えは約【75%】。宝くじの1.6倍なのだ。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("horitsu", "宝くじは法律で、5割以下と決まってるのだ。", anim=1.2, se="don", speed=1.15),
+    Unit("horitsu", "宝くじの戻りは、法律で5割以下なのだ。", anim=1.2, se="don", speed=1.15),
     Unit("yume", "つまり夢の値段は、【5350円】なのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("sutansu", "買うなとは言わない。夢は自由なのだ。", anim=1.2, face="happy",

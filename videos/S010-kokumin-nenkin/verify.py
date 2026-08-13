@@ -5,6 +5,7 @@ KOKUMIN_M = 70_608          # 国民年金(老齢基礎)満額 月額・2026年�
 MODEL_HUFU = 237_279        # 厚生年金モデル(夫婦2人)月額・2026年度
 HOSHU_HIREI = 96_063        # 同モデルの報酬比例部分
 HEIKIN_TANSHIN = 147_000    # 厚生年金受給者の平均月額(基礎込み・令和5年度概況の丸め)
+HOKENRYO = 17_920           # 国民年金保険料 月額・2026年度(日本年金機構)
 
 
 def main():
@@ -15,6 +16,8 @@ def main():
     diff = HEIKIN_TANSHIN - KOKUMIN_M
     assert diff == 76_392, diff                       # 差 約7万6千円
     assert round(diff / 1000) == 76
+    assert HOKENRYO * 12 == 215_040               # 保険料 年約21.5万円
+    assert round(HOKENRYO / 1000) == 18           # 「月1万8千円」表現の根拠
     print("S010 verify: ALL OK")
     print(f"  国民年金満額: 月{KOKUMIN_M:,}円 = 年{year:,}円")
     print(f"  会社員平均(参考): 月{HEIKIN_TANSHIN:,}円 (差 {diff:,}円)")

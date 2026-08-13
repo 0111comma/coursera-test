@@ -83,7 +83,7 @@ UNITS = [
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("course", "コースべつの差が、これなのだ。", anim=1.8, speed=1.2),
     Unit("heikin", "数字は塾代込みの平均。家庭差は大きいのだ。", anim=1.2, speed=1.15),
-    Unit("teate", "でも児童手当で、最安の約28%は戻るのだ。", anim=1.2, se="don", speed=1.1,
+    Unit("teate", "でも児童手当で、28%はまかなえるのだ。", anim=1.2, se="don", speed=1.1,
          intonation=1.15),
     Unit("kansha", "…この金額、親に感謝しかないのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.3, pitch=0.02),
