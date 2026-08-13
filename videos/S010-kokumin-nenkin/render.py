@@ -23,13 +23,14 @@ import scenes_common as sc
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 BRAND = "数字で見るお金の教科書"
-BADGE = "2026年度の金額・平均は実績統計"
+BADGE = "2026年度・厚労省のモデル年金で比較"
 
 KOKUMIN_M = 70_608
-HEIKIN = 147_000
+HOSHU_HIREI = 96_063
+MODEL_KAISHAIN = 166_671
 HOKENRYO = 17_920
 assert KOKUMIN_M * 12 == 847_296, "verify.pyと不一致"
-assert HEIKIN - KOKUMIN_M == 76_392, "verify.pyと不一致"
+assert KOKUMIN_M + HOSHU_HIREI == MODEL_KAISHAIN, "verify.pyと不一致"
 assert HOKENRYO * 12 == 215_040, "verify.pyと不一致"
 
 
@@ -78,19 +79,19 @@ def scene_2kai(fig, t):
 
 
 def scene_sa(fig, t):
-    """固有シーン: 差は必ず2つの元の数字を並べて見せる(片方が記憶から落ちるのを防ぐ)。"""
+    """固有シーン: 比較は同じ物差し(モデル年金)同士。差=そのまま2階の分になる。"""
     a1 = sc.clamp01(t * 2.2)
     a2 = sc.clamp01(t * 2.2 - 0.7)
     a3 = sc.clamp01(t * 2.2 - 1.4)
-    fig.text(0.5, 0.90, "同じ65歳でも", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.90, "同じ条件で、くらべると", ha="center", color=INK_2, fontsize=34)
     fig.text(0.27, 0.72, "国民年金だけ", ha="center", color=INK_2, fontsize=28, alpha=a1)
-    fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=38, alpha=a1)
-    fig.text(0.73, 0.72, "会社員の平均", ha="center", color=INK_2, fontsize=28, alpha=a2)
-    fig.text(0.73, 0.645, "月14万7千円", ha="center", color=INK, fontsize=38, alpha=a2)
-    fig.text(0.5, 0.50, "差 月7万6千円", ha="center", color=EMPH, fontsize=52, alpha=a3,
+    fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=36, alpha=a1)
+    fig.text(0.73, 0.72, "会社員のモデル", ha="center", color=INK_2, fontsize=28, alpha=a2)
+    fig.text(0.73, 0.645, "月16万6671円", ha="center", color=INK, fontsize=36, alpha=a2)
+    fig.text(0.5, 0.50, "差 = 2階の分", ha="center", color=EMPH, fontsize=52, alpha=a3,
              path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2.5))
-    fig.text(0.5, 0.415, "(40年払い切った人と、厚生年金をもらう人の平均)",
-             ha="center", color=INK_2, fontsize=25, alpha=a3)
+    fig.text(0.5, 0.415, "(どちらも40年働いた場合の厚労省モデル)",
+             ha="center", color=INK_2, fontsize=26, alpha=a3)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -107,11 +108,11 @@ SCENES = {
                        main_size=52),
     "quiz": sc.quiz("クイズ", "会社で働く人は", "いくらもらえる?", "(同じ65歳で比べる)", BADGE, BRAND),
     "kousei": scene_2kai,
-    "heikin": sc.reveal("月14万7千円", "国民年金+厚生年金の合計", "厚生年金をもらう人の平均(基礎年金込み)", BADGE, BRAND,
-                        size=92),
+    "heikin": sc.reveal("月9万6063円", "会社員に上乗せされる厚生年金(モデル)", "平均的な収入で40年働いた場合", BADGE, BRAND,
+                        size=96),
     "sa": scene_sa,
-    "ikkai": sc.card("自営業でいる間は", "厚生年金が乗らない", "(会社員だった期間があれば、その分は乗る)", BADGE, BRAND,
-                     main_size=50, ask="あなたは今、どっちで働いてる?"),
+    "ikkai": sc.card("会社員だった期間は", "その分が、ちゃんと乗る", "(自営業でいる間は、乗らない)", BADGE, BRAND,
+                     main_size=46, ask="あなたは今、どっちで働いてる?"),
     "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
     "chips": sc.chips("あなたは今、どっちで働いてる?",
@@ -130,12 +131,12 @@ UNITS = [
          speed=1.15, intonation=1.2, pause_scale=1.3),
     Unit("kousei", "会社員は、その上に【厚生年金】が乗るのだ。", anim=1.6,
          speed=1.1, intonation=1.15),
-    Unit("ikkai", "自営業でいる間は、厚生年金が乗らないのだ。", anim=1.2, face="troubled",
-         speed=1.1, intonation=1.15, pitch=-0.04),
-    Unit("heikin", "その合計が、平均で月【14万7千円】なのだ。", anim=1.4, face="surprised",
+    Unit("ikkai", "会社員だった期間は、その分が乗るのだ。", anim=1.2, face="happy",
+         speed=1.1, intonation=1.15),
+    Unit("heikin", "モデルだと上乗せは、月【9万6063円】。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("sa", "国民年金だけの人と、月7万6千円もの差。", anim=1.6, se="don", speed=1.15),
+    Unit("sa", "合計で月16万6671円。差が2階の分なのだ。", anim=1.6, se="don", speed=1.15),
     Unit("teikibin", "自分の額は、【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
     Unit("chips", "あなたは今、どっちで働いてるのだ?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
