@@ -64,6 +64,18 @@ def main(video_dir: Path) -> int:
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
     check("仮定バッジの描画", "draw_badge" in src, "利回り等の仮定明示")
+
+    # P系(ループ㊳: ユーザーレビュー第7弾)。前置き・生活翻訳・情景ユーモア・中盤の問い
+    cover_m = re.search(r'"[\w]+__cover":\s*sc\.cover\(\s*"([^"]*)"', src)
+    lead_m = re.search(r'lead="([^"]*)"', src)
+    cover_top = cover_m.group(1) if cover_m else ""
+    check("D23 前置き(1フレーム目に問い)", "?" in cover_top or (lead_m and "?" in lead_m.group(1)),
+          f"cover上段='{cover_top}'。P1: 数字だけのカバーにしない")
+    # 締めの4択より前に、二人称の問いが1つ以上あるか(P4: 中盤で自分ごと化させる)
+    mid = src.split("sc.chips")[0]
+    mid_q = re.findall(r'"[^"]*あなた[^"]*[??][^"]*"', mid)
+    check("D26 中盤の問い(二人称・締めより前)", bool(mid_q),
+          "" if mid_q else "P4: 締めの質問と同趣旨の問いを中盤の図解にも重ねる")
     # 運用利回りの仮定に基づく数字を扱う動画は、動画内に元本リスクの打消し表示が必要(ループ⑫)。
     # 物価上昇率など運用リターン以外の仮定や、事実のみの動画は対象外
     if "draw_badge" in src and re.search(r"(年\d|年利|利回り|リターン|運用).{0,10}仮定", src):

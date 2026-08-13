@@ -30,6 +30,8 @@ def scene_nikai(fig, t):
     a1 = sc.clamp01(t * 1.8)
     a2 = sc.clamp01(t * 1.8 - 0.6)
     fig.text(0.5, 0.90, "会社員の年金は2階建て", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.845, "あなたは、どっちの階に住む?", ha="center", color=EMPH, fontsize=32,
+             alpha=sc.clamp01(t * 1.6 - 0.6))
     fig.patches.append(FancyBboxPatch((0.22, 0.46), 0.56, 0.10, boxstyle="round,pad=0.008",
                                       transform=fig.transFigure, facecolor=MUTED_BAR,
                                       edgecolor="none", alpha=a1))
@@ -46,18 +48,20 @@ def scene_nikai(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(70608, "{:,}円", BADGE, BRAND, size=104),
-    "hero_count__cover": sc.cover("国民年金だけの場合", "月7万608円", "会社員との差は?",
+    "hero_count": sc.hero_count(70608, "{:,}円", BADGE, BRAND, size=104,
+                                lead="その老後、月7万円で足りる?"),
+    "hero_count__cover": sc.cover("その老後、月7万円で足りる?", "月7万608円", "国民年金だけの現実",
                                   "2026年度の満額・厚労省", BRAND, main_size=104),
     "hero_full": sc.hero("月7万608円", "国民年金(満額)の1ヶ月分", BADGE, BRAND, size=100),
     "genjitsu": sc.card("毎月の保険料", "17,920円 × 40年", "(2026年度の保険料。未納があると減る)", BADGE, BRAND, main_size=48),
-    "nen85": sc.hero("年85万円", "70,608円 × 12ヶ月 = 847,296円", BADGE, BRAND, size=100),
+    "seikatsu": sc.card("この額で暮らすと", "家賃を払うと、残り数万円", "(年間でも847,296円。ここから食費・光熱費)",
+                        BADGE, BRAND, main_size=44),
     "quiz": sc.quiz("クイズ", "会社員がもらう年金は", "平均でいくら?", "(厚生年金+国民年金)", BADGE, BRAND),
     "kaisha": sc.reveal("月14万7千円", "厚生年金をもらう人の平均", "厚労省の実績統計(基礎年金込み)", BADGE, BRAND, size=92),
     "sa": sc.card("同じ65歳でも", "差は月7万6千円", "(147,000 − 70,608 = 76,392円)", BADGE, BRAND, main_size=52),
     "nikai": scene_nikai,
     "ikkai": sc.card("フリーランス・自営業は", "1階だけ", "(国民年金のみ。2階は自分で作る)", BADGE, BRAND, main_size=56),
-    "edamame": sc.card("ここだけの話", "ボクの老後、枝豆だけでは無理", "(1階だけの見込みなのだ)", BADGE, BRAND, main_size=40),
+    "edamame": sc.card("ここだけの話", "毎日、塩ゆで枝豆をかじる老後", "(それだけは避けたいのだ…)", BADGE, BRAND, main_size=40),
     "huufu": sc.hero("月23万7279円", "夫婦2人のモデル(会社員+専業)", BADGE, BRAND, size=88),
     "teikibin": sc.card("自分の見込み額は", "ねんきん定期便", "(毎年誕生月に届くハガキ)", BADGE, BRAND, main_size=52),
     "chips": sc.chips("あなたは何階建て?", ["1階だけ", "2階建て", "iDeCoで3階", "わからない"], BADGE, BRAND),
@@ -70,7 +74,8 @@ UNITS = [
     Unit("hero_full", "65歳からもらう、国民年金の満額。", anim=0.8, speed=1.2),
     Unit("genjitsu", "保険料は月1万8千円。40年でこの額なのだ。", anim=1.2, speed=1.1,
          face="troubled", intonation=1.15, pitch=-0.04),
-    Unit("nen85", "1年分でも、約85万円なのだ。", anim=1.0, speed=1.15),
+    Unit("seikatsu", "家賃を払ったら、残りは数万円なのだ。", anim=1.2, face="troubled",
+         speed=1.1, intonation=1.2, pitch=-0.04),
     Unit("quiz", "では会社員の年金は、いくらだと思う?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
     Unit("kaisha", "平均で、月【14万7千円】なのだ。", anim=1.4, face="surprised",
@@ -79,7 +84,7 @@ UNITS = [
     Unit("sa", "同じ65歳で、差は月7万6千円なのだ。", anim=1.2, speed=1.15),
     Unit("nikai", "会社員の年金は、【2階建て】だからなのだ。", anim=1.6, speed=1.1, intonation=1.15),
     Unit("ikkai", "フリーランスは、1階だけなのだ。", anim=1.2, face="troubled", speed=1.15),
-    Unit("edamame", "ボクの老後、枝豆だけでは無理そうなのだ。", anim=1.2, face="troubled",
+    Unit("edamame", "毎日枝豆をかじる老後は、無理なのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("huufu", "夫婦のモデルなら、月23万7279円。", anim=1.0, se="don", speed=1.15),
     Unit("teikibin", "自分の見込みは、【ねんきん定期便】で見る。", anim=1.2, speed=1.15),

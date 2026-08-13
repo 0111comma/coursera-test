@@ -52,13 +52,14 @@ def scene_waku(fig, t):
 
 SCENES = {
     "hero_zero": sc.hero("0円", "退職金2000万円にかかる所得税", BADGE, BRAND, size=128, sub_fs=30),
-    "hero_zero__cover": sc.cover("退職金2000万円", "税金0円", "そのカラクリは?",
+    "hero_zero__cover": sc.cover("その退職金、税金はいくら?", "税金0円", "そのカラクリは?",
                                  "勤続38年の例・国税庁", BRAND, main_size=118),
     "quiz": sc.quiz("クイズ", "2000万円もらって", "なぜ税金0円?", "(勤続38年の場合)", BADGE, BRAND),
     "kotae": sc.reveal("非課税の枠", "勤続38年なら2,060万円まで", "名前は「退職所得控除」", BADGE, BRAND, size=92),
     "waku": scene_waku,
     "shikumi": sc.card("枠の育ち方", "年40万 → 年70万", "(20年までは40万/年、超えたら70万/年)", BADGE, BRAND,
-                       main_size=50),
+                       main_size=50,
+                     ask="あなたの勤続だと、枠はいくら?"),
     "koeru": sc.card("枠を超えても", "超えた分の半分だけ", "(2500万なら220万にだけ課税)", BADGE, BRAND,
                      main_size=48),
     "ideco": sc.card("ただし注意", "iDeCoと近い受け取り", "(10年ルールで枠が減ることあり)", BADGE, BRAND,

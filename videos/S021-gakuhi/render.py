@@ -44,8 +44,9 @@ def scene_course(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(838, "{:,}万円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("子ども1人の学費", "838万円", "いちばん安いコースでも",
+    "hero_count": sc.hero_count(838, "{:,}万円", BADGE, BRAND, size=118,
+                                lead="その学費、安くていくら?"),
+    "hero_count__cover": sc.cover("その学費、いちばん安くていくら?", "838万円", "いちばん安いコースでも",
                                   "幼稚園〜大学・文科省", BRAND),
     "hero_full": sc.hero("約838万円", "学費の最安コース(幼稚園〜大学)", BADGE, BRAND,
                          size=104, sub_fs=30),
@@ -56,7 +57,8 @@ SCENES = {
                        size=96),
     "course": scene_course,
     "heikin": sc.card("ただし", "学習費は塾・習い事込み", "(平均の数字。家庭差が大きい)", BADGE, BRAND,
-                      main_size=46),
+                      main_size=46,
+                     ask="あなたの家は、どのコース?"),
     "teate": sc.card("朗報", "児童手当で約28%", "(総額234万円 ÷ 最安838万円)", BADGE, BRAND,
                      main_size=52),
     "kansha": sc.card("ここだけの話", "親に感謝しかない", "(この金額、払ってもらってたのだ)", BADGE, BRAND,

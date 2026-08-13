@@ -67,8 +67,9 @@ def scene_curve(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(694, "{:,}万円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("積立スタート25歳と35歳", "差694万円", "払った差は120万だけ",
+    "hero_count": sc.hero_count(694, "{:,}万円", BADGE, BRAND, size=118,
+                                lead="その10年、いくらの差になる?"),
+    "hero_count__cover": sc.cover("その10年、いくらの差になる?", "差694万円", "払った差は120万だけ",
                                   "月1万・65歳まで・年5%仮定", BRAND, main_size=104),
     "hero_full": sc.hero("約694万円", "スタート10年の差(65歳時点・年5%仮定)", BADGE, BRAND,
                          size=104, sub_fs=28),
@@ -82,7 +83,8 @@ SCENES = {
                        size=84),
     "curve": scene_curve,
     "riyu": sc.card("理由", "早い10年が一番長く増える", "(最初の積立ほど複利の時間が長い)", BADGE, BRAND,
-                    main_size=42),
+                    main_size=42,
+                     ask="あなたは、何歳スタート?"),
     "kasetsu": sc.card("大事な注意", "年5%は仮定", "(保証はなく、元本割れの年もある)", BADGE, BRAND,
                        main_size=56),
     "jigyaku": sc.card("ここだけの話", "10年前のボクに教えたい", "(過去には戻れないのだ)", BADGE, BRAND,

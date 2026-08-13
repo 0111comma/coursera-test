@@ -47,7 +47,7 @@ def scene_hamidashi(fig, t):
 SCENES = {
     "hero_full": sc.hero("1000万円", "銀行が潰れたとき守られる貯金のライン", BADGE, BRAND,
                          size=104, sub_fs=28),
-    "hero_full__cover": sc.cover("銀行が潰れたら?", "1000万円", "貯金が守られるライン",
+    "hero_full__cover": sc.cover("その貯金、銀行が潰れたら?", "1000万円", "貯金が守られるライン",
                                  "預金保険・実例つき", BRAND, main_size=112),
     "tsusetsu": sc.card("よくある不安", "「全部消える…?」", "(そうはならないのだ)", BADGE, BRAND,
                         main_color=MUTED_BAR, main_size=54),
@@ -59,7 +59,8 @@ SCENES = {
                         main_size=52),
     "hamidashi": scene_hamidashi,
     "kessai": sc.card("実は", "利息ゼロ口座なら全額", "(「決済用預金」は上限なしで保護)", BADGE, BRAND,
-                      main_size=50),
+                      main_size=50,
+                     ask="あなたの貯金は、上限の内側?"),
     "gaika": sc.card("ただし", "外貨預金は対象外", "(円の預金とはルールが別)", BADGE, BRAND,
                      main_size=54),
     "meyose": sc.card("もう1つ", "同じ銀行の口座は合算", "(支店を分けても1,000万は1,000万)", BADGE, BRAND,

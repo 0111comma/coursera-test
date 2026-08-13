@@ -51,14 +51,16 @@ def scene_timeline(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(234, "{:,}万円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("児童手当ぜんぶで", "234万円", "子ども1人あたりの総額",
+    "hero_count": sc.hero_count(234, "{:,}万円", BADGE, BRAND, size=118,
+                                lead="その手当、ぜんぶでいくら?"),
+    "hero_count__cover": sc.cover("その手当、ぜんぶでいくら?", "234万円", "子ども1人あたりの総額",
                                   "所得制限なし・こども家庭庁", BRAND),
     "hero_full": sc.hero("234万円", "児童手当の総額(子ども1人・18歳まで)", BADGE, BRAND,
                          size=112, sub_fs=28),
     "timeline": scene_timeline,
     "shotoku": sc.card("しかも今は", "所得制限なし", "(2024年10月から撤廃された)", BADGE, BRAND,
-                       main_size=56),
+                       main_size=56,
+                     ask="あなたの家は、いくらもらえる?"),
     "tanjobi": sc.card("実は", "誕生月で総額が変わる", "(支給は「18歳のあと最初の3月末」まで)", BADGE, BRAND,
                        main_size=46),
     "tanjobi2": sc.card("その差", "4月生まれ245万円", "(3月生まれ234万円。差11万円)", BADGE, BRAND,

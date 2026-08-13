@@ -37,8 +37,9 @@ def scene_jidai(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(178, "{:,}万円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("バイト・パートの税金", "178万円", "「103万の壁」はもう古い",
+    "hero_count": sc.hero_count(178, "{:,}万円", BADGE, BRAND, size=118,
+                                lead="その働き方、税金ゼロはいくらまで?"),
+    "hero_count__cover": sc.cover("その働き方、いくらまで税金ゼロ?", "178万円", "「103万の壁」はもう古い",
                                   "所得税のライン・2026年分", BRAND),
     "hero_full": sc.hero("178万円", "所得税がかかり始める年収(2026年分)", BADGE, BRAND, size=112, sub_fs=30),
     "tsusetsu": sc.card("多くの人はこう答える", "「103万円まで」", "…それ、2年前の常識なのだ", BADGE, BRAND,
@@ -46,7 +47,8 @@ SCENES = {
     "jidai": scene_jidai,
     "kaisei": sc.reveal("178万円", "2026年分はここまで所得税ゼロ", "基礎控除104万+給与の控除74万", BADGE, BRAND, size=104),
     "tokurei": sc.card("ただし注意", "2年間の特例込み", "(2026・2027年分。その後は縮小予定)", BADGE, BRAND, main_size=50),
-    "shaho": sc.card("もう1つ注意", "社会保険の壁は別", "(106万・130万は税金と別の仕組み)", BADGE, BRAND, main_size=50),
+    "shaho": sc.card("もう1つ注意", "社会保険の壁は別", "(106万・130万は税金と別の仕組み)", BADGE, BRAND, main_size=50,
+                     ask="あなたに関係あるのは、どの壁?"),
     "haishi": sc.card("さらに今年", "106万の壁は10月に廃止", "(週20時間の基準に一本化)", BADGE, BRAND, main_size=44),
     "oboe": sc.card("ここだけの話", "壁、動きすぎ", "(ボクは覚え直すたびに調べてるのだ)", BADGE, BRAND, main_size=56),
     "chips": sc.chips("この壁、知ってた?", ["知ってた", "103万だと思ってた", "自分に関係ある", "家族に教える"], BADGE, BRAND),

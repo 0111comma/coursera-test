@@ -60,8 +60,9 @@ def scene_zandaka(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(115_794, "{:,}円", BADGE, BRAND, size=96),
-    "hero_count__cover": sc.cover("10万円の買い物", "11万5794円", "リボ払いの本当の値段",
+    "hero_count": sc.hero_count(115_794, "{:,}円", BADGE, BRAND, size=96,
+                                lead="その買い物、本当はいくら?"),
+    "hero_count__cover": sc.cover("その買い物、本当はいくら?", "11万5794円", "リボ払いの本当の値段",
                                   "年率15%・月5千円の試算", BRAND, main_size=96),
     "hero_full": sc.hero("11万5794円", "10万円をリボ払いした場合の総額(試算)", BADGE, BRAND,
                          size=92, sub_fs=29),
@@ -71,7 +72,8 @@ SCENES = {
     "kotae": sc.reveal("2年(24ヶ月)", "手数料は15,794円", "10万円+15,794円=115,794円", BADGE, BRAND, size=88),
     "zandaka": scene_zandaka,
     "shikumi": sc.card("手数料の仕組み", "残高に年率15%", "(毎月、残高×1.25%が上乗せ)", BADGE, BRAND,
-                       main_size=52),
+                       main_size=52,
+                     ask="あなたの残高にも、毎月かかる?"),
     "ikkatsu": sc.card("ちなみに", "一括払いなら0円", "(手数料は「分けた期間」の値段)", BADGE, BRAND,
                        main_size=54),
     "niju": sc.card("20万円に増えると", "手数料 約7.9万円", "(78,997円・完済まで4年8ヶ月)", BADGE, BRAND,

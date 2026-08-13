@@ -39,8 +39,9 @@ def scene_kinri(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(4_000, "{:,}円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("100万円を1年預けた利息", "4,000円", "実は3年で400倍になった",
+    "hero_count": sc.hero_count(4_000, "{:,}円", BADGE, BRAND, size=118,
+                                lead="その100万円、1年でいくら?"),
+    "hero_count__cover": sc.cover("あなたの100万円、1年でいくら?", "4,000円", "実は3年で400倍になった",
                                   "金利0.40%・2026年8月", BRAND),
     "hero_full": sc.hero("4,000円", "100万円を1年預けたときの利息", BADGE, BRAND, size=112, sub_fs=30),
     "sukuna": sc.card("正直…", "「少なっ」と思った?", "(その感覚、もう古いかも)", BADGE, BRAND,
@@ -51,7 +52,8 @@ SCENES = {
                         size=118),
     "kinri": scene_kinri,
     "teiki": sc.card("定期預金(1年)なら", "年0.50%で5千円", "(同じ100万円でも預け方で差)", BADGE, BRAND,
-                     main_size=50),
+                     main_size=50,
+                     ask="あなたの預け方は、どっち?"),
     "zeikin": sc.card("ただし利息には", "税金が約2割", "(4,000円 → 手取り3,188円)", BADGE, BRAND,
                       main_size=54),
     "atm": sc.card("ここだけの話", "昔はATM1回=利息22年分", "(手数料220円 ÷ 年10円)", BADGE, BRAND,

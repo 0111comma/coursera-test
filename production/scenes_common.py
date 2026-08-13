@@ -16,12 +16,20 @@ def clamp01(x):
     return max(0.0, min(1.0, x))
 
 
-def hero_count(value: float, fmt: str, badge: str, brand: str, size: int = 112, decimals: int = 0):
-    """冒頭の数字カウントアップ。fmt例: "{:,.0f}万円" """
+def hero_count(value: float, fmt: str, badge: str, brand: str, size: int = 112, decimals: int = 0,
+               lead: str = ""):
+    """冒頭の数字カウントアップ。fmt例: "{:,.0f}万円"
+
+    lead: 数字の上に出す「前置き」= 視聴者の課題を自分ごと化する問い(ループ㊳・P1)。
+    音声のフックは数字のまま(結果フックが最強)、画面で「これはあなたの話」を同時に伝える。
+    """
     def painter(fig, t):
         appear = ease_out_back(clamp01(t * 3.4))
         scale = 0.25 + 0.75 * appear
         v = value * ease_out(clamp01(t * 1.15))
+        if lead:
+            fig.text(0.5, 0.775, lead, ha="center", va="center", color=INK, fontsize=42,
+                     path_effects=stroke_fx(INK, outline=outline_for(42), fatten=2))
         draw_glow_text(fig, 0.5, 0.62, fmt.format(round(v, decimals) if decimals else round(v)),
                        size * max(scale, 0.05))
         draw_badge(fig, badge)
@@ -53,10 +61,17 @@ def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: in
 
 def card(headline: str, main: str, sub: str, badge: str, brand: str,
          main_color=EMPH, main_size: int = 54, sub_color=INK_2, sub_fs: int = 30,
-         head_fs: int = 34):
-    """見出し+ポップインする主役語+補足の汎用カード。"""
+         head_fs: int = 34, ask: str = ""):
+    """見出し+ポップインする主役語+補足の汎用カード。
+
+    ask: 中盤に重ねる二人称の問い(P4)。締めの4択と同趣旨の問いを先出しし、
+    視聴者に「自分はどうだろう」と考えさせながら最後まで見せる。
+    """
     def painter(fig, t):
         fig.text(0.5, 0.90, headline, ha="center", color=INK_2, fontsize=head_fs)
+        if ask:
+            fig.text(0.5, 0.845, ask, ha="center", color=EMPH, fontsize=31,
+                     alpha=clamp01(t * 1.6 - 0.5))
         a = clamp01(t * 2)
         fig.text(0.5, 0.62, main, ha="center", va="center", color=main_color,
                  fontsize=main_size * max(ease_out_back(a), 0.05), alpha=a,

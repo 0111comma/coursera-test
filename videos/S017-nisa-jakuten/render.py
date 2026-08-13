@@ -38,8 +38,9 @@ def scene_genbun(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(101_575, "{:,}円", BADGE, BRAND, size=100),
-    "hero_count__cover": sc.cover("NISAの弱点", "10万1575円", "損しても取り戻せない税金",
+    "hero_count": sc.hero_count(101_575, "{:,}円", BADGE, BRAND, size=100,
+                                lead="その損、税金で取り戻せる?"),
+    "hero_count__cover": sc.cover("その損、税金で取り戻せる?", "10万1575円", "損しても取り戻せない税金",
                                   "損益通算の話・金融庁", BRAND, main_size=96),
     "hero_full": sc.hero("10万1575円", "「NISAの弱点」で消せなくなる税金(例)", BADGE, BRAND,
                          size=96, sub_fs=28),
@@ -53,7 +54,8 @@ SCENES = {
     "nisa": sc.card("NISAの損50万は", "利益と相殺できない", "(利益50万に税101,575円がそのまま)", BADGE, BRAND,
                     main_size=46),
     "kurikoshi": sc.card("さらに", "翌年への繰越もなし", "(課税口座なら3年繰り越せる)", BADGE, BRAND,
-                         main_size=50),
+                         main_size=50,
+                     ask="あなたはこの弱点、知ってた?"),
     "hachi": sc.card("ここだけの話", "泣きっ面に蜂", "(損した上に、税金でも使えないのだ)", BADGE, BRAND,
                      main_size=56),
     "balance": sc.card("それでも", "利益非課税は大きい", "(弱点も知った上で使うのだ)", BADGE, BRAND,

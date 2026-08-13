@@ -42,13 +42,15 @@ def scene_kangen(fig, t):
 
 
 SCENES = {
-    "hero_count": sc.hero_count(4_650, "{:,}円", BADGE, BRAND, size=118),
-    "hero_count__cover": sc.cover("宝くじ1万円分", "戻りは4,650円", "では競馬は何%戻る?",
+    "hero_count": sc.hero_count(4_650, "{:,}円", BADGE, BRAND, size=118,
+                                lead="その1万円、いくら戻る?"),
+    "hero_count__cover": sc.cover("その1万円、いくら戻ると思う?", "戻りは4,650円", "では競馬は何%戻る?",
                                   "還元率46.5%・総務省", BRAND, main_size=96),
     "hero_full": sc.hero("4,650円", "宝くじ1万円分の平均の戻り", BADGE, BRAND, size=112, sub_fs=30),
     "kangen": scene_kangen,
     "pct": sc.card("つまり還元率は", "46.5%", "(令和6年度の当せん金割合)", BADGE, BRAND,
-                   main_size=64),
+                   main_size=64,
+                     ask="あなたは、買う派?買わない派?"),
     "quiz": sc.quiz("クイズ", "では競馬は", "何%戻る?", "(公営競技の払戻率)", BADGE, BRAND),
     "kotae": sc.reveal("約75%", "宝くじの約1.6倍戻る", "(券種により約70〜80%)", BADGE, BRAND, size=118),
     "horitsu": sc.card("実は法律で", "当せん金は5割以下", "(当せん金付証票法で上限が決まってる)", BADGE, BRAND,

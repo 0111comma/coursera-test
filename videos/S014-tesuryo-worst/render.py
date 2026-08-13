@@ -21,8 +21,9 @@ assert 990 - 110 == 880, "verify.pyと不一致"
 
 
 SCENES = {
-    "hero_count": sc.hero_count(11_440, "{:,}円", BADGE, BRAND, size=112),
-    "hero_count__cover": sc.cover("気づかず払う手数料", "年1万1440円", "ワースト3を数えたら",
+    "hero_count": sc.hero_count(11_440, "{:,}円", BADGE, BRAND, size=112,
+                                lead="その手数料、1年でいくら?"),
+    "hero_count__cover": sc.cover("その手数料、1年でいくら?", "年1万1440円", "ワースト3を数えたら",
                                   "週1のコンビニATMの場合", BRAND, main_size=96),
     "hero_full": sc.hero("年1万1440円", "週1のコンビニATMだけで(220円×52回)", BADGE, BRAND,
                          size=96, sub_fs=28),
@@ -33,7 +34,8 @@ SCENES = {
     "w3b": sc.card("同じ振込でも", "アプリなら110円〜", "(窓口との差、最大880円)", BADGE, BRAND,
                    main_size=52),
     "w2": sc.card("2位: 時間外手数料", "夜のATMは110円〜", "(コンビニATMの夜間は330円)", BADGE, BRAND,
-                  main_size=50),
+                  main_size=50,
+                     ask="あなたは、どれを払ってる?"),
     "w1": sc.reveal("1回220円", "1位: コンビニATM(日中でも)", "時間外なら330円", BADGE, BRAND, size=104),
     "tsumi": sc.card("週1回使うと", "年1万1440円", "(220円 × 52週)", BADGE, BRAND, main_size=56),
     "kansan": sc.card("これ、金利0.4%なら", "預金286万円分の利息", "(2,860,000円 × 0.40% = 11,440円)", BADGE, BRAND,
