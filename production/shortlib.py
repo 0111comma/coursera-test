@@ -38,7 +38,7 @@ FIGSIZE = (W / DPI, H / DPI)
 # ---- デザイントークン ----
 # チャート配色は dataviz スキルの参照パレット(ダークモード、検証済み)
 SURFACE = "#1a1a19"      # 背景
-INK = "#ffffff"          # 主テキスト
+INK = "#f2f1e9"          # 主テキスト(純白→オフホワイト。純白×暗背景のハレーション対策。ループ㉞)
 INK_2 = "#c3c2b7"        # 副テキスト
 MUTED = "#898781"        # 軸ラベル等(テキスト用。背景と4:1を確保するため暗くしない)
 MUTED_BAR = "#67655f"    # グレーアウトした文脈バー用(ループ⑮: 金とのΔE 通常21/P型17を確保)
@@ -425,8 +425,12 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(narration)]
         for e in extra:
             cmd += ["-i", str(e)]
+        # ループ㉞: 最終ミックスにもloudnormを掛ける。ナレーション単体を-14に正規化しても
+        # 間(無音)とBGM/SEの合成で統合ラウドネスが-15.5〜-16に沈み、他チャンネルより
+        # 音が小さくなっていた(実測)。YouTubeは音量を上げる方向には正規化しない。
         cmd += ["-filter_complex",
-                ";".join(filters) + f";{mix_labels}amix=inputs={n_in}:duration=first:normalize=0",
+                ";".join(filters) + f";{mix_labels}amix=inputs={n_in}:duration=first:normalize=0"
+                ",loudnorm=I=-14:TP=-1.0:LRA=11",
                 str(mixed)]
         subprocess.run(cmd, check=True)
         audio_in = mixed
