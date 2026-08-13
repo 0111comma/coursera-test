@@ -730,8 +730,10 @@ def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0)
     from zunda import draw_zunda
     ax = fig.add_axes(CHARA_RECTS[pos])
     ax.axis("off")
-    # dyは13スケール単位 → 素材915pxに換算(呼吸±0.10→7px、ジャンプ0.5→35px)
-    draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 915.0)
+    # dyは13スケール単位 → 素材915pxに換算(呼吸±0.10→7px、ジャンプ0.5→35px)。
+    # 素材は左向きなので、左下配置では反転して画面内側(右)を向かせる(ミラー定石)
+    draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 915.0,
+               flip=(pos == "bl"))
 
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,

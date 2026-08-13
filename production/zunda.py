@@ -10,6 +10,7 @@ gen_zunda_parts.py が表情×口×目の状態別PNG(assets/zunda/parts/)を事
 目パチ=平均3.5秒±1.5秒・閉じ0.13秒(normalのみ。専用目の表情は常時)。
 表情は1本で2〜4種。呼吸=高さ1%弱のsin揺れ。Z順=グラフ→立ち絵→字幕(最前面)。
 """
+import wave
 from pathlib import Path
 
 import numpy as np
@@ -21,22 +22,27 @@ PARTS_DIR = Path(__file__).resolve().parent / "assets" / "zunda" / "parts"
 _IMG_CACHE: dict[str, "np.ndarray"] = {}
 
 
-def _img(expr: str, mouth: int, eyes: str):
-    """状態別PNG(uniform crop 800x915)。まばたき差分がない表情はopenにフォールバック。"""
+def _img(expr: str, mouth: int, eyes: str, flip: bool = False):
+    """状態別PNG(uniform crop 800x915)。まばたき差分がない表情はopenにフォールバック。
+    flip=True で左右反転(素材は左向き→画面内側=右を向かせる。㉙R1のミラー定石)。"""
     name = f"{expr}_{mouth}_{eyes}.png"
     if not (PARTS_DIR / name).exists():
         name = f"{expr}_{mouth}_open.png"
-    if name not in _IMG_CACHE:
+    key = name + ("|flip" if flip else "")
+    if key not in _IMG_CACHE:
         from PIL import Image
-        _IMG_CACHE[name] = np.asarray(Image.open(PARTS_DIR / name).convert("RGBA"))
-    return _IMG_CACHE[name]
+        arr = np.asarray(Image.open(PARTS_DIR / name).convert("RGBA"))
+        if flip:
+            arr = arr[:, ::-1].copy()
+        _IMG_CACHE[key] = arr
+    return _IMG_CACHE[key]
 
 
-def draw_zunda(ax, mouth=0, eyes="open", expr="normal", dy_px: float = 0.0):
+def draw_zunda(ax, mouth=0, eyes="open", expr="normal", dy_px: float = 0.0, flip: bool = False):
     """立ち絵を描く。ax=専用オーバーレイaxes(縦横比は呼び出し側のrectで合わせる)。
-    mouth: 0閉/1半/2開 / eyes: open/closed(まばたき) / dy_px: 呼吸・ジャンプの上下(素材px)
+    mouth: 0閉/1半/2開 / eyes: open/closed(まばたき) / dy_px: 上下 / flip: 左右反転
     """
-    arr = _img(expr, mouth, eyes)
+    arr = _img(expr, mouth, eyes, flip)
     h, w = arr.shape[:2]
     ax.imshow(arr, extent=[0, w, h, 0], interpolation="bilinear", aspect="auto")
     ax.set_xlim(0, w)

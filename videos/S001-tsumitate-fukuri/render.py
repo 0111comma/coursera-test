@@ -365,7 +365,7 @@ def scene_table_big(fig, t):
     ))
     fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
     _table(fig, 0.70)
-    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.60, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=INK_2, fontsize=28)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
