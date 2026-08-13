@@ -117,6 +117,8 @@ class Unit:
     se_at: float = 0.0       # ユニット頭からのSEオフセット秒(深掘り④: 着地に同期させる用)
     cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
     puchun: bool = False     # ユニット頭に「プチュン」を鳴らす(音だけのフリーズ演出。映像の暗転はしない)
+    face: str = "normal"     # 立ち絵の表情 normal/surprised/troubled/happy/smug(deep-loops ㉙: 1本で2〜4種)
+    chara: str = "bl"        # 立ち絵の位置 "bl"(左下)/"br"(右下)/"none"(そのユニットで非表示)
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -201,7 +203,30 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
 BGM_OVERRIDE = Path(__file__).resolve().parent / "assets" / "bgm.wav"
 
 
-def synth_bgm(duration: float, out_wav: Path, bpm: int = 86):
+BGM_VARIANTS = [
+    # (bpm, コード進行)。量産型対策(㉚): 動画ごとにローテーション
+    (86, [
+        [110.00, 164.81, 196.00, 261.63, 246.94],   # Am9
+        [87.31, 130.81, 174.61, 220.00, 196.00],    # Fmaj9
+        [130.81, 196.00, 293.66, 329.63, 246.94],   # Cadd9
+        [98.00, 146.83, 196.00, 246.94, 220.00],    # G9
+    ]),
+    (92, [
+        [146.83, 220.00, 261.63, 349.23, 329.63],   # Dm9 (D,A,C,F,E)
+        [116.54, 174.61, 233.08, 293.66, 261.63],   # Bbmaj9
+        [174.61, 261.63, 349.23, 440.00, 392.00],   # Fadd9
+        [130.81, 196.00, 261.63, 329.63, 293.66],   # C9
+    ]),
+    (80, [
+        [164.81, 246.94, 293.66, 392.00, 369.99],   # Em9 (E,B,D,G,F#)
+        [130.81, 196.00, 246.94, 329.63, 293.66],   # Cmaj9
+        [196.00, 293.66, 392.00, 493.88, 440.00],   # Gadd9
+        [146.83, 220.00, 293.66, 369.99, 329.63],   # D9
+    ]),
+]
+
+
+def synth_bgm(duration: float, out_wav: Path, variant: int = 0):
     """lo-fi風BGM(深掘り③で定石に準拠)。
 
     - 9th入りボイシング(Am9→Fmaj9→Cadd9→G9)
@@ -216,19 +241,13 @@ def synth_bgm(duration: float, out_wav: Path, bpm: int = 86):
                         "-i", str(BGM_OVERRIDE), "-t", f"{duration:.2f}",
                         "-ar", "44100", "-ac", "1", str(out_wav)], check=True)
         return
+    bpm, chords = BGM_VARIANTS[variant % len(BGM_VARIANTS)]
     sr = 44100
     n = int(sr * duration)
     t = np.arange(n) / sr
     beat = 60.0 / bpm
     bar = beat * 4
-    rng = np.random.default_rng(20260812)
-
-    chords = [
-        [110.00, 164.81, 196.00, 261.63, 246.94],   # Am9 (A,E,G,C,B)
-        [87.31, 130.81, 174.61, 220.00, 196.00],    # Fmaj9 (F,C,F,A,G)
-        [130.81, 196.00, 293.66, 329.63, 246.94],   # Cadd9
-        [98.00, 146.83, 196.00, 246.94, 220.00],    # G9 (G,D,G,B,A)
-    ]
+    rng = np.random.default_rng(20260812 + variant)
     audio = np.zeros(n)
     for bi in range(int(duration / bar) + 1):
         start = bi * bar
@@ -366,7 +385,7 @@ def pad_wav(src: Path, dst: Path, pad_sec: float):
 
 def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path],
              out_mp4: Path, workdir: Path, bgm: bool = True,
-             se_events: list[tuple[float, str]] | None = None):
+             se_events: list[tuple[float, str]] | None = None, bgm_variant: int = 0):
     """フレーム列+ナレーション(+BGM+SE)をmp4(1080x1920, 30fps)に結合する。"""
     alist = workdir / "audio.txt"
     alist.write_text("".join(f"file '{w.resolve()}'\n" for w in padded_wavs))
@@ -384,7 +403,7 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
     n_in = 1
     if bgm:
         bgm_wav = workdir / "bgm.wav"
-        synth_bgm(total + 0.5, bgm_wav)
+        synth_bgm(total + 0.5, bgm_wav, variant=bgm_variant)
         # 深掘り③: ダッキング(発話中はBGMが自動で下がる。動画ミックスの定石)
         filters.append("[0:a]asplit=2[nara][narb]")
         filters.append(
@@ -423,7 +442,7 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
          "-f", "concat", "-safe", "0", "-i", str(vlist),
          "-i", str(audio_in),
          "-vf", f"fps=30,scale={W}:{H}:flags=lanczos,format=yuv420p",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "17",  # 細字の圧縮にじみ対策(文字潰れ指摘)
+         "-c:v", "libx264", "-preset", "medium", "-crf", "15",  # 細字の圧縮にじみ対策(文字潰れ指摘第2弾: 17→15)
          "-c:a", "aac", "-b:a", "192k",
          "-movflags", "+faststart", "-shortest",
          str(out_mp4)],
@@ -700,13 +719,33 @@ def save_frame(fig, path: Path, facecolor: str = SURFACE):
     plt.close(fig)
 
 
+# 立ち絵のオーバーレイ位置(deep-loops ㉙: 字幕の上・セーフエリア内。字幕=最前面のZ順)
+CHARA_RECTS = {
+    "bl": [0.012, 0.245, 0.30, 0.22],
+    "br": [0.688, 0.245, 0.30, 0.22],
+}
+
+
+def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0):
+    from zunda import draw_zunda
+    ax = fig.add_axes(CHARA_RECTS[pos])
+    ax.axis("off")
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 13)
+    draw_zunda(ax, 5, 8 + dy, 10, mouth=mouth, eyes=eyes, expr=expr)
+
+
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
-                 speaker: int = DEFAULT_SPEAKER, bgm: bool = True) -> dict:
+                 speaker: int = DEFAULT_SPEAKER, bgm: bool = True,
+                 chara: bool = True, bgm_variant: int | None = None) -> dict:
     """ユニット列とシーン描画関数からmp4を作る。
 
     scene_painters: {scene名: painter(fig, t)}。tはユニット内アニメーションの進行度
     (0→1、静止ユニットでは常に1.0)。
+    chara=True でずんだもん立ち絵(口パク・目パチ・呼吸・表情)を合成(deep-loops ㉙)。
+    bgm_variant: BGMのローテーション(未指定は動画名から決定。量産型対策㉚)。
     """
+    from zunda import mouth_track, BlinkSchedule, breath_offset, CHARA_FPS
     setup_fonts()
     workdir = outdir / "work"
     workdir.mkdir(parents=True, exist_ok=True)
@@ -714,6 +753,12 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         old.unlink()
 
     wavs, engine = synthesize(units, workdir, speaker=speaker)
+
+    seed = sum(ord(c) for c in out_name)
+    if bgm_variant is None:
+        bgm_variant = seed % len(BGM_VARIANTS)
+    blink = BlinkSchedule(seed)
+    breath_phase = (seed % 7) * 0.9
 
     frames, durations, padded = [], [], []
     se_events: list[tuple[float, str]] = []
@@ -730,10 +775,29 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             # ユニット頭に「プチュン」(u.seはリベール側=se_atで少し後に鳴らせる)
             se_events.append((elapsed + (0.07 if u.cover else 0.0), "puchun"))
 
+        chara_on = chara and u.chara != "none"
+        mtrack = mouth_track(pw, CHARA_FPS) if chara_on else []
+
         def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0,
-                 painter=None, with_subtitle: bool = True):
+                 painter=None, with_subtitle: bool = True,
+                 t_unit: float = 0.0, static_chara: bool = False, no_chara: bool = False):
             fig = new_canvas()
             (painter or scene_painters[u.scene])(fig, t)
+            if chara_on and not no_chara:
+                tg = elapsed + t_unit
+                if static_chara:
+                    mouth = 0
+                else:
+                    mi = min(len(mtrack) - 1, max(0, int(t_unit * CHARA_FPS)))
+                    mouth = mtrack[mi] if mtrack else 0
+                dy = breath_offset(tg, 13, breath_phase)
+                # 強調ジャンプ(㉙R9: SE/驚きのユニット頭で1回。高さ約4%)
+                if not static_chara and (u.se in ("don", "impact") or u.face == "surprised"):
+                    bt = t_unit - (0.07 if u.cover else 0.0)
+                    if 0 <= bt < 0.35:
+                        dy += 0.5 * math.sin(math.pi * bt / 0.35)
+                draw_chara(fig, u.chara, mouth, blink.eyes(tg) if not static_chara else "open",
+                           u.face, dy)
             if with_subtitle:
                 draw_subtitle(fig, u.subtitle, pop=pop)
             f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
@@ -749,23 +813,37 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             # 字幕なしのサムネ設計で描く(深掘り⑨)
             cover_painter = scene_painters.get(f"{u.scene}__cover")
             cf = emit(1.0, 990, 0.07, painter=cover_painter,
-                      with_subtitle=(cover_painter is None))
+                      with_subtitle=(cover_painter is None), no_chara=True)
             thumbnail = cf
         anim = min(anim, d_total - head)
         if anim > 0:
             n = max(2, int(anim * u.fps))
             for k in range(n):
                 t = (k + 1) / n
-                emit(t, k, anim / n, pop=(1.06 if k == 0 else 1.0))
+                emit(t, k, anim / n, pop=(1.06 if k == 0 else 1.0),
+                     t_unit=head + anim * (k + 0.5) / n)
             hold = d_total - anim - head
             if hold > 0.01:
-                emit(1.0, n, hold)
+                if chara_on:
+                    m = max(1, int(round(hold * CHARA_FPS)))
+                    for j in range(m):
+                        emit(1.0, n + j, hold / m,
+                             t_unit=head + anim + hold * (j + 0.5) / m)
+                else:
+                    emit(1.0, n, hold)
         else:
-            emit(1.0, 0, d_total - head)
+            body = d_total - head
+            if chara_on:
+                m = max(1, int(round(body * CHARA_FPS)))
+                for j in range(m):
+                    emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
+            else:
+                emit(1.0, 0, body)
         elapsed += d_total
 
     out_mp4 = outdir / out_name
-    assemble(frames, durations, padded, out_mp4, workdir, bgm=bgm, se_events=se_events)
+    assemble(frames, durations, padded, out_mp4, workdir, bgm=bgm, se_events=se_events,
+             bgm_variant=bgm_variant)
     if thumbnail is not None:
         import shutil
         shutil.copy(thumbnail, outdir / "thumbnail.png")

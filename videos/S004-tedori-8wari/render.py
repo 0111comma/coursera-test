@@ -75,7 +75,7 @@ def scene_hero_count__cover(fig, t):
     fig.text(0.5, 0.435, "手取りは 約8割", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.88, "年収400万円・2026年度・東京・独身の概算", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -187,7 +187,7 @@ def scene_meisai(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5,
     ))
-    fig.text(0.5, 0.765, "給与明細", ha="center", va="center", color=MUTED, fontsize=26)
+    fig.text(0.5, 0.765, "給与明細", ha="center", va="center", color=INK_2, fontsize=28)
     rows = [("支給", "400万円", INK_2, 0.685), ("控除", "-83万円", EMPH, 0.60),
             ("差引(手取り)", "317万円", INK, 0.515)]
     for name, v, c, y in rows:
@@ -198,7 +198,7 @@ def scene_meisai(fig, t):
         (0.19, 0.575), 0.56, 0.052, boxstyle="round,pad=0.006",
         transform=fig.transFigure, fill=False, edgecolor=EMPH, linewidth=3, alpha=a))
     fig.text(0.5, 0.445, "← この欄に内訳が全部ある", ha="center", va="center",
-             color=EMPH, fontsize=24, alpha=clamp01(t * 2 - 0.9))
+             color=EMPH, fontsize=28, alpha=clamp01(t * 2 - 0.9))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -211,17 +211,17 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
     rows = [("厚生年金", "36万6千円"), ("健康保険", "19万7千円"), ("住民税", "17万7千円"),
             ("所得税", "6万6千円"), ("雇用保険+支援金", "約2万5千円"),
             ("合計", "約83万円"), ("手取り", "約317万円")]
     for i, (name, v) in enumerate(rows):
         y = 0.735 - i * 0.048
         c = EMPH if name in ("合計", "手取り") else (MUTED if i < 5 else INK)
-        fig.text(0.30, y, name, ha="center", color=MUTED if i < 5 else EMPH, fontsize=25)
-        fig.text(0.64, y, v, ha="center", color=INK if i < 5 else EMPH, fontsize=27)
+        fig.text(0.30, y, name, ha="center", color=MUTED if i < 5 else EMPH, fontsize=28)
+        fig.text(0.64, y, v, ha="center", color=INK if i < 5 else EMPH, fontsize=28)
     fig.text(0.46, 0.40, "2026年度・東京・独身・40歳未満の概算", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -253,7 +253,7 @@ def scene_sutete(fig, t):
              fontsize=48 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(48), fatten=2))
     fig.text(0.5, 0.51, "(過去のボクの話なのだ)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -285,32 +285,32 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【83万円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【83万円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "年収400万円から、引かれるお金。", anim=0.8, speed=1.2),
     Unit("tedori", "手取りは【317万円】、約8割なのだ。", anim=1.2, speed=1.15),
     Unit("bunkai", "引かれた83万円の、【中身】を見るのだ。", anim=1.2, speed=1.2),
-    Unit("quiz", "一番重いのは…【所得税】だと思うのだ?", anim=1.6,  # Q4/Q5: 高確信の誤答に張る
+    Unit("quiz", "一番重いのは…【所得税】だと思うのだ?", face="troubled", anim=1.6,  # Q4/Q5: 高確信の誤答に張る
          speed=1.15, intonation=1.25),
-    Unit("ans", "正解は【厚生年金】。36万6千円なのだ。", anim=1.4,
+    Unit("ans", "正解は【厚生年金】。36万6千円なのだ。", face="surprised", anim=1.4,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.3),
     Unit("kenpo", "健康保険は、【19万7千円】なのだ。", anim=1.2, speed=1.15),
     Unit("jumin", "住民税は、【17万7千円】。", anim=1.0, speed=1.15),
     Unit("shotoku", "所得税は、意外と【6万6千円】。", anim=1.4, speed=1.15, intonation=1.2),
-    Unit("aha", "重いのは税金より、【社会保険料】。", anim=1.2, se="don",
+    Unit("aha", "重いのは税金より、【社会保険料】。", face="smug", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("hosho", "そのぶん、年金や医療の【保障】つき。", anim=1.4, speed=1.15),
     Unit("meisai", "明細の【控除欄】に、全部あるのだ。", anim=1.4, pad=0.3,
          speed=1.15, intonation=1.15),
     # H5: ずぼら自虐(構造点=締めの手前)
-    Unit("sutete", "ボクは見ずに、捨ててた側なのだ。", anim=1.2,
+    Unit("sutete", "ボクは見ずに、捨ててた側なのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.15),
     Unit("hayami", "【早見表】で、内訳を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたは明細、見る派?", anim=1.4, pad=0.15,  # E7+N1
+    Unit("chips", "あなたは明細、見る派?", face="happy", anim=1.4, pad=0.15,  # E7+N1
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ(→冒頭「83万円。」に接続)
-    Unit("loop_back", "見ると最初に目が行くのが、これなのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "見ると最初に目が行くのが、これなのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

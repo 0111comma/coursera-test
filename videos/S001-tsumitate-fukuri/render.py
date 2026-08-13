@@ -83,7 +83,7 @@ def scene_gaman(fig, t):
              fontsize=44 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.51, "(ボクの意志力の問題なのだ)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
 
@@ -142,7 +142,7 @@ def scene_invest(fig, t):
         ax.annotate("", xy=(1.38, FV20_5), xytext=(1.38, PIGGY),
                     arrowprops=dict(arrowstyle="<->", color=EMPH, linewidth=3, alpha=a))
         ax.text(1.47, (FV20_5 + PIGGY) / 2, f"+{round(GAIN20)}万円", color=EMPH,
-                fontsize=27, va="center", ha="center", alpha=a, rotation=90)
+                fontsize=28, va="center", ha="center", alpha=a, rotation=90)
     fig.text(0.5, 0.90, "世界中の株で運用した場合", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
@@ -182,9 +182,9 @@ def scene_snowball(fig, t):
         grow = ease_out(clamp01(t * 3 - i))
         r = r0 * max(grow, 0.15)
         ax.add_patch(Circle((x, line_y(x) + r * 0.9), r, facecolor="#e8e6df", edgecolor=INK_2, linewidth=2))
-    ax.text(1.6, 8.2, "利息", ha="center", color=INK_2, fontsize=26)
-    ax.text(4.9, 7.6, "利息の利息", ha="center", color=INK_2, fontsize=26, alpha=clamp01(t * 3 - 1))
-    ax.text(8.0, 7.2, "さらに…", ha="center", color=INK_2, fontsize=26, alpha=clamp01(t * 3 - 2))
+    ax.text(1.6, 8.2, "利息", ha="center", color=INK_2, fontsize=28)
+    ax.text(4.9, 7.6, "利息の利息", ha="center", color=INK_2, fontsize=28, alpha=clamp01(t * 3 - 1))
+    ax.text(8.0, 7.2, "さらに…", ha="center", color=INK_2, fontsize=28, alpha=clamp01(t * 3 - 2))
     fig.text(0.5, 0.90, "複利(ふくり)のしくみ", ha="center", color=INK, fontsize=40,
              path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
     draw_badge(fig, "年利5%と仮定の計算")
@@ -216,11 +216,11 @@ def scene_predict(fig, t):
     a = clamp01(t)
     ax.plot([0, 20], [0, FV20_5], color=MUTED, linewidth=3, linestyle=(0, (5, 4)), alpha=a)
     ax.plot([20], [FV20_5], marker="o", markersize=12, color=MUTED, alpha=a)
-    ax.text(20, FV20_5 + 25, "20年で411万円", ha="center", color=INK_2, fontsize=25, alpha=a)
+    ax.text(20, FV20_5 + 25, "20年で411万円", ha="center", color=INK_2, fontsize=28, alpha=a)
     a2 = clamp01(t * 2 - 1)
     ax.plot([10], [HALF_LINEAR], marker="o", markersize=12, color=MUTED, alpha=a2)
     ax.annotate("半分なら 約205万円?", (10, HALF_LINEAR), xytext=(1.8, HALF_LINEAR + 65),
-                color=INK, fontsize=27, alpha=a2)
+                color=INK, fontsize=28, alpha=a2)
     fig.text(0.5, 0.90, "クイズ: 10年目はいくら?", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
@@ -240,7 +240,7 @@ def scene_reveal(fig, t):
         ax.plot([10], [FV10_5], marker="o", markersize=12, color=SERIES_1,
                 markeredgecolor=SURFACE, markeredgewidth=2)
         ax.annotate("実際は 155万円", (10, FV10_5), xytext=(10.6, FV10_5 - 60),
-                    color=INK, fontsize=27)
+                    color=INK, fontsize=28)
     fig.text(0.5, 0.90, "正解", ha="center", color=INK_2, fontsize=34)
     draw_badge(fig, "年利5%と仮定の計算")
     draw_footer_brand(fig, BRAND)
@@ -259,13 +259,13 @@ def scene_accel(fig, t):
                 markeredgecolor=SURFACE, markeredgewidth=2)
     ax.plot([10], [FV10_5], marker="o", markersize=11, color=SERIES_1,
             markeredgecolor=SURFACE, markeredgewidth=2)
-    ax.text(5, 437, "前半10年", ha="center", color=INK_2, fontsize=26)
+    ax.text(5, 437, "前半10年", ha="center", color=INK_2, fontsize=28)
     ax.text(5, 396, f"+{round(FV10_5)}万円", ha="center", color=INK_2, fontsize=28)
     if t >= 0.6:
         a2 = clamp01((t - 0.6) / 0.3)
         ax.plot([20], [FV20_5], marker="o", markersize=12, color=SERIES_1,
                 markeredgecolor=SURFACE, markeredgewidth=2, alpha=a2)
-        ax.text(15, 437, "後半10年", ha="center", color=INK_2, fontsize=26, alpha=a2)
+        ax.text(15, 437, "後半10年", ha="center", color=INK_2, fontsize=28, alpha=a2)
         ax.text(15, 396, f"+{round(FV20_5 - FV10_5)}万円", ha="center", color=EMPH, fontsize=30,
                 alpha=a2, path_effects=stroke_fx(EMPH, outline=outline_for(30), fatten=2))
     fig.text(0.5, 0.90, "伸びは後半に集中する", ha="center", color=INK_2, fontsize=34)
@@ -326,12 +326,12 @@ def scene_lever(fig, t):
     fig.text(0.34, 0.68, "年利", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
     fig.text(0.70, 0.68, "×", ha="center", va="center", color=MUTED, fontsize=64)
-    fig.text(0.70, 0.632, "選べない", ha="center", color=MUTED, fontsize=26)
+    fig.text(0.70, 0.632, "選べない", ha="center", color=INK_2, fontsize=28)
     a = clamp01(t * 2 - 0.6)
     fig.text(0.34, 0.53, "毎月の金額", ha="center", color=EMPH, fontsize=52,
              path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2))
     fig.text(0.70, 0.53, "◯", ha="center", va="center", color=EMPH, fontsize=64, alpha=a)
-    fig.text(0.70, 0.492, "選べる", ha="center", color=EMPH, fontsize=26, alpha=a)
+    fig.text(0.70, 0.492, "選べる", ha="center", color=EMPH, fontsize=28, alpha=a)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
@@ -363,9 +363,9 @@ def scene_table_big(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
     _table(fig, 0.70)
-    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=MUTED, fontsize=24)
+    fig.text(0.46, 0.435, "計算方式: 毎月末積立・月次複利", ha="center", color=INK_2, fontsize=28)
     draw_badge(fig, "利回りは仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
@@ -398,7 +398,7 @@ def scene_hero_count__cover(fig, t):
     fig.text(0.5, 0.435, "貯金箱なら 240万円", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     # サムネにも打消し表示(強調表示と同一画面の原則。ループ⑫)。⑨の3要素階層を崩さないようMUTED
-    fig.text(0.5, 0.88, "年利5%と仮定の計算", ha="center", va="center", color=MUTED, fontsize=24)
+    fig.text(0.5, 0.88, "年利5%と仮定の計算", ha="center", va="center", color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -426,7 +426,7 @@ SCENES = {
 
 # 深掘り⑧: 各文は「動画内で導入済みの情報+新情報1つ」だけで構成する(Given-New)
 UNITS = [
-    Unit("hero_count", "【411万円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【411万円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "月1万円を20年、積み立てた結果。", anim=0.8, speed=1.2),
     # 誰でも分かる基準線(貯金箱=利息ゼロ)を先に置く
@@ -440,31 +440,31 @@ UNITS = [
     Unit("snowball", "正体は、利息が利息を生む【雪だるま】。", anim=2.4,
          speed=1.15, intonation=1.15),
     # クイズ(フリ→オチ)
-    Unit("predict", "では10年目は、半分くらいと思うのだ?", anim=1.6,
+    Unit("predict", "では10年目は、半分くらいと思うのだ?", face="troubled", anim=1.6,
          speed=1.15, intonation=1.25),
-    Unit("reveal", "実際は、まだ【155万円】しかないのだ。", anim=1.8,
+    Unit("reveal", "実際は、まだ【155万円】しかないのだ。", face="surprised", anim=1.8,
          puchun=True, se="impact", se_at=0.34,  # フリーズ演出: プチュン(暗転)→ドーン
          speed=1.1, intonation=1.2, pitch=-0.06, pause_scale=1.4),
     Unit("accel", "後半の10年で、【+256万円】。", anim=1.6,
          narration="後半の10年で、プラス256万円。",
          speed=1.25, intonation=1.3, pitch=0.0),
     # 橋渡し(ユーザーレビュー第2弾)を1文に圧縮(E3: 尾の圧縮): 不確実性の明示+操作変数への転換
-    Unit("lever", "利回りは選べない。選べるのは【金額】なのだ。", anim=1.2, pad=0.35,
+    Unit("lever", "何%かは選べない。選べるのは【金額】なのだ。", anim=1.2, pad=0.35,
          speed=1.15, intonation=1.2),
-    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", anim=1.2, se="don",
+    Unit("hero_loop", "月3万円にすると…【1233万円】なのだ。", face="happy", anim=1.2, se="don",
          narration="月3万円にすると…、1233万円なのだ。",
          speed=1.1, intonation=1.3, pitch=0.0, pause_scale=1.7),
     # H3+H5: 衝撃数字(1233万)直後の過剰リアクション+欲望の自虐(知識の自虐は禁止)
-    Unit("gaman", "ボクは月3千円で、挫折しそうなのだ。", anim=1.2,
+    Unit("gaman", "ボクは月3千円で、挫折しそうなのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
     # H4のフォロー(正情報への復帰)+B6の人間スケール換算を兼ねる
     Unit("coin", "でも月1万円なら、1日【333円】。", anim=0.8, speed=1.2, intonation=1.15),
     Unit("table_big", "【早見表】で、月いくらか決めるのだ。", anim=0.8, se="pop", speed=1.2),
     # E7: 質問はループ点の5〜8秒前+N1の2人称+視聴者の数字を聞く(㉖)
-    Unit("chips", "あなたなら、月いくらから始める?", anim=1.4, pad=0.15,
+    Unit("chips", "あなたなら、月いくらから始める?", face="happy", anim=1.4, pad=0.15,
          speed=1.15, intonation=1.2),
     # E5/E6: ナラティブループ(→冒頭「411万円。」に接続)+ビジュアルループ(冒頭と同構図)
-    Unit("loop_back", "その20年後の答えが、これなのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "その20年後の答えが、これなのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

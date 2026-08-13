@@ -60,7 +60,7 @@ def scene_hero_count__cover(fig, t):
     fig.text(0.5, 0.435, "満額なら 5年", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.88, "NISAの生涯枠1800万円で計算", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -146,17 +146,17 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.32, 0.735, "毎月", ha="center", color=MUTED, fontsize=28)
-    fig.text(0.64, 0.735, "うまるまで", ha="center", color=MUTED, fontsize=28)
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.32, 0.735, "毎月", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.64, 0.735, "うまるまで", ha="center", color=INK_2, fontsize=28)
     rows = [("5千円", "300年"), ("1万円", "150年"), ("3万円", "50年"),
             ("5万円", "30年"), ("10万円", "15年")]
     for i, (m, y) in enumerate(rows):
         yy = 0.675 - i * 0.055
-        fig.text(0.32, yy, m, ha="center", color=MUTED, fontsize=27)
+        fig.text(0.32, yy, m, ha="center", color=INK_2, fontsize=28)
         fig.text(0.64, yy, y, ha="center", color=INK, fontsize=30)
     fig.text(0.46, 0.425, "満額(年間360万円)なら5年。枠は元本ベースで計算",
-             ha="center", color=MUTED, fontsize=24)
+             ha="center", color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -188,7 +188,7 @@ def scene_en(fig, t):
              fontsize=52 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
     fig.text(0.5, 0.51, "(ボクの財布の話なのだ)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, "2026年8月時点の制度")
     draw_footer_brand(fig, BRAND)
 
@@ -220,35 +220,35 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ(S001/S002の視聴に依存しない)
 UNITS = [
-    Unit("hero_count", "【50年】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【50年】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "月3万円で、NISAの枠がうまる年数。", anim=0.8,
          narration="月3万円で、ニーサの枠がうまる年数。", speed=1.2),
-    Unit("waku", "非課税の枠は、1人【1800万円】。", anim=1.2, speed=1.15),
+    Unit("waku", "税金がかからない枠が、1人【1800万円】。", anim=1.2, speed=1.15),
     Unit("calc1", "月3万円だと、年に【36万円】。", anim=1.2, speed=1.2),
     Unit("calc2", "1800万÷36万で、【50年】なのだ。", anim=1.6,
          narration="1800万わる36万で、50年なのだ。", speed=1.15, intonation=1.15),
-    Unit("quiz", "では月5千円なら…何年だと思うのだ?", anim=1.4,
+    Unit("quiz", "では月5千円なら…何年だと思うのだ?", face="troubled", anim=1.4,
          speed=1.15, intonation=1.25),
-    Unit("edo", "答えは【300年】。江戸から令和なのだ。", anim=1.4,
+    Unit("edo", "答えは【300年】。江戸から令和なのだ。", face="surprised", anim=1.4,
          puchun=True, se="impact", se_at=0.34,
          narration="答えは300年。江戸かられいわなのだ。",
          speed=1.1, intonation=1.25, pause_scale=1.3),
     Unit("m10", "月10万円に増やしても、【15年】かかる。", anim=1.2, speed=1.2),
     Unit("mangaku", "満額の年間360万円でも、【5年】なのだ。", anim=1.2, speed=1.15),
     # H5: 財布事情の自虐(360万の直後=H3の構造点)
-    Unit("en", "ボクには、縁のない金額なのだ。", anim=1.2,
+    Unit("en", "ボクには、縁のない金額なのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
-    Unit("amaru", "つまり枠は、【余るほど】大きいのだ。", anim=1.2, se="don",
+    Unit("amaru", "つまり枠は、【余るほど】大きいのだ。", face="smug", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
-    Unit("mukigen", "しかも非課税は、【無期限】なのだ。", anim=1.0, speed=1.15),
+    Unit("mukigen", "しかも税金ゼロは、【無期限】なのだ。", anim=1.0, speed=1.15),
     Unit("gimu", "枠を使い切る、義務はないのだ。", anim=1.0, pad=0.3,
          speed=1.1, intonation=1.15),
     Unit("hayami", "【早見表】で、自分の年数を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたなら、何年コース?", anim=1.4, pad=0.15,  # E7: ループ点の手前+N1
+    Unit("chips", "あなたなら、何年コース?", face="happy", anim=1.4, pad=0.15,  # E7: ループ点の手前+N1
          speed=1.15, intonation=1.15),
 # E5/E6: サゲ=マクラの回収(→冒頭「50年。」に接続)
-    Unit("loop_back", "で、月3万円なら何年かというと…", anim=0.8, pad=0.1,
+    Unit("loop_back", "で、月3万円なら何年かというと…", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.2, pause_scale=1.3),
 ]
 

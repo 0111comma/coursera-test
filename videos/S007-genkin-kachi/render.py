@@ -63,7 +63,7 @@ def scene_hero_count__cover(fig, t):
     fig.text(0.5, 0.435, "金額は減らないのに", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.88, "物価は年率2%の例で計算", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -135,7 +135,7 @@ def scene_meimei(fig, t):
              fontsize=60 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(EMPH, outline=outline_for(60), fatten=3))
     fig.text(0.5, 0.47, "(インフレによる実質価値の低下)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -160,16 +160,16 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.30, 0.73, "年数", ha="center", color=MUTED, fontsize=28)
-    fig.text(0.64, 0.73, "実質価値", ha="center", color=MUTED, fontsize=28)
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.30, 0.73, "年数", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.64, 0.73, "実質価値", ha="center", color=INK_2, fontsize=28)
     rows = [("10年後", "約82万円"), ("20年後", "約67万円"), ("30年後", "約55万円")]
     for i, (n, v) in enumerate(rows):
         yy = 0.66 - i * 0.07
-        fig.text(0.30, yy, n, ha="center", color=MUTED, fontsize=28)
+        fig.text(0.30, yy, n, ha="center", color=INK_2, fontsize=28)
         fig.text(0.64, yy, v, ha="center", color=INK, fontsize=32)
     fig.text(0.46, 0.44, "物価が年率2%で上がり続けた場合の例", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -201,7 +201,7 @@ def scene_edamame(fig, t):
              fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
     fig.text(0.5, 0.51, "(ボクの貯蔵方法なのだ。豆は減らないが…)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -232,31 +232,31 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【67万円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【67万円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "20年後の、現金100万円の【価値】。", anim=0.8, speed=1.2),
     Unit("herazu", "金額は、100万円のまま【減らない】。", anim=1.2, speed=1.15),
     Unit("kaeru", "でも物価が上がると、【買える量】が減る。", anim=1.4,
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("nichigin", "日銀の目標は、物価上昇【年率2%】。", anim=1.0, speed=1.15),
-    Unit("tsuzuku", "2%が20年続くと、100万円は…", anim=1.6,
+    Unit("tsuzuku", "2%が20年続くと、100万円は…", face="troubled", anim=1.6,
          speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("ochi", "約【67万円】ぶんの価値に、目減りするのだ。", anim=1.2,
+    Unit("ochi", "約【67万円】ぶんの価値に、目減りするのだ。", face="surprised", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("chokkin", "直近の物価上昇は、【年率1.6%】。", anim=1.0, speed=1.15),
     Unit("sore16", "それでも20年で、約【73万円】ぶんに。", anim=1.0, speed=1.15),
-    Unit("meimei", "これが、タンス預金の、【見えない目減り】。", anim=1.4, se="don",
+    Unit("meimei", "これが、タンス預金の、【見えない目減り】。", face="smug", anim=1.4, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04),
     # H1/H5: キャラ自虐(緊張→緩和)。枝豆=タンス預金の比喩で本筋に接続
-    Unit("edamame", "ボクも枝豆を、タンスに隠す派なのだ。", anim=1.2,
+    Unit("edamame", "ボクも枝豆を、タンスに隠す派なのだ。", face="smug", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
-    Unit("kinri", "金利が物価より低いと、実質は【目減り】。", anim=1.4, pad=0.3, speed=1.15),
+    Unit("kinri", "金利が物価に負けてると、【目減り】するのだ。", anim=1.4, pad=0.3, speed=1.15),
     Unit("hayami", "【早見表】で、年数別に見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたは、現金派?", anim=1.4, pad=0.15,  # E7+N1
+    Unit("chips", "あなたは、現金派?", face="happy", anim=1.4, pad=0.15,  # E7+N1
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ(→冒頭「67万円。」に接続)
-    Unit("loop_back", "そのまま20年たつと、こうなるのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "そのまま20年たつと、こうなるのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

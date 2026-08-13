@@ -67,7 +67,7 @@ def scene_hero_count__cover(fig, t):
     fig.text(0.5, 0.435, "ただし上限あり", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.88, "ふるさと納税・上限は目安", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -90,7 +90,7 @@ def scene_modoru(fig, t):
     fig.text(0.5, 0.52, "税金が 3万8千円 安くなる", ha="center", va="center", color=INK,
              fontsize=40, alpha=a, path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
     fig.text(0.5, 0.44, "(所得税の還付 + 住民税の控除)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -174,15 +174,15 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.30, 0.735, "年収", ha="center", color=MUTED, fontsize=28)
-    fig.text(0.64, 0.735, "上限の目安", ha="center", color=MUTED, fontsize=28)
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.30, 0.735, "年収", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.64, 0.735, "上限の目安", ha="center", color=INK_2, fontsize=28)
     for i, (m, y_) in enumerate(SOUMU):
         yy = 0.675 - i * 0.055
-        fig.text(0.30, yy, m, ha="center", color=MUTED, fontsize=27)
+        fig.text(0.30, yy, m, ha="center", color=INK_2, fontsize=28)
         fig.text(0.64, yy, y_, ha="center", color=INK, fontsize=30)
     fig.text(0.46, 0.425, "総務省の目安(給与のみ・他の控除なし)", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -214,7 +214,7 @@ def scene_ii_hito(fig, t):
              fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
     fig.text(0.5, 0.51, "(返礼品はもらえるが控除はない)", ha="center", va="center",
-             color=MUTED, fontsize=25, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -246,7 +246,7 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【2000円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【2000円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "ふるさと納税の、実質の自己負担。", anim=0.8, speed=1.2),
     Unit("rei", "たとえば、【4万円】寄付したとする。", anim=1.2, speed=1.15),
@@ -255,24 +255,24 @@ UNITS = [
     Unit("henrei", "そのうえで、【返礼品】がもらえるのだ。", anim=1.2, speed=1.15, intonation=1.2),
     Unit("but", "でもこれ、【上限】があるのだ。", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04),
-    Unit("quiz", "年収400万円の独身なら…【いくら】まで?", anim=1.4,
+    Unit("quiz", "年収400万円の独身なら…【いくら】まで?", face="troubled", anim=1.4,
          speed=1.15, intonation=1.25),
-    Unit("ans", "目安は、【4万2千円】なのだ。", anim=1.2,
+    Unit("ans", "目安は、【4万2千円】なのだ。", face="surprised", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pause_scale=1.3),
-    Unit("wana", "超えた分は、控除なしの【ただの寄付】。", anim=1.4,
+    Unit("wana", "超えた分は、安くならない【ただの寄付】。", face="troubled", anim=1.4,
          speed=1.1, intonation=1.15, pitch=-0.04),
     # H1/H3: 損失ビート直後の緩和(過剰リアクション)
-    Unit("ii_hito", "うっかり、善意の人になるのだ。", anim=1.2,
+    Unit("ii_hito", "うっかり、善意の人になるのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("kawaru", "上限は、年収や家族構成で【変わる】。", anim=1.4, speed=1.15),
     Unit("kakunin", "寄付の前に、自分の上限を【確認】なのだ。", anim=1.2, pad=0.3,
          speed=1.15, intonation=1.2),
     Unit("hayami", "【早見表】で、年収別の目安を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたの上限、知ってる?", anim=1.4, pad=0.15,  # E7+N1
+    Unit("chips", "あなたの上限、知ってる?", face="happy", anim=1.4, pad=0.15,  # E7+N1
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ(→冒頭「2000円。」に接続)
-    Unit("loop_back", "確認すれば、負担はこれだけなのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "確認すれば、負担はこれだけなのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

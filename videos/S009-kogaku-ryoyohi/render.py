@@ -56,29 +56,45 @@ def scene_hero_count(fig, t):
 
 
 def scene_hero_count__cover(fig, t):
-    fig.text(0.5, 0.795, "医療費100万円の月", ha="center", va="center", color=INK_2,
+    fig.text(0.5, 0.795, "入院で治療費100万円の月", ha="center", va="center", color=INK_2,
              fontsize=46, path_effects=stroke_fx(INK_2, outline=outline_for(46), fatten=1.5))
     draw_glow_text(fig, 0.5, 0.615, "9.3万円", 130)
     fig.text(0.5, 0.435, "3割負担=30万円ではない", ha="center", va="center", color=INK,
              fontsize=42, path_effects=stroke_fx(INK, outline=outline_for(42), fatten=2))
     fig.text(0.5, 0.88, "年収370〜770万円の例・2026年8月改定後", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_hero_full(fig, t):
-    _hero(fig, "9.3万円", "医療費100万円の月に実際に払う額",
+    _hero(fig, "9.3万円", "大きな病気で入院した月に払う額",
           sub_alpha=clamp01(t), size=112)
 
 
+def scene_nyuin(fig, t):
+    # W2: 視聴者の体験(入院・手術)から入る。治療費の全体像はここで1回だけ見せる
+    fig.text(0.5, 0.90, "たとえば", ha="center", color=INK_2, fontsize=34)
+    a = clamp01(t * 2)
+    fig.text(0.5, 0.64, "手術+入院1ヶ月", ha="center", va="center", color=INK,
+             fontsize=52 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(INK, outline=outline_for(52), fatten=2))
+    fig.text(0.5, 0.52, "治療費ぜんぶで 100万円", ha="center", va="center",
+             color=INK_2, fontsize=36, alpha=clamp01(t * 2 - 0.8))
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
 def scene_sanwari(fig, t):
-    fig.text(0.5, 0.90, "健康保険の窓口負担は3割", ha="center", color=INK_2, fontsize=34)
-    fig.text(0.5, 0.66, "100万円 × 3割", ha="center", va="center", color=INK, fontsize=54,
-             path_effects=stroke_fx(INK, outline=outline_for(54), fatten=2))
+    # 視聴者が実際に見る数字=窓口の請求額(3割)
+    fig.text(0.5, 0.90, "保険証があるから3割。でも…", ha="center", color=INK_2, fontsize=32)
+    fig.text(0.5, 0.66, "窓口の請求", ha="center", va="center", color=INK, fontsize=48,
+             path_effects=stroke_fx(INK, outline=outline_for(48), fatten=2))
     a = clamp01(t * 2 - 0.4)
-    fig.text(0.5, 0.52, "= 30万円?", ha="center", va="center", color=EMPH,
-             fontsize=64 * max(ease_out_back(a), 0.05), alpha=a,
-             path_effects=stroke_fx(EMPH, outline=outline_for(64), fatten=3))
+    fig.text(0.5, 0.52, "30万円", ha="center", va="center", color=EMPH,
+             fontsize=72 * max(ease_out_back(a), 0.05), alpha=a,
+             path_effects=stroke_fx(EMPH, outline=outline_for(72), fatten=3))
+    fig.text(0.5, 0.42, "(100万円の3割負担)", ha="center", va="center",
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.9))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -113,13 +129,13 @@ def scene_meisho(fig, t):
              fontsize=58 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(EMPH, outline=outline_for(58), fatten=3))
     fig.text(0.5, 0.47, "(公的医療保険にもとから付いている)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_quiz(fig, t):
-    fig.text(0.5, 0.88, "クイズ: 医療費100万円の月", ha="center", color=INK, fontsize=36,
+    fig.text(0.5, 0.88, "クイズ: 治療費100万円の月", ha="center", color=INK, fontsize=36,
              path_effects=stroke_fx(INK, outline=outline_for(36), fatten=2))
     fig.text(0.5, 0.66, "年収500万円の人の", ha="center", va="center", color=INK_2, fontsize=38)
     fig.text(0.5, 0.575, "自己負担の上限は?", ha="center", va="center", color=INK, fontsize=44,
@@ -129,7 +145,7 @@ def scene_quiz(fig, t):
              fontsize=110 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(EMPH, outline=outline_for(110), fatten=4))
     fig.text(0.5, 0.33, "(年収約370〜770万円の区分)", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -139,7 +155,7 @@ def scene_ochi(fig, t):
     fig.text(0.5, 0.53, "自己負担の上限(月)", ha="center", va="center",
              color=INK_2, fontsize=32, alpha=clamp01(t * 2 - 0.3))
     fig.text(0.5, 0.445, "85,800円+(100万円−28.6万円)×1%", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.7))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.7))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -177,13 +193,13 @@ def scene_kaisei(fig, t):
              fontsize=62 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(EMPH, outline=outline_for(62), fatten=3))
     fig.text(0.5, 0.49, "(7月の診療分までは旧上限)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_sengetsu(fig, t):
-    fig.text(0.5, 0.88, "医療費100万円の月の上限", ha="center", color=INK, fontsize=36,
+    fig.text(0.5, 0.88, "治療費100万円の月の上限", ha="center", color=INK, fontsize=36,
              path_effects=stroke_fx(INK, outline=outline_for(36), fatten=2))
     fig.text(0.30, 0.70, "7月まで", ha="center", color=MUTED, fontsize=30)
     fig.text(0.30, 0.62, "8万7430円", ha="center", color=INK_2, fontsize=40)
@@ -207,9 +223,9 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.095, 0.815, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.28, 0.755, "年収の目安", ha="center", color=MUTED, fontsize=27)
-    fig.text(0.67, 0.755, "上限(基準額)", ha="center", color=MUTED, fontsize=27)
+    fig.text(0.095, 0.815, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.28, 0.755, "年収の目安", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.67, 0.755, "上限(基準額)", ha="center", color=INK_2, fontsize=28)
     rows = [
         ("約1160万円〜", "27万300円+1%"),
         ("約770〜1160万", "17万9100円+1%"),
@@ -220,11 +236,11 @@ def scene_hayami(fig, t):
     for i, (n, v) in enumerate(rows):
         yy = 0.695 - i * 0.062
         focal = (i == 2)
-        fig.text(0.28, yy, n, ha="center", color=INK_2 if focal else MUTED, fontsize=27)
+        fig.text(0.28, yy, n, ha="center", color=INK_2 if focal else MUTED, fontsize=28)
         fig.text(0.67, yy, v, ha="center", color=INK, fontsize=29,
                  path_effects=stroke_fx(INK, outline=outline_for(29), fatten=1.5) if focal else None)
     fig.text(0.46, 0.38, "「+1%」は医療費に応じた加算(概要欄参照)", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -287,7 +303,7 @@ def scene_kakugo(fig, t):
              fontsize=44 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.51, "(いちばん良い無駄なのだ)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -301,6 +317,7 @@ SCENES = {
     "hero_count": scene_hero_count,
     "hero_count__cover": scene_hero_count__cover,
     "hero_full": scene_hero_full,
+    "nyuin": scene_nyuin,
     "sanwari": scene_sanwari,
     "jougen": scene_jougen,
     "meisho": scene_meisho,
@@ -319,32 +336,34 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【9万3千円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【9万3千円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("hero_full", "医療費100万円の月に、実際に払う額。", anim=0.8, speed=1.2),
-    Unit("sanwari", "3割負担なら、【30万円】のはずなのだ。", anim=1.2, speed=1.15),
+    Unit("hero_full", "大きな病気で入院した月に、払う額。", anim=0.8, speed=1.2),
+    # W2: 視聴者の体験(手術・入院→窓口の請求書)から数字を立てる
+    Unit("nyuin", "たとえば手術と入院で、治療費100万円。", anim=1.4, speed=1.15),
+    Unit("sanwari", "保険証で3割でも、請求は【30万円】。", anim=1.2, speed=1.15,
+         intonation=1.15, pitch=-0.04),
     Unit("jougen", "でも医療費には、月の【上限】があるのだ。", anim=1.5,
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("meisho", "その名も、【高額療養費制度】。", anim=1.2, speed=1.1),
-    Unit("quiz", "年収500万なら、いくらだと思う?", anim=1.4,
+    Unit("quiz", "年収500万なら、いくらだと思う?", face="troubled", anim=1.4,
          speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("ochi", "上限は、【9万2940円】なのだ。", anim=1.4,
+    Unit("ochi", "上限は、【9万2940円】なのだ。", face="surprised", anim=1.4,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("modoru", "超えた分は、あとで【戻ってくる】のだ。", anim=1.6, speed=1.15),
     # H1/H3: リベール直後の緩和
-    Unit("kakugo", "30万円の覚悟だけが、無駄になるのだ。", anim=1.2,
+    Unit("kakugo", "30万円の覚悟だけが、無駄になるのだ。", face="happy", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("kaisei", "実は【今月】から、この上限が上がったのだ。", anim=1.2, se="don",
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("sengetsu", "先月までなら、【8万7430円】だったのだ。", anim=1.4, speed=1.15),
-    Unit("taishogai", "差額ベッド代と食事代は、【対象外】。", anim=1.4, speed=1.15),
-    Unit("maina", "マイナ保険証なら、窓口も【上限まで】なのだ。", anim=1.2, speed=1.15),
+    Unit("taishogai", "差額ベッド代と食事代は、【対象外】。", face="troubled", anim=1.4, speed=1.15),
     Unit("hayami", "年収別の上限は、【早見表】で見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "この制度、知ってた?", anim=1.4, pad=0.15,  # E7
+    Unit("chips", "この制度、知ってた?", face="happy", anim=1.4, pad=0.15,  # E7
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ(→冒頭「9万3千円。」に接続)
-    Unit("loop_back", "覚えるのは、この数字ひとつなのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "覚えるのは、この数字ひとつなのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

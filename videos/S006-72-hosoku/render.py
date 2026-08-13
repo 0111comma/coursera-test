@@ -61,13 +61,13 @@ def scene_hero_count__cover(fig, t):
     draw_glow_text(fig, 0.5, 0.615, "14年", 150)
     fig.text(0.5, 0.435, "暗算で出せる", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
-    fig.text(0.5, 0.88, "年5%運用の例・元本保証なし", ha="center", va="center",
-             color=MUTED, fontsize=24)
+    fig.text(0.5, 0.88, "年5%で増える例・元本保証なし", ha="center", va="center",
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_hero_full(fig, t):
-    _hero6(fig, "14年", "年5%運用のお金が2倍になる年数", sub_alpha=clamp01(t), size=132)
+    _hero6(fig, "14年", "年5%で増えるお金が2倍になる年数", sub_alpha=clamp01(t), size=132)
 
 
 def scene_anzan(fig, t):
@@ -160,17 +160,17 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.30, 0.74, "年利", ha="center", color=MUTED, fontsize=26)
-    fig.text(0.64, 0.74, "72÷金利", ha="center", color=MUTED, fontsize=26)
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.30, 0.74, "年利", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.64, 0.74, "72÷金利", ha="center", color=INK_2, fontsize=28)
     for i, r in enumerate(RATES):
         yy = 0.695 - i * 0.038
         v = RULE[r]
         disp = f"{v:.0f}年" if v == int(v) else f"約{v:.1f}年"
-        fig.text(0.30, yy, f"{r}%", ha="center", color=MUTED, fontsize=24)
-        fig.text(0.64, yy, disp, ha="center", color=INK, fontsize=26)
+        fig.text(0.30, yy, f"{r}%", ha="center", color=INK_2, fontsize=28)
+        fig.text(0.64, yy, disp, ha="center", color=INK, fontsize=28)
     fig.text(0.46, 0.385, "利回りは例。厳密値との誤差は4%未満(概要欄)", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -203,7 +203,7 @@ def scene_yokin02(fig, t):
              fontsize=76 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(76), fatten=3))
     fig.text(0.5, 0.50, "72 ÷ 0.2 = 360(2倍になる年数)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -235,33 +235,34 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【14年】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【14年】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("hero_full", "年5%運用のお金が、【2倍】になる年数。", anim=0.8, speed=1.2),
+    Unit("hero_full", "年5%で増えるお金が、【2倍】になる年数。", anim=0.8, speed=1.2,
+         narration="年率5%で増えるお金が、2倍になる年数。"),  # W1+年→トシ誤読回避
     Unit("anzan", "実はこれ、【暗算】で出せるのだ。", anim=1.2, speed=1.15, intonation=1.2),
     Unit("num72", "使うのは、【72】という数字。", anim=1.0, speed=1.15),
     Unit("formula", "72÷金利で、2倍になる年数が出る。", anim=1.4,
          narration="72わる金利で、2倍になる年数が出る。", speed=1.15),
     Unit("example", "72÷5で、約【14年】なのだ。", anim=1.2,
          narration="72わる5で、約14年なのだ。", speed=1.15, intonation=1.15),
-    Unit("quiz", "では年1%の預金なら…【何年】?", anim=1.4,
+    Unit("quiz", "では年1%の預金なら…【何年】?", face="troubled", anim=1.4,
          speed=1.15, intonation=1.25),
-    Unit("ans72", "答えは【72年】。人生ほぼ一周なのだ。", anim=1.2,
+    Unit("ans72", "答えは【72年】。人生ほぼ一周なのだ。", face="surprised", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.25, pause_scale=1.3),
     # H5: 財布事情の自虐+エスカレーション(72年→360年)。0.2%は普通預金の例
-    Unit("yokin02", "ボクの預金だと、【360年】なのだ。", anim=1.2,
+    Unit("yokin02", "ボクの預金だと、【360年】なのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("r3", "年3%なら、【24年】。", anim=1.0, speed=1.15),
     Unit("r7", "年7%なら、【約10年】なのだ。", anim=1.0, speed=1.15),
     Unit("gosa", "この法則、誤差は【わずか】なのだ。", anim=1.4, speed=1.15),
-    Unit("inflation", "逆に物価2%なら、36年で【価値半分】。", anim=1.4, se="don",
+    Unit("inflation", "逆に物価2%なら、36年で【価値半分】。", face="troubled", anim=1.4, se="don",
          speed=1.1, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     Unit("hayami", "【早見表】で、年利別に見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたのお金は、何年コース?", anim=1.4, pad=0.15,  # E7+N1
+    Unit("chips", "あなたのお金は、何年コース?", face="happy", anim=1.4, pad=0.15,  # E7+N1
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ(→冒頭「14年。」に接続)
-    Unit("loop_back", "たとえば年5%なら、こうなるのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "たとえば年5%なら、こうなるのだ。", face="smug", anim=0.8, pad=0.1,
          narration="たとえば年率5%なら、こうなるのだ。",  # 年→トシ誤読回避(kana照合)
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]

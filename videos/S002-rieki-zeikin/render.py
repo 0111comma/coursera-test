@@ -80,7 +80,7 @@ def scene_hero_count__cover(fig, t):
     draw_glow_text(fig, 0.5, 0.615, "約35万円", 132)
     fig.text(0.5, 0.435, "NISAなら 0円", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
-    fig.text(0.5, 0.88, "利益は年5%と仮定の計算", ha="center", va="center", color=MUTED, fontsize=24)
+    fig.text(0.5, 0.88, "利益は年5%と仮定の計算", ha="center", va="center", color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
@@ -219,7 +219,7 @@ def _nisa_axes(fig):
     ax.set_yticks([])
     ax.spines["left"].set_visible(False)
     ax.set_xticks([0, 1])
-    ax.set_xticklabels(["課税口座", "NISA"])
+    ax.set_xticklabels(["ふつうの口座", "NISA"])
     ax.tick_params(axis="x", labelsize=30, colors=INK_2)
     return ax
 
@@ -230,7 +230,7 @@ def _nisa_bars(ax, t_nisa=1.0, dim_left=False, label_left=True, nisa_label=True)
     ax.bar([0], [net], width=0.5, color=GOLD, alpha=la)
     ax.bar([0], [TAX_MAN], bottom=[net], width=0.5, color=BASELINE, alpha=la)
     if label_left:
-        ax.text(0, net + TAX_MAN + 8, "税 -34万7千円", ha="center", color=INK_2, fontsize=26, alpha=la)
+        ax.text(0, net + TAX_MAN + 8, "税 -34万7千円", ha="center", color=INK_2, fontsize=28, alpha=la)
     e = ease_in_out(clamp01(t_nisa))
     h = GAIN_MAN * e
     ax.bar([1], [h], width=0.5, color=GOLD)
@@ -274,7 +274,7 @@ def scene_if472(fig, t):
     fig.text(0.5, 0.90, "もし30年つづけたら?", ha="center", color=INK_2, fontsize=34)
     draw_glow_text(fig, 0.5, 0.62, f"利益 {round(GAIN30 / 10_000 * ease_out(clamp01(t)))}万円", 84)
     fig.text(0.5, 0.50, "(元本360万円・年5%と仮定)", ha="center", va="center",
-             color=MUTED, fontsize=26, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, "利益は仮定・元本保証なし")
     draw_footer_brand(fig, BRAND)
 
@@ -301,15 +301,15 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.52, 0.735, "課税なら", ha="center", color=MUTED, fontsize=28)
-    fig.text(0.76, 0.735, "NISAなら", ha="center", color=MUTED, fontsize=28)
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.52, 0.735, "課税なら", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.76, 0.735, "NISAなら", ha="center", color=INK_2, fontsize=28)
     for i, (g, tax) in enumerate(zip(TABLE_GAINS, TABLE_TAX)):
         y = 0.675 - i * 0.055
-        fig.text(0.24, y, f"利益{g}万", ha="center", color=MUTED, fontsize=26)
+        fig.text(0.24, y, f"利益{g}万", ha="center", color=INK_2, fontsize=28)
         fig.text(0.52, y, f"-{tax}万", ha="center", color=INK, fontsize=30)
         fig.text(0.76, y, "0円", ha="center", color=INK, fontsize=30)
-    fig.text(0.46, 0.425, "税率20.315%で計算(2026年8月時点)", ha="center", color=MUTED, fontsize=24)
+    fig.text(0.46, 0.425, "税率20.315%で計算(2026年8月時点)", ha="center", color=INK_2, fontsize=28)
     draw_badge(fig, "2026年8月時点の税制・制度")
     draw_footer_brand(fig, BRAND)
 
@@ -317,7 +317,7 @@ def scene_hayami(fig, t):
 def scene_chips(fig, t):
     fig.text(0.5, 0.76, "NISA、もう使ってる?", ha="center", color=INK, fontsize=52,
              path_effects=stroke_fx(INK, outline=outline_for(52), fatten=3))
-    chips = ["使ってる", "課税口座のみ", "これから", "初めて知った"]
+    chips = ["使ってる", "ふつうの口座だけ", "これから", "初めて知った"]
     for i, c in enumerate(chips):
         a = clamp01(t * 3.2 - i * 0.7)
         if a <= 0:
@@ -378,16 +378,16 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ(タイトル・S001視聴に依存しない)
 UNITS = [
-    Unit("hero_count", "【34万7千円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【34万7千円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
     Unit("hero_full", "積立の利益から、引かれる税金。", anim=0.8, speed=1.2),
     Unit("stack_base", "月1万円を20年、積み立てたとする。", anim=1.8, speed=1.15),
     Unit("stack_gain", "年5%仮定なら、利益は【171万円】。", anim=2.0, speed=1.15, intonation=1.15),
     Unit("stack_tax", "でも利益には、【約20%】の税金がかかる。", anim=1.8,
          speed=1.15, intonation=1.15, pitch=-0.04),
-    Unit("quiz", "171万の20%…【いくら】だと思う?", anim=1.4,
+    Unit("quiz", "171万の20%…【いくら】だと思う?", face="troubled", anim=1.4,
          speed=1.15, intonation=1.25),
-    Unit("answer", "答えは、【34万7千円】なのだ。", anim=1.2,
+    Unit("answer", "答えは、【34万7千円】なのだ。", face="surprised", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.12, intonation=1.2, pitch=-0.06, pause_scale=1.25),
     Unit("tedori", "手取りは、【136万円】。", anim=1.4,
@@ -402,18 +402,18 @@ UNITS = [
     Unit("tax96", "税金は、【約96万円】なのだ。", anim=1.2, se="don",
          speed=1.12, intonation=1.2, pitch=-0.04, pause_scale=1.2),
     # H1/H3: 衝撃数字の直後に過剰リアクション(金額の翻訳=関連ユーモア)
-    Unit("kei", "軽自動車ほぼ1台が、消えるのだ。", anim=1.2,
+    Unit("kei", "軽自動車ほぼ1台が、消えるのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
     # ピーク(感情の頂点)を尾でなくここに(E1: 尺の70〜85%)
-    Unit("chishiki", "腕の差じゃなく、【知識の差】なのだ。", anim=1.2, pad=0.25,
+    Unit("chishiki", "腕の差じゃなく、【知識の差】なのだ。", face="smug", anim=1.2, pad=0.25,
          speed=1.1, intonation=1.2, pitch=-0.04),
     Unit("hayami", "【早見表】で、税額を見るのだ。", anim=0.8, se="pop", speed=1.2),
     # E7: 質問はループ点の手前+N1(あなた)
-    Unit("chips", "あなたはもう、【NISA】使ってる?", anim=1.4, pad=0.15,
+    Unit("chips", "あなたはもう、【NISA】使ってる?", face="happy", anim=1.4, pad=0.15,
          narration="あなたはもう、ニーサ使ってる?",
          speed=1.15, intonation=1.2),
     # E5/E6: ナラティブループ(→冒頭「34万7千円。」)
-    Unit("loop_back", "知らないままだと、この税金なのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "知らないままだと、この税金なのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 

@@ -54,18 +54,18 @@ def scene_hero_count(fig, t):
 
 
 def scene_hero_count__cover(fig, t):
-    fig.text(0.5, 0.795, "単身の平均貯蓄", ha="center", va="center", color=INK_2,
+    fig.text(0.5, 0.795, "一人暮らしの貯金、平均は", ha="center", va="center", color=INK_2,
              fontsize=46, path_effects=stroke_fx(INK_2, outline=outline_for(46), fatten=1.5))
     draw_glow_text(fig, 0.5, 0.615, "919万円", 126)
     fig.text(0.5, 0.435, "真ん中の人は 130万", ha="center", va="center", color=INK,
              fontsize=44, path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
     fig.text(0.5, 0.88, "出典: J-FLEC 2025年調査", ha="center", va="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_hero_full(fig, t):
-    _hero8(fig, "919万円", "単身世帯の平均の金融資産", sub_alpha=clamp01(t), size=112)
+    _hero8(fig, "919万円", "一人暮らしの人の貯金や投資の平均", sub_alpha=clamp01(t), size=104)
 
 
 def scene_karakuri(fig, t):
@@ -151,7 +151,7 @@ def scene_tane(fig, t):
 
 
 def scene_jitsu(fig, t):
-    _hero8(fig, "130万円", "単身世帯の中央値(実データ)", sub_alpha=clamp01(t * 2 - 0.4), size=110)
+    _hero8(fig, "130万円", "一人暮らしの真ん中の人(実データ)", sub_alpha=clamp01(t * 2 - 0.4), size=110)
 
 
 def scene_nanabai(fig, t):
@@ -183,17 +183,17 @@ def scene_hayami(fig, t):
         transform=fig.transFigure, fill=False, edgecolor=INK_2,
         linewidth=2.5, linestyle=(0, (6, 5)),
     ))
-    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=24, alpha=clamp01(t))
-    fig.text(0.44, 0.73, "平均", ha="center", color=MUTED, fontsize=27)
-    fig.text(0.72, 0.73, "中央値", ha="center", color=MUTED, fontsize=27)
-    rows = [("単身", "919万", "130万"), ("二人以上", "1940万", "720万")]
+    fig.text(0.115, 0.795, "スクショ用", ha="left", color=EMPH, fontsize=28, alpha=clamp01(t))
+    fig.text(0.44, 0.73, "平均", ha="center", color=INK_2, fontsize=28)
+    fig.text(0.72, 0.73, "中央値", ha="center", color=INK_2, fontsize=28)
+    rows = [("一人暮らし", "919万", "130万"), ("二人以上", "1940万", "720万")]
     for i, (n, a_, m) in enumerate(rows):
         yy = 0.655 - i * 0.08
-        fig.text(0.22, yy, n, ha="center", color=MUTED, fontsize=27)
+        fig.text(0.22, yy, n, ha="center", color=INK_2, fontsize=28)
         fig.text(0.44, yy, a_, ha="center", color=INK, fontsize=31)
         fig.text(0.72, yy, m, ha="center", color=INK, fontsize=31)
     fig.text(0.46, 0.455, "J-FLEC「家計の金融行動に関する世論調査」", ha="center",
-             color=MUTED, fontsize=24)
+             color=INK_2, fontsize=28)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -225,7 +225,7 @@ def scene_ochikomi(fig, t):
              fontsize=50 * max(ease_out_back(a), 0.05), alpha=a,
              path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2))
     fig.text(0.5, 0.51, "(919万と比べて落ち込んでいた過去のボク)", ha="center", va="center",
-             color=MUTED, fontsize=24, alpha=clamp01(t * 2 - 0.8))
+             color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.8))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -257,33 +257,33 @@ SCENES = {
 
 # Given-New: 各文は動画内で導入済みの語+新情報1つ
 UNITS = [
-    Unit("hero_count", "【919万円】。", anim=1.2, cover=True, se="pop",
+    Unit("hero_count", "【919万円】。", face="surprised", anim=1.2, cover=True, se="pop",
          speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("hero_full", "単身世帯の、平均の金融資産。", anim=0.8, speed=1.2),
-    Unit("karakuri", "多すぎ?でも【カラクリ】があるのだ。", anim=1.2,
+    Unit("hero_full", "一人暮らしの人の、貯金や投資の平均。", anim=0.8, speed=1.2),  # W1: 日常語(正確な定義=金融資産は画面出典で担保)
+    Unit("karakuri", "多すぎ?でも【カラクリ】があるのだ。", face="smug", anim=1.2,
          speed=1.15, intonation=1.2),
     Unit("mura", "10人の村で、考えるのだ。", anim=1.2, speed=1.15),
     Unit("mura2", "9人は貯金100万円、1人だけ【9100万円】。", anim=1.6, speed=1.15),
     Unit("avg", "この村の平均は、【1000万円】。", anim=1.2, se="don",
          speed=1.1, intonation=1.2, pause_scale=1.2),
-    Unit("med", "でも真ん中の人は、【100万円】なのだ。", anim=1.2,
+    Unit("med", "でも真ん中の人は、【100万円】なのだ。", face="surprised", anim=1.2,
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.04),
     Unit("meimei", "この真ん中が、【中央値】。", anim=1.0, speed=1.15),
     Unit("tane", "平均は、お金持ちが【引き上げる】。", anim=1.4, speed=1.15),
-    Unit("jitsu", "実データでも、単身の中央値は【130万円】。", anim=1.2, se="don",
+    Unit("jitsu", "実際のデータでも、真ん中は【130万円】。", anim=1.2, se="don",
          speed=1.1, intonation=1.15, pause_scale=1.2),
     Unit("nanabai", "平均919万との差は、【7倍】なのだ。", anim=1.4, speed=1.15, intonation=1.2),
     # H6: 過去の自分へのツッコミ(緊張→緩和)
-    Unit("ochikomi", "919万と比べて、落ち込んで損したのだ。", anim=1.2,
+    Unit("ochikomi", "919万と比べて、落ち込んで損したのだ。", face="troubled", anim=1.2,
          speed=1.1, intonation=1.3, pitch=0.02),
-    Unit("miru", "比べるなら、【中央値】を見るのだ。", anim=1.2, pad=0.3,
+    Unit("miru", "比べるなら、【中央値】を見るのだ。", face="smug", anim=1.2, pad=0.3,
          speed=1.15, intonation=1.2),
     Unit("hayami", "【早見表】で、平均と中央値を見るのだ。", anim=0.8, se="pop", speed=1.2),
-    Unit("chips", "あなたはどっちと、比べてた?", anim=1.4, pad=0.15,  # E7+N1
+    Unit("chips", "あなたはどっちと、比べてた?", face="happy", anim=1.4, pad=0.15,  # E7+N1
          speed=1.15, intonation=1.2),
     # E5/E6: サゲ=答え合わせ型ループ(→冒頭「919万円。」に接続)
-    Unit("loop_back", "では改めて、この数字を見るのだ。", anim=0.8, pad=0.1,
+    Unit("loop_back", "では改めて、この数字を見るのだ。", face="smug", anim=0.8, pad=0.1,
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
