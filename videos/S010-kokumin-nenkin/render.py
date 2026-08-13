@@ -77,6 +77,24 @@ def scene_2kai(fig, t):
     draw_footer_brand(fig, BRAND)
 
 
+def scene_sa(fig, t):
+    """固有シーン: 差は必ず2つの元の数字を並べて見せる(片方が記憶から落ちるのを防ぐ)。"""
+    a1 = sc.clamp01(t * 2.2)
+    a2 = sc.clamp01(t * 2.2 - 0.7)
+    a3 = sc.clamp01(t * 2.2 - 1.4)
+    fig.text(0.5, 0.90, "同じ65歳でも", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.27, 0.72, "国民年金だけ", ha="center", color=INK_2, fontsize=28, alpha=a1)
+    fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=38, alpha=a1)
+    fig.text(0.73, 0.72, "会社員の平均", ha="center", color=INK_2, fontsize=28, alpha=a2)
+    fig.text(0.73, 0.645, "月14万7千円", ha="center", color=INK, fontsize=38, alpha=a2)
+    fig.text(0.5, 0.50, "差 月7万6千円", ha="center", color=EMPH, fontsize=52, alpha=a3,
+             path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2.5))
+    fig.text(0.5, 0.415, "(40年払い切った人と、厚生年金をもらう人の平均)",
+             ha="center", color=INK_2, fontsize=25, alpha=a3)
+    draw_badge(fig, BADGE)
+    draw_footer_brand(fig, BRAND)
+
+
 SCENES = {
     "hero_count": sc.hero_count(70608, "月{:,}円", BADGE, BRAND, size=96,
                                 lead="老後にもらえる年金は?"),
@@ -91,14 +109,13 @@ SCENES = {
     "kousei": scene_2kai,
     "heikin": sc.reveal("月14万7千円", "国民年金+厚生年金の合計", "厚生年金をもらう人の平均(基礎年金込み)", BADGE, BRAND,
                         size=92),
-    "sa": sc.card("同じ65歳でも", "差は月7万6千円", "(満額モデルと受給者平均の比較)", BADGE, BRAND,
-                  main_size=52),
+    "sa": scene_sa,
     "ikkai": sc.card("自営業でいる間は", "厚生年金が乗らない", "(会社員だった期間があれば、その分は乗る)", BADGE, BRAND,
-                     main_size=50, ask="あなたの年金は、どのタイプ?"),
-    "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(納付書とは別。誕生月に届くハガキ)", BADGE, BRAND,
+                     main_size=50, ask="あなたは今、どっちで働いてる?"),
+    "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
-    "chips": sc.chips("あなたの年金は、どのタイプ?",
-                      ["厚生年金あり", "国民年金だけ", "会社員だった", "わからない"], BADGE, BRAND, q_fs=44),
+    "chips": sc.chips("あなたは今、どっちで働いてる?",
+                      ["今、会社員", "今、自営業", "会社員だった", "わからない"], BADGE, BRAND, q_fs=44),
     "loop_back": sc.hero("月7万608円", "65歳から毎月もらう、国民年金だけの額", BADGE, BRAND,
                          size=96, sub_fs=29),
 }
@@ -113,14 +130,14 @@ UNITS = [
          speed=1.15, intonation=1.2, pause_scale=1.3),
     Unit("kousei", "会社員は、その上に【厚生年金】が乗るのだ。", anim=1.6,
          speed=1.1, intonation=1.15),
+    Unit("ikkai", "自営業でいる間は、厚生年金が乗らないのだ。", anim=1.2, face="troubled",
+         speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("heikin", "その合計が、平均で月【14万7千円】なのだ。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("sa", "同じ65歳で、月7万6千円もの差なのだ。", anim=1.2, se="don", speed=1.15),
-    Unit("ikkai", "自営業でいる間は、厚生年金が乗らないのだ。", anim=1.2, face="troubled",
-         speed=1.1, intonation=1.15, pitch=-0.04),
+    Unit("sa", "国民年金だけの人と、月7万6千円もの差。", anim=1.6, se="don", speed=1.15),
     Unit("teikibin", "自分の額は、【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
-    Unit("chips", "あなたの年金は、どのタイプなのだ?", anim=1.4, pad=0.15, face="happy",
+    Unit("chips", "あなたは今、どっちで働いてるのだ?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "国民年金だけなら、40年払って7万608円。", anim=0.8, pad=0.1, face="smug",
          speed=1.15, intonation=1.15, pitch=-0.03),
