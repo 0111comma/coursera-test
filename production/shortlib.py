@@ -390,9 +390,13 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
     alist = workdir / "audio.txt"
     alist.write_text("".join(f"file '{w.resolve()}'\n" for w in padded_wavs))
     narration = workdir / "narration.wav"
+    # ループ㉞: HPF80Hz(不要低域カット)+1.4kHz+2dB(スマホスピーカーは700Hz以下が
+    # ほぼ出ないため声の芯を中域で確保)+軽いコンプ → loudnorm の宅録ナレーション定石チェーン
     subprocess.run(
         ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(alist),
-         "-af", "loudnorm=I=-14:TP=-1.0:LRA=11", str(narration)],
+         "-af", "highpass=f=80,equalizer=f=1400:t=q:w=1.2:g=2,"
+                "acompressor=threshold=-21dB:ratio=2.5:attack=8:release=120,"
+                "loudnorm=I=-14:TP=-1.0:LRA=11", str(narration)],
         check=True,
     )
     total = sum(durations)
