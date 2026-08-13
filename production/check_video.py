@@ -74,7 +74,10 @@ def main(video_dir: Path) -> int:
     smd = sp.read_text() if sp.exists() else ""
     check("script.md 存在", bool(smd))
     check("VOICEVOXクレジット", "VOICEVOX:" in smd, "キャラ利用ガイドライン必須")
-    check("#shorts タグ", "#shorts" in smd)
+    # ループ㉛: #shortsは判定に不要(自動判定)。日本語ハッシュタグ2〜4個の行が方針
+    tagline = re.search(r"^(#\S+(?:\s+#\S+)+)\s*$", smd, re.M)
+    ntags = len(tagline.group(1).split()) if tagline else 0
+    check("ハッシュタグ行2〜4個(日本語)", 2 <= ntags <= 4, f"{ntags}個")
     # 投資系は「投資助言ではありません」、給与・制度系は「〜アドバイスではありません」等を許容
     check("免責文", ("投資助言ではありません" in smd) or ("アドバイスではありません" in smd))
 
