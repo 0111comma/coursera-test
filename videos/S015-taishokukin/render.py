@@ -65,13 +65,6 @@ SCENES = {
                      main_size=48),
     "jigyaku": sc.card("ここだけの話", "ボクはまだ勤続2年目", "(枠が育つのは、これからなのだ)", BADGE, BRAND,
                        main_size=46),
-    "hayami": sc.hayami("非課税の枠は、勤続で育つ", [
-        ("勤続10年", "400万円"),
-        ("勤続20年", "800万円"),
-        ("勤続30年", "1,500万円"),
-        ("勤続38年", "2,060万円"),
-        ("枠を超えた分", "半分だけ課税"),
-    ], "国税庁タックスアンサーNo.1420(2026年8月時点)", BADGE, BRAND, focal=3),
     "chips": sc.chips("この枠、知ってた?", ["知ってた", "初めて知った", "親に教える", "退職金がない"], BADGE, BRAND),
     "loop_back": sc.hero("0円", "退職金2000万円にかかる所得税", BADGE, BRAND, size=128, sub_fs=30),
 }
@@ -95,7 +88,6 @@ UNITS = [
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("jigyaku", "ちなみにボクは、まだ勤続2年目なのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.3, pitch=0.02),
-    Unit("hayami", "勤続年数べつの枠は、【早見表】なのだ。", anim=0.8, se="pop", speed=1.2),
     Unit("chips", "あなたはこの枠、知ってた?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "そして2000万円の税金が、これなのだ。", anim=0.8, pad=0.1, face="smug",

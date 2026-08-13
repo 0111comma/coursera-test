@@ -57,13 +57,6 @@ SCENES = {
                     main_size=50),
     "sutansu": sc.card("だから", "買うなとは言わない", "(夢の値段を知って選ぶのだ)", BADGE, BRAND,
                        main_size=50),
-    "hayami": sc.hayami("1万円の戻りは、遊び方で差", [
-        ("宝くじ", "4,650円"),
-        ("競馬など", "約7,500円"),
-        ("預金", "1万円+利息"),
-        ("当せん金割合", "46.5%"),
-        ("法律の上限", "戻り5割以下"),
-    ], "総務省(令和6年度実績)ほか・2026年8月時点", BADGE, BRAND, focal=0),
     "chips": sc.chips("宝くじ、あなたは?", ["夢を買う派", "ジャンボだけ", "買わない派", "当てたことある"], BADGE, BRAND),
     "loop_back": sc.hero("4,650円", "宝くじ1万円分の平均の戻り", BADGE, BRAND, size=112, sub_fs=30),
 }
@@ -85,7 +78,6 @@ UNITS = [
          speed=1.1, intonation=1.3, pitch=0.02),
     Unit("sutansu", "買うなとは言わない。夢は自由なのだ。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
-    Unit("hayami", "戻り方くらべは、【早見表】なのだ。", anim=0.8, se="pop", speed=1.2),
     Unit("chips", "宝くじ、あなたはどっち?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "そして平均の戻りが、これなのだ。", anim=0.8, pad=0.1, face="smug",

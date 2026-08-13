@@ -58,13 +58,6 @@ SCENES = {
                    main_size=40),
     "bukka": sc.card("それでも", "物価2%仮定なら実質目減り", "(金利0.4% − 物価2% = マイナス)", BADGE, BRAND,
                      main_size=42),
-    "hayami": sc.hayami("100万円の利息、預け方で差", [
-        ("普通預金 0.40%", "4,000円"),
-        ("定期1年 0.50%", "5,000円"),
-        ("旧金利 0.001%", "10円"),
-        ("税引き後(普通)", "3,188円"),
-        ("物価2%仮定", "実質マイナス"),
-    ], "大手銀行の公表金利・2026年8月時点(変動あり)", BADGE, BRAND, focal=0),
     "chips": sc.chips("あなたの銀行、金利見てる?", ["見てる", "見たことない", "定期にした", "10円時代を知ってる"], BADGE, BRAND),
     "loop_back": sc.hero("4,000円", "100万円を1年預けたときの利息", BADGE, BRAND, size=112, sub_fs=30),
 }
@@ -86,7 +79,6 @@ UNITS = [
     Unit("atm", "昔はATM1回で、利息【22年分】が消えてたのだ。", anim=1.2, se="don", speed=1.1,
          face="troubled", intonation=1.25, pitch=0.02),
     Unit("bukka", "物価が2%上がるなら、実質は目減りなのだ。", anim=1.2, speed=1.15),
-    Unit("hayami", "預け方べつの利息は、【早見表】なのだ。", anim=0.8, se="pop", speed=1.2),
     Unit("chips", "あなたの銀行の金利、見たことある?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "そして今の利息が、これなのだ。", anim=0.8, pad=0.1, face="smug",
