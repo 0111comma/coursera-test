@@ -133,7 +133,7 @@ UNITS = [
     Unit("jieigyo", "自営業には、毎月1万7920円の納付書。", anim=1.2, speed=1.15),
     Unit("quiz", "では、会社員はいくらもらえるのだ?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("kousei", "会社員は、国民年金の上に【厚生年金】。", anim=1.6,
+    Unit("kousei", "会社員も給料から引かれ、【厚生年金】が乗る。", anim=1.6,
          speed=1.1, intonation=1.15),
     Unit("ikkai", "会社員をやった分だけ、ちゃんと乗るのだ。", anim=1.2, face="happy",
          speed=1.1, intonation=1.15),
