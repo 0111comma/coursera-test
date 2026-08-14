@@ -244,3 +244,45 @@
 - ユーモア: [IHPT(Wanzer 2010)](https://www.tandfonline.com/doi/abs/10.1080/03634520903367238), [EEG研究2025(動画講義の関連ユーモア)](https://link.springer.com/article/10.1007/s12144-025-08405-7), [Bitterly 2017: Risky Business(JPSP)](https://www.ncbi.nlm.nih.gov/pubmed/27831701), [UGA 2025(科学者のユーモアと信頼)](https://news.uga.edu/using-humor-in-communication-helps-scientist-connect/), [seductive detailsメタ分析](https://link.springer.com/article/10.1007/s10648-020-09522-4), [ずんだもん公式設定(不幸属性)](https://dic.pixiv.net/a/%E3%81%9A%E3%82%93%E3%81%A0%E3%82%82%E3%82%93)
 - 物語化: [Mayer personalization d=1.11](https://www.researchgate.net/publication/232481296_A_Personalization_Effect_in_Multimedia_Learning_Students_Learn_Better_When_Words_Are_in_Conversational_Style_Rather_Than_Formal_Style), [narrative vs expositoryメタ分析2024](https://www.researchgate.net/publication/384420142_Impact_of_Narrative_versus_Expository_Instruction_in_Science_Education_on_Recall_Understanding_and_Transfer_A_Meta-Analysis), [Stanford金融教育の物語研究(+17〜18pt)](https://news.stanford.edu/stories/2025/05/study-financial-literacy-education-storytelling), [知識ゲインは形式間で差なし(2025)](https://www.sciencedirect.com/org/science/article/pii/S1935787725000863), [対話傍聴のvicarious learning](https://journals.sagepub.com/doi/10.2190/Q8CM-FH7L-6HJU-DT9W)
 - 国内成功例: [両学長の冒頭分析](https://nabe-hiro.com/2024/09/06/ryogakutyo/), [フェルミ漫画大学(対話形式)](https://dic.nicovideo.jp/a/%E3%83%95%E3%82%A7%E3%83%AB%E3%83%9F%E6%BC%AB%E7%94%BB%E5%A4%A7%E5%AD%A6), [ずんだもん語尾の運用規範](https://note.com/dempa_exe/n/n001a7583381c), [量産型規制と生存条件](https://note.com/machosuke/n/nf4463c75c937)
+
+## パートF: ネタ選定ゲートと脱テンプレ(ループ㊷。ユーザーによる12本の合否判定から抽出)
+
+ユーザー判定: **合格 S015・S020・S021 / 却下 それ以外9本**
+理由「ありきたりすぎる上に表現がつまらなすぎる」。合格3本も「表現がだめ」。
+
+### F1. ネタ選定ゲート(これを通らないネタは企画しない)
+
+**判定基準: 視聴者が動画を見る前に持っている予想と、動画の結論が食い違うか。**
+
+| 動画 | 視聴前の予想 | 結論 | 判定 |
+|---|---|---|---|
+| S015 | 2000万もらえば何百万も取られる | 税金0円 | 裏切る=合格 |
+| S020 | 宝くじ、半分は戻るでしょ | 46.5%。競馬75%より低い | 裏切る=合格 |
+| S021 | 学費、そんなに変わらない | 838万〜2400万の3倍差 | 裏切る=合格 |
+| S010 | 年金は少ない | 年金は少ない | 予想通り=却下 |
+| S012 | リボは損 | リボは損 | 予想通り=却下 |
+| S018 | 早く始めた方がいい | 早く始めた方がいい | 予想通り=却下 |
+| S016 | 1000万まで守られる | 1000万まで守られる | 予想通り=却下 |
+
+**教科書的に正しいだけでは不合格。** 企画書に必ず次の2行を書き、食い違わないなら企画を捨てる:
+- 視聴者の予想: 「____」
+- この動画の結論: 「____」
+
+補助テスト(どれか1つを満たすこと):
+- **逆転**: AよりBの方が上、が常識と逆(宝くじ<競馬)
+- **無料/ゼロ**: 取られると思っていたものが0になる(退職金の税金)
+- **桁**: 想像の3倍以上ひらく(学費838万↔2400万)
+- **行き先**: 消えたお金がどこへ行っているかを明かす(宝くじの5350円→自治体の財源)
+- **締切/失効**: 知らないと権利が消える
+
+### F2. 脱テンプレ(12本が同じ骨格になった反省)
+
+12本すべてが「数字→接続語→説明→あなたは〜?→そして〜が、これなのだ」で、
+語尾も全部「〜なのだ」。**チェックを通すための接続語の貼り付けが、事務的な文体を加速させた。**
+
+- **終わり方を固定しない**。ループ back / 立場表明 / 委ねる / 問いかけ を動画ごとに変える
+- **締めを4択に固定しない**。二択・自由記述・「どっちだと思った?」等を混ぜる
+- **1本に必ず1つ、情景か体験を入れる**(「宝くじ1万円分、買ってみたのだ」)
+- **数字は必ず実感に翻訳する**(1500万円=家が1軒 / 5350円=寿司ランチ2回)
+- **消えたお金の行き先を言う**(誰が受け取ったのか。これが最も驚かれる情報になりやすい)
+- 接続語は意味があるときだけ置く。リズムを殺す貼り付けをしない

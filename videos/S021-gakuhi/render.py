@@ -19,6 +19,9 @@ assert 282_000 + 535_800 * 4 == 2_425_200, "verify.pyと不一致"
 assert 5_960_000 + 2_425_200 == 8_385_200, "verify.pyと不一致"
 assert 19_760_000 + 4_110_000 == 23_870_000, "verify.pyと不一致"
 assert round(23_870_000 / 8_385_200, 1) == 2.8, "verify.pyと不一致"
+assert 23_870_000 - 8_385_200 == 15_484_800, "verify.pyと不一致"
+assert round(15_484_800 / (19 * 12) / 1_000) * 1_000 == 68_000, "verify.pyと不一致"
+assert 8_385_200 - 2_340_000 == 6_045_200, "verify.pyと不一致"
 
 
 def scene_course(fig, t):
@@ -50,8 +53,14 @@ SCENES = {
                                   "幼稚園〜大学・文科省", BRAND),
     "hero_full": sc.hero("約838万円", "子ども1人を幼稚園から大学まで出す最安コース", BADGE, BRAND,
                          size=104, sub_fs=25),
-    "uchiwake": sc.card("内訳", "高校まで596万+大学242万", "(ぜんぶ公立+国立大・自宅通学)", BADGE, BRAND,
-                        main_size=42),
+    "joken": sc.card("その最安コースとは", "ぜんぶ公立 + 国立大", "(高校まで596万+大学242万。自宅から通う)", BADGE, BRAND,
+                     main_size=48, head_fs=32),
+    "tsuki": sc.card("この差を19年で割ると", "毎月6万8千円", "(15,484,800円 ÷ 19年 ÷ 12ヶ月)", BADGE, BRAND,
+                     main_size=60, head_fs=32),
+    "yachin": sc.card("つまり進路の差とは", "もう1軒ぶんの家賃", "(それを19年、払い続けるかどうか)", BADGE, BRAND,
+                      main_size=52, head_fs=32),
+    "oya": sc.card("では残りは誰が出すのか", "親が605万円", "(最安838万 − 児童手当234万)", BADGE, BRAND,
+                   main_size=58, head_fs=32),
     "quiz": sc.quiz("クイズ", "では、ぜんぶ私立なら", "いくらだと思う?", "(幼稚園から大学まで)", BADGE, BRAND),
     "kotae": sc.reveal("約2,400万円", "最安コースの約2.8倍", "(私立中心+私大文系の場合)", BADGE, BRAND,
                        size=96),
@@ -61,33 +70,37 @@ SCENES = {
                      ask="あなたの家は、どのコース?"),
     "teate": sc.card("朗報", "児童手当で約28%", "(総額234万円 ÷ 最安838万円)", BADGE, BRAND,
                      main_size=52),
-    "kansha": sc.card("ここだけの話", "その残りを払った親に感謝", "(この金額、払ってもらってたのだ)", BADGE, BRAND,
+    "kansha": sc.card("ここだけの話", "その605万を出してくれた人", "(ボクも払ってもらってた側なのだ)", BADGE, BRAND,
                       main_size=44),
-    "chips": sc.chips("あなたの家は?", ["ずっと公立", "私立まじり", "オール私立", "これから考える"], BADGE, BRAND),
+    "chips": sc.chips("あなたの家は、どれだった?", ["ずっと公立", "私立まじり", "オール私立", "これから考える"],
+                      BADGE, BRAND, q_fs=42),
     "loop_back": sc.hero("約838万円", "子ども1人を幼稚園から大学まで出す最安コース", BADGE, BRAND,
                          size=104, sub_fs=25),
 }
 
 # 全ビートを But/Therefore で繋ぐ(D10・ループ㊶)。check_flow.py で断絶0件を確認すること。
+# 表現の書き直し(ループ㊷): 差を「月あたりの家賃」に翻訳し、最後に「誰が払ったか」で締める。
 UNITS = [
     Unit("hero_count", "【838万円】。子ども1人の学費の最安値。", anim=1.2, cover=True,
          se="pop", face="surprised", speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("uchiwake", "その内訳は高校まで596万と国立大242万。", anim=1.2, speed=1.1),
+    Unit("joken", "その最安コースは、ぜんぶ公立で大学は国立。", anim=1.2, speed=1.15),
     Unit("quiz", "では、ぜんぶ私立ならいくら?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("kotae", "答えは約【2400万円】。差は約3倍なのだ。", anim=1.4, face="surprised",
+    Unit("kotae", "答えは約【2400万円】。最安の2.8倍なのだ。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("course", "そのコースべつの差が、これなのだ。", anim=1.8, speed=1.2),
-    Unit("heikin", "この数字は塾代も込みの平均。家庭差は大きい。", anim=1.2, speed=1.15),
-    Unit("teate", "でも児童手当で、最安の28%はまかなえる。", anim=1.2, se="don", speed=1.1,
-         intonation=1.15),
-    Unit("kansha", "その残りを払ってくれた親に、感謝なのだ。", anim=1.2, face="troubled",
+    Unit("course", "その差、【1548万円】なのだ。", anim=1.8, speed=1.15),
+    Unit("tsuki", "これを19年で割ると、毎月6万8千円。", anim=1.2, speed=1.15),
+    Unit("yachin", "つまり進路の差は、もう1軒ぶんの家賃。", anim=1.4, se="don", face="troubled",
+         speed=1.1, intonation=1.25, pitch=-0.03),
+    Unit("heikin", "ただしこの数字、塾代も込みの平均なのだ。", anim=1.2, speed=1.15),
+    Unit("teate", "しかも児童手当で、まかなえるのは3割。", anim=1.2, speed=1.15),
+    Unit("oya", "その残りの605万円は、親が出しているのだ。", anim=1.2, face="troubled",
+         speed=1.1, intonation=1.15, pitch=-0.04),
+    Unit("kansha", "その605万を出した人に、感謝なのだ。", anim=1.2, face="happy",
          speed=1.1, intonation=1.3, pitch=0.02),
-    Unit("chips", "あなたの家は、どのコース?", anim=1.4, pad=0.15, face="happy",
+    Unit("chips", "あなたの家は、どれだった?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
-    Unit("loop_back", "そして最安コースが、これなのだ。", anim=0.8, pad=0.1, face="smug",
-         speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
 if __name__ == "__main__":
