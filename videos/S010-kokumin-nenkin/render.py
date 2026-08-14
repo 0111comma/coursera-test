@@ -62,7 +62,7 @@ def scene_2kai(fig, t):
     """
     a1 = sc.clamp01(t * 2.0)
     a2 = sc.clamp01(t * 2.0 - 0.9)
-    fig.text(0.5, 0.905, "会社員も、土台は同じ", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.5, 0.905, "だから、こう積み上がる", ha="center", color=INK_2, fontsize=34)
     fig.text(0.66, 0.375, "あなたの給料からも、\n引かれてる?", ha="center", color=EMPH,
              fontsize=29, linespacing=1.4, alpha=sc.clamp01(t * 1.6 - 1.0))
     if a2 > 0:
@@ -77,7 +77,7 @@ def scene_2kai(fig, t):
     fig.text(0.5, 0.5925, "国民年金  月7万608円", ha="center", va="center", color=INK,
              fontsize=34, alpha=a1,
              path_effects=stroke_fx(INK, outline=outline_for(34), fatten=1.5))
-    fig.text(0.5, 0.49, "給料から、その分も引かれている", ha="center", color=INK_2,
+    fig.text(0.5, 0.49, "土台は、自営業と同じ国民年金", ha="center", color=INK_2,
              fontsize=27, alpha=a2)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
@@ -111,19 +111,23 @@ SCENES = {
                                 lead="老後にもらえる年金は?"),
     "hero_count__cover": sc.cover("その老後、月7万円で足りる?", "月7万608円", "老後にもらえる年金の額",
                                   "2026年度の満額・40年納めた場合", BRAND, main_size=100),
-    "itsu": sc.card("この7万608円は", "65歳から、毎月もらう", "(40年ぶん払い切った人の額)", BADGE, BRAND,
-                    main_size=48),
+    # 背骨の宣言。ここから先の全ビートが「働き方でどう変わるか」の説明になる
+    "hatarakikata": sc.card("でも、ここが大事", "額は、働き方で変わる", "(同じ65歳でも、2倍以上ちがう)", BADGE, BRAND,
+                            main_size=48),
     "kokan": scene_kokan,
-    "jieigyo": sc.card("自営業・フリーランスが払うのは", "毎月17,920円", "(毎月届く納付書。2026年度の額)", BADGE, BRAND,
-                       main_size=52, head_fs=32),
-    "quiz": sc.quiz("クイズ", "会社員がもらう額は", "いくら?", "(同じ65歳で比べる)", BADGE, BRAND),
+    "haraikiru": sc.card("その保険料を40年ぶん払うと", "月7万608円", "(65歳から、一生もらえる)", BADGE, BRAND,
+                         main_size=54, head_fs=32),
+    "jieigyo": sc.card("自営業・フリーランスは", "この保険料を、自分で払う", "(毎月17,920円の納付書が届く)", BADGE, BRAND,
+                       main_size=42),
+    "kaishain": sc.card("では、会社員は?", "保険料は、給料から引かれる", "(納付書は届かない。天引きだから)", BADGE, BRAND,
+                        main_size=42),
     "kousei": scene_2kai,
-    "heikin": sc.reveal("月9万6063円", "国民年金に足される、厚生年金の分", "平均的な収入で40年働いた場合", BADGE, BRAND,
+    "heikin": sc.reveal("月9万6063円", "国民年金の上に乗る、厚生年金の分", "平均的な収入で40年働いた場合", BADGE, BRAND,
                         size=96),
     "sa": scene_sa,
-    "ikkai": sc.card("会社員だった期間は", "その分の厚生年金が乗る", "(自営業でいる間は、増えない)", BADGE, BRAND,
+    "ikkai": sc.card("ただし、乗るのは", "会社員だった期間の分だけ", "(自営業でいる間は、増えない)", BADGE, BRAND,
                      main_size=40),
-    "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
+    "teikibin": sc.card("じゃあ、自分はいくら?", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
     "chips": sc.chips("あなたは今、どれ?",
                       ["今、会社員", "今、自営業", "会社員だった", "わからない"], BADGE, BRAND, q_fs=44),
@@ -131,26 +135,34 @@ SCENES = {
                          size=96, sub_fs=29),
 }
 
+# 全ビートを But/Therefore で繋ぐ(D10・ループ㊶)。
+# 各行の頭の接続語か、直前の行に出た語を必ず受けること。文脈を切らない。
 UNITS = [
     Unit("hero_count", "月【7万608円】。老後にもらえる年金の額。", anim=1.2, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("itsu", "40年払い切った人が、65歳から毎月もらう額。", anim=1.0, speed=1.15),
-    Unit("kokan", "20歳から60歳まで、全員が【国民年金】。", anim=1.6, speed=1.1),
-    Unit("jieigyo", "自営業には、毎月1万7920円の納付書。", anim=1.2, speed=1.15),
-    Unit("quiz", "では、会社員はいくらもらえるのだ?", anim=1.4, face="troubled",
-         speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("kousei", "会社員も給料から引かれ、【厚生年金】が乗る。", anim=1.6,
+    # But: 数字は1つではない、と宣言して背骨を立てる
+    Unit("hatarakikata", "でも年金の額は、働き方で大きく変わるのだ。", anim=1.2, face="troubled",
+         speed=1.15, intonation=1.2),
+    # Therefore: まず全員に共通する部分から
+    Unit("kokan", "まず20歳から60歳まで、全員が【国民年金】。", anim=1.6, speed=1.1),
+    Unit("haraikiru", "その保険料を40年払うと、月7万608円。", anim=1.2, speed=1.15),
+    # 「払う」の話を受けて、払い方の違いへ(自営業=見える / 会社員=見えない)
+    Unit("jieigyo", "この保険料、自営業は毎月1万7920円。", anim=1.2, speed=1.15),
+    Unit("kaishain", "では会社員は?保険料は給料から引かれる。", anim=1.2, face="troubled",
+         speed=1.15, intonation=1.2, pause_scale=1.2),
+    # Therefore: そのまとめて払った保険料が、2階建てを生む
+    Unit("kousei", "だから国民年金に、【厚生年金】が乗るのだ。", anim=1.6,
          speed=1.1, intonation=1.15),
-    Unit("ikkai", "会社員をやった分だけ、ちゃんと乗るのだ。", anim=1.2, face="happy",
-         speed=1.1, intonation=1.15),
-    Unit("heikin", "平均的な収入で40年なら、月【9万6063円】。", anim=1.4, face="surprised",
+    Unit("heikin", "厚生年金は平均的な収入で、月【9万6063円】。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("sa", "7万608円に足して、合計16万6671円なのだ。", anim=1.6, se="don", speed=1.15),
-    Unit("teikibin", "自分の額は、【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
+    Unit("sa", "これを7万608円に足すと、合計16万6671円。", anim=1.6, se="don", speed=1.15),
+    Unit("ikkai", "ただし乗るのは、会社員だった期間の分だけ。", anim=1.2, face="happy",
+         speed=1.1, intonation=1.15),
+    Unit("teikibin", "じゃあ自分は?【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
     Unit("chips", "あなたは今、会社員?自営業?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
-    Unit("loop_back", "国民年金だけなら、40年払って7万608円。", anim=0.8, pad=0.1, face="smug",
+    Unit("loop_back", "国民年金だけなら、40年払って月7万608円。", anim=0.8, pad=0.1, face="smug",
          speed=1.15, intonation=1.15, pitch=-0.03),
 ]
 
