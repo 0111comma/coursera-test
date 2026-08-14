@@ -23,7 +23,7 @@ import scenes_common as sc
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 BRAND = "数字で見るお金の教科書"
-BADGE = "2026年度・厚労省のモデル年金で比較"
+BADGE = "2026年度・どちらも40年働いた場合"
 
 KOKUMIN_M = 70_608
 HOSHU_HIREI = 96_063
@@ -86,11 +86,11 @@ def scene_sa(fig, t):
     fig.text(0.5, 0.90, "同じ条件で、くらべると", ha="center", color=INK_2, fontsize=34)
     fig.text(0.27, 0.72, "国民年金だけ", ha="center", color=INK_2, fontsize=28, alpha=a1)
     fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=36, alpha=a1)
-    fig.text(0.73, 0.72, "会社員のモデル", ha="center", color=INK_2, fontsize=28, alpha=a2)
+    fig.text(0.73, 0.72, "会社員の場合", ha="center", color=INK_2, fontsize=28, alpha=a2)
     fig.text(0.73, 0.645, "月16万6671円", ha="center", color=INK, fontsize=36, alpha=a2)
-    fig.text(0.5, 0.50, "差 = 2階の分", ha="center", color=EMPH, fontsize=52, alpha=a3,
-             path_effects=stroke_fx(EMPH, outline=outline_for(52), fatten=2.5))
-    fig.text(0.5, 0.415, "(どちらも40年働いた場合の厚労省モデル)",
+    fig.text(0.5, 0.50, "差 = 厚生年金の分", ha="center", color=EMPH, fontsize=46, alpha=a3,
+             path_effects=stroke_fx(EMPH, outline=outline_for(46), fatten=2.5))
+    fig.text(0.5, 0.415, "(どちらも40年働いた場合・厚労省の試算)",
              ha="center", color=INK_2, fontsize=26, alpha=a3)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
@@ -108,14 +108,14 @@ SCENES = {
                        main_size=52),
     "quiz": sc.quiz("クイズ", "会社で働く人は", "いくらもらえる?", "(同じ65歳で比べる)", BADGE, BRAND),
     "kousei": scene_2kai,
-    "heikin": sc.reveal("月9万6063円", "会社員に上乗せされる厚生年金(モデル)", "平均的な収入で40年働いた場合", BADGE, BRAND,
+    "heikin": sc.reveal("月9万6063円", "会社員に上乗せされる厚生年金", "平均的な収入で40年働いた場合", BADGE, BRAND,
                         size=96),
     "sa": scene_sa,
     "ikkai": sc.card("会社員だった期間は", "その分が、ちゃんと乗る", "(自営業でいる間は、乗らない)", BADGE, BRAND,
-                     main_size=46, ask="あなたは今、どっちで働いてる?"),
+                     main_size=46),
     "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
-    "chips": sc.chips("あなたは今、どっちで働いてる?",
+    "chips": sc.chips("あなたは今、どれ?",
                       ["今、会社員", "今、自営業", "会社員だった", "わからない"], BADGE, BRAND, q_fs=44),
     "loop_back": sc.hero("月7万608円", "65歳から毎月もらう、国民年金だけの額", BADGE, BRAND,
                          size=96, sub_fs=29),
@@ -127,18 +127,18 @@ UNITS = [
     Unit("itsu", "40年払い切った人が、65歳から毎月もらう額。", anim=1.0, speed=1.15),
     Unit("kokan", "20歳から60歳まで、全員が【国民年金】。", anim=1.6, speed=1.1),
     Unit("jieigyo", "自営業は毎月1万7920円。あの納付書なのだ。", anim=1.2, speed=1.15),
-    Unit("quiz", "では、会社で働く人はどうなのだ?", anim=1.4, face="troubled",
+    Unit("quiz", "では、会社で働く人はいくらなのだ?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
-    Unit("kousei", "会社員は、その上に【厚生年金】が乗るのだ。", anim=1.6,
+    Unit("kousei", "会社員は、国民年金の上に【厚生年金】。", anim=1.6,
          speed=1.1, intonation=1.15),
-    Unit("ikkai", "会社員だった期間は、その分が乗るのだ。", anim=1.2, face="happy",
+    Unit("ikkai", "自営業の間は乗らないが、元会社員は乗るのだ。", anim=1.2, face="happy",
          speed=1.1, intonation=1.15),
-    Unit("heikin", "モデルだと上乗せは、月【9万6063円】。", anim=1.4, face="surprised",
+    Unit("heikin", "平均的な収入で40年なら、月【9万6063円】。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("sa", "合計で月16万6671円。差が2階の分なのだ。", anim=1.6, se="don", speed=1.15),
+    Unit("sa", "7万608円に足して、合計16万6671円なのだ。", anim=1.6, se="don", speed=1.15),
     Unit("teikibin", "自分の額は、【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
-    Unit("chips", "あなたは今、どっちで働いてるのだ?", anim=1.4, pad=0.15, face="happy",
+    Unit("chips", "あなたは今、どれなのだ?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "国民年金だけなら、40年払って7万608円。", anim=0.8, pad=0.1, face="smug",
          speed=1.15, intonation=1.15, pitch=-0.03),
