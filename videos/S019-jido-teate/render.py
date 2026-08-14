@@ -28,7 +28,8 @@ def scene_timeline(fig, t):
     fig.text(0.5, 0.90, "もらえる流れ(子ども1人)", ha="center", color=INK_2, fontsize=32)
     a1 = sc.clamp01(t * 1.8)
     a2 = sc.clamp01(t * 1.8 - 0.5)
-    x0, y0, h = 0.12, 0.52, 0.09
+    # 立ち絵(y0.245-0.465)を避け、下段ラベルと合計まで含めて y>0.48 に収める
+    x0, y0, h = 0.12, 0.625, 0.09
     w1 = 0.76 * (36 / 216)
     w2 = 0.76 * (180 / 216)
     fig.patches.append(Rectangle((x0, y0), w1 * a1, h, transform=fig.transFigure,
@@ -38,13 +39,13 @@ def scene_timeline(fig, t):
                                      facecolor=MUTED_BAR, edgecolor="none"))
     fig.text(x0 + w1 / 2, y0 + h + 0.03, "月1.5万", ha="center", color=INK, fontsize=26, alpha=a1,
              path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.5))
-    fig.text(x0 + w1 / 2, y0 - 0.04, "0〜3歳\n54万円", ha="center", va="top", color=INK_2,
+    fig.text(x0 + w1 / 2, y0 - 0.035, "0〜3歳\n54万円", ha="center", va="top", color=INK_2,
              fontsize=22, alpha=a1)
     fig.text(x0 + w1 + w2 / 2, y0 + h + 0.03, "月1万", ha="center", color=INK, fontsize=26, alpha=a2)
-    fig.text(x0 + w1 + w2 / 2, y0 - 0.04, "3歳〜18歳の年度末\n180万円", ha="center", va="top",
+    fig.text(x0 + w1 + w2 / 2, y0 - 0.035, "3歳〜18歳の年度末\n180万円", ha="center", va="top",
              color=INK_2, fontsize=22, alpha=a2)
     if a2 >= 1:
-        fig.text(0.5, 0.325, "合計 234万円", ha="center", color=EMPH, fontsize=40,
+        fig.text(0.5, 0.49, "合計 234万円", ha="center", color=EMPH, fontsize=40,
                  path_effects=stroke_fx(EMPH, outline=outline_for(40), fatten=2))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
@@ -55,8 +56,8 @@ SCENES = {
                                 lead="その手当、ぜんぶでいくら?"),
     "hero_count__cover": sc.cover("その手当、ぜんぶでいくら?", "234万円", "子ども1人あたりの総額",
                                   "所得制限なし・こども家庭庁", BRAND),
-    "hero_full": sc.hero("234万円", "児童手当の総額(子ども1人・18歳まで)", BADGE, BRAND,
-                         size=112, sub_fs=28),
+    "hero_full": sc.hero("234万円", "親が子ども1人ぶんでもらう総額(18歳まで)", BADGE, BRAND,
+                         size=112, sub_fs=26),
     "timeline": scene_timeline,
     "shotoku": sc.card("しかも今は", "所得制限なし", "(2024年10月から撤廃された)", BADGE, BRAND,
                        main_size=56,
@@ -66,19 +67,19 @@ SCENES = {
     "tanjobi2": sc.card("その差", "4月生まれ245万円", "(3月生まれ234万円。差11万円)", BADGE, BRAND,
                         main_size=50),
     "daisan": sc.reveal("648万円", "第3子以降は月3万円だから", "30,000円 × 216ヶ月", BADGE, BRAND, size=112),
-    "shinsei": sc.card("いちばん大事", "申請しないともらえない", "(出生・転入から15日以内が目安)", BADGE, BRAND,
+    "shinsei": sc.card("いちばん大事", "申請しないともらえない", "(住んでいる市区町村へ。生まれて15日以内)", BADGE, BRAND,
                        main_size=44),
     "gacha": sc.card("ここだけの話", "誕生月ガチャ、ここにも", "(4月生まれ、ちょっとお得なのだ)", BADGE, BRAND,
                      main_size=46),
     "chips": sc.chips("あなたの家は?", ["もらってる", "これから", "申請を確認する", "独身なのだ"], BADGE, BRAND),
-    "loop_back": sc.hero("234万円", "児童手当の総額(子ども1人・18歳まで)", BADGE, BRAND,
-                         size=112, sub_fs=28),
+    "loop_back": sc.hero("234万円", "親が子ども1人ぶんでもらう総額(18歳まで)", BADGE, BRAND,
+                         size=112, sub_fs=26),
 }
 
 UNITS = [
     Unit("hero_count", "【234万円】。", anim=1.2, cover=True, se="pop", face="normal",
          speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("hero_full", "子ども1人でもらえる、児童手当の総額。", anim=0.8, speed=1.2),
+    Unit("hero_full", "子ども1人につき、親がもらえる総額なのだ。", anim=0.8, speed=1.2),
     Unit("timeline", "3歳まで月1万5千円、そのあと月1万円。",
          narration="3歳まで月1万5千円、そのあとは毎月1万円。", anim=1.8, speed=1.15),
     Unit("shotoku", "今は、所得制限も【なし】なのだ。", anim=1.2, se="don", speed=1.15),

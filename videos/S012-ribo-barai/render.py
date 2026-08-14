@@ -40,7 +40,8 @@ assert (M2, FEE2) == (56, 78_997), "verify.pyと不一致"
 def scene_zandaka(fig, t):
     """固有シーン: 残高の推移バー(24ヶ月)。1年後でも半分強残ることを見せる。"""
     fig.text(0.5, 0.90, "残高はこう減る(月5千円)", ha="center", color=INK_2, fontsize=32)
-    x0, x1, y0, hmax = 0.12, 0.88, 0.42, 0.34
+    # 立ち絵(y0.245-0.465)を避け、軸ラベルまで含めて y>0.48 に収める
+    x0, x1, y0, hmax = 0.12, 0.88, 0.53, 0.24
     w = (x1 - x0) / 24
     n_show = int(sc.clamp01(t * 1.6) * 24 + 0.999)
     for i in range(min(n_show, 24)):
@@ -53,8 +54,8 @@ def scene_zandaka(fig, t):
         fig.text(x0 + 11.5 * w, y0 + hmax * 0.62, "1年後\nまだ5.2万円", ha="center",
                  color=INK, fontsize=26,
                  path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.5))
-    fig.text(x0, y0 - 0.045, "1ヶ月目", ha="left", color=INK_2, fontsize=22)
-    fig.text(x1, y0 - 0.045, "24ヶ月目", ha="right", color=INK_2, fontsize=22)
+    fig.text(x0, y0 - 0.04, "1ヶ月目", ha="left", color=INK_2, fontsize=22)
+    fig.text(x1, y0 - 0.04, "24ヶ月目", ha="right", color=INK_2, fontsize=22)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -71,7 +72,7 @@ SCENES = {
     "quiz": sc.quiz("クイズ", "払い終わるまで", "何ヶ月かかる?", "(月5千円ずつ)", BADGE, BRAND),
     "kotae": sc.reveal("2年(24ヶ月)", "手数料は15,794円", "10万円+15,794円=115,794円", BADGE, BRAND, size=88),
     "zandaka": scene_zandaka,
-    "shikumi": sc.card("手数料の仕組み", "残高に年率15%", "(毎月、残高×1.25%が上乗せ)", BADGE, BRAND,
+    "shikumi": sc.card("手数料の仕組み", "残高に年率15%", "(毎月、残っている額の1.25%がふえる)", BADGE, BRAND,
                        main_size=52,
                      ask="あなたの残高にも、毎月かかる?"),
     "ikkatsu": sc.card("ちなみに", "一括払いなら0円", "(手数料は「分けた期間」の値段)", BADGE, BRAND,
@@ -97,7 +98,8 @@ UNITS = [
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("zandaka", "1年払っても、まだ半分残ってるのだ。", anim=1.6, face="troubled",
          speed=1.1, intonation=1.15, pitch=-0.04),
-    Unit("shikumi", "利息は年率15%。残高に、毎月かかるのだ。", anim=1.2, speed=1.15),
+    Unit("shikumi", "手数料は年率15%。残っている額に毎月かかる。",
+         narration="手数料はねんりつ15パーセント。残っている額に毎月かかる。", anim=1.2, speed=1.15),
     Unit("ikkatsu", "ちなみに一括なら、手数料【0円】なのだ。", anim=1.2, speed=1.15),
     Unit("niju", "20万円に増えると、約7万9千円なのだ。", anim=1.2, se="don", speed=1.1,
          face="surprised", intonation=1.15),

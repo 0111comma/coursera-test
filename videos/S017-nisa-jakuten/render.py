@@ -23,15 +23,16 @@ def scene_genbun(fig, t):
     from matplotlib.patches import FancyBboxPatch
     a = sc.clamp01(t * 1.6)
     fig.text(0.5, 0.90, "金融庁の説明には、こうある", ha="center", color=INK_2, fontsize=32)
-    fig.patches.append(FancyBboxPatch((0.10, 0.42), 0.80, 0.34, boxstyle="round,pad=0.015",
+    # 立ち絵(y0.245-0.465)を避け、引用枠ごと y>0.48 に収める
+    fig.patches.append(FancyBboxPatch((0.10, 0.495), 0.80, 0.285, boxstyle="round,pad=0.015",
                                       transform=fig.transFigure, facecolor=SURFACE,
                                       edgecolor=MUTED, linewidth=2, alpha=a))
-    fig.text(0.5, 0.66, "NISA口座の損失は", ha="center", color=INK, fontsize=34, alpha=a)
-    fig.text(0.5, 0.585, "他の口座の利益と", ha="center", color=INK, fontsize=34, alpha=a)
-    fig.text(0.5, 0.51, "損益通算できません", ha="center", color=EMPH, fontsize=38, alpha=a,
+    fig.text(0.5, 0.725, "NISA口座の損失は", ha="center", color=INK, fontsize=34, alpha=a)
+    fig.text(0.5, 0.660, "他の口座の利益と", ha="center", color=INK, fontsize=34, alpha=a)
+    fig.text(0.5, 0.593, "損益通算できません", ha="center", color=EMPH, fontsize=38, alpha=a,
              path_effects=stroke_fx(EMPH, outline=outline_for(38), fatten=2))
-    fig.text(0.5, 0.455, "(繰越控除もできません)", ha="center", color=INK_2, fontsize=26, alpha=a)
-    fig.text(0.88, 0.405, "— 金融庁 NISA特設サイトより(要旨)", ha="right", color=INK_2,
+    fig.text(0.5, 0.543, "(繰越控除もできません)", ha="center", color=INK_2, fontsize=26, alpha=a)
+    fig.text(0.88, 0.512, "— 金融庁 NISA特設サイトより(要旨)", ha="right", color=INK_2,
              fontsize=20, alpha=a)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
@@ -47,13 +48,13 @@ SCENES = {
     "zentei": sc.card("NISAといえば", "利益に税金ゼロ", "(そこは本当。じゃあ損したら?)", BADGE, BRAND,
                       main_size=54),
     "genbun": scene_genbun,
-    "iikae": sc.reveal("ないもの扱い", "NISAの損は、税金の計算に使えない", "損益通算・繰越控除とも不可", BADGE, BRAND,
+    "iikae": sc.reveal("ないもの扱い", "NISAの損は、税金の計算に使えない", "他の利益と相殺も、翌年への持ち越しも不可", BADGE, BRAND,
                        size=92),
-    "kazei": sc.card("課税口座同士なら", "損50万で税0円にできる", "(利益50万−損50万=0。税101,575円が消える)", BADGE, BRAND,
-                     main_size=42),
+    "kazei": sc.card("NISAじゃない普通の口座なら", "損50万で税0円にできる", "(利益50万−損50万=0。税101,575円が消える)", BADGE, BRAND,
+                     main_size=42, head_fs=30),
     "nisa": sc.card("NISAの損50万は", "利益と相殺できない", "(利益50万に税101,575円がそのまま)", BADGE, BRAND,
                     main_size=46),
-    "kurikoshi": sc.card("さらに", "翌年への繰越もなし", "(課税口座なら3年繰り越せる)", BADGE, BRAND,
+    "kurikoshi": sc.card("さらに", "翌年への繰越もなし", "(普通の口座なら3年ぶん持ち越せる)", BADGE, BRAND,
                          main_size=50,
                      ask="あなたはこの弱点、知ってた?"),
     "hachi": sc.card("ここだけの話", "泣きっ面に蜂", "(損した上に、税金でも使えないのだ)", BADGE, BRAND,
@@ -78,7 +79,7 @@ UNITS = [
          narration="ニーサの損は、ないもの扱いなのだ。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("kazei", "課税口座なら、損50万で税10万を消せる。", anim=1.2, speed=1.1),
+    Unit("kazei", "普通の口座なら、損50万で税10万を消せる。", anim=1.2, speed=1.1),
     Unit("nisa", "NISAの損50万は、それができないのだ。",
          narration="ニーサの損50万は、それができないのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.15, pitch=-0.04),

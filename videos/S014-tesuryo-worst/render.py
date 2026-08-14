@@ -29,7 +29,7 @@ SCENES = {
                          size=96, sub_fs=28),
     "intro": sc.card("今日の数字", "手数料ワースト3", "(ありがち順・このチャンネル調べ)", BADGE, BRAND,
                      main_size=54),
-    "w3": sc.card("3位: 振込手数料", "窓口だと〜990円", "(他行宛て。改定で値上がり傾向)", BADGE, BRAND,
+    "w3": sc.card("3位: 振込手数料", "窓口だと最大990円", "(他行宛て。改定で値上がり傾向)", BADGE, BRAND,
                   main_size=52),
     "w3b": sc.card("同じ振込でも", "アプリなら110円〜", "(窓口との差、最大880円)", BADGE, BRAND,
                    main_size=52),

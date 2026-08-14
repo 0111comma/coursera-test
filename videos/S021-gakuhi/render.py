@@ -31,7 +31,7 @@ def scene_course(fig, t):
         a = sc.clamp01(t * 2.2 - i * 0.5)
         if a <= 0:
             continue
-        y = 0.72 - i * 0.13
+        y = 0.78 - i * 0.11   # 立ち絵(y0.245-0.465)を避け全行を y>0.48 に収める
         w = 0.55 * (man / 2_387) * a
         fig.patches.append(Rectangle((0.28, y - 0.033), w, 0.066, transform=fig.transFigure,
                                      facecolor=c, edgecolor="none"))
@@ -48,15 +48,15 @@ SCENES = {
                                 lead="その学費、安くていくら?"),
     "hero_count__cover": sc.cover("その学費、いちばん安くていくら?", "838万円", "いちばん安いコースでも",
                                   "幼稚園〜大学・文科省", BRAND),
-    "hero_full": sc.hero("約838万円", "学費の最安コース(幼稚園〜大学)", BADGE, BRAND,
-                         size=104, sub_fs=30),
+    "hero_full": sc.hero("約838万円", "子ども1人を幼稚園から大学まで出す最安コース", BADGE, BRAND,
+                         size=104, sub_fs=25),
     "uchiwake": sc.card("内訳", "高校まで596万+大学242万", "(ぜんぶ公立+国立大・自宅通学)", BADGE, BRAND,
                         main_size=42),
     "quiz": sc.quiz("クイズ", "では、ぜんぶ私立なら", "いくらだと思う?", "(幼稚園から大学まで)", BADGE, BRAND),
     "kotae": sc.reveal("約2,400万円", "最安コースの約2.8倍", "(私立中心+私大文系の場合)", BADGE, BRAND,
                        size=96),
     "course": scene_course,
-    "heikin": sc.card("ただし", "学習費は塾・習い事込み", "(平均の数字。家庭差が大きい)", BADGE, BRAND,
+    "heikin": sc.card("ただし", "この数字、塾や習い事も込み", "(平均の数字。家庭差が大きい)", BADGE, BRAND,
                       main_size=46,
                      ask="あなたの家は、どのコース?"),
     "teate": sc.card("朗報", "児童手当で約28%", "(総額234万円 ÷ 最安838万円)", BADGE, BRAND,
@@ -64,14 +64,14 @@ SCENES = {
     "kansha": sc.card("ここだけの話", "親に感謝しかない", "(この金額、払ってもらってたのだ)", BADGE, BRAND,
                       main_size=50),
     "chips": sc.chips("あなたの家は?", ["ずっと公立", "私立まじり", "オール私立", "これから考える"], BADGE, BRAND),
-    "loop_back": sc.hero("約838万円", "学費の最安コース(幼稚園〜大学)", BADGE, BRAND,
-                         size=104, sub_fs=30),
+    "loop_back": sc.hero("約838万円", "子ども1人を幼稚園から大学まで出す最安コース", BADGE, BRAND,
+                         size=104, sub_fs=25),
 }
 
 UNITS = [
     Unit("hero_count", "【838万円】。", anim=1.2, cover=True, se="pop", face="surprised",
          speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("hero_full", "子ども1人の学費、いちばん安いコース。", anim=0.8, speed=1.2),
+    Unit("hero_full", "幼稚園から大学まで、子ども1人の最安コース。", anim=0.8, speed=1.2),
     Unit("uchiwake", "高校まで全部公立で596万、国立大で242万。", anim=1.2, speed=1.1),
     Unit("quiz", "では、ぜんぶ私立ならいくら?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
@@ -79,7 +79,7 @@ UNITS = [
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("course", "コースべつの差が、これなのだ。", anim=1.8, speed=1.2),
-    Unit("heikin", "数字は塾代込みの平均。家庭差は大きいのだ。", anim=1.2, speed=1.15),
+    Unit("heikin", "この数字は塾代も込みの平均。家庭差は大きい。", anim=1.2, speed=1.15),
     Unit("teate", "でも児童手当で、28%はまかなえるのだ。", anim=1.2, se="don", speed=1.1,
          intonation=1.15),
     Unit("kansha", "…この金額、親に感謝しかないのだ。", anim=1.2, face="troubled",

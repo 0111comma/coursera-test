@@ -39,16 +39,16 @@ def scene_kokan(fig, t):
     a1 = sc.clamp01(t * 2.0)
     a2 = sc.clamp01(t * 2.0 - 0.8)
     fig.text(0.5, 0.90, "国民年金は、全員が入る", ha="center", color=INK_2, fontsize=34)
-    fig.patches.append(FancyBboxPatch((0.10, 0.62), 0.80, 0.11, boxstyle="round,pad=0.008",
+    fig.patches.append(FancyBboxPatch((0.10, 0.66), 0.80, 0.11, boxstyle="round,pad=0.008",
                                       transform=fig.transFigure, facecolor=MUTED_BAR,
                                       edgecolor="none", alpha=a1))
-    fig.text(0.5, 0.675, "20歳から60歳まで  払う", ha="center", va="center", color=INK,
+    fig.text(0.5, 0.715, "20歳から60歳まで  払う", ha="center", va="center", color=INK,
              fontsize=34, alpha=a1)
-    fig.text(0.5, 0.575, "↓", ha="center", va="center", color=INK_2, fontsize=44, alpha=a2)
-    fig.patches.append(FancyBboxPatch((0.10, 0.42), 0.80, 0.11, boxstyle="round,pad=0.008",
+    fig.text(0.5, 0.615, "↓", ha="center", va="center", color=INK_2, fontsize=44, alpha=a2)
+    fig.patches.append(FancyBboxPatch((0.10, 0.50), 0.80, 0.11, boxstyle="round,pad=0.008",
                                       transform=fig.transFigure, facecolor=GOLD,
                                       edgecolor="none", alpha=a2))
-    fig.text(0.5, 0.475, "65歳から一生  もらう", ha="center", va="center", color=INK,
+    fig.text(0.5, 0.555, "65歳から一生  もらう", ha="center", va="center", color=INK,
              fontsize=34, alpha=a2,
              path_effects=stroke_fx(INK, outline=outline_for(34), fatten=1.5))
     draw_badge(fig, BADGE)
@@ -56,45 +56,51 @@ def scene_kokan(fig, t):
 
 
 def scene_2kai(fig, t):
-    """固有シーン: 会社員=国民年金(土台)+厚生年金(上)の積み上げ。土台を先に描く。"""
+    """固有シーン: 会社員=国民年金(土台)+厚生年金(上)の積み上げ。土台を先に描く。
+
+    立ち絵(x<0.342, y0.245-0.465)と重ならないよう、テキストはすべて y>0.48 に置く。
+    """
     a1 = sc.clamp01(t * 2.0)
     a2 = sc.clamp01(t * 2.0 - 0.9)
-    fig.text(0.5, 0.90, "会社員も、土台は同じ", ha="center", color=INK_2, fontsize=34)
-    fig.patches.append(FancyBboxPatch((0.14, 0.44), 0.72, 0.12, boxstyle="round,pad=0.008",
-                                      transform=fig.transFigure, facecolor=GOLD,
-                                      edgecolor="none", alpha=a1))
-    fig.text(0.5, 0.50, "国民年金  月7万608円", ha="center", va="center", color=INK,
-             fontsize=34, alpha=a1,
-             path_effects=stroke_fx(INK, outline=outline_for(34), fatten=1.5))
+    fig.text(0.5, 0.905, "会社員も、土台は同じ", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.66, 0.375, "あなたの給料からも、\n引かれてる?", ha="center", color=EMPH,
+             fontsize=29, linespacing=1.4, alpha=sc.clamp01(t * 1.6 - 1.0))
     if a2 > 0:
-        fig.patches.append(FancyBboxPatch((0.14, 0.575), 0.72, 0.12, boxstyle="round,pad=0.008",
+        fig.patches.append(FancyBboxPatch((0.14, 0.665), 0.72, 0.115, boxstyle="round,pad=0.008",
                                           transform=fig.transFigure, facecolor=MUTED_BAR,
                                           edgecolor="none", alpha=a2))
-        fig.text(0.5, 0.635, "厚生年金  会社員だけ", ha="center", va="center", color=INK,
+        fig.text(0.5, 0.7225, "厚生年金  会社員だけ", ha="center", va="center", color=INK,
                  fontsize=34, alpha=a2)
-    fig.text(0.5, 0.375, "給料から、その分も引かれている", ha="center", color=INK_2,
+    fig.patches.append(FancyBboxPatch((0.14, 0.535), 0.72, 0.115, boxstyle="round,pad=0.008",
+                                      transform=fig.transFigure, facecolor=GOLD,
+                                      edgecolor="none", alpha=a1))
+    fig.text(0.5, 0.5925, "国民年金  月7万608円", ha="center", va="center", color=INK,
+             fontsize=34, alpha=a1,
+             path_effects=stroke_fx(INK, outline=outline_for(34), fatten=1.5))
+    fig.text(0.5, 0.49, "給料から、その分も引かれている", ha="center", color=INK_2,
              fontsize=27, alpha=a2)
-    fig.text(0.5, 0.315, "あなたの給料からも、引かれてる?", ha="center", color=EMPH,
-             fontsize=30, alpha=sc.clamp01(t * 1.6 - 1.1))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
 
 def scene_sa(fig, t):
-    """固有シーン: 比較は同じ物差し(モデル年金)同士。差=そのまま2階の分になる。"""
+    """固有シーン: 比較は同じ物差し(モデル年金)同士。差=そのまま厚生年金の分になる。
+
+    立ち絵と重ならないよう、テキストはすべて y>0.48 に置く。
+    """
     a1 = sc.clamp01(t * 2.2)
     a2 = sc.clamp01(t * 2.2 - 0.7)
     a3 = sc.clamp01(t * 2.2 - 1.4)
-    fig.text(0.5, 0.90, "同じ条件で、くらべると", ha="center", color=INK_2, fontsize=34)
-    fig.text(0.27, 0.72, "国民年金だけ", ha="center", color=INK_2, fontsize=28, alpha=a1)
-    fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=36, alpha=a1)
-    fig.text(0.73, 0.72, "会社員の場合", ha="center", color=INK_2, fontsize=28, alpha=a2)
-    fig.text(0.73, 0.645, "月16万6671円", ha="center", color=INK, fontsize=36, alpha=a2)
-    fig.text(0.73, 0.585, "7万608 + 9万6063", ha="center", color=INK_2,
-             fontsize=25, alpha=a2)
-    fig.text(0.5, 0.50, "差 = 厚生年金の分", ha="center", color=EMPH, fontsize=46, alpha=a3,
+    fig.text(0.5, 0.905, "同じ条件で、くらべると", ha="center", color=INK_2, fontsize=34)
+    fig.text(0.27, 0.775, "国民年金だけ", ha="center", color=INK_2, fontsize=28, alpha=a1)
+    fig.text(0.27, 0.705, "月7万608円", ha="center", color=INK, fontsize=36, alpha=a1)
+    fig.text(0.73, 0.775, "会社員の場合", ha="center", color=INK_2, fontsize=28, alpha=a2)
+    fig.text(0.73, 0.705, "月16万6671円", ha="center", color=INK, fontsize=36, alpha=a2)
+    fig.text(0.73, 0.65, "7万608円 + 9万6063円", ha="center", color=INK_2,
+             fontsize=23, alpha=a2)
+    fig.text(0.5, 0.565, "差 = 厚生年金の分", ha="center", color=EMPH, fontsize=46, alpha=a3,
              path_effects=stroke_fx(EMPH, outline=outline_for(46), fatten=2.5))
-    fig.text(0.5, 0.415, "(どちらも40年働いた場合・厚労省の試算)",
+    fig.text(0.5, 0.49, "(どちらも40年働いた場合・厚労省の試算)",
              ha="center", color=INK_2, fontsize=26, alpha=a3)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
@@ -108,15 +114,15 @@ SCENES = {
     "itsu": sc.card("この7万608円は", "65歳から、毎月もらう", "(40年ぶん払い切った人の額)", BADGE, BRAND,
                     main_size=48),
     "kokan": scene_kokan,
-    "jieigyo": sc.card("自営業・フリーランスは", "毎月17,920円", "(毎月届く納付書。2026年度の額)", BADGE, BRAND,
-                       main_size=52),
+    "jieigyo": sc.card("自営業・フリーランスが払うのは", "毎月17,920円", "(毎月届く納付書。2026年度の額)", BADGE, BRAND,
+                       main_size=52, head_fs=32),
     "quiz": sc.quiz("クイズ", "会社員がもらう額は", "いくら?", "(同じ65歳で比べる)", BADGE, BRAND),
     "kousei": scene_2kai,
-    "heikin": sc.reveal("月9万6063円", "会社員が、もらう額に上乗せされる分", "平均的な収入で40年働いた場合", BADGE, BRAND,
+    "heikin": sc.reveal("月9万6063円", "国民年金に足される、厚生年金の分", "平均的な収入で40年働いた場合", BADGE, BRAND,
                         size=96),
     "sa": scene_sa,
-    "ikkai": sc.card("会社員をやった期間ぶん", "だけ、ちゃんと乗る", "(自営業でいる間は、増えない)", BADGE, BRAND,
-                     main_size=46),
+    "ikkai": sc.card("会社員だった期間は", "その分の厚生年金が乗る", "(自営業でいる間は、増えない)", BADGE, BRAND,
+                     main_size=40),
     "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
     "chips": sc.chips("あなたは今、どれ?",

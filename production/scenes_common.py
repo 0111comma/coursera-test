@@ -70,7 +70,7 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
     def painter(fig, t):
         fig.text(0.5, 0.90, headline, ha="center", color=INK_2, fontsize=head_fs)
         if ask:
-            fig.text(0.5, 0.845, ask, ha="center", color=EMPH, fontsize=31,
+            fig.text(0.5, 0.775, ask, ha="center", color=EMPH, fontsize=31,
                      alpha=clamp01(t * 1.6 - 0.5))
         a = clamp01(t * 2)
         fig.text(0.5, 0.62, main, ha="center", va="center", color=main_color,
@@ -88,28 +88,32 @@ def quiz(headline: str, line1: str, line2: str, note: str, badge: str, brand: st
     def painter(fig, t):
         fig.text(0.5, 0.88, headline, ha="center", color=INK, fontsize=36,
                  path_effects=stroke_fx(INK, outline=outline_for(36), fatten=2))
-        fig.text(0.5, 0.66, line1, ha="center", va="center", color=INK_2, fontsize=38)
-        fig.text(0.5, 0.575, line2, ha="center", va="center", color=INK, fontsize=44,
+        fig.text(0.5, 0.68, line1, ha="center", va="center", color=INK_2, fontsize=38)
+        fig.text(0.5, 0.60, line2, ha="center", va="center", color=INK, fontsize=44,
                  path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
+        # 注記は立ち絵(y<0.465)より上に置く。「?」は細いので立ち絵の右側に落としてよい
+        if note:
+            fig.text(0.5, 0.52, note, ha="center", va="center", color=INK_2, fontsize=28)
         a = clamp01(t * 2 - 0.5)
-        fig.text(0.5, 0.44, "?", ha="center", va="center", color=EMPH,
+        fig.text(0.5, 0.42, "?", ha="center", va="center", color=EMPH,
                  fontsize=110 * max(ease_out_back(a), 0.05), alpha=a,
                  path_effects=stroke_fx(EMPH, outline=outline_for(110), fatten=4))
-        if note:
-            fig.text(0.5, 0.33, note, ha="center", va="center", color=INK_2, fontsize=28)
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
     return painter
 
 
 def reveal(main: str, sub: str, formula: str, badge: str, brand: str, size: int = 96):
-    """フリーズ演出つきリベール用(金額グロー+補足+根拠式)。"""
+    """フリーズ演出つきリベール用(金額グロー+補足+根拠式)。
+
+    立ち絵(y 0.245-0.465)に被らないよう、最下段の formula も y>0.48 に置く。
+    """
     def painter(fig, t):
-        draw_glow_text(fig, 0.5, 0.64, main, size)
-        fig.text(0.5, 0.53, sub, ha="center", va="center",
+        draw_glow_text(fig, 0.5, 0.66, main, size)
+        fig.text(0.5, 0.565, sub, ha="center", va="center",
                  color=INK_2, fontsize=32, alpha=clamp01(t * 2 - 0.3))
         if formula:
-            fig.text(0.5, 0.445, formula, ha="center", va="center",
+            fig.text(0.5, 0.495, formula, ha="center", va="center",
                      color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.7))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
@@ -168,7 +172,7 @@ def chips(question: str, options: list, badge: str, brand: str, q_fs: int = 48):
             fig.text(x, y, c, ha="center", va="center", color=INK, fontsize=30, alpha=a,
                      bbox=dict(boxstyle="round,pad=0.6", facecolor=SURFACE,
                                edgecolor=EMPH, linewidth=2.5, alpha=a))
-        fig.text(0.5, 0.40, "▼ コメントで教えて ▼", ha="center", va="center",
+        fig.text(0.5, 0.49, "▼ コメントで教えて ▼", ha="center", va="center",
                  color=MUTED, fontsize=30, alpha=clamp01(t * 2 - 1.0))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)

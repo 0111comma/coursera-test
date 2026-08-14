@@ -33,19 +33,20 @@ def scene_waku(fig, t):
     fig.text(0.5, 0.90, "非課税の枠 と 退職金", ha="center", color=INK_2, fontsize=34)
     a1 = sc.clamp01(t * 1.8)
     a2 = sc.clamp01(t * 1.8 - 0.5)
-    hmax = 0.30
+    # 立ち絵(y0.245-0.465)を避け、結びの一文まで含めて y>0.48 に収める
+    base, hmax = 0.525, 0.215
     h1 = hmax * a1
     h2 = hmax * (2_000 / 2_060) * a2
-    fig.patches.append(Rectangle((0.16, 0.40), 0.28, h1, transform=fig.transFigure,
+    fig.patches.append(Rectangle((0.16, base), 0.28, h1, transform=fig.transFigure,
                                  facecolor=GOLD, edgecolor="none"))
-    fig.patches.append(Rectangle((0.56, 0.40), 0.28, h2, transform=fig.transFigure,
+    fig.patches.append(Rectangle((0.56, base), 0.28, h2, transform=fig.transFigure,
                                  facecolor=MUTED_BAR, edgecolor="none"))
-    fig.text(0.30, 0.40 + hmax + 0.03, "枠 2,060万", ha="center", color=INK, fontsize=30, alpha=a1,
+    fig.text(0.30, base + hmax + 0.028, "枠 2,060万", ha="center", color=INK, fontsize=30, alpha=a1,
              path_effects=stroke_fx(INK, outline=outline_for(30), fatten=1.5))
-    fig.text(0.70, 0.40 + hmax * (2_000 / 2_060) + 0.03, "退職金 2,000万", ha="center",
+    fig.text(0.70, base + hmax * (2_000 / 2_060) + 0.028, "退職金 2,000万", ha="center",
              color=INK_2, fontsize=28, alpha=a2)
     if a2 >= 1:
-        fig.text(0.5, 0.335, "枠の中 → 所得税0円", ha="center", color=EMPH, fontsize=32)
+        fig.text(0.5, 0.49, "枠の中 → 所得税0円", ha="center", color=EMPH, fontsize=32)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -57,13 +58,13 @@ SCENES = {
     "quiz": sc.quiz("クイズ", "2000万円もらって", "なぜ税金0円?", "(勤続38年の場合)", BADGE, BRAND),
     "kotae": sc.reveal("非課税の枠", "勤続38年なら2,060万円まで", "名前は「退職所得控除」", BADGE, BRAND, size=92),
     "waku": scene_waku,
-    "shikumi": sc.card("枠の育ち方", "年40万 → 年70万", "(20年までは40万/年、超えたら70万/年)", BADGE, BRAND,
+    "shikumi": sc.card("枠の育ち方", "20年までは年40万", "(21年目からは、年70万ずつ増える)", BADGE, BRAND,
                        main_size=50,
                      ask="あなたの勤続だと、枠はいくら?"),
-    "koeru": sc.card("枠を超えても", "超えた分の半分だけ", "(2500万なら220万にだけ課税)", BADGE, BRAND,
+    "koeru": sc.card("枠を超えても", "超えた分の半分に課税", "(2500万円なら、220万円にだけ税金)", BADGE, BRAND,
                      main_size=48),
-    "ideco": sc.card("ただし注意", "iDeCoと近い受け取り", "(10年ルールで枠が減ることあり)", BADGE, BRAND,
-                     main_size=48),
+    "ideco": sc.card("ただし注意", "iDeCoを近い時期に受け取ると", "(この枠が減ることがある。10年ルール)", BADGE, BRAND,
+                     main_size=40),
     "jigyaku": sc.card("ここだけの話", "ボクはまだ勤続2年目", "(枠が育つのは、これからなのだ)", BADGE, BRAND,
                        main_size=46),
     "chips": sc.chips("この枠、知ってた?", ["知ってた", "初めて知った", "親に教える", "退職金がない"], BADGE, BRAND),
@@ -84,8 +85,8 @@ UNITS = [
          narration="勤続20年まで毎年40万、そのあと毎年70万育つ。", anim=1.2, speed=1.15),
     Unit("koeru", "枠を超えても、超えた分の【半分】だけ課税。", anim=1.2, se="don", speed=1.1,
          intonation=1.15),
-    Unit("ideco", "ただしiDeCoと近い受け取りは、注意なのだ。",
-         narration="ただしイデコと近い受け取りは、注意なのだ。", anim=1.2, face="troubled",
+    Unit("ideco", "iDeCoを近い時期に受け取ると、枠が減るのだ。",
+         narration="イデコを近い時期に受け取ると、枠が減るのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.15, pitch=-0.04),
     Unit("jigyaku", "ちなみにボクは、まだ勤続2年目なのだ。", anim=1.2, face="troubled",
          speed=1.1, intonation=1.3, pitch=0.02),
