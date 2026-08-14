@@ -25,19 +25,19 @@ def scene_hamidashi(fig, t):
     fig.text(0.5, 0.90, "例: 1つの銀行に1,500万円", ha="center", color=INK_2, fontsize=32)
     a1 = sc.clamp01(t * 1.8)
     a2 = sc.clamp01(t * 1.8 - 0.6)
-    hmax = 0.32
+    base, hmax = 0.50, 0.26   # 立ち絵(y0.245-0.465)を避ける
     h_hogo = hmax * (1_000 / 1_500) * a1
     h_hami = hmax * (500 / 1_500) * a2
-    fig.patches.append(Rectangle((0.30, 0.38), 0.40, h_hogo, transform=fig.transFigure,
+    fig.patches.append(Rectangle((0.30, base), 0.40, h_hogo, transform=fig.transFigure,
                                  facecolor=GOLD, edgecolor="none"))
-    fig.text(0.5, 0.38 + hmax * (1_000 / 1_500) / 2, "保護 1,000万+利息", ha="center",
+    fig.text(0.5, base + hmax * (1_000 / 1_500) / 2, "保護 1,000万+利息", ha="center",
              va="center", color=INK, fontsize=29, alpha=a1,
              path_effects=stroke_fx(INK, outline=outline_for(29), fatten=1.5))
     if a2 > 0:
-        fig.patches.append(Rectangle((0.30, 0.38 + hmax * (1_000 / 1_500)), 0.40, h_hami,
+        fig.patches.append(Rectangle((0.30, base + hmax * (1_000 / 1_500)), 0.40, h_hami,
                                      transform=fig.transFigure, facecolor=MUTED_BAR,
                                      edgecolor="none", alpha=0.9))
-        fig.text(0.5, 0.38 + hmax * (1_000 / 1_500) + hmax * (500 / 1_500) / 2,
+        fig.text(0.5, base + hmax * (1_000 / 1_500) + hmax * (500 / 1_500) / 2,
                  "500万は戻らない可能性", ha="center", va="center", color=INK_2,
                  fontsize=24, alpha=a2)
     draw_badge(fig, BADGE)

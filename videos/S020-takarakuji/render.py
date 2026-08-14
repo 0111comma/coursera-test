@@ -26,15 +26,15 @@ def scene_kangen(fig, t):
     fig.text(0.5, 0.90, "1万円分買うと、平均で", ha="center", color=INK_2, fontsize=34)
     a1 = sc.clamp01(t * 1.8)
     a2 = sc.clamp01(t * 1.8 - 0.6)
-    hmax = 0.30
-    fig.patches.append(Rectangle((0.16, 0.40), 0.28, hmax * a1, transform=fig.transFigure,
+    base, hmax = 0.52, 0.23   # 立ち絵(y0.245-0.465)を避ける
+    fig.patches.append(Rectangle((0.16, base), 0.28, hmax * a1, transform=fig.transFigure,
                                  facecolor=MUTED_BAR, edgecolor="none"))
-    fig.text(0.30, 0.40 + hmax + 0.03, "買った額\n10,000円", ha="center", color=INK_2,
+    fig.text(0.30, base + hmax + 0.03, "買った額\n10,000円", ha="center", color=INK_2,
              fontsize=26, alpha=a1)
     if a2 > 0:
-        fig.patches.append(Rectangle((0.56, 0.40), 0.28, hmax * 0.465 * a2,
+        fig.patches.append(Rectangle((0.56, base), 0.28, hmax * 0.465 * a2,
                                      transform=fig.transFigure, facecolor=GOLD, edgecolor="none"))
-        fig.text(0.70, 0.40 + hmax * 0.465 + 0.03, "戻る額(平均)\n4,650円", ha="center",
+        fig.text(0.70, base + hmax * 0.465 + 0.03, "戻る額(平均)\n4,650円", ha="center",
                  color=INK, fontsize=26, alpha=a2,
                  path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.5))
     draw_badge(fig, BADGE)

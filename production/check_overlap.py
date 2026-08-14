@@ -93,6 +93,32 @@ def check_video(vdir: Path):
             badge_art = next((a for a in fig.texts if anchored_at(a, BADGE_ANCHOR)), None)
             badge_box = box_of(badge_art) if badge_art is not None else None
 
+            # 図形(棒・枠)と座標軸も判定する。文字だけ見ていると
+            # グラフ本体が立ち絵に食い込む不具合を見逃す(ループ㊵の積み残し)
+            shapes = []
+            for pat in list(fig.patches):
+                e = pat.get_window_extent(renderer)
+                shapes.append(("図形", (e.x0 / W, e.y0 / H, e.x1 / W, e.y1 / H)))
+            for ax in list(fig.axes):
+                pos = ax.get_position()
+                if pos.width > 0.9 and pos.height > 0.9:
+                    continue          # new_canvas() の全面背景アックスは判定対象外
+                e = ax.get_tightbbox(renderer)
+                if e is None:
+                    continue
+                shapes.append(("グラフ", (e.x0 / W, e.y0 / H, e.x1 / W, e.y1 / H)))
+            for label, box in shapes:
+                if box[3] - box[1] <= 0 or box[2] - box[0] <= 0:
+                    continue
+                zones = []
+                if has_chara:
+                    zones.append(("立ち絵", CHARA))
+                if badge_box is not None:
+                    zones.append(("バッジ", badge_box))
+                for name, zone in zones:
+                    if _overlap(box, zone) > 0:
+                        issues.append((key, t, name, f"<{label}>"))
+
             for art in list(fig.texts):
                 txt = art.get_text()
                 if not txt.strip() or art is badge_art:

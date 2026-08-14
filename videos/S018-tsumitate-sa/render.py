@@ -36,7 +36,7 @@ assert round(fv_series(240)[-1] / 10_000) == 411, "verify.pyと不一致"
 def scene_curve(fig, t):
     """固有シーン: 25歳/35歳スタートの成長曲線(65歳時点まで)。"""
     a = sc.clamp01(t * 1.4)
-    ax = fig.add_axes([0.12, 0.40, 0.76, 0.40])
+    ax = fig.add_axes([0.12, 0.505, 0.76, 0.305])   # 立ち絵(y0.245-0.465)を避ける
     ax.set_facecolor("none")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
@@ -57,11 +57,11 @@ def scene_curve(fig, t):
     ax.set_yticks([500, 1000, 1500])
     ax.set_yticklabels(["500万", "1000万", "1500万"])
     ax.grid(axis="y", color=MUTED, alpha=0.35, lw=1)
-    fig.text(0.5, 0.855, "同じ月1万円でも(年5%仮定)", ha="center", color=INK_2, fontsize=32)
+    fig.text(0.5, 0.885, "同じ月1万円でも(年5%仮定)", ha="center", color=INK_2, fontsize=32)
     if a >= 1:
-        fig.text(0.74, 0.745, "25歳〜 1,526万", ha="center", color=INK, fontsize=27,
+        fig.text(0.74, 0.775, "25歳〜 1,526万", ha="center", color=INK, fontsize=27,
                  path_effects=stroke_fx(INK, outline=outline_for(27), fatten=1.5))
-        fig.text(0.80, 0.545, "35歳〜 832万", ha="center", color=INK_2, fontsize=25)
+        fig.text(0.80, 0.625, "35歳〜 832万", ha="center", color=INK_2, fontsize=25)
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
