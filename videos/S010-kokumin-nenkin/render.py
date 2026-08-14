@@ -74,6 +74,8 @@ def scene_2kai(fig, t):
                  fontsize=34, alpha=a2)
     fig.text(0.5, 0.375, "給料から、その分も引かれている", ha="center", color=INK_2,
              fontsize=27, alpha=a2)
+    fig.text(0.5, 0.315, "あなたの給料からも、引かれてる?", ha="center", color=EMPH,
+             fontsize=30, alpha=sc.clamp01(t * 1.6 - 1.1))
     draw_badge(fig, BADGE)
     draw_footer_brand(fig, BRAND)
 
@@ -88,6 +90,8 @@ def scene_sa(fig, t):
     fig.text(0.27, 0.645, "月7万608円", ha="center", color=INK, fontsize=36, alpha=a1)
     fig.text(0.73, 0.72, "会社員の場合", ha="center", color=INK_2, fontsize=28, alpha=a2)
     fig.text(0.73, 0.645, "月16万6671円", ha="center", color=INK, fontsize=36, alpha=a2)
+    fig.text(0.73, 0.585, "7万608 + 9万6063", ha="center", color=INK_2,
+             fontsize=25, alpha=a2)
     fig.text(0.5, 0.50, "差 = 厚生年金の分", ha="center", color=EMPH, fontsize=46, alpha=a3,
              path_effects=stroke_fx(EMPH, outline=outline_for(46), fatten=2.5))
     fig.text(0.5, 0.415, "(どちらも40年働いた場合・厚労省の試算)",
@@ -104,14 +108,14 @@ SCENES = {
     "itsu": sc.card("この7万608円は", "65歳から、毎月もらう", "(40年ぶん払い切った人の額)", BADGE, BRAND,
                     main_size=48),
     "kokan": scene_kokan,
-    "jieigyo": sc.card("自営業・フリーランスは", "毎月17,920円", "(あの納付書。2026年度の額)", BADGE, BRAND,
+    "jieigyo": sc.card("自営業・フリーランスは", "毎月17,920円", "(毎月届く納付書。2026年度の額)", BADGE, BRAND,
                        main_size=52),
-    "quiz": sc.quiz("クイズ", "会社で働く人は", "いくらもらえる?", "(同じ65歳で比べる)", BADGE, BRAND),
+    "quiz": sc.quiz("クイズ", "会社員がもらう額は", "いくら?", "(同じ65歳で比べる)", BADGE, BRAND),
     "kousei": scene_2kai,
-    "heikin": sc.reveal("月9万6063円", "会社員に上乗せされる厚生年金", "平均的な収入で40年働いた場合", BADGE, BRAND,
+    "heikin": sc.reveal("月9万6063円", "会社員が、もらう額に上乗せされる分", "平均的な収入で40年働いた場合", BADGE, BRAND,
                         size=96),
     "sa": scene_sa,
-    "ikkai": sc.card("会社員だった期間は", "その分が、ちゃんと乗る", "(自営業でいる間は、乗らない)", BADGE, BRAND,
+    "ikkai": sc.card("会社員をやった期間ぶん", "だけ、ちゃんと乗る", "(自営業でいる間は、増えない)", BADGE, BRAND,
                      main_size=46),
     "teikibin": sc.card("自分がいくらか知るには", "ねんきん定期便", "(毎年、誕生月に届くあのハガキ)", BADGE, BRAND,
                         main_size=52),
@@ -126,19 +130,19 @@ UNITS = [
          se="pop", face="normal", speed=1.05, intonation=1.2, pitch=0.0),
     Unit("itsu", "40年払い切った人が、65歳から毎月もらう額。", anim=1.0, speed=1.15),
     Unit("kokan", "20歳から60歳まで、全員が【国民年金】。", anim=1.6, speed=1.1),
-    Unit("jieigyo", "自営業は毎月1万7920円。あの納付書なのだ。", anim=1.2, speed=1.15),
-    Unit("quiz", "では、会社で働く人はいくらなのだ?", anim=1.4, face="troubled",
+    Unit("jieigyo", "自営業には、毎月1万7920円の納付書。", anim=1.2, speed=1.15),
+    Unit("quiz", "では、会社員はいくらもらえるのだ?", anim=1.4, face="troubled",
          speed=1.15, intonation=1.2, pause_scale=1.3),
     Unit("kousei", "会社員は、国民年金の上に【厚生年金】。", anim=1.6,
          speed=1.1, intonation=1.15),
-    Unit("ikkai", "自営業の間は乗らないが、元会社員は乗るのだ。", anim=1.2, face="happy",
+    Unit("ikkai", "会社員をやった分だけ、ちゃんと乗るのだ。", anim=1.2, face="happy",
          speed=1.1, intonation=1.15),
     Unit("heikin", "平均的な収入で40年なら、月【9万6063円】。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
     Unit("sa", "7万608円に足して、合計16万6671円なのだ。", anim=1.6, se="don", speed=1.15),
     Unit("teikibin", "自分の額は、【ねんきん定期便】で分かるのだ。", anim=1.2, speed=1.15),
-    Unit("chips", "あなたは今、どれなのだ?", anim=1.4, pad=0.15, face="happy",
+    Unit("chips", "あなたは今、会社員?自営業?", anim=1.4, pad=0.15, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loop_back", "国民年金だけなら、40年払って7万608円。", anim=0.8, pad=0.1, face="smug",
          speed=1.15, intonation=1.15, pitch=-0.03),
