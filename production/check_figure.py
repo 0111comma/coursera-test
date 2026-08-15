@@ -45,6 +45,7 @@ MAX_LONG = 1          # 「文」は1つまで(見出し用)
 MIN_SHAPES = 1        # 図形が0個なら図ではない
 FIGURE_COVERAGE = 0.40  # 図のあるユニットが全体に占める最低割合
 REDUNDANT_RATIO = 0.6
+TABLE_NUMS = 6        # これ以上の数値を持つシーンは早見表とみなす
 
 # 「数字が無言」判定は、文字列ではなく**値**で比べる。
 # 図が「70,608円」、声が「7万608円」なら同じ値なので合格にしたい。
@@ -151,8 +152,13 @@ def check_video(vdir: Path):
 
         body = [t for t, _ in texts]
         subtitle = u.subtitle.replace("【", "").replace("】", "")
+        scene_values = set()
         for t in body:
-            fig_numbers |= money_values(t)
+            scene_values |= money_values(t)
+        # 早見表(一覧表)は、読み上げるためではなく止めて見るための図。
+        # 1シーンに数値が TABLE_NUMS 個以上あるなら一覧表とみなし、無言判定から外す
+        if len(scene_values) < TABLE_NUMS:
+            fig_numbers |= scene_values
 
         # 1. 図の有無を数える(個別には落とさない。カードは図でなくてよい)
         if n_shapes >= MIN_SHAPES:
