@@ -45,7 +45,39 @@ MAX_LONG = 1          # 「文」は1つまで(見出し用)
 MIN_SHAPES = 1        # 図形が0個なら図ではない
 FIGURE_COVERAGE = 0.40  # 図のあるユニットが全体に占める最低割合
 REDUNDANT_RATIO = 0.6
-NUM_RE = re.compile(r"[0-9０-９][0-9０-９,，]*\s*(?:万|億|%|倍|円|年|歳|割|人)?")
+
+# 「数字が無言」判定は、文字列ではなく**値**で比べる。
+# 図が「70,608円」、声が「7万608円」なら同じ値なので合格にしたい。
+# 逆に、図にしかない金額は、書式が違うだけでは言い訳にならない。
+NUM_RE = re.compile(
+    r"(\d[\d,]*)\s*億\s*(\d[\d,]*)?\s*万?\s*(\d[\d,]*)?"   # ○億○万○
+    r"|(\d[\d,]*)\s*万\s*(\d[\d,]*)?"                          # ○万○
+    r"|(\d[\d,]*(?:\.\d+)?)\s*(%|倍|割)"                        # 割合
+    r"|(\d[\d,]*)\s*(円|年|歳)")                                  # 素の数字+単位
+
+
+def money_values(text: str) -> set:
+    """文章から、声に出すべき数値を取り出す。単位のない目盛り数字と西暦は無視する。"""
+    out = set()
+    for m in NUM_RE.finditer(text.replace("，", ",").replace("、", "")):
+        g = m.groups()
+        if g[0]:                                   # ○億○万○
+            v = int(g[0].replace(",", "")) * 10**8
+            v += int(g[1].replace(",", "")) * 10**4 if g[1] else 0
+            v += int(g[2].replace(",", "")) if g[2] else 0
+            out.add(v)
+        elif g[3]:                                 # ○万○
+            v = int(g[3].replace(",", "")) * 10**4
+            v += int(g[4].replace(",", "")) if g[4] else 0
+            out.add(v)
+        elif g[5]:                                 # 割合
+            out.add(f"{float(g[5].replace(',', '')):g}{g[6]}")
+        elif g[7]:                                 # 素の数字+単位
+            v = int(g[7].replace(",", ""))
+            if g[8] == "年" and 1900 <= v <= 2100:
+                continue                           # 出典の西暦・時点表記は声に出さなくてよい
+            out.add(v if g[8] == "円" else f"{v}{g[8]}")
+    return out
 
 # 常に出る要素(バッジ・ブランド)は判定から除く
 BADGE_ANCHOR = (0.90, 0.83)
@@ -79,7 +111,7 @@ def check_video(vdir: Path):
     issues = []
     n_with_figure = [0]
     fig_numbers = set()
-    spoken = "".join(u.subtitle for u in units).replace("【", "").replace("】", "").replace(",", "")
+    spoken = money_values("".join(u.subtitle for u in units).replace("【", "").replace("】", ""))
 
     for u in units:
         painter = scenes.get(u.scene)
@@ -113,8 +145,7 @@ def check_video(vdir: Path):
         body = [t for t, _ in texts]
         subtitle = u.subtitle.replace("【", "").replace("】", "")
         for t in body:
-            for m in NUM_RE.finditer(t):
-                fig_numbers.add(m.group().replace(" ", "").replace(",", "").replace("，", ""))
+            fig_numbers |= money_values(t)
 
         # 1. 図の有無を数える(個別には落とさない。カードは図でなくてよい)
         if n_shapes >= MIN_SHAPES:
@@ -146,10 +177,10 @@ def check_video(vdir: Path):
                            f"図のあるユニットが{n_with_figure[0]}/{len(units)}"
                            f"({ratio:.0%})。文字カードだけで説明している"))
     # 図に出した数字は、必ず声でも言う(音だけで追えること)
-    mute = sorted(n for n in fig_numbers if n and n not in spoken)
+    mute = sorted((n for n in fig_numbers - spoken), key=str)
     if mute:
         issues.append(("(動画全体)", "数字が無言",
-                       f"図にあるが字幕にない数値: {'、'.join(mute[:6])}"
+                       f"図にあるが字幕にない数値: {'、'.join(str(n) for n in mute[:6])}"
                        f"。何と何の数字なのか、声でも言うこと"))
 
     # 同じシーンの同じ指摘は1件にまとめる
