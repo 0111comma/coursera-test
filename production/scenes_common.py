@@ -177,3 +177,124 @@ def chips(question: str, options: list, badge: str, brand: str, q_fs: int = 48):
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
     return painter
+
+
+# ── 株価チャート(ループ㊼) ──────────────────────────────────────────
+# ユーザー指摘:「株価のこのタイミングで買って、どのタイミングで売って、
+# どのタイミングで買い戻すとか、チャートでわかりやすくして欲しい」
+#
+# 投資テーマの図は、原則この「株価チャート」を土台にする。
+# 横=時間、縦=株価。売買のタイミングはチャート上の点として打つ。
+# 抽象的なトークンや棒グラフに置き換えない(視聴者の心的モデルはチャートである)。
+
+def price_path(start: float, end: float, n: int = 56, wiggle: float = 1.0):
+    """始点と終点を厳密に固定したまま、途中だけ揺らした株価の道筋。
+
+    数値の根拠になるのは始点と終点だけ(verify.pyで検算する)。
+    途中の形はイメージなので、バッジに「イメージ」と明記して使う。
+    """
+    import math
+    pts = []
+    span = abs(end - start)
+    for i in range(n):
+        u = i / (n - 1)
+        base = start + (end - start) * u
+        w = (math.sin(u * 9.4) * 0.035 + math.sin(u * 21.7) * 0.015) * span * wiggle
+        w *= math.sin(math.pi * u)          # 両端では揺れを0にする
+        pts.append(base + w)
+    return pts
+
+
+def price_chart(prices, marks, band=None, title="", badge="", brand="",
+                ymin=None, ymax=None, unit="万", reveal=1.0):
+    """株価チャートのシーン(ループ㊼)。
+
+    prices : 株価の列(左から右へ時間)
+    marks  : [(位置0〜1, ラベル, 種類)]。種類は "sell"(売る) / "buy"(買い戻す)
+    band   : (価格A, 価格B, ラベル) 2つの価格のあいだを塗り、差額を示す
+    reveal : 0〜1。線をどこまで描くか(ユニットごとに伸ばして見せる)
+
+    実際の取引画面と同じ作りにする: 価格の目盛りは左、売買の点はチャート上、
+    ラベルには背景を敷いて価格の線と食い合わせない。
+    """
+    X0, X1 = 0.205, 0.940
+    Y0, Y1 = 0.520, 0.790
+    lo = ymin if ymin is not None else min(prices)
+    hi = ymax if ymax is not None else max(prices)
+    pad = (hi - lo) * 0.14 or 1.0
+    lo, hi = lo - pad, hi + pad
+
+    def px(u):
+        return X0 + (X1 - X0) * u
+
+    def py(v):
+        return Y0 + (Y1 - Y0) * (v - lo) / (hi - lo)
+
+    def chip(fig, x, y, text, color, size, ha="center"):
+        """線の上に置いても読めるよう、背景を敷いたラベル。"""
+        fig.text(x, y, text, ha=ha, va="center", color=color, fontsize=size,
+                 bbox=dict(boxstyle="round,pad=0.28", facecolor=SURFACE,
+                           edgecolor="none", alpha=0.92), zorder=8)
+
+    def painter(fig, t):
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import Rectangle
+        if title:
+            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+        a_band = clamp01(reveal * 2 - 1)
+
+        # 差額の帯
+        if band:
+            va_, vb, lab = band
+            ya, yb = py(va_), py(vb)
+            fig.patches.append(Rectangle((X0, min(ya, yb)), X1 - X0, abs(ya - yb),
+                                         transform=fig.transFigure, facecolor=EMPH,
+                                         edgecolor="none", alpha=0.15 * a_band, zorder=1))
+
+        # 価格の目盛り(左)と、その水平の点線
+        for u, lab, kind in marks:
+            idx = int(u * (len(prices) - 1))
+            if idx >= max(2, int(len(prices) * clamp01(reveal))):
+                continue
+            v = prices[idx]
+            fig.add_artist(plt.Line2D([X0, X1], [py(v), py(v)], transform=fig.transFigure,
+                                      color=MUTED, linewidth=1.4, linestyle=(0, (5, 5)),
+                                      alpha=0.6, zorder=2))
+            fig.text(X0 - 0.014, py(v), f"{v:,.0f}{unit}", ha="right", va="center",
+                     color=INK, fontsize=26,
+                     path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.5))
+
+        # 株価の線
+        n = max(2, int(len(prices) * clamp01(reveal)))
+        xs = [px(i / (len(prices) - 1)) for i in range(n)]
+        ys = [py(v) for v in prices[:n]]
+        fig.add_artist(plt.Line2D(xs, ys, transform=fig.transFigure, color=INK,
+                                  linewidth=5, solid_capstyle="round", zorder=4))
+
+        # 売買のタイミング(チャート上の点)
+        for u, lab, kind in marks:
+            idx = int(u * (len(prices) - 1))
+            if idx >= n:
+                continue
+            x, y = px(u), py(prices[idx])
+            color = EMPH if kind == "sell" else GOLD
+            fig.add_artist(plt.Line2D([x], [y], transform=fig.transFigure, marker="o",
+                                      markersize=22, color=color, markeredgecolor=SURFACE,
+                                      markeredgewidth=4, linestyle="none", zorder=6))
+            right = u <= 0.5
+            chip(fig, x + (0.030 if right else -0.030), y + (0.045 if kind == "sell" else -0.045),
+                 lab, color, 29, ha="left" if right else "right")
+
+        # 差額のラベル(帯の中央。背景を敷いて線と分離する)
+        if band and a_band > 0:
+            va_, vb, lab = band
+            chip(fig, (X0 + X1) / 2, (py(va_) + py(vb)) / 2, lab, EMPH, 34)
+
+        fig.text(0.075, (Y0 + Y1) / 2, "株\n価", ha="center", va="center",
+                 color=MUTED, fontsize=21, linespacing=1.2)
+        fig.text((X0 + X1) / 2, Y0 - 0.030, "時間 →", ha="center", va="center",
+                 color=MUTED, fontsize=21)
+        if badge:
+            draw_badge(fig, badge)
+        draw_footer_brand(fig, brand)
+    return painter
