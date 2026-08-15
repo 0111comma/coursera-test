@@ -187,38 +187,47 @@ def chips(question: str, options: list, badge: str, brand: str, q_fs: int = 48):
 # 横=時間、縦=株価。売買のタイミングはチャート上の点として打つ。
 # 抽象的なトークンや棒グラフに置き換えない(視聴者の心的モデルはチャートである)。
 
-def price_path(start: float, end: float, n: int = 56, wiggle: float = 1.0):
-    """始点と終点を厳密に固定したまま、途中だけ揺らした株価の道筋。
+def price_path(start: float, end: float, n: int = 150, vol: float = 0.30, seed: int = 11):
+    """本物の値動きに見える株価の道筋(ブラウン橋)。
 
-    数値の根拠になるのは始点と終点だけ(verify.pyで検算する)。
-    途中の形はイメージなので、バッジに「イメージ」と明記して使う。
+    正弦波を重ねただけでは滑らかすぎて「偽物のチャート」になる(ユーザー指摘)。
+    乱歩を作ってから両端を start/end にぴったり合わせる(ブラウン橋)ことで、
+    **始点と終点は厳密に固定したまま、途中は実際の株価のようにギザギザ**になる。
+    seed を固定しているので毎回同じ形が出る(検証のたびに絵が変わらない)。
     """
-    import math
-    pts = []
-    span = abs(end - start)
-    for i in range(n):
-        u = i / (n - 1)
-        base = start + (end - start) * u
-        w = (math.sin(u * 9.4) * 0.035 + math.sin(u * 21.7) * 0.015) * span * wiggle
-        w *= math.sin(math.pi * u)          # 両端では揺れを0にする
-        pts.append(base + w)
-    return pts
+    import random
+    rng = random.Random(seed)
+    walk, acc = [], 0.0
+    for _ in range(n):
+        acc += rng.gauss(0, 1)
+        walk.append(acc)
+    # 両端を0に固定する(ブラウン橋)
+    w0, wn = walk[0], walk[-1]
+    bridged = [w - (w0 + (wn - w0) * i / (n - 1)) for i, w in enumerate(walk)]
+    scale = max(abs(x) for x in bridged) or 1.0
+    span = abs(end - start) or abs(start) * 0.25
+    amp = span * vol
+    return [start + (end - start) * (i / (n - 1)) + bridged[i] / scale * amp
+            for i in range(n)]
 
 
 def price_chart(prices, marks, band=None, title="", badge="", brand="",
-                ymin=None, ymax=None, unit="万", reveal=1.0):
+                ymin=None, ymax=None, unit="万", reveal=1.0, borrow=None):
     """株価チャートのシーン(ループ㊼)。
 
     prices : 株価の列(左から右へ時間)
     marks  : [(位置0〜1, ラベル, 種類)]。種類は "sell"(売る) / "buy"(買い戻す)
     band   : (価格A, 価格B, ラベル) 2つの価格のあいだを塗り、差額を示す
     reveal : 0〜1。線をどこまで描くか(ユニットごとに伸ばして見せる)
+    borrow : (開始0〜1, 終了0〜1, ラベル) 株を借りている期間をチャートの下に帯で出す。
+             空売りの本体は「借りて売る → 買い戻して返す」なので、これがないと図が成立しない
 
     実際の取引画面と同じ作りにする: 価格の目盛りは左、売買の点はチャート上、
     ラベルには背景を敷いて価格の線と食い合わせない。
     """
     X0, X1 = 0.205, 0.940
-    Y0, Y1 = 0.520, 0.790
+    Y0, Y1 = 0.560, 0.800
+    Y_BORROW = 0.505          # 「株を借りている期間」の帯
     lo = ymin if ymin is not None else min(prices)
     hi = ymax if ymax is not None else max(prices)
     pad = (hi - lo) * 0.14 or 1.0
@@ -282,13 +291,35 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
                                       markersize=22, color=color, markeredgecolor=SURFACE,
                                       markeredgewidth=4, linestyle="none", zorder=6))
             right = u <= 0.5
-            chip(fig, x + (0.030 if right else -0.030), y + (0.045 if kind == "sell" else -0.045),
+            chip(fig, x + (0.030 if right else -0.030),
+                 y + (0.050 if kind == "sell" else -0.062),
                  lab, color, 29, ha="left" if right else "right")
 
         # 差額のラベル(帯の中央。背景を敷いて線と分離する)
         if band and a_band > 0:
             va_, vb, lab = band
             chip(fig, (X0 + X1) / 2, (py(va_) + py(vb)) / 2, lab, EMPH, 34)
+
+        # 株を借りている期間(空売りの本体)。売った瞬間に借り、買い戻した瞬間に返す
+        if borrow:
+            bu0, bu1, blab = borrow
+            n_ratio = clamp01(reveal)
+            bx0, bx1 = px(bu0), px(min(bu1, n_ratio))
+            if bx1 > bx0:
+                a_b = clamp01(reveal * 3 - bu0 * 3)
+                fig.patches.append(Rectangle((bx0, Y_BORROW - 0.016), bx1 - bx0, 0.032,
+                                             transform=fig.transFigure, facecolor=MUTED_BAR,
+                                             edgecolor="none", alpha=0.9 * a_b, zorder=3))
+                # 両端の縦棒(いつ借りて、いつ返したか)
+                for bx in ((bx0,) if n_ratio < bu1 else (bx0, bx1)):
+                    fig.add_artist(plt.Line2D([bx, bx], [Y_BORROW - 0.030, Y_BORROW + 0.030],
+                                              transform=fig.transFigure, color=INK,
+                                              linewidth=4, alpha=a_b, zorder=4))
+                if bx1 - bx0 > 0.30:      # 帯が十分に伸びてからラベルを出す
+                    fig.text((bx0 + bx1) / 2, Y_BORROW, blab, ha="center", va="center",
+                             color=INK, fontsize=24, alpha=a_b, zorder=5)
+            fig.text(0.075, Y_BORROW, "株", ha="center", va="center",
+                     color=MUTED, fontsize=21)
 
         fig.text(0.075, (Y0 + Y1) / 2, "株\n価", ha="center", va="center",
                  color=MUTED, fontsize=21, linespacing=1.2)
