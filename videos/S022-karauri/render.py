@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch, Rectangle, FancyArrow
+from matplotlib.patches import Rectangle, FancyArrow
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "production"))
 from shortlib import (
@@ -25,7 +25,7 @@ import scenes_common as sc
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 BRAND = "数字で見るお金の教科書"
-BADGE = "100万円分の例・手数料や金利は考慮せず"
+BADGE = "100万円分の例・値動きはイメージ"
 
 MOTO = 1_000_000
 assert MOTO - int(MOTO * 3.0) == -2_000_000, "verify.pyと不一致"
@@ -33,99 +33,27 @@ assert MOTO - int(MOTO * 0.8) == 200_000, "verify.pyと不一致"
 assert int(MOTO * 0.0) - MOTO == -1_000_000, "verify.pyと不一致"
 
 
-# 経路図の定位置。横=時間(3拍)、上のレーン=株、下のレーン=お金の残高。
-# 「手順の文を箱に並べる」のは図ではない(figure-forms.md の判定表NG欄)。
-COLS = [0.245, 0.50, 0.755]     # 横位置 = 時間の3拍
-Y_KABU = 0.755                  # 株レーン(トークンの中心)
-Y_TIME = 0.672                  # 時間ラベル。バッジ(y0.805〜)より下に置く
-Y_BASE = 0.492                  # お金レーンの底(残高0)
-H_MAX = 0.105                   # 残高100万のときの棒の高さ
-ASPECT = 1080 / 1920            # 図座標で「丸」に見せるための縦横比
+# 株価チャートの土台(ループ㊼)。ユーザー指摘:
+#   「株価のこのタイミングで買って、どのタイミングで売って、どのタイミングで買い戻すとか
+#     チャートでわかりやすくして欲しい」「借りて返している様子が全くない」
+# → 横=時間、縦=株価。売買は線上の点。株を借りている期間はチャートの下に帯で出す。
+# 値動きはブラウン橋(price_path)で、本物の株価と同じようにギザギザさせる。
+DOWN = sc.price_path(100, 80, seed=11)     # 下がった場合: 100万 → 80万
+UP = sc.price_path(100, 300, seed=5)       # 上がった場合: 100万 → 300万
+KARI = (0.0, 1.0, "株を借りている")
 
-# 株が今どこにあるか / 手元のお金(万円)
-WHERE = ["あなた", "市場", "証券会社"]
-KANE = [0, 100, 20]          # 下がった場合: 売って+100、80万で買い戻して+20
-KANE_LOSS = [0, 100, -200]   # 上がった場合: 300万で買い戻すので手元は−200万
+SELL = (0.0, "借りて売る", "sell")
+BUY = (1.0, "買い戻して返す", "buy")
 
 
-def _token(fig, x, y, label, color, alpha=1.0, rx=0.072):
-    """株の所在を示すトークン。位置そのものが「今どこにあるか」を表す。"""
-    from matplotlib.patches import Ellipse
-    fig.patches.append(Ellipse((x, y), 2 * rx, 2 * rx * ASPECT, transform=fig.transFigure,
-                               facecolor=color, edgecolor="none", alpha=alpha))
-    fig.text(x, y, label, ha="center", va="center", color=SURFACE, fontsize=23, alpha=alpha,
-             fontweight="black")
+def chart_down(title, marks, band=None, reveal=1.0):
+    return sc.price_chart(DOWN, marks, band, title, BADGE, BRAND,
+                          ymin=78, ymax=102, reveal=reveal, borrow=KARI)
 
 
-def keiro(step: int, loss: bool = False):
-    """固有シーン: 空売りの経路図(figure-forms.md「物やお金が動く → 経路図」)。
-
-    意味を担う視覚要素:
-      - 横位置 = 時間(借りる → 売る → 買い戻して返す)
-      - 上レーンのトークンの位置と矢印 = 株が誰の手にあるか、どちらへ動いたか
-      - 下レーンの棒の高さ = そのときの手元のお金。折れ線で「増えて減る」軌跡を見せる
-    文は置かない(冗長性)。語句は必ず対象の上か中に置く(空間的近接)。
-    """
-    kane = KANE_LOSS if loss else KANE
-    hmax = H_MAX * 0.5 if loss else H_MAX   # 損失側は縦を圧縮(比率は保つ)
-    labels_time = ["借りる", "売る", "買い戻して返す"]
-
-    def painter(fig, t):
-        a_now = sc.clamp01(t * 2.4)
-        fig.text(0.5, 0.905, "上がると、同じ図がこうなる" if loss else "株とお金は、こう動く",
-                 ha="center", color=INK_2, fontsize=34)
-        fig.text(0.045, Y_KABU, "株", ha="center", va="center", color=INK_2, fontsize=25)
-        fig.text(0.045, Y_BASE + 0.055, "お金", ha="center", va="center", color=INK_2, fontsize=25)
-
-        shown = min(step, 3)
-        # 株レーン: 矢印を先に描き、トークンをその上に重ねる
-        for i in range(1, shown):
-            alpha = a_now if i + 1 == step else 1.0
-            fig.add_artist(FancyArrow(COLS[i - 1] + 0.078, Y_KABU,
-                                      (COLS[i] - COLS[i - 1]) - 0.156, 0, width=0.005,
-                                      head_width=0.024, head_length=0.020,
-                                      transform=fig.transFigure, facecolor=INK_2,
-                                      edgecolor="none", length_includes_head=True, alpha=alpha))
-        for i in range(shown):
-            alpha = a_now if i + 1 == step else 1.0
-            _token(fig, COLS[i], Y_KABU, WHERE[i],
-                   GOLD if i != 1 else MUTED_BAR, alpha)
-
-        # 時間ラベル(その列が何の瞬間か)
-        for i, lb in enumerate(labels_time):
-            on = i + 1 <= step
-            fig.text(COLS[i], Y_TIME, lb, ha="center", va="center",
-                     color=EMPH if i + 1 == step else INK_2,
-                     fontsize=23, alpha=(a_now if i + 1 == step else 1.0) if on else 0.28)
-
-        # お金レーン: 底を1本の線で共有し、棒の高さで残高を示す
-        fig.add_artist(plt.Line2D([0.13, 0.88], [Y_BASE, Y_BASE], transform=fig.transFigure,
-                                  color=MUTED, linewidth=1.5, alpha=0.5))
-        tops = []
-        for i in range(shown):
-            alpha = a_now if i + 1 == step else 1.0
-            h = hmax * (kane[i] / 100) * (a_now if i + 1 == step else 1.0)
-            if abs(h) > 0.001:
-                y0 = Y_BASE if h > 0 else Y_BASE + h
-                fig.patches.append(Rectangle((COLS[i] - 0.055, y0), 0.11, abs(h),
-                                             transform=fig.transFigure,
-                                             facecolor=EMPH if i == 2 else GOLD,
-                                             edgecolor="none", alpha=alpha))
-            tops.append((COLS[i], Y_BASE + h))
-            lab = f"{kane[i]:+,}万".replace("+", "") if kane[i] else "0円"
-            fig.text(COLS[i], Y_BASE + h + (0.030 if h >= 0 else -0.030), lab,
-                     ha="center", va="center", color=EMPH if kane[i] < 0 else INK,
-                     fontsize=25, alpha=alpha,
-                     path_effects=stroke_fx(EMPH if kane[i] < 0 else INK,
-                                            outline=outline_for(25), fatten=1.5))
-        # 残高の軌跡(増えて、減る)を細い折れ線で結ぶ
-        if len(tops) >= 2:
-            fig.add_artist(plt.Line2D([p[0] for p in tops], [p[1] for p in tops],
-                                      transform=fig.transFigure, color=INK_2,
-                                      linewidth=2, alpha=0.55, zorder=5))
-        draw_badge(fig, BADGE)
-        draw_footer_brand(fig, BRAND)
-    return painter
+def chart_up(title, marks, band=None, reveal=1.0):
+    return sc.price_chart(UP, marks, band, title, BADGE, BRAND,
+                          ymin=90, ymax=310, reveal=reveal, borrow=KARI)
 
 
 def scene_hitaisho(fig, t):
@@ -194,19 +122,17 @@ SCENES = {
     "nazo": sc.hero("株が下がると", "もうかる人がいる", BADGE, BRAND, size=84, sub_fs=44),
     "nazo__cover": sc.cover("株が下がると、もうかるのはなぜ?", "空売り", "やることは、3つだけ",
                             "仕組みを図で解説", BRAND, main_size=124),
-    "teigi": sc.card("空売り", "持っていない株を、売る", "(証券会社から借りて売る取引)", BADGE, BRAND,
+    "teigi": sc.card("空売り", "持っていない株を、売る", "(借りている間は貸株料がかかる)", BADGE, BRAND,
                      main_size=50, head_fs=40),
-    "step1": keiro(1),
-    "step2": keiro(2),
-    "step3": keiro(3),
-    "rei": sc.reveal("もうけ 20万円", "100万 − 80万", "(株を返しても、手元に残る)",
-                     BADGE, BRAND, size=96),
+    "step1": chart_down("①株を借りる", [(0.0, "株を借りる", "sell")], reveal=0.14),
+    "step2": chart_down("②借りた株を売る", [SELL], reveal=0.30),
+    "step3": chart_down("③買い戻して返す", [SELL, BUY]),
+    "rei": chart_down("差額が、もうけ", [SELL, BUY], (100, 80, "もうけ 20万")),
     "imi": scene_gyaku,
     "toi": sc.card("上がったときは", "買い戻す値段も上がる", "(返すには、買うしかない)", BADGE, BRAND,
                    main_size=48, head_fs=34),
-    "takaku": keiro(3, loss=True),
-    "baisu": sc.reveal("損 200万円", "株価が3倍になった場合", "100万で売り、300万で買い戻す", BADGE, BRAND,
-                       size=104),
+    "takaku": chart_up("上がった場合", [SELL, BUY]),
+    "baisu": chart_up("差額は、そのまま損", [SELL, BUY], (100, 300, "損 200万")),
     "hitaisho": scene_hitaisho,
     "mugen": sc.card("株価に上限はないので", "損にも上限がない", "(実際は追証や強制決済で止められる)", BADGE, BRAND,
                      main_size=54, head_fs=32),

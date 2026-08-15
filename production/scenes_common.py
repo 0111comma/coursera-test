@@ -225,9 +225,9 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
     実際の取引画面と同じ作りにする: 価格の目盛りは左、売買の点はチャート上、
     ラベルには背景を敷いて価格の線と食い合わせない。
     """
-    X0, X1 = 0.205, 0.940
-    Y0, Y1 = 0.560, 0.800
-    Y_BORROW = 0.505          # 「株を借りている期間」の帯
+    X0, X1 = 0.185, 0.945
+    Y0, Y1 = 0.575, 0.795
+    Y_BORROW = 0.512          # 「株を借りている期間」の帯
     lo = ymin if ymin is not None else min(prices)
     hi = ymax if ymax is not None else max(prices)
     pad = (hi - lo) * 0.14 or 1.0
@@ -239,18 +239,56 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
     def py(v):
         return Y0 + (Y1 - Y0) * (v - lo) / (hi - lo)
 
-    def chip(fig, x, y, text, color, size, ha="center"):
-        """線の上に置いても読めるよう、背景を敷いたラベル。"""
-        fig.text(x, y, text, ha=ha, va="center", color=color, fontsize=size,
-                 bbox=dict(boxstyle="round,pad=0.28", facecolor=SURFACE,
-                           edgecolor="none", alpha=0.92), zorder=8)
+    # ラベルの当たり判定(図の座標。1080x1920 / 100dpi なので pt→図の割合は下式)
+    def _box(x, y, text, size, ha):
+        w = len(text) * size / 72 / 10.8 * 1.05 + 0.020
+        h = size / 72 / 19.2 + 0.024
+        x0 = x - w / 2 if ha == "center" else (x if ha == "left" else x - w)
+        return (x0, x0 + w, y - h / 2, y + h / 2)
+
+    def _hit(b, placed):
+        return any(b[0] < p[1] and p[0] < b[1] and b[2] < p[3] and p[2] < b[3]
+                   for p in placed)
 
     def painter(fig, t):
         import matplotlib.pyplot as plt
         from matplotlib.patches import Rectangle
+
+        # 先に「動かせないもの」を占有させる(見出し・バッジ)。ラベルはここを避ける
+        placed = [(0.52, 0.965, 0.800, 0.862)] if badge else []
         if title:
             fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+            placed.append((0.04, 0.96, 0.882, 0.928))
+
+        def chip(x, y, text, color, size, ha="center"):
+            """線の上に置いても読めるよう、背景を敷いたラベル。"""
+            fig.text(x, y, text, ha=ha, va="center", color=color, fontsize=size,
+                     bbox=dict(boxstyle="round,pad=0.28", facecolor=SURFACE,
+                               edgecolor="none", alpha=0.92), zorder=8)
+            placed.append(_box(x, y, text, size, ha))
+
+        def chip_free(cands, text, color, size):
+            """候補の位置を順に試し、画面内で他のラベルとぶつからない最初の場所に置く。"""
+            ok = [(x, y, ha, _box(x, y, text, size, ha)) for x, y, ha in cands]
+            ok = [c for c in ok if c[3][0] > 0.032 and c[3][1] < 0.968]  # 画面外に出さない
+            if not ok:
+                ok = [(0.5, cands[0][1], "center", _box(0.5, cands[0][1], text, size, "center"))]
+            for x, y, ha, b in ok:
+                if not _hit(b, placed):
+                    chip(x, y, text, color, size, ha)
+                    return
+            x, y, ha, _ = ok[-1]
+            chip(x, y, text, color, size, ha)
+
         a_band = clamp01(reveal * 2 - 1)
+
+        # 目盛り線(実際のチャート画面と同じく、薄く水平に)
+        for k in range(5):
+            gy = Y0 + (Y1 - Y0) * k / 4
+            fig.add_artist(plt.Line2D([X0, X1], [gy, gy], transform=fig.transFigure,
+                                      color=MUTED, linewidth=1, alpha=0.16, zorder=0))
+        fig.add_artist(plt.Line2D([X0, X0], [Y0, Y1], transform=fig.transFigure,
+                                  color=MUTED, linewidth=1.2, alpha=0.35, zorder=0))
 
         # 差額の帯
         if band:
@@ -258,27 +296,36 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
             ya, yb = py(va_), py(vb)
             fig.patches.append(Rectangle((X0, min(ya, yb)), X1 - X0, abs(ya - yb),
                                          transform=fig.transFigure, facecolor=EMPH,
-                                         edgecolor="none", alpha=0.15 * a_band, zorder=1))
+                                         edgecolor="none", alpha=0.17 * a_band, zorder=1))
+            for gy in (ya, yb):
+                fig.add_artist(plt.Line2D([X0, X1], [gy, gy], transform=fig.transFigure,
+                                          color=EMPH, linewidth=1.6, alpha=0.55 * a_band,
+                                          zorder=2))
 
-        # 価格の目盛り(左)と、その水平の点線
+        # 価格の目盛り(左)。売買した価格だけを出す
         for u, lab, kind in marks:
             idx = int(u * (len(prices) - 1))
             if idx >= max(2, int(len(prices) * clamp01(reveal))):
                 continue
             v = prices[idx]
-            fig.add_artist(plt.Line2D([X0, X1], [py(v), py(v)], transform=fig.transFigure,
-                                      color=MUTED, linewidth=1.4, linestyle=(0, (5, 5)),
-                                      alpha=0.6, zorder=2))
             fig.text(X0 - 0.014, py(v), f"{v:,.0f}{unit}", ha="right", va="center",
-                     color=INK, fontsize=26,
-                     path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.5))
+                     color=INK_2, fontsize=24)
 
         # 株価の線
         n = max(2, int(len(prices) * clamp01(reveal)))
         xs = [px(i / (len(prices) - 1)) for i in range(n)]
         ys = [py(v) for v in prices[:n]]
         fig.add_artist(plt.Line2D(xs, ys, transform=fig.transFigure, color=INK,
-                                  linewidth=5, solid_capstyle="round", zorder=4))
+                                  linewidth=5, solid_capstyle="round",
+                                  solid_joinstyle="round", zorder=4))
+
+        # 差額のラベル(この図の主役なので、先に場所を取る)
+        if band and a_band > 0:
+            va_, vb, lab = band
+            ymid = (py(va_) + py(vb)) / 2
+            chip_free([(0.52, ymid, "center"), (0.34, ymid, "center"),
+                       (0.72, ymid, "center"), (0.52, ymid + 0.045, "center"),
+                       (0.52, ymid - 0.045, "center")], lab, EMPH, 34)
 
         # 売買のタイミング(チャート上の点)
         for u, lab, kind in marks:
@@ -291,14 +338,14 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
                                       markersize=22, color=color, markeredgecolor=SURFACE,
                                       markeredgewidth=4, linestyle="none", zorder=6))
             right = u <= 0.5
-            chip(fig, x + (0.030 if right else -0.030),
-                 y + (0.050 if kind == "sell" else -0.062),
-                 lab, color, 29, ha="left" if right else "right")
-
-        # 差額のラベル(帯の中央。背景を敷いて線と分離する)
-        if band and a_band > 0:
-            va_, vb, lab = band
-            chip(fig, (X0 + X1) / 2, (py(va_) + py(vb)) / 2, lab, EMPH, 34)
+            dx, ha = (0.030, "left") if right else (-0.030, "right")
+            up = 0.052 if kind == "sell" else -0.052
+            cands = [(x + dx, y + d, ha) for d in (up, -up, up * 1.9, -up * 1.9)]
+            cands += [(x - dx, y + d, "right" if right else "left") for d in (up, -up)]
+            # 最後の逃げ場: グラフの上下(枠の外)。ここなら線とも帯とも重ならない
+            cands += [(x + dx, Y0 - 0.020, ha), (x + dx, Y1 + 0.022, ha)]
+            cands = [(cx, min(max(cy, Y0 - 0.020), 0.796), ch) for cx, cy, ch in cands]
+            chip_free(cands, lab, color, 29)
 
         # 株を借りている期間(空売りの本体)。売った瞬間に借り、買い戻した瞬間に返す
         if borrow:
@@ -307,24 +354,19 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
             bx0, bx1 = px(bu0), px(min(bu1, n_ratio))
             if bx1 > bx0:
                 a_b = clamp01(reveal * 3 - bu0 * 3)
-                fig.patches.append(Rectangle((bx0, Y_BORROW - 0.016), bx1 - bx0, 0.032,
-                                             transform=fig.transFigure, facecolor=MUTED_BAR,
-                                             edgecolor="none", alpha=0.9 * a_b, zorder=3))
+                fig.patches.append(Rectangle((bx0, Y_BORROW - 0.014), bx1 - bx0, 0.028,
+                                             transform=fig.transFigure, facecolor=GOLD,
+                                             edgecolor="none", alpha=0.45 * a_b, zorder=3))
                 # 両端の縦棒(いつ借りて、いつ返したか)
                 for bx in ((bx0,) if n_ratio < bu1 else (bx0, bx1)):
-                    fig.add_artist(plt.Line2D([bx, bx], [Y_BORROW - 0.030, Y_BORROW + 0.030],
-                                              transform=fig.transFigure, color=INK,
+                    fig.add_artist(plt.Line2D([bx, bx], [Y_BORROW - 0.028, Y_BORROW + 0.028],
+                                              transform=fig.transFigure, color=GOLD,
                                               linewidth=4, alpha=a_b, zorder=4))
                 if bx1 - bx0 > 0.30:      # 帯が十分に伸びてからラベルを出す
                     fig.text((bx0 + bx1) / 2, Y_BORROW, blab, ha="center", va="center",
-                             color=INK, fontsize=24, alpha=a_b, zorder=5)
-            fig.text(0.075, Y_BORROW, "株", ha="center", va="center",
-                     color=MUTED, fontsize=21)
-
-        fig.text(0.075, (Y0 + Y1) / 2, "株\n価", ha="center", va="center",
-                 color=MUTED, fontsize=21, linespacing=1.2)
-        fig.text((X0 + X1) / 2, Y0 - 0.030, "時間 →", ha="center", va="center",
-                 color=MUTED, fontsize=21)
+                             color=INK, fontsize=23, alpha=a_b, zorder=5)
+            fig.text(X0 - 0.014, Y_BORROW, "株", ha="right", va="center",
+                     color=INK_2, fontsize=22)
         if badge:
             draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
