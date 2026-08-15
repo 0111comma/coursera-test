@@ -371,3 +371,144 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
             draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
     return painter
+
+
+# ─────────────────────────────────────────────────────────────
+# 図の型を足す(ループ㊿)。figure-forms.md の判定表に対応させる。
+#   bars2   ... 「AとBの量が違う」/「前→後で変わった」→ 共通の底からの棒2本(+差の帯)
+#   lines2  ... 「2つが時間でどう離れるか」→ 同じ軸に2本の折れ線(直接ラベル)
+#   stack   ... 「積み上がっている」→ 同じ単位のブロックを積んで、総額に届かせる
+# いずれも意味を担うのは長さ・位置であって、箱の中の文ではない。
+# ─────────────────────────────────────────────────────────────
+
+def bars2(title, left, right, badge, brand, gap=None, unit="", ymax=None):
+    """共通の底からの棒2本。left/right = (見出し, 値, 棒の中に書く短い語句)。
+
+    gap : (ラベル,) を渡すと、2本の差を右側に帯と数字で出す
+    長さが意味を持つので、値そのものを軸のスケールにする(棒の高さ=値/ymax)。
+    """
+    Y0 = 0.545
+    HMAX = 0.215
+    top = ymax if ymax else max(left[1], right[1]) * 1.05
+
+    def painter(fig, t):
+        from matplotlib.patches import Rectangle
+        if title:
+            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+        fig.add_artist(plt.Line2D([0.10, 0.90], [Y0, Y0], transform=fig.transFigure,
+                                  color=MUTED, linewidth=1.5, alpha=0.5))
+        cols = [(0.30, left, MUTED_BAR, clamp01(t * 2.2)),
+                (0.66, right, EMPH, clamp01(t * 2.2 - 0.6))]
+        tops = {}
+        for x, (head, val, inner), color, a in cols:
+            if a <= 0:
+                continue
+            h = HMAX * (val / top) * a
+            fig.patches.append(Rectangle((x - 0.13, Y0), 0.26, h, transform=fig.transFigure,
+                                         facecolor=color, edgecolor="none", alpha=0.95))
+            tops[x] = Y0 + h
+            fig.text(x, Y0 + h + 0.032, inner, ha="center", va="center", color=INK,
+                     fontsize=32, alpha=a,
+                     path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
+            fig.text(x, Y0 - 0.030, head, ha="center", va="center", color=INK_2,
+                     fontsize=28, alpha=a)
+        if gap and len(tops) == 2 and clamp01(t * 2.2 - 1.2) > 0:
+            a = clamp01(t * 2.2 - 1.2)
+            y1, y2 = tops[0.30], tops[0.66]
+            fig.patches.append(Rectangle((0.838, min(y1, y2)), 0.050, abs(y2 - y1),
+                                         transform=fig.transFigure, facecolor=GOLD,
+                                         edgecolor="none", alpha=0.55 * a))
+            fig.text(0.863, (y1 + y2) / 2, gap, ha="center", va="center", color=INK,
+                     fontsize=27, alpha=a, rotation=90,
+                     path_effects=stroke_fx(INK, outline=outline_for(27), fatten=1.5))
+        if badge:
+            draw_badge(fig, badge)
+        draw_footer_brand(fig, brand)
+    return painter
+
+
+def lines2(title, series, badge, brand, ymin=None, ymax=None, xlabels=None, reveal=1.0):
+    """同じ軸に2本の折れ線。series = [(名前, [値...], 色), ...]。
+
+    2系列なので凡例は使わず、線の右端に直接ラベルを置く(空間的近接)。
+    横位置=時間、縦位置=値。どちらが上か・どこで離れるかが形で分かる。
+    """
+    X0, X1 = 0.175, 0.760      # 右端はラベルの場所として空ける
+    Y0, Y1 = 0.560, 0.800
+    vals = [v for _, ys, _ in series for v in ys]
+    lo = ymin if ymin is not None else min(vals)
+    hi = ymax if ymax is not None else max(vals)
+    pad = (hi - lo) * 0.16 or 1.0
+    lo, hi = lo - pad, hi + pad
+
+    def painter(fig, t):
+        if title:
+            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+        for k in range(5):
+            gy = Y0 + (Y1 - Y0) * k / 4
+            fig.add_artist(plt.Line2D([X0, X1], [gy, gy], transform=fig.transFigure,
+                                      color=MUTED, linewidth=1, alpha=0.16, zorder=0))
+        n_pt = len(series[0][1])
+        shown = max(2, int(round(n_pt * clamp01(reveal))))
+        # 右端のラベルが近すぎると読めないので、上下に押し分ける(空間的近接は保つ)
+        ends = [Y0 + (Y1 - Y0) * (ys[shown - 1] - lo) / (hi - lo) for _, ys, _ in series]
+        if len(ends) == 2 and abs(ends[0] - ends[1]) < 0.040:
+            mid = sum(ends) / 2
+            hi_i = 0 if ends[0] >= ends[1] else 1
+            ends[hi_i], ends[1 - hi_i] = mid + 0.020, mid - 0.020
+        for i, (name, ys, color) in enumerate(series):
+            xs = [X0 + (X1 - X0) * (j / (n_pt - 1)) for j in range(shown)]
+            py = [Y0 + (Y1 - Y0) * (v - lo) / (hi - lo) for v in ys[:shown]]
+            fig.add_artist(plt.Line2D(xs, py, transform=fig.transFigure, color=color,
+                                      linewidth=6, solid_capstyle="round", zorder=4 + i))
+            fig.add_artist(plt.Line2D([xs[-1]], [py[-1]], transform=fig.transFigure, marker="o",
+                                      markersize=18, color=color, markeredgecolor=SURFACE,
+                                      markeredgewidth=4, linestyle="none", zorder=6))
+            fig.text(X1 + 0.022, ends[i], name, ha="left", va="center", color=color,
+                     fontsize=29, zorder=8,
+                     path_effects=stroke_fx(color, outline=outline_for(29), fatten=1.5))
+        for j, lab in enumerate(xlabels or []):
+            if j < shown:
+                fig.text(X0 + (X1 - X0) * (j / (n_pt - 1)), Y0 - 0.032, lab,
+                         ha="center", va="center", color=INK_2, fontsize=25)
+        if badge:
+            draw_badge(fig, badge)
+        draw_footer_brand(fig, brand)
+    return painter
+
+
+def stack(title, n_blocks, block_label, total_label, badge, brand, cols=5, focus=None):
+    """同じ大きさのブロックを積んで、総額に届かせる図(PERなど「○年分」)。
+
+    1個=1年分。個数そのものが意味を持つので、数えられる大きさにする。
+    """
+    def painter(fig, t):
+        from matplotlib.patches import Rectangle
+        if title:
+            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+        rows = (n_blocks + cols - 1) // cols
+        bw, bh = 0.115, 0.048
+        gx, gy = 0.020, 0.017
+        total_w = cols * bw + (cols - 1) * gx
+        x0 = 0.5 - total_w / 2
+        y_top = 0.790
+        shown = int(round(n_blocks * clamp01(t * 1.8)))
+        for i in range(shown):
+            r, c = divmod(i, cols)
+            x = x0 + c * (bw + gx)
+            y = y_top - r * (bh + gy) - bh
+            on = focus is None or i < focus
+            fig.patches.append(Rectangle((x, y), bw, bh, transform=fig.transFigure,
+                                         facecolor=EMPH if on else MUTED_BAR,
+                                         edgecolor="none", alpha=0.95))
+        y_bottom = y_top - rows * (bh + gy)
+        if block_label:
+            fig.text(0.5, y_bottom - 0.012, block_label, ha="center", va="top",
+                     color=INK_2, fontsize=27)
+        if total_label:
+            fig.text(x0, 0.845, total_label, ha="left", va="center", color=INK,
+                     fontsize=32, path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
+        if badge:
+            draw_badge(fig, badge)
+        draw_footer_brand(fig, brand)
+    return painter

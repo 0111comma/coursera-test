@@ -136,7 +136,10 @@ def check_video(vdir: Path):
             if pos.width > 0.9 and pos.height > 0.9:
                 continue          # new_canvas の全面背景
             n_shapes += len(ax.lines) + len(ax.patches) + len(ax.collections)
-        n_shapes += len([a for a in fig.artists if type(a).__name__.startswith("FancyArrow")])
+        # fig.add_artist で足した線・矢印は fig.lines ではなく fig.artists に入る
+        n_shapes += len([a for a in fig.artists
+                         if type(a).__name__ in ("Line2D", "Polygon", "Rectangle")
+                         or type(a).__name__.startswith("FancyArrow")])
 
         texts = []
         for art in fig.texts:
