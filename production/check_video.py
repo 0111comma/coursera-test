@@ -81,6 +81,18 @@ def main(video_dir: Path) -> int:
     if "draw_badge" in src and re.search(r"(年\d|年利|利回り|リターン|運用).{0,10}仮定", src):
         check("動画内リスク表示(元本)", "元本" in src, "打消し表示: 消費者庁実態調査準拠")
 
+    # 2.5 企画書(plan.md)の必須4行 — ループ㊹
+    # 「誰が、なぜこの動画で指を止めるのか」を定義せずに render.py を書いたことが
+    # ユーザー却下の根因だった。文章で書いたルールは守られないので、ここで落とす。
+    pp = video_dir / "plan.md"
+    pmd = pp.read_text() if pp.exists() else ""
+    check("plan.md 存在", bool(pmd), "企画書なしで台本を書かない(docs/persona.md)")
+    for key, hint in [("想定視聴者", "P-A/P-Bのどちらか+具体的な状況"),
+                      ("指を止める理由", "この人はフィードで何を見て止まるのか"),
+                      ("視聴後に得るもの", "この人は何が分かるようになるのか"),
+                      ("この動画の結論", "ネタ選定ゲートF1: 予想と食い違うこと")]:
+        check(f"plan.md「{key}」", key in pmd, hint)
+
     # 3. script.md の必須要素
     sp = video_dir / "script.md"
     smd = sp.read_text() if sp.exists() else ""

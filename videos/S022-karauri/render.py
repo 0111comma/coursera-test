@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""S022: 空売りとは何か(仕組み解説型)。数値はverify.pyとassert照合。
+"""S022: 空売りとは何か(仕組み解説型)。企画書は plan.md、数値は verify.py と照合。
 
-ループ㊸: 主戦場を投資の仕組み解説に変更(戦略§4)。本作はその第1弾。
-- ネタ選定ゲート(F1): 予想「持ってない株を売る?意味がわからない」
-  → 結論「借りて売って買い戻すだけ。ただし損に上限がない」
-- 用語の定義で終わらせず、3ステップの図を積み上げて仕組みを見せる
-- リスクの解説に限る。やり方の推奨・煽りはしない(戦略§6)
+ループ㊹(v2・全面改稿): v1はユーザー却下。原因は数字フックの誤用とペルソナ不在。
+- 想定視聴者は P-A(NISAで積立中・個別株はやらない・空売りを説明できない)。docs/persona.md
+- **この人は空売りを知らないので、金額のフックは効かない。** v1の「100万円の空売りで損200万円」は
+  名詞を知らない人には他人事であり、何の動画かも伝わらなかった
+- v2は「株が下がると、もうかる人がいる」という**名詞なしで分かる矛盾**で開き、名詞は2文目で与える
+- 数字は仕組みを理解したあと(6ユニット目)に初めて出す
+- 締めは「ニュースの空売りが分かる」。やり方は勧めない(戦略§6)
 """
 import sys
 from pathlib import Path
@@ -111,21 +113,24 @@ def scene_hitaisho(fig, t):
 
 
 SCENES = {
-    "hero": sc.hero("損 200万円", "100万円分を空売りして、株価が3倍になった場合", BADGE, BRAND,
-                    size=104, sub_fs=24),
-    "hero__cover": sc.cover("持ってない株を、売れると思う?", "損 200万円", "出したのは100万円なのに",
-                            "空売りの仕組みとリスク", BRAND, main_size=104),
-    "teigi": sc.card("そもそも空売りとは", "持っていない株を売る", "(信用取引という仕組みを使う)", BADGE, BRAND,
+    "nazo": sc.hero("株が下がると", "もうかる人がいる", BADGE, BRAND, size=84, sub_fs=44),
+    "nazo__cover": sc.cover("株が下がると、もうかるのはなぜ?", "空売り", "やることは、3つだけ",
+                            "仕組みを図で解説", BRAND, main_size=124),
+    "teigi": sc.card("その方法が【空売り】", "やることは3つだけ", "(持っていない株を、売る取引)", BADGE, BRAND,
                      main_size=52, head_fs=32),
     "step1": shikumi(1),
     "step2": shikumi(2),
     "step3": shikumi(3),
     "step4": shikumi(4),
-    "imi": sc.card("だから空売りとは", "下がると得をする取引", "(買いとは、もうかる向きが逆)", BADGE, BRAND,
+    "rei": sc.reveal("もうけ 20万円", "100万円で売って、80万円で買い戻した場合", "その差額が、そのまま手元に残る",
+                     BADGE, BRAND, size=96),
+    "imi": sc.card("これが冒頭の答え", "下がると得をする取引", "(買いとは、もうかる向きが逆)", BADGE, BRAND,
                    main_size=50, head_fs=32,
-                   ask="あなたは、下がる方に賭けられる?"),
+                   ask="あなたの投信は、下がると損だけど?"),
     "toi": sc.card("では、逆に上がったら?", "買い戻す値段が上がる", "(返すために、買わないといけない)", BADGE, BRAND,
                    main_size=48, head_fs=32),
+    "takaku": sc.card("株は返さないといけない", "だから高くても買い戻す", "(100万で売った株が、300万になっても)",
+                      BADGE, BRAND, main_size=46, head_fs=32),
     "baisu": sc.reveal("損 200万円", "株価が3倍になった場合", "売った100万 − 買い戻し300万", BADGE, BRAND,
                        size=104),
     "hitaisho": scene_hitaisho,
@@ -133,33 +138,35 @@ SCENES = {
                      main_size=54, head_fs=32),
     "kai": sc.card("ただし普通に買う場合は", "最悪でも100万円まで", "(株価が0になっても、出した分が上限)", BADGE, BRAND,
                    main_size=48, head_fs=32),
-    "shime": sc.hero("損 200万円", "この非対称が、空売りのいちばん怖いところ", BADGE, BRAND,
-                     size=104, sub_fs=24),
+    "shime": sc.hero("株が下がると", "もうかる人がいる。それが空売り", BADGE, BRAND,
+                     size=84, sub_fs=34),
 }
 
 # ネタ選定ゲート(F1): 予想「持ってない株を売る?意味がわからない」
 #   → 結論「借りて売って買い戻すだけ。ただし損に上限がない」
+# フックは「名詞なしで分かる矛盾」。数字は仕組みを理解したあとに出す(ループ㊹・persona.md)。
 UNITS = [
-    Unit("hero", "100万円の空売りで、【損が200万円】。", anim=1.0, cover=True,
-         se="pop", face="surprised", speed=1.05, intonation=1.2, pitch=0.0),
-    Unit("teigi", "まず空売りとは、持っていない株を売ること。", anim=1.2, speed=1.15),
-    Unit("step1", "その株は、証券会社から借りるのだ。", anim=1.2, speed=1.15),
-    Unit("step2", "そして借りた株を、今の値段で売る。", anim=1.2, speed=1.15),
-    Unit("step3", "その株が値下がりしたら、買い戻して返す。", anim=1.2, speed=1.15),
-    Unit("step4", "その差額が、もうけになるのだ。", anim=1.2, se="don", face="happy",
-         speed=1.15, intonation=1.15),
-    Unit("imi", "だから下がると得をする、珍しい取引なのだ。", anim=1.2, speed=1.15),
-    Unit("toi", "では、上がったらどうなるのか。", anim=1.4, face="troubled",
+    Unit("nazo", "株が下がると、もうかる人がいるのだ。", anim=1.0, cover=True,
+         se="pop", face="normal", speed=1.05, intonation=1.25, pitch=0.0),
+    Unit("teigi", "その方法が【空売り】。やることは3つだけ。", anim=1.2, face="happy",
+         speed=1.15, intonation=1.2),
+    Unit("step1", "まず、証券会社から株を借りる。", anim=1.2, speed=1.15),
+    Unit("step2", "その借りた株を、今の値段で売るのだ。", anim=1.2, speed=1.15),
+    Unit("step3", "その株が下がったら、買い戻して返すのだ。", anim=1.2, speed=1.15),
+    Unit("rei", "その差額20万円が、まるごともうけになる。", anim=1.4, se="don", face="happy",
+         speed=1.1, intonation=1.2),
+    Unit("imi", "これが、下がると得をする仕組み。", anim=1.2, speed=1.15),
+    Unit("toi", "では、上がってしまったら?", anim=1.4, face="troubled",
          speed=1.1, intonation=1.2, pause_scale=1.3),
-    Unit("baisu", "その株が3倍になれば、損は【200万円】。", anim=1.4, face="surprised",
+    Unit("takaku", "その株を返すために、高い値段で買うのだ。", anim=1.2, face="troubled",
+         speed=1.15),
+    Unit("baisu", "その値段が3倍なら、損は【200万円】なのだ。", anim=1.4, face="surprised",
          puchun=True, se="impact", se_at=0.34,
          speed=1.1, intonation=1.2, pitch=-0.05, pause_scale=1.3),
-    Unit("hitaisho", "これは株価に、上限がないから起きるのだ。", anim=1.8,
+    Unit("kai", "ただし普通に買うなら、最悪でも100万まで。", anim=1.2, speed=1.15),
+    Unit("hitaisho", "でも株価に上限はない。だから損にも上限がない。", anim=1.8, face="troubled",
          speed=1.1, intonation=1.15, pitch=-0.04),
-    Unit("mugen", "つまり空売りの損には、上限がないのだ。", anim=1.2, face="troubled",
-         speed=1.1, intonation=1.2),
-    Unit("kai", "ただし買いなら、最悪でも出した100万円まで。", anim=1.2, speed=1.15),
-    Unit("shime", "この差が、空売りのいちばん怖いところ。", anim=1.0, pad=0.15, face="smug",
+    Unit("shime", "これで、ニュースの空売りが分かる。", anim=1.0, pad=0.15, face="smug",
          speed=1.1, intonation=1.15, pitch=-0.03),
 ]
 
