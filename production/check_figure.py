@@ -15,11 +15,19 @@
   3. 冗長        : 図の中の文字列が、そのユニットの字幕と6割以上重なる
   4. 強調過多    : 強調色の要素が3つ以上(WARN)
 
+動画レベル:
+  5. 図が足りない : 図のあるユニットが4割未満
+  6. 数字が無言   : 図に出ている数値が、どの字幕にも出てこない(ループ㊾)
+     ユーザー指摘:「買った金額と売った金額をちゃんと言わないとよくわからんよ」
+     図に100万・80万と書いてあっても、声が「その値段で売る」としか言わなければ、
+     見ている人は何と何の差額なのか分からない。音だけでも follow できることが条件
+
 使い方:
     python3 production/check_figure.py                 # 全動画
     python3 production/check_figure.py videos/S022-... # 1本だけ
 """
 import importlib.util
+import re
 import sys
 import warnings
 from pathlib import Path
@@ -37,6 +45,7 @@ MAX_LONG = 1          # 「文」は1つまで(見出し用)
 MIN_SHAPES = 1        # 図形が0個なら図ではない
 FIGURE_COVERAGE = 0.40  # 図のあるユニットが全体に占める最低割合
 REDUNDANT_RATIO = 0.6
+NUM_RE = re.compile(r"[0-9０-９][0-9０-９,，]*\s*(?:万|億|%|倍|円|年|歳|割|人)?")
 
 # 常に出る要素(バッジ・ブランド)は判定から除く
 BADGE_ANCHOR = (0.90, 0.83)
@@ -69,6 +78,8 @@ def check_video(vdir: Path):
     units = getattr(mod, "UNITS", [])
     issues = []
     n_with_figure = [0]
+    fig_numbers = set()
+    spoken = "".join(u.subtitle for u in units).replace("【", "").replace("】", "").replace(",", "")
 
     for u in units:
         painter = scenes.get(u.scene)
@@ -101,6 +112,9 @@ def check_video(vdir: Path):
 
         body = [t for t, _ in texts]
         subtitle = u.subtitle.replace("【", "").replace("】", "")
+        for t in body:
+            for m in NUM_RE.finditer(t):
+                fig_numbers.add(m.group().replace(" ", "").replace(",", "").replace("，", ""))
 
         # 1. 図の有無を数える(個別には落とさない。カードは図でなくてよい)
         if n_shapes >= MIN_SHAPES:
@@ -131,6 +145,13 @@ def check_video(vdir: Path):
             issues.append(("(動画全体)", "図が足りない",
                            f"図のあるユニットが{n_with_figure[0]}/{len(units)}"
                            f"({ratio:.0%})。文字カードだけで説明している"))
+    # 図に出した数字は、必ず声でも言う(音だけで追えること)
+    mute = sorted(n for n in fig_numbers if n and n not in spoken)
+    if mute:
+        issues.append(("(動画全体)", "数字が無言",
+                       f"図にあるが字幕にない数値: {'、'.join(mute[:6])}"
+                       f"。何と何の数字なのか、声でも言うこと"))
+
     # 同じシーンの同じ指摘は1件にまとめる
     return sorted(set(issues))
 
