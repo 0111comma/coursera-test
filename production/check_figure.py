@@ -49,35 +49,42 @@ REDUNDANT_RATIO = 0.6
 # 「数字が無言」判定は、文字列ではなく**値**で比べる。
 # 図が「70,608円」、声が「7万608円」なら同じ値なので合格にしたい。
 # 逆に、図にしかない金額は、書式が違うだけでは言い訳にならない。
-NUM_RE = re.compile(
-    r"(\d[\d,]*)\s*億\s*(\d[\d,]*)?\s*万?\s*(\d[\d,]*)?"   # ○億○万○
-    r"|(\d[\d,]*)\s*万\s*(\d[\d,]*)?"                          # ○万○
-    r"|(\d[\d,]*(?:\.\d+)?)\s*(%|倍|割)"                        # 割合
-    r"|(\d[\d,]*)\s*(円|年|歳)")                                  # 素の数字+単位
+# 数値の連なり(1億2千万・7万608円・3千2百円 など)と、その後ろの単位
+NUM_RUN = re.compile(r"(?:\d[\d,]*(?:\.\d+)?\s*[億万千百]?\s*)+(?:%|倍|割|円|年|歳)?")
+NUM_PART = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*([億万千百])?")
+UNIT = re.compile(r"(%|倍|割|年|歳)\s*$")
+MULT = {"億": 10**8, "万": 10**4, "千": 10**3, "百": 10**2}
 
 
 def money_values(text: str) -> set:
-    """文章から、声に出すべき数値を取り出す。単位のない目盛り数字と西暦は無視する。"""
+    """文章から、声に出すべき数値を取り出す。
+
+    図が「70,608円」で声が「7万608円」なら同じ値なので合格にしたい。
+    そのため文字列ではなく**値**に正規化して比べる。
+    単位も桁もない裸の数字(軸の目盛り)と、出典の西暦は判定から外す。
+    """
     out = set()
-    for m in NUM_RE.finditer(text.replace("，", ",").replace("、", "")):
-        g = m.groups()
-        if g[0]:                                   # ○億○万○
-            v = int(g[0].replace(",", "")) * 10**8
-            v += int(g[1].replace(",", "")) * 10**4 if g[1] else 0
-            v += int(g[2].replace(",", "")) if g[2] else 0
-            out.add(v)
-        elif g[3]:                                 # ○万○
-            v = int(g[3].replace(",", "")) * 10**4
-            v += int(g[4].replace(",", "")) if g[4] else 0
-            out.add(v)
-        elif g[5]:                                 # 割合
-            out.add(f"{float(g[5].replace(',', '')):g}{g[6]}")
-        elif g[7]:                                 # 素の数字+単位
-            v = int(g[7].replace(",", ""))
-            if g[8] == "年" and 1900 <= v <= 2100:
-                continue                           # 出典の西暦・時点表記は声に出さなくてよい
-            out.add(v if g[8] == "円" else f"{v}{g[8]}")
+    for m in NUM_RUN.finditer(text.replace("，", ",").replace("、", "").replace(",", "")):
+        run = m.group()
+        total, has_keta = 0.0, False
+        for num, keta in NUM_PART.findall(run):
+            if not num:
+                continue
+            total += float(num) * MULT.get(keta, 1)
+            has_keta = has_keta or bool(keta)
+        u = UNIT.search(run)
+        unit = u.group(1) if u else ("円" if run.rstrip().endswith("円") else "")
+        if unit in ("年", "歳") and not has_keta:
+            if unit == "年" and 1500 <= total <= 2100:
+                continue                      # 出典の西暦・時点表記は声に出さなくてよい
+            out.add(f"{total:g}{unit}")
+        elif unit in ("%", "倍", "割"):
+            out.add(f"{total:g}{unit}")
+        elif unit == "円" or has_keta:
+            out.add(int(total))
+        # 単位も桁もない裸の数字は、軸の目盛りとみなして無視する
     return out
+
 
 # 常に出る要素(バッジ・ブランド)は判定から除く
 BADGE_ANCHOR = (0.90, 0.83)
