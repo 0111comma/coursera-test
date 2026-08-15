@@ -81,7 +81,7 @@ SCENES = {
                        BADGE, BRAND, gap="差 2000円", ymax=18_000),
     "gyaku": kakezan(130, 13_000, highlight=True),
     "ryoho": sc.lines2("2つを重ねてみる",
-                       [("現地", [100, 100, 100], MUTED_BAR),
+                       [("現地", [100, 100, 100], INK_2),
                         ("円での値段", [100, 113, 87], EMPH)],
                        BADGE, BRAND, ymin=82, ymax=118,
                        xlabels=["買った日", "円安", "円高"]),
