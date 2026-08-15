@@ -38,11 +38,11 @@ def scene_kashi(fig, t):
     from matplotlib.patches import FancyArrow
     fig.text(0.5, 0.905, "債券は、お金を貸す商品", ha="center", color=INK_2, fontsize=34)
     for x, name in ((0.20, "あなた"), (0.80, "国や会社")):
-        fig.text(x, 0.790, name, ha="center", va="center", color=INK, fontsize=32,
+        fig.text(x, 0.762, name, ha="center", va="center", color=INK, fontsize=32,
                  path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
-    rows = [(0.715, +1, "100万円を貸す", GOLD, sc.clamp01(t * 2.6)),
-            (0.630, -1, "毎年1万円の利息", EMPH, sc.clamp01(t * 2.6 - 0.7)),
-            (0.545, -1, "10年後に100万円", GOLD, sc.clamp01(t * 2.6 - 1.4))]
+    rows = [(0.690, +1, "100万円を貸す", GOLD, sc.clamp01(t * 2.6)),
+            (0.605, -1, "毎年1万円の利息", EMPH, sc.clamp01(t * 2.6 - 0.7)),
+            (0.520, -1, "10年後に100万円", GOLD, sc.clamp01(t * 2.6 - 1.4))]
     for y, direction, label, color, a in rows:
         if a <= 0:
             continue
@@ -81,7 +81,7 @@ SCENES = {
     "manki": sc.lines2("満期まで持った場合の値段",
                        [("持ち続ける", [100, 91, 94, 97, 100], INK)],
                        BADGE, BRAND, ymin=88, ymax=102,
-                       xlabels=["買った日", "金利上昇", "", "", "満期"]),
+                       xlabels=["買った日", "", "", "", "満期"]),
     "dare": sc.card("損になるのは", "途中で売った人だけ", "(発行体が破綻しない場合)",
                     BADGE, BRAND, main_size=48, head_fs=34),
     "shime": sc.hero("金利が上がると", "債券は下がる。もう分かるのだ", BADGE, BRAND,

@@ -487,8 +487,10 @@ def stack(title, n_blocks, block_label, total_label, badge, brand, cols=5, focus
         if title:
             fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
         rows = (n_blocks + cols - 1) // cols
-        bw, bh = 0.115, 0.048
-        gx, gy = 0.020, 0.017
+        # 行が増えても立ち絵(y<0.465)に届かないよう、間隔を行数に合わせて詰める
+        pitch = min(0.065, 0.270 / max(rows, 1))
+        bw, bh = 0.115, pitch * 0.74
+        gx, gy = 0.020, pitch * 0.26
         total_w = cols * bw + (cols - 1) * gx
         x0 = 0.5 - total_w / 2
         y_top = 0.790
@@ -506,7 +508,7 @@ def stack(title, n_blocks, block_label, total_label, badge, brand, cols=5, focus
             fig.text(0.5, y_bottom - 0.012, block_label, ha="center", va="top",
                      color=INK_2, fontsize=27)
         if total_label:
-            fig.text(x0, 0.845, total_label, ha="left", va="center", color=INK,
+            fig.text(x0, 0.866, total_label, ha="left", va="center", color=INK,
                      fontsize=32, path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
         if badge:
             draw_badge(fig, badge)
