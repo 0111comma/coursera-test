@@ -73,6 +73,12 @@ TOPIC = EVERYDAY
 # 「言い換えた」と認める書き方。用語と同じ字幕にこれがあれば定義したとみなす
 GLOSS = ("とは", "という", "のこと", "意味", "つまり", "呼ばれる", "呼ぶ", "＝", "=")
 
+# 年ごとに変わる数値を扱っている印。これがあるのに時点表記がなければ不合格(ループ63)
+TIME_SENSITIVE = ["金利", "税率", "利率", "保険料", "控除", "上限", "枠", "手数料",
+                  "年金額", "最低賃金", "物価"]
+TIME_MARK = re.compile(r"(20[0-9]{2}\s*年|いま|今|現在|去年|今年|来年|昨年|今日|"
+                       r"[0-9]{1,2}\s*月時点|年度)")
+
 # 「1万5000円」を1つの数として数える(桁の区切りで割ると、詰め込み判定が誤爆する)
 NUM = re.compile(r"(?:[0-9０-９][0-9０-９.,]*\s*[億万千百]?\s*)+(?:%|倍|割|円|年|歳|日|ドル)?")
 
@@ -111,6 +117,18 @@ def check_video(vdir: Path):
                        f"1文目に「{opener[0]}」。ショートは選ばれないので、"
                        f"専門語は中で教える対象にして、入口は日常語にする"))
 
+    # 0c. 時点を言っていない(ループ63)
+    # ユーザー指摘:「銀行に100万円、1年の利息は3187円。これはいつの話なの?
+    #   その銀行の金利はって、これは2026年8月時点の金利なんですか?っていう疑問が浮かぶ」
+    # 金利・税率・制度の数値は年で変わる。**画面のバッジではなく、声で**時点を言うこと
+    # (バッジは条件の注記であって、耳だけで追っている人には届かない=W5ラジオテスト)
+    joined_all = "".join(subs)
+    if any(w in joined_all for w in TIME_SENSITIVE) and not TIME_MARK.search(joined_all):
+        issues.append(("(動画全体)", "時点が不明",
+                       f"金利・税率・制度の数値を使っているのに、ナレーションに"
+                       f"「2026年8月」「いま」「今年」などの時点表記がない。"
+                       f"バッジだけでは、耳で聞いている人に届かない"))
+
     # 1. 尺が短い(端折りの一番の温床)
     chars = sum(len(s) for s in subs)
     est = chars * SEC_PER_CHAR + len(units) * 0.15
@@ -127,10 +145,12 @@ def check_video(vdir: Path):
     # 「20歳から60歳まで」のような範囲は、2つではなく1つの概念として数える
     RANGE = re.compile(r"([0-9０-９][0-9０-９.,]*\s*[億万千百]?(?:%|倍|割|円|年|歳|日|ドル)?)"
                        r"から[\s、]*([0-9０-９][0-9０-９.,]*\s*[億万千百]?(?:%|倍|割|円|年|歳|日|ドル)?)")
+    # 「2026年8月」も1つの情報(時点)。年と月を別々の数字として数えない(ループ63)
+    DATE = re.compile(r"([0-9０-９]{4}\s*年)\s*[0-9０-９]{1,2}\s*月")
 
     seen_nums = set()
     for i, s in enumerate(subs):
-        s_for_num = RANGE.sub(lambda m: m.group(1), s)
+        s_for_num = DATE.sub(lambda m: m.group(1), RANGE.sub(lambda m: m.group(1), s))
         nums = {m.group().replace(" ", "") for m in NUM.finditer(s_for_num)}
         fresh = sorted(n for n in nums if key(n) not in seen_nums)
         seen_nums |= {key(n) for n in nums}
