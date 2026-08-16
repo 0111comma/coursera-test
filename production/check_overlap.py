@@ -136,6 +136,27 @@ def check_video(vdir: Path):
                 for name, zone in zones:
                     if _overlap(box, zone) > 0:
                         issues.append((key, t, name, txt.replace("\n", "/")[:28]))
+
+            # 図の中の文字どうしの重なり(ループ53)。立ち絵・バッジ・字幕との衝突しか
+            # 見ていなかったので、「税金はゼロ」と「損 50万円」が重なったまま通った
+            labels = []
+            for art in list(fig.texts):
+                txt = art.get_text()
+                if not txt.strip() or art is badge_art:
+                    continue
+                if anchored_at(art, FOOTER_ANCHOR):
+                    continue
+                if art.get_alpha() is not None and art.get_alpha() < 0.15:
+                    continue
+                labels.append((txt.replace("\n", "/")[:14], box_of(art), art.get_position()))
+            for i in range(len(labels)):
+                for j in range(i + 1, len(labels)):
+                    (t1, b1, p1), (t2, b2, p2) = labels[i], labels[j]
+                    # draw_glow_text は同じ文字を同じ位置に重ね描きするので除く
+                    if t1 == t2 or (abs(p1[0] - p2[0]) < 1e-9 and abs(p1[1] - p2[1]) < 1e-9):
+                        continue
+                    if _overlap(b1, b2) > 0:
+                        issues.append((key, t, "文字どうし", f"「{t1}」と「{t2}」"))
             S.plt.close(fig)
     return issues
 
