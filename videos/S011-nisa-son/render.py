@@ -85,9 +85,9 @@ def sousai(show_loss=True, nisa=False, show_tax=False):
 
 
 SCENES = {
-    "nazo": sc.hero("NISAで損すると", "どうなるか", BADGE, BRAND, size=88, sub_fs=44),
-    "nazo__cover": sc.cover("NISAで損したら、どうなる?", "なかったこと",
-                            "税金が10万円ちがう", "はじめての人向け", BRAND, main_size=110),
+    "nazo": sc.hero("同じ50万円の損", "なのに税金がちがう", BADGE, BRAND, size=72, sub_fs=42),
+    "nazo__cover": sc.cover("同じ損なのに、税金が10万円ちがう?", "10万円",
+                            "分かれ目は、どの口座か", "はじめての人向け", BRAND, main_size=150),
     "futsu": sc.card("まず普通の口座の話", "利益には税金がかかる", "(利益から引かれる)",
                      BADGE, BRAND, main_size=48, head_fs=34),
     "rieki": sousai(show_loss=False),
@@ -118,7 +118,7 @@ SCENES = {
 # F3: 結論が「大丈夫」で終わらないこと。ここでは実害(約10万円)で終わる
 # G2: 1文につき新しい数字は1つまで / G3: 専門用語は使う前か直後に言い換える
 UNITS = [
-    Unit("nazo", "NISAで損すると、その損はなかったことになる。", anim=1.0, cover=True,
+    Unit("nazo", "同じ50万円の損なのに、税金が10万円ちがう。", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
     Unit("futsu", "まず、普通の口座の税金を見るのだ。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
