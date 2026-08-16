@@ -46,6 +46,9 @@ sys.path.insert(0, str(PRODUCTION))
 import matplotlib  # noqa: E402
 matplotlib.use("Agg")
 import shortlib as S  # noqa: E402
+# 日本語フォントを入れてから描く。ここは文字の中身しか見ないので結果は変わらないが、
+# 入れ忘れると豆腐(□)で描かれ、あとで幅や位置を見る判定を足したときに静かに狂う
+S.setup_fonts()
 from check_figure import (  # noqa: E402
     BADGE_ANCHOR, FOOTER_ANCHOR, TABLE_NUMS, money_values, _load,
 )
