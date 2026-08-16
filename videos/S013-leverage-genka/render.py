@@ -60,8 +60,8 @@ def scene_maiban(fig, t):
 
 
 SCENES = {
-    "nazo": sc.hero("元に戻ったのに", "減っている", BADGE, BRAND, size=88, sub_fs=46),
-    "nazo__cover": sc.cover("元に戻ったのに、なぜ減る?", "2倍の商品",
+    "nazo": sc.hero("株は元に戻ったのに", "減った人がいる", BADGE, BRAND, size=76, sub_fs=44),
+    "nazo__cover": sc.cover("株が元に戻ったのに、なぜ減る?", "2倍の商品",
                             "毎日リセットされるから", "はじめての人向け", BRAND, main_size=118),
     "shisu": sc.card("まず言葉の説明", "株全体の平均", "(日経平均やS&P500のこと)", BADGE, BRAND,
                      main_size=58, head_fs=34),
@@ -107,7 +107,7 @@ SCENES = {
 #   → 結論「毎日リセットされるので、上下をくり返すと元の水準に戻らない」
 # ループ51(端折り禁止): 1文につき新しい数字は1つまで。専門用語は使う前に言い換える。
 UNITS = [
-    Unit("nazo", "元の値段に戻ったのに、減っている商品。", anim=1.0, cover=True,
+    Unit("nazo", "株の値段は元に戻ったのに、減った人がいる。", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
     Unit("shisu", "まず【指数】とは、株全体の平均のこと。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),

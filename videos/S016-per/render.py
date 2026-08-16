@@ -65,8 +65,8 @@ def warizan(stage=3):
 
 
 SCENES = {
-    "nazo": sc.hero("PER15倍", "何が15倍なのだ?", BADGE, BRAND, size=104, sub_fs=44),
-    "nazo__cover": sc.cover("PER15倍って、何が15倍?", "PER", "答えは、利益15年分",
+    "nazo": sc.hero("株のPER15倍", "何が15倍なのだ?", BADGE, BRAND, size=82, sub_fs=44),
+    "nazo__cover": sc.cover("株のPER15倍って、何が15倍?", "PER", "答えは、利益15年分",
                             "はじめての人向け", BRAND, main_size=150),
     "teigi": sc.card("PERとは", "株のねだんの物差し", "(ピー・イー・アール、と読む)",
                      BADGE, BRAND, main_size=48, head_fs=36),
@@ -100,7 +100,7 @@ SCENES = {
 #   → 結論「利益の何年分の値段か。低いほど安いとは限らない」
 # ループ51(端折り禁止): 1文につき新しい数字は1つまで。専門用語は使う前に言い換える。
 UNITS = [
-    Unit("nazo", "【PER15倍】。何が15倍なのだ?", anim=1.0, cover=True,
+    Unit("nazo", "株の【PER15倍】。何が15倍なのだ?", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
     Unit("teigi", "PERとは、株の値段をはかる数字。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
