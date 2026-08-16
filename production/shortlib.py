@@ -14,6 +14,7 @@
 """
 
 import json
+import os
 import math
 import re
 import struct
@@ -132,6 +133,10 @@ class Unit:
 VOICEVOX_URL = "http://127.0.0.1:50021"
 DEFAULT_SPEAKER = 3      # ずんだもん(ノーマル)。概要欄に「VOICEVOX:ずんだもん」必須(R13)
 DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
+# 全体の話速の倍率(ループ58)。ユーザー指摘:
+#   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
+# 各Unitの speed に、さらにこの倍率を掛ける。1本ずつ直さなくても全体を調整できる
+SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.0"))
 
 
 def _http(url: str, data: bytes | None = None, headers: dict | None = None, timeout=120) -> bytes:
@@ -192,7 +197,7 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
         w = workdir / f"seg_{i:02d}.wav"
         if use_vv:
             tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation,
-                         speed=(u.speed or DEFAULT_SPEED), pitch=u.pitch,
+                         speed=(u.speed or DEFAULT_SPEED) * SPEED_SCALE, pitch=u.pitch,
                          pause_scale=u.pause_scale)
         else:
             tts_openjtalk(u.tts_text(), w)
