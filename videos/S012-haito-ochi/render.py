@@ -136,7 +136,7 @@ UNITS = [
          speed=1.15),
     Unit("wari", "その税金は、だいたい2割なのだ。", anim=1.4, speed=1.15),
     Unit("goukei", "だから手取りは、24円になるのだ。", anim=1.4, speed=1.15),
-    Unit("nisa", "つまり合計は、2993円まで減る。", anim=1.4,
+    Unit("nisa", "その2つを足すと、2993円まで減る。", anim=1.4,
          puchun=True, speed=1.1, intonation=1.2, pitch=-0.05),
     Unit("imi", "でもNISAの口座なら、税金はかからない。", anim=1.2, face="happy",
          speed=1.15),

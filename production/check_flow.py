@@ -37,6 +37,63 @@ CONNECTIVES = (
     "すると", "たとえば", "例えば", "やがて", "もし", "なので", "そこに", "そこから",
 )
 
+
+# ─────────────────────────────────────────────────────────────
+# ループ54: 接続語の有無だけでは「繋がっている」ことにならない。
+# S013は15文中13文が接続語で始まっていたので全部素通りし、
+# ユーザーに「文脈なさすぎる」と再指摘された。
+# 表面の目印ではなく、**指す先があるか**を見る。
+# ─────────────────────────────────────────────────────────────
+DEF_RE = re.compile(r"([一-龥ァ-ヴーA-Za-z0-9]{2,})とは")
+SUBJ_RE = re.compile(r"([一-龥ァ-ヴー]{2,})(?:は|が)")
+DEMONSTRATIVE = ("その", "この", "あの", "これ", "それ", "あれ")
+GENERIC = {"場合", "とき", "こと", "もの", "ほう", "ため", "あと", "自分", "今回",
+           "普通", "実際", "本当", "最後", "最初", "全部", "一部", "以上", "以下"}
+
+
+def referent_issues(subs, tail_exempt=2):
+    """指す先のない語を洗い出す。
+
+    1. 定義文「XとはY」の X が、直前の文に出ていない
+       → 「なぜ急にその言葉の説明が始まるのか」が分からない
+    2. 文の主語 X(「Xは」「Xが」)が新出で、指示語も付いていない
+       → 主語が宙に浮く(「ただし約束は」= 何の約束?)
+    """
+    out = []
+    for i, cur in enumerate(subs):
+        if i >= len(subs) - tail_exempt:
+            continue          # 末尾はCTAと冒頭への戻り。新しい主語が出てよい
+        if cur.rstrip().endswith(("?", "?")):
+            continue          # 問いかけは、新しい話題を持ち出してよい
+        prev = " ".join(subs[max(0, i - 3):i])   # 直前3文まで遡って探す
+        for m in DEF_RE.finditer(cur):
+            term = m.group(1)
+            if i > 0 and term not in prev:
+                out.append((i + 1, "前振りのない定義",
+                            f"「{term}とは」と説明を始めているが、"
+                            f"直前の文に「{term}」が出ていない: 「{cur[:20]}」"))
+        m = SUBJ_RE.search(cur)
+        if not m:
+            continue
+        subj = m.group(1)
+        head = cur[:m.start()]
+        if subj in GENERIC or subj in prev:
+            continue
+        if any(d in head for d in DEMONSTRATIVE):
+            continue        # 「その残りの605万円は」型。指す先は前文にある
+        if head.endswith("に"):
+            continue        # 「株価に上限はない」型。主題は直前の名詞のほう
+        if head and (head[-1].isdigit() or head[-1] in "万億千百0123456789０-９"):
+            continue        # 「605万円は」型。数字の一部を名詞と誤認しない
+        if "は" in head or "、" in head[-3:]:
+            continue        # すでに主題がある文の従属節。文の主語ではない
+        if f"{subj}とは" in cur:
+            continue
+        if i > 0:
+            out.append((i + 1, "前振りのない主語",
+                        f"「{subj}」が初めて出るのに主語になっている: 「{cur[:20]}」"))
+    return out
+
 # 内容語として数えない汎用語(これだけ一致しても「繋がっている」とは言えない)
 STOPWORDS = {
     "こと", "もの", "とき", "ため", "場合", "自分", "本当", "今回", "あなた", "ボク",
@@ -79,8 +136,11 @@ def check_video(vdir: Path):
         shared = content_words(cur) & content_words(prev)
         if shared:
             continue
-        breaks.append((i + 1, prev, cur))
-    return breaks
+        breaks.append((i + 1, prev, cur, "接続語も共通語もない"))
+    # 接続語があっても「指す先」がなければ繋がっていない(ループ54)
+    for n, kind, detail in referent_issues(lines, TAIL_EXEMPT):
+        breaks.append((n, lines[n - 2] if n >= 2 else "", lines[n - 1], f"{kind}: {detail}"))
+    return sorted(breaks)
 
 
 def main():
@@ -93,9 +153,10 @@ def main():
         if breaks:
             total += len(breaks)
             print(f"[NG] {vdir.name} — 文脈の断絶 {len(breaks)}件")
-            for n, prev, cur in breaks:
+            for n, prev, cur, why in breaks:
                 print(f"       #{n}  前: {prev}")
-                print(f"            今: {cur}   ← 接続語も共通語もない")
+                print(f"            今: {cur}")
+                print(f"            → {why}")
         else:
             print(f"[OK] {vdir.name}")
 

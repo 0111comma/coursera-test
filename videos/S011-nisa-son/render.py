@@ -120,7 +120,7 @@ SCENES = {
 UNITS = [
     Unit("nazo", "NISAで損すると、その損はなかったことになる。", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
-    Unit("futsu", "まず、普通の口座の話をするのだ。", anim=1.2, face="happy",
+    Unit("futsu", "まず、普通の口座の税金を見るのだ。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
     Unit("rieki", "その口座で、50万円もうけたとする。", anim=1.4, speed=1.15),
     Unit("zei", "すると税金が、【10万円】引かれるのだ。", anim=1.4, speed=1.15),
