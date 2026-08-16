@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S016: 給料から引かれている住民税は、去年の所得で決まっている。
+"""S015: 給料から引かれている住民税は、去年の所得で決まっている。
 
 企画書は plan.md。基準作 S011 の8行を埋めてから作った。
 
@@ -148,6 +148,6 @@ UNITS = [
 
 if __name__ == "__main__":
     require_voicevox()
-    result = render_video(UNITS, SCENES, OUTDIR, "S016.mp4")
+    result = render_video(UNITS, SCENES, OUTDIR, "S015.mp4")
     print(f"total: {result['total_sec']:.1f}s")
     print(f"mp4: {result['mp4']}")
