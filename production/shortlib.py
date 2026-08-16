@@ -59,6 +59,44 @@ SAFE_L, SAFE_R = 0.08, 0.92
 SUBTITLE_Y = 0.24        # 字幕ブロックの上端(下から)
 SUB_FS = 52              # 字幕フォントサイズ(ループ20: 画面高の約4%。スマホ最優先)
 SUB_WRAP = 12            # 字幕の折り返し文字数
+SUB_BLOCK_FIT = 0.70     # 字幕ブロックの最大幅(Shorts右ボタン列 x>0.85 を避ける)
+SUB_LINE_H = 0.036       # 字幕の行間(図の高さに対する割合)
+BADGE_XY = (0.90, 0.83)  # 注記バッジの位置
+BADGE_FS = 28
+BRAND_XY = (0.5, 0.045)  # フッターのチャンネル名
+BRAND_FS = 20
+
+
+def use_landscape():
+    """出力を横型 1920×1080 に切り替える(長尺用。docs/research/longform-design.md)。
+
+    ショートと長尺で違うのは**画面比とレイアウト定数だけ**で、
+    TTS・BGM・SE・立ち絵・結合はまったく同じ処理でよい。
+    だから 868行を複製せず、この関数でモジュール定数を差し替える。
+    長尺の render.py は先頭で 1回だけ呼ぶこと(new_canvas より前)。
+
+    値の決め方(縦型からの換算):
+    - 字幕は「画面高の何%か」で決まる。縦型52ptは1920pxの3.8%。
+      横型1080pxで同じ割合にすると29ptだが、長尺はテレビ・PCでも見られるので
+      少し大きめの40pt(4.9%)を採る
+    - 折り返しは横幅が1.78倍になるので12字→26字
+    - バッジとフッターは Shorts のUIを避ける必要がないので、四隅に寄せる
+    """
+    global W, H, FIGSIZE, SUBTITLE_Y, SUB_FS, SUB_WRAP, SUB_BLOCK_FIT, SUB_LINE_H
+    global BADGE_XY, BADGE_FS, BRAND_XY, BRAND_FS, SAFE_L, SAFE_R
+    W, H = 1920, 1080
+    FIGSIZE = (W / DPI, H / DPI)
+    SAFE_L, SAFE_R = 0.05, 0.95
+    SUBTITLE_Y = 0.150
+    SUB_FS = 40
+    SUB_WRAP = 26
+    SUB_BLOCK_FIT = 0.86
+    SUB_LINE_H = 0.069       # 縦型と同じ行間(px)を、1080px基準の割合に直したもの
+    BADGE_XY, BADGE_FS = (0.972, 0.940), 22
+    BRAND_XY, BRAND_FS = (0.5, 0.036), 16
+    # 立ち絵: 縦型と同じピクセル寸法(約369×422px)を右下に置き、字幕の上に載せる
+    CHARA_RECTS["bl"] = [0.010, 0.200, 0.192, 0.391]
+    CHARA_RECTS["br"] = [0.798, 0.200, 0.192, 0.391]
 
 # ループ3: テロップの定番は源ノ角ゴシック(=Noto Sans CJK JP)。太ウェイトを実際に使う
 _JP_FONT_CANDIDATES = [
@@ -125,7 +163,27 @@ class Unit:
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
+        for a, b in READING.items():
+            t = t.replace(a, b)
         return t.replace("【", "").replace("】", "")
+
+
+# 画面に出す綴りと、読ませたい音がちがう語(ループ66)。
+#
+# 「NISA を エヌアイエスエー と読んでいる」はループ⑳(S002)とループ64(S017)で
+# **2回**指摘されている。1回目の対策は render.py に narration= を1つ書くことで、
+# それは**その1本しか直らない対策**だった。2回目の対策として check_yomi.py を
+# 作ったが、それは**書き忘れを見つける**だけで、書き忘れ自体は起こり続ける。
+#
+# ここで表にしておけば、字幕に NISA と書くだけで読みは常に「ニーサ」になる。
+# つまり**書き忘れようがない**。check_yomi.py は最後の網として残す。
+READING = {
+    "NISA": "ニーサ",
+    "iDeCo": "イデコ",
+    "ATM": "エーティーエム",
+    "GDP": "ジーディーピー",
+    "ETF": "イーティーエフ",
+}
 
 
 # ---- TTS ----
@@ -678,9 +736,10 @@ def draw_subtitle(fig, text: str, pop: float = 1.0):
 
     pop>1 で表示直後の「ポン」(スケール収束)を表現する(ループ10)。
     block_fit=0.70: 字幕はShorts右ボタン列(x>0.85)に掛けない(x 0.15〜0.85。ループ⑫)。
+    横型(use_landscape)ではUIを避ける必要がないので 0.86 まで広げる。
     """
-    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=0.036,
-                   block_fit=0.70)
+    draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=SUB_LINE_H,
+                   block_fit=SUB_BLOCK_FIT)
 
 
 def draw_badge(fig, text: str):
@@ -692,13 +751,14 @@ def draw_badge(fig, text: str):
     読まれない(消費者庁・打消し表示実態調査)。常時表示+字幕(52pt)の54%を確保(深掘りループ⑫)。
     """
     fig.text(
-        0.90, 0.83, text, ha="right", va="center", color=INK_2, fontsize=28,
+        BADGE_XY[0], BADGE_XY[1], text, ha="right", va="center", color=INK_2, fontsize=BADGE_FS,
         bbox=dict(boxstyle="round,pad=0.5", facecolor=SURFACE, edgecolor=BASELINE, linewidth=1.5),
     )
 
 
 def draw_footer_brand(fig, text: str):
-    fig.text(0.5, 0.045, text, ha="center", va="center", color=MUTED, fontsize=20)
+    fig.text(BRAND_XY[0], BRAND_XY[1], text, ha="center", va="center",
+             color=MUTED, fontsize=BRAND_FS)
 
 
 def require_voicevox():
@@ -779,6 +839,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     breath_phase = (seed % 7) * 0.9
 
     frames, durations, padded = [], [], []
+    unit_secs: list[float] = []   # ユニットごとの尺(長尺のチャプター時刻を出すため)
     se_events: list[tuple[float, str]] = []
     elapsed = 0.0
     thumbnail = None
@@ -787,6 +848,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         pad_wav(w, pw, u.pad)
         d_total = duration_of(pw)
         padded.append(pw)
+        unit_secs.append(d_total)
         if u.se:
             se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
         if u.puchun:
@@ -865,4 +927,5 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     if thumbnail is not None:
         import shutil
         shutil.copy(thumbnail, outdir / "thumbnail.png")
-    return {"mp4": out_mp4, "engine": engine, "total_sec": sum(durations)}
+    return {"mp4": out_mp4, "engine": engine, "total_sec": sum(durations),
+            "unit_secs": unit_secs}
