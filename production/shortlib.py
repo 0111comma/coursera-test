@@ -136,7 +136,7 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 # 全体の話速の倍率(ループ58)。ユーザー指摘:
 #   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
 # 各Unitの speed に、さらにこの倍率を掛ける。1本ずつ直さなくても全体を調整できる
-SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.0"))
+SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
 
 
 def _http(url: str, data: bytes | None = None, headers: dict | None = None, timeout=120) -> bytes:

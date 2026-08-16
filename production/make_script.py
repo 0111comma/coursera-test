@@ -16,6 +16,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "production"))
 
+# 1文字あたりの秒数(ループ58で再較正)。話速を1.3倍にしたので、
+# 実測 0.1462秒/字(S011+S012の全543字を新しい速度で合成して測定)に4%の余裕を足した
+SEC_PER_CHAR = 0.152
+
 CREDITS = """---
 ※本動画は情報提供を目的としており、投資助言ではありません。特定の銘柄・商品・業者を推奨するものではありません。
 ※{assume}2026年8月時点の一般的な仕組みの説明です。
@@ -35,7 +39,7 @@ def main(vdir: Path, meta: dict):
     units = mod.UNITS
     narration = "\n".join(u.subtitle.replace("【", "").replace("】", "") for u in units)
     chars = sum(len(u.subtitle.replace("【", "").replace("】", "")) for u in units)
-    est = chars * 0.191 + len(units) * 0.15
+    est = chars * SEC_PER_CHAR + len(units) * 0.15
 
     body = f"""# 台本(ショート): {meta['title']}
 

@@ -37,6 +37,10 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 sys.path.insert(0, str(PRODUCTION))
 
+# 1文字あたりの秒数(ループ58で再較正)。話速を1.3倍にしたので、
+# 実測 0.1462秒/字(S011+S012の全543字を新しい速度で合成して測定)に4%の余裕を足した
+SEC_PER_CHAR = 0.152
+
 MIN_SEC = 46.0        # これ未満なら、上限(55.5秒)まで説明を足す余地がある
 MAX_NEW_NUM = 1       # 1ユニットに出してよい「初出の数値」の数
 
@@ -109,7 +113,7 @@ def check_video(vdir: Path):
 
     # 1. 尺が短い(端折りの一番の温床)
     chars = sum(len(s) for s in subs)
-    est = chars * 0.191 + len(units) * 0.15
+    est = chars * SEC_PER_CHAR + len(units) * 0.15
     if est < MIN_SEC:
         issues.append(("(動画全体)", "尺が短い",
                        f"推定{est:.0f}秒。上限55秒まで{55 - est:.0f}秒ぶん、"
@@ -120,9 +124,14 @@ def check_video(vdir: Path):
         """「100円」と「100」は同じ数として扱う(単位違いで初出判定が誤爆する)。"""
         return re.sub(r"(%|倍|割|円|年|歳|日|ドル)$", "", tok.replace(" ", "").replace(",", ""))
 
+    # 「20歳から60歳まで」のような範囲は、2つではなく1つの概念として数える
+    RANGE = re.compile(r"([0-9０-９][0-9０-９.,]*\s*[億万千百]?(?:%|倍|割|円|年|歳|日|ドル)?)"
+                       r"から[\s、]*([0-9０-９][0-9０-９.,]*\s*[億万千百]?(?:%|倍|割|円|年|歳|日|ドル)?)")
+
     seen_nums = set()
     for i, s in enumerate(subs):
-        nums = {m.group().replace(" ", "") for m in NUM.finditer(s)}
+        s_for_num = RANGE.sub(lambda m: m.group(1), s)
+        nums = {m.group().replace(" ", "") for m in NUM.finditer(s_for_num)}
         fresh = sorted(n for n in nums if key(n) not in seen_nums)
         seen_nums |= {key(n) for n in nums}
         if i == 0:

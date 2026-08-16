@@ -14,6 +14,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from shortlib import SUB_WRAP, wrap_plain  # noqa: E402
 
 # 戦略§6(コンプライアンス): 断定・投資助言に当たる表現の禁止
+# 1文字あたりの秒数(ループ58で再較正)。話速を1.3倍にしたので、
+# 実測 0.1462秒/字(S011+S012の全543字を新しい速度で合成して測定)に4%の余裕を足した
+SEC_PER_CHAR = 0.152
+
 FORBIDDEN = ["儲かる", "必ず増え", "絶対に増え", "損しない", "買うべき", "おすすめの銘柄", "おすすめの証券"]
 
 def main(video_dir: Path) -> int:
@@ -58,7 +62,7 @@ def main(video_dir: Path) -> int:
             frac = sum(_w(c) for c in line) * (52 / 72 * 100) / 1080
             if 0.70 / max(frac, 1e-9) < 0.75:
                 check(f"字幕縮小75%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
-    est = total_chars * 0.191 + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
+    est = total_chars * SEC_PER_CHAR + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
     check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
