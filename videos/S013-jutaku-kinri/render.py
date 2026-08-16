@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "production"))
 from shortlib import (  # noqa: E402
     Unit, render_video, require_voicevox, stroke_fx, outline_for,
-    draw_badge, draw_footer_brand, INK, INK_2, MUTED, MUTED_BAR, EMPH,
+    draw_badge, draw_footer_brand, INK, INK_2, MUTED, MUTED_BAR, EMPH, GOLD,
 )
 import scenes_common as sc  # noqa: E402
 
@@ -31,6 +31,18 @@ INT_VAR = 571      # 年1.025%のときの利息(万円)
 INT_FIX = 1948     # 年3.140%のときの利息(万円)
 assert BASE + INT_VAR == 3571 and BASE + INT_FIX == 4948, "verify.pyと不一致"
 assert INT_FIX - INT_VAR == 1377
+
+# 「変動」と「固定」の動き方のちがいを見せるためだけの模式線(ループ60)。
+# 将来の金利を予想する図ではないので、縦軸には目盛りを置かず、値も画面に出さない。
+# 上下に振れるか/一直線かという**形**だけが情報。
+# 変動の線は固定の線を何度も横切らせる。理由は2つ:
+#   1. 固定の線に重なって隠れないようにするため(重ねると「変動だけの図」に見える)
+#   2. 変動が固定より高くなることも低くなることもある、と形で示すため。
+#      どちらかの側に寄せると「変動のほうが得」という主張になってしまう(戦略§6)
+# 色は EMPH(金) と INK(オフホワイト)。GOLD と EMPH では同系色で線が見分けられなかった。
+HENDO = [1.0, 1.5, 1.1, 2.1, 2.9, 2.3, 3.1, 1.8, 2.7, 1.4, 2.4]
+KOTEI = [2.2] * len(HENDO)
+XLAB = ["借りた時"] + [""] * (len(HENDO) - 2) + ["35年後"]
 
 
 def kaeshi(ia=None, ib=None, note="", note_color=EMPH):
@@ -74,8 +86,8 @@ def kaeshi(ia=None, ib=None, note="", note_color=EMPH):
             fig.text(x + 0.12, Y0 - 0.032, foot, ha="center", va="center",
                      color=INK_2, fontsize=27)
 
-        bar(0.17, ia, "年1.025%", True)
-        bar(0.59, ib, "年3.14%", ib is not None)
+        bar(0.17, ia, "変動 1.025%", True)
+        bar(0.59, ib, "固定 3.14%", ib is not None)
         if note:
             fig.text(0.5, 0.487, note, ha="center", va="center", color=note_color,
                      fontsize=34, alpha=sc.clamp01(t * 2 - 0.4),
@@ -95,13 +107,20 @@ SCENES = {
                     BADGE, BRAND, main_size=72, head_fs=34),
     "gaku": sc.card("この動画で使う条件", "3000万円", "(35年・元利均等・ボーナス払いなし)",
                     BADGE, BRAND, main_size=54, head_fs=34),
-    "risoku": sc.card("借りると何が起きるか", "利息がつく", "(借りた額より多く返すことになる)",
+    "risoku": sc.card("借りると何が起きるか", "利息がつく", "(借りるお礼として払うお金)",
                       BADGE, BRAND, main_size=68, head_fs=34),
-    "toha": sc.card("その利息とは", "借りるお礼", "(貸してくれた側に払うお金)",
-                    BADGE, BRAND, main_size=68, head_fs=34),
-    "wariai": sc.card("その割合の呼び名", "金利", "(年に何%かで表す)",
-                      BADGE, BRAND, main_size=88, head_fs=34),
-    "kinri1": sc.card("いまの金利のひとつ", "年1.025%", "(2026年8月・大手行の変動金利)",
+    "shurui": sc.card("その金利には", "2種類ある", "(変わるものと、変わらないもの)",
+                      BADGE, BRAND, main_size=72, head_fs=34),
+    # ユーザー指摘(ループ60):「変わらない金利もある」から何の話か分からなくなる。
+    # 変動と固定を**言葉で名指しし、動き方の違いを図で見せる**。
+    # 縦軸に目盛りを置かないのは、将来の金利を予想する図ではないから(戦略§6)。
+    "hendo": sc.lines2("金利の動き方(イメージ)",
+                       [("変動金利", HENDO, EMPH)],
+                       BADGE, BRAND, ymin=0.7, ymax=3.4, xlabels=XLAB),
+    "kotei": sc.lines2("金利の動き方(イメージ)",
+                       [("変動金利", HENDO, EMPH), ("固定金利", KOTEI, INK)],
+                       BADGE, BRAND, ymin=0.7, ymax=3.4, xlabels=XLAB),
+    "kinri1": sc.card("その変動金利は", "年1.025%", "(2026年8月・大手行の水準)",
                       BADGE, BRAND, main_size=76, head_fs=34,
                       ask="あなたなら、いくら借りる?"),
     "getsu1": sc.card("毎月はらう額は", "8万5036円", "(3000万円・35年・年1.025%)",
@@ -111,12 +130,12 @@ SCENES = {
     "goukei1": kaeshi(ia=INT_VAR),
     "risoku1": kaeshi(ia=INT_VAR, note="利息 571万円"),
     "ginko": kaeshi(ia=INT_VAR, note="571万円は銀行へ"),
-    "toi": sc.quiz("金利は1つではない", "変わらない金利だと", "いくらになる?", "", BADGE, BRAND),
-    "kinri2": sc.card("35年ずっと同じなら", "年3.14%", "(2026年7月・フラット35の最頻金利)",
+    "toi": sc.quiz("では、もう一方は", "35年変わらない", "固定金利だと?", "", BADGE, BRAND),
+    "kinri2": sc.card("その固定金利は", "年3.14%", "(2026年7月・フラット35の最頻金利)",
                       BADGE, BRAND, main_size=76, head_fs=34),
     "getsu2": sc.bars2("毎月はらう額のちがい",
-                       ("年1.025%", 8.5036, "8万5036円"),
-                       ("年3.14%", 11.7812, "11万7812円"),
+                       ("変動 1.025%", 8.5036, "8万5036円"),
+                       ("固定 3.14%", 11.7812, "11万7812円"),
                        BADGE, BRAND, ymax=13),
     "goukei2": kaeshi(ia=INT_VAR, ib=INT_FIX),
     "risoku2": kaeshi(ia=INT_VAR, ib=INT_FIX, note="利息 1948万円"),
@@ -130,33 +149,34 @@ SCENES = {
 #   予想「3000万円の家なら3000万円払う」→ 結論「3571万円。金利が違うと1377万円変わる」
 #   オチ=実害(571万円が銀行のもうけ)+ 見方の変更(家の値段は金利でも決まる)
 UNITS = [
-    Unit("nazo", "3000万円の家。でも払うのは3571万円。", anim=1.0, cover=True,
+    Unit("nazo", "3000万円の家。払うのは3571万円。", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
     Unit("kariru", "まず、家を買う人はお金を借りる。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
     Unit("loan", "その借金が、住宅ローンなのだ。", anim=1.2, speed=1.15),
-    Unit("gaku", "その3000万円を、35年で借りる。", anim=1.4, speed=1.15),
-    Unit("risoku", "すると借りたお金に、利息がつくのだ。", anim=1.4, speed=1.15),
-    Unit("toha", "利息とは、借りるお礼のお金のこと。", anim=1.4, speed=1.15),
-    Unit("wariai", "その割合が、金利なのだ。", anim=1.2, speed=1.15),
-    Unit("kinri1", "その金利は、いま年1.025%ほど。", anim=1.4, speed=1.15),
-    Unit("getsu1", "すると毎月、8万5036円をはらう。", anim=1.4, speed=1.15),
-    Unit("kaisu", "これを35年、420回くり返すのだ。", anim=1.6, speed=1.15),
+    Unit("gaku", "その3000万円を、35年借りる。", anim=1.4, speed=1.15),
+    Unit("risoku", "すると利息、つまり借りるお礼がつく。", anim=1.4, speed=1.15),
+    Unit("shurui", "その割合が金利で、2種類ある。", anim=1.4, speed=1.15),
+    Unit("hendo", "そのひとつが、途中で変わる変動金利。", anim=1.6, speed=1.15),
+    Unit("kotei", "そしてもう1つは、変わらない固定金利。", anim=1.6, speed=1.15),
+    Unit("kinri1", "その変動金利は、いま年1.025%。", anim=1.4, speed=1.15),
+    Unit("getsu1", "すると毎月、8万5036円になる。", anim=1.4, speed=1.15),
+    Unit("kaisu", "これを420回、くり返す。", anim=1.6, speed=1.15),
     Unit("goukei1", "その合計が、最初の3571万円。", anim=1.4, face="surprised",
          se="impact", se_at=0.34, speed=1.1, intonation=1.2),
-    Unit("risoku1", "つまり利息が、571万円なのだ。", anim=1.4, speed=1.15),
-    Unit("ginko", "その571万円は、銀行のもうけになる。", anim=1.4, face="troubled",
+    Unit("risoku1", "つまり利息が、571万円。", anim=1.4, speed=1.15),
+    Unit("ginko", "その571万円は、銀行のもうけ。", anim=1.4, face="troubled",
          speed=1.15),
-    Unit("toi", "でも、変わらない金利もあるのだ。", anim=1.4, face="troubled",
+    Unit("toi", "では固定金利だと、どうなる?", anim=1.4, face="troubled",
          speed=1.1, intonation=1.2, pause_scale=1.3),
-    Unit("kinri2", "その金利だと、いま年3.14%。", anim=1.4, speed=1.15),
+    Unit("kinri2", "その金利は、年3.14%。", anim=1.4, speed=1.15),
     Unit("getsu2", "その場合、毎月11万7812円。", anim=1.4, speed=1.15),
     Unit("goukei2", "するとその合計は、4948万円。", anim=1.6, face="surprised",
          puchun=True, se="don", speed=1.1, intonation=1.2),
-    Unit("risoku2", "つまり利息が、1948万円なのだ。", anim=1.4, speed=1.15),
+    Unit("risoku2", "つまり利息が、1948万円。", anim=1.4, speed=1.15),
     Unit("sa", "同じ家なのに、その差は1377万円。", anim=1.6, face="surprised",
          speed=1.1, intonation=1.2),
-    Unit("shime", "家の値段は、金利でも決まるのだ。", anim=1.0, pad=0.15, face="smug",
+    Unit("shime", "家の値段は、金利で決まるのだ。", anim=1.0, pad=0.15, face="smug",
          speed=1.1, intonation=1.15, pitch=-0.03),
 ]
 
