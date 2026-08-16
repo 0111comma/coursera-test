@@ -119,18 +119,16 @@ def chains_of(values):
     for i, v in enumerate(values):
         u.find(i)
         pool = seen + [(h, None) for h in HELPERS]
-        linked = False
+        # 見つかった導出は**全部**つなぐ(ループ64・フェーズ4で改良)。
+        # 最初の1つで打ち切っていた頃は、たとえばS014の 20.315% が孤立していた:
+        # 813円 は「4000×20.315%」でも「4000−3187」でも導けるが、後者が先に当たると
+        # 20.315% との縁が張られないまま終わっていた。全部つなぐと正しく1本にまとまる
         for ai, (a, ia) in enumerate(pool):
             for b, ib in pool[ai + 1:]:
                 if derives(v, a, b):
                     for j in (ia, ib):
                         if j is not None:
                             u.join(i, j)
-                            linked = True
-                    if linked:
-                        break
-            if linked:
-                break
         seen.append((v, i))
     groups = {}
     for i in range(len(values)):
