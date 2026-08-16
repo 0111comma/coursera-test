@@ -40,7 +40,13 @@ import matplotlib
 matplotlib.use("Agg")
 import shortlib as S  # noqa: E402
 
-LONG_TEXT = 15        # これ以上の長さの文字列は「文」とみなす
+LONG_TEXT = 15        # これ以上の長さの文字列は「文」とみなす(縦型1080px幅の基準)
+LONG_TEXT_WIDE = 26   # 横型1920pxでの同じ基準。**画面幅に対する割合を揃える**
+#   縦型の15字は横幅のほぼ全部を占めるので「文を貼っている」ことの目安になるが、
+#   横型で15字は幅の4割しかなく、注記として普通に読める大きさである。
+#   この閾値は**解像度に依存する**ので、形式に合わせて換算する
+#   (字幕の折り返しを12字→26字にしたのと同じ比率)。
+#   一方で「冗長」(Mayer)は認知の話なので、解像度では変えない。
 MAX_LONG = 1          # 「文」は1つまで(見出し用)
 MIN_SHAPES = 1        # 図形が0個なら図ではない
 FIGURE_COVERAGE = 0.40  # 図のあるユニットが全体に占める最低割合
@@ -98,6 +104,18 @@ def _load(render_py: Path):
     sys.modules[spec.name] = mod
     spec.loader.exec_module(mod)
     return mod
+
+
+_NUMBERISH = set("0123456789,.%円年万千億ヶか月日 　+-=×÷")
+
+
+def _is_number_label(t: str) -> bool:
+    """「差は 40,630円」のような、数値の見出しかどうか。
+
+    数値部分が半分以上を占めるなら、それは文ではなく**数字の掲示**である。
+    規則6(図の数値は声でも言うこと)が、この重なりをわざと作っている。
+    """
+    return sum(1 for c in t if c in _NUMBERISH) / max(1, len(t)) >= 0.5
 
 
 def _overlap_ratio(a: str, b: str) -> float:
@@ -168,13 +186,16 @@ def check_video(vdir: Path):
             n_with_figure[0] += 1
 
         # 2. 文章を並べている
-        longs = [t for t in body if len(t) >= LONG_TEXT]
+        long_text = LONG_TEXT_WIDE if S.W == 1920 else LONG_TEXT
+        longs = [t for t in body if len(t) >= long_text]
         if len(longs) > MAX_LONG:
             issues.append((u.scene, "文章",
-                           f"{LONG_TEXT}字以上の文字列が{len(longs)}個: 「{longs[0][:18]}」ほか"))
+                           f"{long_text}字以上の文字列が{len(longs)}個: 「{longs[0][:18]}」ほか"))
 
         # 3. 冗長(図の文字が字幕と重なる)
         for t in body:
+            if _is_number_label(t):
+                continue      # 数値ラベルの重なりは規則6が要求しているもの
             if len(t) >= 10 and _overlap_ratio(t, subtitle) >= REDUNDANT_RATIO:
                 issues.append((u.scene, "冗長",
                                f"字幕とほぼ同義: 図「{t[:18]}」/ 字幕「{subtitle[:18]}」"))

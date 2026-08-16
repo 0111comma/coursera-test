@@ -30,8 +30,25 @@ matplotlib.use("Agg")
 import shortlib as S  # noqa: E402
 
 # 禁止領域(figure座標 x0, y0, x1, y1)
-CHARA = (0.000, 0.245, 0.342, 0.465)     # 立ち絵(bl)
-SUBTITLE = (0.000, 0.000, 1.000, 0.245)  # 字幕帯
+CHARA = (0.000, 0.245, 0.342, 0.465)     # 立ち絵(bl)。縦型
+SUBTITLE = (0.000, 0.000, 1.000, 0.245)  # 字幕帯。縦型
+
+
+def zones_for_format():
+    """立ち絵と字幕帯の占有域を、いまの画面比から出す。
+
+    ここを縦型の値で固定したまま横型を通すと、
+    フッターのチャンネル名(y=0.036)まで「字幕帯に重なる」と言い出す。
+    **占有域は shortlib のレイアウト定数から引く**(use_landscape が書き換える)。
+    """
+    if S.W == 1920:
+        r = S.CHARA_RECTS["br"]                      # 横型は右下に置く
+        chara = (r[0], r[1], r[0] + r[2], r[1] + r[3])
+        # 字幕は SUBTITLE_Y を上端に2行ぶん下へ伸びる。その下端はフッターの上まで
+        band_top = S.SUBTITLE_Y + 0.030
+        subtitle = (0.000, S.BRAND_XY[1] + 0.018, 1.000, band_top)
+        return chara, subtitle
+    return CHARA, SUBTITLE
 # バッジは draw_badge のアンカー(0.90, 0.83)で実体を特定し、実測範囲を禁止領域にする
 BADGE_ANCHOR = (0.90, 0.83)
 FOOTER_ANCHOR = (0.5, 0.045)
@@ -70,6 +87,7 @@ def check_video(vdir: Path):
     cover_keys = {k for k in scenes if k.endswith("__cover")}
     used = {u.scene for u in units} | cover_keys
 
+    chara_zone, subtitle_zone = zones_for_format()
     issues = []
     for key in sorted(used):
         painter = scenes.get(key)
@@ -112,7 +130,7 @@ def check_video(vdir: Path):
                     continue
                 zones = []
                 if has_chara:
-                    zones.append(("立ち絵", CHARA))
+                    zones.append(("立ち絵", chara_zone))
                 if badge_box is not None:
                     zones.append(("バッジ", badge_box))
                 for name, zone in zones:
@@ -128,9 +146,9 @@ def check_video(vdir: Path):
                 if art.get_alpha() is not None and art.get_alpha() < 0.15:
                     continue
                 box = box_of(art)
-                zones = [("字幕帯", SUBTITLE)]
+                zones = [("字幕帯", subtitle_zone)]
                 if has_chara:
-                    zones.append(("立ち絵", CHARA))
+                    zones.append(("立ち絵", chara_zone))
                 if badge_box is not None:
                     zones.append(("バッジ", badge_box))
                 for name, zone in zones:

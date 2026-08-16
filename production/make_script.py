@@ -40,10 +40,14 @@ def main(vdir: Path, meta: dict):
     narration = "\n".join(u.subtitle.replace("【", "").replace("】", "") for u in units)
     chars = sum(len(u.subtitle.replace("【", "").replace("】", "")) for u in units)
     est = chars * SEC_PER_CHAR + len(units) * 0.15
+    # 横型の長尺かどうか(render.py が use_landscape() を呼んでいるか)で見出しを変える
+    long_form = "use_landscape" in (vdir / "render.py").read_text()
+    kind = "長尺・横型" if long_form else "ショート"
+    length = f"約{est / 60:.1f}分" if long_form else f"約{est:.0f}秒"
 
-    body = f"""# 台本(ショート): {meta['title']}
+    body = f"""# 台本({kind}): {meta['title']}
 
-- **ID**: {meta['id']} / **テンプレ**: {meta.get('template', '仕組み解説型')} / **想定尺**: 約{est:.0f}秒
+- **ID**: {meta['id']} / **テンプレ**: {meta.get('template', '仕組み解説型')} / **想定尺**: {length}
 - **投稿タイトル**: {meta['post_title']}({len(meta['post_title'])}字)
 - **調声・構成**: render.pyが正(共通シーンはproduction/scenes_common.py)
 
@@ -80,7 +84,7 @@ def main(vdir: Path, meta: dict):
 - 運用: 投稿直後に固定、初動1〜3時間は返信最優先 / 禁止: URL貼り
 """
     (vdir / "script.md").write_text(body)
-    print(f"{vdir.name}: script.md を生成({len(units)}ユニット / 推定{est:.0f}秒)")
+    print(f"{vdir.name}: script.md を生成({len(units)}ユニット / 推定{length})")
 
 
 if __name__ == "__main__":

@@ -95,13 +95,22 @@ def plain(u):
     return u.subtitle.replace("【", "").replace("】", "")
 
 
+def is_longform(mod) -> bool:
+    """横型(1920×1080)なら長尺とみなす。render.py が use_landscape() を呼ぶと
+    shortlib の W が書き換わるので、それを読む。"""
+    import shortlib
+    return getattr(shortlib, "W", 1080) == 1920
+
+
 def check_video(vdir: Path):
     render_py = vdir / "render.py"
     if not render_py.exists():
         return []
-    units = getattr(_load(render_py), "UNITS", [])
+    mod = _load(render_py)
+    units = getattr(mod, "UNITS", [])
     if not units:
         return []
+    longform = is_longform(mod)
     subs = [plain(u) for u in units]
     issues = []
 
@@ -111,11 +120,18 @@ def check_video(vdir: Path):
                        f"1文目「{subs[0]}」に、興味のない人でも知っている物の名前がない。"
                        f"給料・税金・銀行・家・宝くじ など、日常語で入ること"))
     # 0b. 専門語で始めている = 興味のない人はここで指が動く(P-0)
-    opener = [w for w in NOT_OPENER if w in subs[0]]
-    if opener:
-        issues.append(("#1", "専門語で始めている",
-                       f"1文目に「{opener[0]}」。ショートは選ばれないので、"
-                       f"専門語は中で教える対象にして、入口は日常語にする"))
+    #
+    # **長尺(横型)には掛けない。** ショートはフィードで押し付けられるので、
+    # 専門語で始めると興味のない人の指が動く。だが長尺は**タイトルとサムネで選ばれて**
+    # 見られるので、そもそも専門語を知っている人しか開かない。
+    # そこで日常語に言い換えると、逆に「探していた動画かどうか」が分からなくなる
+    # (docs/research/longform-design.md §1)。**形式がちがえば入口の正解もちがう。**
+    if not longform:
+        opener = [w for w in NOT_OPENER if w in subs[0]]
+        if opener:
+            issues.append(("#1", "専門語で始めている",
+                           f"1文目に「{opener[0]}」。ショートは選ばれないので、"
+                           f"専門語は中で教える対象にして、入口は日常語にする"))
 
     # 0c. 時点を言っていない(ループ63)
     # ユーザー指摘:「銀行に100万円、1年の利息は3187円。これはいつの話なの?

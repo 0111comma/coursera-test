@@ -48,18 +48,23 @@ def _frame(fig, title, badge, brand):
 # ---------------------------------------------------------------- 文字もの
 
 def chapter(no: int, title: str, question: str, badge: str, brand: str):
-    """章の入口カード。「第N章」+ 章題 + **その章が答える問い**。
+    """章の入口カード。「第N章」+ 短いラベル。
 
-    章題だけだと目次になる(longform-design §4a)。**問いを必ず併記する。**
+    **その章が答える問いは、画面ではなくナレーションが言う。**
+    最初は問いも画面に書いていたが、ナレーションと一字一句同じになり、
+    Mayerの冗長性(図の中の文がナレーションと同義だと学習を妨げる)にそのまま当たった。
+    かといって問いをナレーションから外すと、耳だけで追っている人に章の切れ目が
+    伝わらない(W5 ラジオテスト)。**だから声が問いを言い、画面は道標だけを出す。**
+
+    question は概要欄のチャプター行に使う値として受け取り、描画には使わない。
+    title は道標なので短く(9文字以内)。長い章題は問いの言い換えであることが多い。
     """
     def painter(fig, t):
         a = clamp01(t * 2.2)
-        fig.text(PLOT_L, 0.720, f"第{no}章", ha="left", va="center",
-                 color=EMPH, fontsize=34, alpha=a)
-        draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.590, title, 76 * (1 + 0.04 * (1 - a)),
-                       wrap=16, line_h=0.075, block_fit=0.66)
-        fig.text((PLOT_L + PLOT_R) / 2, 0.420, question, ha="center", va="center",
-                 color=INK_2, fontsize=32, alpha=clamp01(t * 2 - 0.5))
+        fig.text((PLOT_L + PLOT_R) / 2, 0.680, f"第{no}章", ha="center", va="center",
+                 color=EMPH, fontsize=40, alpha=a)
+        draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.500, title, 92 * (1 + 0.04 * (1 - a)),
+                       wrap=12, line_h=0.090, block_fit=0.60)
         _frame(fig, "", badge, brand)
     return painter
 
@@ -84,7 +89,9 @@ def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: in
         draw_rich_text(fig, 0.5, 0.560, main, main_size, wrap=10, line_h=0.13, block_fit=0.86)
         fig.text(0.5, 0.320, bottom, ha="center", va="center", color=EMPH, fontsize=54,
                  path_effects=stroke_fx(EMPH, outline=outline_for(54), fatten=2.5))
-        fig.text(0.5, 0.190, note, ha="center", va="center", color=MUTED, fontsize=30)
+        # 字幕帯(上端 SUBTITLE_Y + 行分)より上に置く。カバーは字幕を出さないが、
+        # 同じ位置に注記を置くと通常フレームと視線の置き場がずれる
+        fig.text(0.5, 0.225, note, ha="center", va="center", color=MUTED, fontsize=30)
         draw_footer_brand(fig, brand)
     return painter
 
@@ -315,6 +322,38 @@ def timeline(title, years, badge, brand, arrow=None, note=""):
         if note:
             fig.text((PLOT_L + PLOT_R) / 2, 0.232, note, ha="center", va="center",
                      color=MUTED, fontsize=26)
+        _frame(fig, title, badge, brand)
+    return painter
+
+
+def checklist(title, items, badge, brand, lit=0):
+    """箇条を「点灯するチェックリスト」として見せる(S014の herasu の横型版)。
+
+    items = [短い見出し, ...]。lit までが点灯し、残りは沈む。
+    ただの箇条書きは「箱に入った文章」にすぎない(Larkin & Simon)。
+    **いま何番目の話をしているか**が位置で分かることに意味を持たせる。
+    """
+    n = len(items)
+    H = 0.088
+    top = 0.780
+
+    def painter(fig, t):
+        for k, label in enumerate(items):
+            on = k < lit
+            a = clamp01(t * 2.4 - k * 0.15) if on else 0.30
+            y = top - H * k
+            fig.patches.append(Rectangle((PLOT_L, y - H * 0.38), PLOT_R - PLOT_L, H * 0.76,
+                                         transform=fig.transFigure,
+                                         facecolor=EMPH if (on and k == lit - 1) else "none",
+                                         edgecolor=(EMPH if (on and k == lit - 1)
+                                                    else BASELINE),
+                                         linewidth=1.6, alpha=(0.16 if (on and k == lit - 1)
+                                                               else 0.9) * a))
+            cur = on and k == lit - 1        # いま話している行だけを強調する
+            fig.text(PLOT_L + 0.035, y, f"{k + 1}", ha="center", va="center",
+                     color=EMPH if cur else (INK_2 if on else MUTED), fontsize=32, alpha=a)
+            fig.text(PLOT_L + 0.075, y, label, ha="left", va="center",
+                     color=INK if on else MUTED, fontsize=34, alpha=a)
         _frame(fig, title, badge, brand)
     return painter
 

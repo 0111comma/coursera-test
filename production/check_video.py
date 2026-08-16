@@ -41,15 +41,21 @@ def main(video_dir: Path) -> int:
     # 2. render.py のユニット文の長さ・折り返し・禁止語
     rp = video_dir / "render.py"
     src = rp.read_text() if rp.exists() else ""
+    # 形式の判定。use_landscape() を呼ぶ render.py は横型の長尺
+    LONG = "use_landscape" in src
+    WRAP = 26 if LONG else SUB_WRAP
+    FIG_W = 1920 if LONG else 1080
+    BLOCK_FIT = 0.86 if LONG else 0.70
+    SUB_PT = 40 if LONG else 52
     units = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
     check("render.py にユニット定義", len(units) > 0, f"{len(units)}ユニット")
     total_chars = 0
     for u in units:
         plain = u.replace("【", "").replace("】", "")
         total_chars += len(plain)
-        if len(plain) > 35:
+        if len(plain) > (48 if LONG else 35):
             check(f"1文35字以内: {plain[:14]}…", False, f"{len(plain)}字")
-        if len(wrap_plain(plain, SUB_WRAP)) > 2:
+        if len(wrap_plain(plain, WRAP)) > 2:
             check(f"字幕2行以内: {plain[:14]}…", False)
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
     # 字幕の安全幅(ループ⑫): 最長行が block_fit=0.70 に収まる際の縮小率が75%未満なら
@@ -58,12 +64,16 @@ def main(video_dir: Path) -> int:
         return 0.6 if ch in "。、!?…" else (0.55 if ord(ch) < 0x100 else 1.0)
     for u in units:
         plain = u.replace("【", "").replace("】", "")
-        for line in wrap_plain(plain, SUB_WRAP):
-            frac = sum(_w(c) for c in line) * (52 / 72 * 100) / 1080
-            if 0.70 / max(frac, 1e-9) < 0.75:
+        for line in wrap_plain(plain, WRAP):
+            frac = sum(_w(c) for c in line) * (SUB_PT / 72 * 100) / FIG_W
+            if BLOCK_FIT / max(frac, 1e-9) < 0.75:
                 check(f"字幕縮小75%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
     est = total_chars * SEC_PER_CHAR + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
-    check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
+    if LONG:
+        # 長尺は**8分を超えること**が条件(longform-design)。上限は設けない
+        check("推定尺 8分以上", est >= 480, f"約{est / 60:.1f}分")
+    else:
+        check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
@@ -116,7 +126,10 @@ def main(video_dir: Path) -> int:
         dur = float(subprocess.run(
             ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4)],
             capture_output=True, text=True).stdout.strip())
-        check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
+        if LONG:
+            check("尺 8分以上", dur >= 480, f"{dur / 60:.1f}分")
+        else:
+            check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
         vd = subprocess.run(["ffmpeg", "-i", str(mp4), "-af", "volumedetect", "-f", "null", "-"],
                             capture_output=True, text=True).stderr
         m = re.search(r"mean_volume: ([-\d.]+) dB", vd)
@@ -125,7 +138,8 @@ def main(video_dir: Path) -> int:
         wh = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0",
                              "-show_entries", "stream=width,height", "-of", "csv=p=0", str(mp4)],
                             capture_output=True, text=True).stdout.strip()
-        check("解像度 1080x1920", wh == "1080,1920", wh)
+        want = "1920,1080" if LONG else "1080,1920"
+        check(f"解像度 {want.replace(',', 'x')}", wh == want, wh)
         # ループ⑭: 末尾に0.4秒以上の無音が残っているとループの継ぎ目に死に時間が生まれる。
         # 無音が動画末尾まで続くと silence_start だけ出て silence_end が出ないことを利用
         sil = subprocess.run(["ffmpeg", "-v", "info", "-ss", str(max(dur - 2, 0)), "-i", str(mp4),
