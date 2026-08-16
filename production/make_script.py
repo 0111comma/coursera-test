@@ -62,6 +62,10 @@ def main(vdir: Path, meta: dict):
 
 ({len(units)}ユニット)
 
+## タグ(YouTubeのタグ欄。説明欄のハッシュタグとは別)
+
+{meta.get('yt_tags', '(未設定)')}
+
 ## 概要欄テキスト
 
 {meta['description']}
