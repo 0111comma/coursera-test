@@ -83,6 +83,36 @@ def zandaka(split=False, fee=False, note=""):
     return painter
 
 
+def herasu(step=0):
+    """固有シーン: 手数料の減らし方を、上から順に点灯させるチェックリスト。
+
+    ユーザー指摘(ループ61):「減らすのを止めるって具体的にどうすれば良いのか
+    案を出してあげると良いかもね」。締めが行動に変わらないと、見た人は何もできない。
+    3つを並べて置き、言った順に色を変える。止めて見れば持ち帰れる形にする(D16)。
+    """
+    ROWS = ["平日の昼に下ろす", "下ろすのは月1回", "無料の回数を調べる"]
+    Y0, DY = 0.760, 0.078
+
+    def painter(fig, t):
+        from matplotlib.patches import Rectangle
+        fig.text(0.5, 0.905, "手数料の減らし方", ha="center", color=INK_2, fontsize=34)
+        for i, row in enumerate(ROWS):
+            y = Y0 - i * DY
+            on = i < step
+            a = sc.clamp01(t * 2.4 - i * 0.2) if on else 0.5
+            fig.patches.append(Rectangle((0.155, y - 0.020), 0.040, 0.040,
+                                         transform=fig.transFigure,
+                                         facecolor=EMPH if on else MUTED_BAR,
+                                         edgecolor="none", alpha=0.95 * a + 0.05))
+            fig.text(0.225, y, row, ha="left", va="center",
+                     color=INK if on else MUTED, fontsize=34, alpha=a,
+                     path_effects=stroke_fx(INK, outline=outline_for(34), fatten=1.8)
+                     if on else None)
+        draw_badge(fig, BADGE)
+        draw_footer_brand(fig, BRAND)
+    return painter
+
+
 SCENES = {
     "nazo": sc.hero("その預金の利息", "手数料に負ける", BADGE, BRAND, size=88, sub_fs=42),
     "nazo__cover": sc.cover("100万円、1年でいくら増える?", "3187円",
@@ -107,11 +137,12 @@ SCENES = {
                       BADGE, BRAND, cols=6),
     "nenkan": zandaka(split=True, fee=True),
     "hikaku": zandaka(split=True, fee=True, note="手数料のほうが多い"),
-    "oitsuka": zandaka(split=True, fee=True),
     "erabenai": sc.card("金利について", "自分では選べない", "(決めるのは銀行と日銀)",
                         BADGE, BRAND, main_size=56, head_fs=34),
-    "muryo": sc.card("手数料について", "無料の回数がある", "(まず自分の口座を見てみるのだ)",
-                     BADGE, BRAND, main_size=56, head_fs=34),
+    "herasu0": herasu(0),
+    "herasu1": herasu(1),
+    "herasu2": herasu(2),
+    "herasu3": herasu(3),
     "shime": sc.hero("増やす前に", "減らすのを止める", BADGE, BRAND, size=88, sub_fs=44),
 }
 
@@ -121,33 +152,39 @@ SCENES = {
 #   → 結論「1年の利息3187円より、月1回のATM手数料3960円のほうが多い」
 #   オチ=実害(773円のマイナス)+ 見方の変更(金利は選べないが手数料は選べる)
 UNITS = [
-    Unit("nazo", "銀行に100万円。1年でつく利息は3187円。", anim=1.0, cover=True,
+    Unit("nazo", "銀行に100万円。1年の利息は3187円。", anim=1.0, cover=True,
          se="pop", face="normal", speed=1.05, intonation=1.25),
-    Unit("kinri", "その銀行の金利は、いま年0.4%なのだ。", anim=1.2, face="happy",
+    Unit("kinri", "その銀行の金利は、年0.4%。", anim=1.2, face="happy",
          speed=1.15, intonation=1.2),
     Unit("mukashi", "これは34年ぶりの高さなのだ。", anim=1.2, face="surprised",
          speed=1.15, intonation=1.2),
     Unit("risoku", "でも100万円だと、1年で4000円。", anim=1.4, speed=1.15),
-    Unit("zei", "しかも、そこから税金が引かれるのだ。", anim=1.4, speed=1.15),
-    Unit("ritsu", "利息にかかる税金は、20.315%。", anim=1.4, speed=1.15),
-    Unit("hikare", "つまり813円は、税金として消える。", anim=1.4, face="troubled",
+    Unit("zei", "しかも、そこから税金が引かれる。", anim=1.4, speed=1.15),
+    Unit("ritsu", "その税金は、20.315%。", anim=1.4, speed=1.15),
+    Unit("hikare", "つまり813円は、税金で消える。", anim=1.4, face="troubled",
          speed=1.15),
-    Unit("nokori", "するとその残りが、さっきの3187円。", anim=1.6, speed=1.15),
+    Unit("nokori", "するとその残りが、3187円なのだ。", anim=1.6, speed=1.15),
+    # ATMは「エイティーエム」と読まれるので、読み上げだけカナにする(ループ61)
     Unit("toi", "では、ATMの手数料を見てみるのだ。", anim=1.4, face="troubled",
-         speed=1.1, intonation=1.2, pause_scale=1.3),
-    Unit("atm", "その手数料は、コンビニで1回330円。", anim=1.4, speed=1.15),
-    Unit("itsu", "これは平日の夜や、土日に下ろした時。", anim=1.4, speed=1.15),
-    Unit("tsuki", "その330円を、月に1回だけ使うとする。", anim=1.4, speed=1.15),
-    Unit("nenkan", "すると1年で、3960円になるのだ。", anim=1.6, face="surprised",
+         speed=1.1, intonation=1.2, pause_scale=1.3,
+         narration="では、エーティーエムの手数料を見てみるのだ。"),
+    Unit("atm", "その手数料は、コンビニで330円。", anim=1.4, speed=1.15),
+    Unit("itsu", "これは平日の夜や、土日の場合。", anim=1.4, speed=1.15),
+    Unit("tsuki", "その330円を、月1回使うとする。", anim=1.4, speed=1.15),
+    Unit("nenkan", "すると1年で、3960円になる。", anim=1.6, face="surprised",
          se="impact", se_at=0.34, speed=1.1, intonation=1.2),
     Unit("hikaku", "その3960円は、利息3187円より多い。", anim=1.6, face="surprised",
          puchun=True, se="don", speed=1.1, intonation=1.2),
-    Unit("oitsuka", "つまり100万円でも、追いつかないのだ。", anim=1.4, speed=1.15),
     Unit("erabenai", "しかもその金利は、自分では選べない。", anim=1.4, face="troubled",
          speed=1.15),
-    Unit("muryo", "でも手数料は、銀行ごとに無料の回数が違う。", anim=1.4, face="happy",
-         speed=1.15),
-    Unit("shime", "増やすより先に、減らすのを止めるのだ。", anim=1.0, pad=0.15, face="smug",
+    # ユーザー指摘(ループ61):「減らすのを止める」だけでは何をすればいいか分からない。
+    # 具体案を3つ、チェックリストとして上から点灯させる
+    Unit("herasu0", "でもその手数料は、3つの方法で減らせる。", anim=1.4, face="happy",
+         speed=1.15, intonation=1.2),
+    Unit("herasu1", "まず、下ろすのは平日の昼にする。", anim=1.4, speed=1.15),
+    Unit("herasu2", "そして下ろす回数を、月1回にまとめる。", anim=1.4, speed=1.15),
+    Unit("herasu3", "さらに口座の、無料回数を調べる。", anim=1.4, speed=1.15),
+    Unit("shime", "増やす前に、減らすのを止めるのだ。", anim=1.0, pad=0.15, face="smug",
          speed=1.1, intonation=1.15, pitch=-0.03),
 ]
 

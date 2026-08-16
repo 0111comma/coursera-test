@@ -141,9 +141,12 @@ UNITS = [
          speed=1.15),
     Unit("furi", "でも、税金がゼロになる箱がある。", anim=1.4, face="happy",
          speed=1.15, intonation=1.2),
-    Unit("nisa", "それがNISAと呼ばれる、口座の種類。", anim=1.4, speed=1.15),
+    # 字幕は「NISA」のまま、読み上げだけカナにする(ループ61)。
+    # VOICEVOX は NISA を「エヌアイエスエー」と読む。check_yomi.py が落とす
+    Unit("nisa", "それがNISAと呼ばれる、口座の種類。", anim=1.4, speed=1.15,
+         narration="それがニーサと呼ばれる、口座の種類。"),
     Unit("nisa2", "そのNISAの中なら、税金がゼロになる。", anim=1.6, face="happy",
-         speed=1.15),
+         speed=1.15, narration="そのニーサの中なら、税金がゼロになる。"),
     Unit("jougen", "ただし、入れられる額に上限がある。", anim=1.4, speed=1.15),
     Unit("waku", "その上限は、一生で1800万円まで。", anim=1.4, speed=1.15),
     Unit("waku2", "そして毎年、入れられるのは360万円まで。", anim=1.4, speed=1.15),
