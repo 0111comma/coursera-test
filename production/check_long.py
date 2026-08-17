@@ -70,15 +70,28 @@ def scene_kinds(src, scenes):
     return out
 
 
-def durations(vdir: Path, units):
-    """音声があれば実測、無ければ字数から推定する。"""
+def durations(vdir: Path, units, scenes, out_name):
+    """音声があれば実測、無ければ字数から推定する。
+
+    **署名が一致しないときは実測を使わない。** 台本を作り直したあとに
+    古い音声から秒を読むと、まったく別の台本の秒で判定してしまう
+    (フェーズ12で実際に踏んだ。93ユニットの新台本を、157ユニットの旧音声で測っていた)。
+    """
+    import shortlib as S
+    est = [len(re.sub(r"[。、【】]", "", u.tts_text())) * SEC_PER_CHAR_LONG + u.pad
+           for u in units]
     wd = vdir / "output" / "work"
+    sig_file = wd / "signature.txt"
+    if not sig_file.exists():
+        return est, "推定"
+    want = S.render_signature(units, scenes, out_name=out_name)
+    if sig_file.read_text().strip() != want:
+        return est, "推定(音声は古い台本のもの)"
     out = []
     for i in range(len(units)):
         p = wd / f"seg_{i:02d}_pad.wav"
         if not p.exists():
-            return [len(re.sub(r"[。、【】]", "", u.tts_text())) * SEC_PER_CHAR_LONG + u.pad
-                    for u in units], "推定"
+            return est, "推定"
         with wave.open(str(p)) as w:
             out.append(w.getnframes() / w.getframerate())
     return out, "実測"
@@ -90,7 +103,8 @@ def check_video(vdir: Path):
     if "use_landscape" not in src:
         return None, None, "横型ではない(このゲートは長尺専用)"
     units, kinds = mod.UNITS, scene_kinds(src, mod.SCENES)
-    durs, how = durations(vdir, units)
+    m = re.search(r'render_video\([^)]*?"([^"]+\.mp4)"', src, re.S)
+    durs, how = durations(vdir, units, mod.SCENES, m.group(1) if m else "")
     starts, t = [], 0.0
     for d in durs:
         starts.append(t)

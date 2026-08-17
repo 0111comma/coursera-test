@@ -206,6 +206,26 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
 # これ以上の pad は「止め」とみなし、その区間はBGMも切る(05/08-tempo/audio)
 LONG_STOP_PAD = 0.5
+
+
+def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
+                     out_name="") -> str:
+    """レンダリング結果を一意に決める署名。
+
+    `render_video` の再開判定に使うほか、**`check_long.py` が
+    `output/work/` の音声を信じてよいかの判断にも使う。**
+    署名が合わないのに秒を読むと、台本を作り直したあとに
+    **古い音声から計算した秒で判定してしまう**(フェーズ12で実際に踏んだ)。
+
+    SPEED_SCALE と画面比も入れる(フェーズ5)。u.speed だけ見ていると、
+    全体の話速だけ変えたときに古い音声を使い回してしまう。
+    """
+    return hashlib.sha256(repr([
+        (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
+         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
+        for u in units
+    ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
+         bgm, chara, out_name, SPEED_SCALE, W, H]).encode()).hexdigest()
 # 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
 # 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
 # ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
@@ -884,15 +904,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     #
     # ただし台本を直したのに古いフレームを使ってしまうと最悪なので、
     # **台本と調声の署名が一致したときだけ**残す。1文字でも変えたら捨てる。
-    sig = hashlib.sha256(repr([
-        (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
-         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
-        for u in units
-    # SPEED_SCALE と画面比も署名に入れる(ループ71 フェーズ5)。
-    # u.speed だけ見ていると、全体の話速だけ変えたときに
-    # 古い音声をそのまま使い回してしまう(長尺の話速を1.3→1.15にしたときに気づいた)。
-    ] + [sorted(scene_painters), speaker, bgm, chara, out_name,
-         SPEED_SCALE, W, H]).encode()).hexdigest()
+    sig = render_signature(units, scene_painters, speaker, bgm, chara, out_name)
     sig_file = workdir / "signature.txt"
     resumed = sig_file.exists() and sig_file.read_text().strip() == sig
     if not resumed:

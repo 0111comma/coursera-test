@@ -47,7 +47,7 @@ def _frame(fig, title, badge, brand):
 
 # ---------------------------------------------------------------- 文字もの
 
-def chapter(no: int, title: str, question: str, badge: str, brand: str):
+def chapter(no: int, title: str, question: str, badge: str, brand: str, total: int = 0):
     """章の入口カード。「第N章」+ 短いラベル。
 
     **その章が答える問いは、画面ではなくナレーションが言う。**
@@ -61,7 +61,10 @@ def chapter(no: int, title: str, question: str, badge: str, brand: str):
     """
     def painter(fig, t):
         a = clamp01(t * 2.2)
-        fig.text((PLOT_L + PLOT_R) / 2, 0.680, f"第{no}章", ha="center", va="center",
+        # total を渡すと「第N章 / 全M章」になる。どこまで来たかを画面に出す
+        # (合図の原則。09/07-progress.md)。分数だけなので短い語句のまま
+        head = f"第{no}章 / 全{total}章" if total else f"第{no}章"
+        fig.text((PLOT_L + PLOT_R) / 2, 0.680, head, ha="center", va="center",
                  color=EMPH, fontsize=40, alpha=a)
         draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.500, title, 92 * (1 + 0.04 * (1 - a)),
                        wrap=12, line_h=0.090, block_fit=0.60)
