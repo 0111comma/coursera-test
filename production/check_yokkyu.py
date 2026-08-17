@@ -52,6 +52,11 @@ sys.path.insert(0, str(PRODUCTION))
 
 YOKKYU_HEAD = re.compile(r"\*\*?この人の欲求\*\*?|^#+\s*この人の欲求", re.M)
 KETTEI_HEAD = re.compile(r"\*\*?視聴後に決められること\*\*?|^#+\s*視聴後に決められること", re.M)
+# 長尺だけ: 尺の見込みを**企画の段階で**書かせる(ループ70 フェーズ1)。
+# check_video に「8分以上」を不合格条件で置いていたら、8分に届かせるために
+# 内容を足した(L002は66ユニットで書き終えたあと尺のために+89ユニット足した)。
+# 尺は書き上がってから測るものではなく、**企画のときに見込むもの**である。
+SHAKU_HEAD = re.compile(r"\*\*?尺の見込み\*\*?|^#+\s*尺の見込み", re.M)
 
 # 「決めること」に入っていなければならない動作。視聴者が手足を動かすか、選ぶか。
 ACTIONS = (
@@ -129,6 +134,14 @@ def check_video(vdir: Path):
                        f"「{yokkyu[:40]}」は主題であって欲求ではない。"
                        "「〜したい」「〜したくない」の形で、"
                        "視聴者の側の言葉で書くこと(docs/research/yokkyu-map.md §4)"))
+
+    # 横型(長尺)だけ、尺の見込みを要求する
+    if (vdir / "render.py").exists() and "use_landscape" in (vdir / "render.py").read_text():
+        if not _line_after(text, SHAKU_HEAD):
+            issues.append(("plan.md", "尺の見込みが無い",
+                           "長尺は「**尺の見込み**」を1行書くこと。"
+                           "この問いに何分ぶんの中身があるのかを、企画の段階で見込む。"
+                           "書き上がってから尺のために内容を足すのは逆(01-length.md)"))
 
     kettei = _line_after(text, KETTEI_HEAD)
     if not kettei:

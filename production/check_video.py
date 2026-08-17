@@ -74,8 +74,17 @@ def main(video_dir: Path) -> int:
     # 上限55.5sは60秒に対する安全余裕として置いてある。定数は動かさない
     est = total_chars * SEC_PER_CHAR + len(units) * 0.15
     if LONG:
-        # 長尺は**8分を超えること**が条件(longform-design)。上限は設けない
-        check("推定尺 8分以上", est >= 480, f"約{est / 60:.1f}分")
+        # 尺は**下限で縛らない**(ループ70 フェーズ1)。
+        # 「8分以上」を不合格条件にしていたら、8分に届かせるために内容を足した。
+        # L002 は66ユニット(3.65分)で書き終えたあと、尺の理由だけで+89ユニット足している。
+        # 8分はミッドロール広告の条件(収益側の閾値)で、視聴者のための数字ではない。
+        # 尺の判定は**企画の段階**(plan.md「8分ぶんの中身があるか」)に移した。
+        if est < 480:
+            warns.append(f"推定尺が8分未満(約{est / 60:.1f}分)。"
+                         "ミッドロール広告は付かない。**尺のために内容を足さないこと**")
+            print(f"  [WARN] 推定尺 — 約{est / 60:.1f}分(8分未満。広告条件を満たさない)")
+        else:
+            check("推定尺", True, f"約{est / 60:.1f}分")
     else:
         check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
     joined = "".join(units) + src
@@ -134,7 +143,11 @@ def main(video_dir: Path) -> int:
             ["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(mp4)],
             capture_output=True, text=True).stdout.strip())
         if LONG:
-            check("尺 8分以上", dur >= 480, f"{dur / 60:.1f}分")
+            if dur < 480:
+                warns.append(f"尺が8分未満({dur / 60:.1f}分)。ミッドロール広告は付かない")
+                print(f"  [WARN] 尺 — {dur / 60:.1f}分(8分未満)")
+            else:
+                check("尺", True, f"{dur / 60:.1f}分")
         else:
             check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
         vd = subprocess.run(["ffmpeg", "-i", str(mp4), "-af", "volumedetect", "-f", "null", "-"],
