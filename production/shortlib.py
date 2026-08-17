@@ -204,6 +204,8 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 #   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
 # 各Unitの speed に、さらにこの倍率を掛ける。1本ずつ直さなくても全体を調整できる
 SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
+# これ以上の pad は「止め」とみなし、その区間はBGMも切る(05/08-tempo/audio)
+LONG_STOP_PAD = 0.5
 # 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
 # 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
 # ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
@@ -466,7 +468,8 @@ def pad_wav(src: Path, dst: Path, pad_sec: float):
 
 def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path],
              out_mp4: Path, workdir: Path, bgm: bool = True,
-             se_events: list[tuple[float, str]] | None = None, bgm_variant: int = 0):
+             se_events: list[tuple[float, str]] | None = None, bgm_variant: int = 0,
+             bgm_mute: list[tuple[float, float]] | None = None):
     """フレーム列+ナレーション(+BGM+SE)をmp4(1080x1920, 30fps)に結合する。"""
     alist = workdir / "audio.txt"
     alist.write_text("".join(f"file '{w.resolve()}'\n" for w in padded_wavs))
@@ -495,7 +498,14 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
             f"[{n_in}:a]volume=0.6[bgv];"
             "[bgv][narb]sidechaincompress=threshold=0.015:ratio=6:attack=8:release=300:makeup=1[bg]"
         )
-        mix_labels = "[nara][bg]"
+        if bgm_mute:
+            # 止めの区間はBGMを0にする。ダッキングだけでは release=300ms のせいで
+            # 長い間にBGMが戻ってきてしまうので、明示的に切る
+            windows = "+".join(f"between(t,{a:.3f},{b:.3f})" for a, b in bgm_mute)
+            filters.append(f"[bg]volume=0:enable='{windows}'[bgq]")
+            mix_labels = "[nara][bgq]"
+        else:
+            mix_labels = "[nara][bg]"
         extra.append(bgm_wav)
         n_in += 1
     if se_events:
@@ -906,6 +916,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     frames, durations, padded = [], [], []
     unit_secs: list[float] = []   # ユニットごとの尺(長尺のチャプター時刻を出すため)
     se_events: list[tuple[float, str]] = []
+    bgm_mute: list[tuple[float, float]] = []   # BGMを完全に切る区間(止め)
     elapsed = 0.0
     thumbnail = None
     for i, (u, w) in enumerate(zip(units, wavs)):
@@ -914,6 +925,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         d_total = duration_of(pw)
         padded.append(pw)
         unit_secs.append(d_total)
+        # 長い「止め」の間はBGMも切る(ループ71 フェーズ8)。
+        # ダッキングの release は300msなので、0.6秒の間を作ると
+        # **その間にBGMが戻ってきて盛り上がる**。止めたつもりが逆になる。
+        if u.pad >= LONG_STOP_PAD:
+            bgm_mute.append((elapsed + d_total - u.pad, elapsed + d_total))
         if u.se:
             se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
         if u.puchun:
@@ -994,7 +1010,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
 
     out_mp4 = outdir / out_name
     assemble(frames, durations, padded, out_mp4, workdir, bgm=bgm, se_events=se_events,
-             bgm_variant=bgm_variant)
+             bgm_variant=bgm_variant, bgm_mute=bgm_mute)
     if thumbnail is not None:
         import shutil
         shutil.copy(thumbnail, outdir / "thumbnail.png")
