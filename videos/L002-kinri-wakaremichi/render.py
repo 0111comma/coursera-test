@@ -53,7 +53,7 @@ _LABEL = {0: "直後", 5: "5年後", 10: "10年後", 15: "15年後", 20: "20年�
 def _bars(upto, highlight=None):
     """分かれ目の棒を、左から upto 本ぶんだけ出す。"""
     items = [(_LABEL[y], BE[y], f"{BE[y]:.2f}%") for y in _YEARS[:upto]]
-    return sl.barsN("上がる時期ごとの分かれ目", items, BADGE, BRAND,
+    return sl.barsN("時期別の一覧", items, BADGE, BRAND,
                     ymax=24, highlight=highlight)
 
 
@@ -75,8 +75,8 @@ SCENES = {
 
     "dare": sl.card("だれの話か", "これから借りる人", "※ 借入3000万円・期間35年で計算",
                     BADGE, BRAND, main_size=88, head_fs=32),
-    "zentei": sl.card("計算に入れないもの", "団信・手数料・保証料", "※ 借りる先で額が変わるため",
-                      BADGE, BRAND, main_size=68, head_fs=32),
+    "zentei": sl.card("計算に入れないもの", "3つの費用", "※ 団信・手数料・保証料は借りる先で違う",
+                      BADGE, BRAND, main_size=120, head_fs=30),
 
     # ---- 第1章 上がらなかったら
     "ch1": sl.chapter(1, "上がらない前提", "そもそも今の金利で、いくら違うのか?",
@@ -88,7 +88,7 @@ SCENES = {
                          [("変動金利", 85036, "8万5036円"),
                           ("固定金利", 117812, "11万7812円")],
                          BADGE, BRAND, ymax=140000, highlight=1),
-    "sougaku": sl.compare2("35年ぶんの総返済額",
+    "sougaku": sl.compare2("総返済額",
                            ("変動金利", [("元金3000万", 3000, MUTED_BAR),
                                      ("利息571万", 571, GOLD)], "3571万円"),
                            ("固定金利", [("元金3000万", 3000, MUTED_BAR),
@@ -112,7 +112,7 @@ SCENES = {
     "uchi2": sl.barsN("最終回の8万5036円の中身",
                       [("利息", 73, "73円"), ("元金", 84963, "8万4963円")],
                       BADGE, BRAND, ymax=100000, highlight=0),
-    "juu": sl.card("前半に返しているもの", "利息", "※ 繰上返済が早いほど効く理由",
+    "juu": sl.card("前半の中身", "利息", "※ 繰上返済が早いほど効く理由",
                    BADGE, BRAND, main_size=150, head_fs=32),
 
     "naze0": sl.card("答えが動く理由", "上がる時期", "※ 残高が大きいうちほど効く",
@@ -150,7 +150,7 @@ SCENES = {
     # ---- 第3章 分かれ目
     "ch3": sl.chapter(3, "分かれ目", "何%まで上がったら、固定金利と並ぶのか?",
                       BADGE, BRAND),
-    "sagasu": sl.card("探し方", "二分法", "※ 総返済額が4948万円になる点を探す",
+    "sagasu": sl.card("探し方", "二分法", "※ 上下から挟んで詰める方法",
                       BADGE, BRAND, main_size=150, head_fs=32),
     "sagasu2": sl.barsN("その金利まで上げたときの総返済額",
                         [("3.14%まで", 4581, "4581万円"), ("3.50%まで", 4769, "4769万円"),
@@ -159,12 +159,12 @@ SCENES = {
     "be5": _bars(2, highlight=1),
     "be5b": sl.hero("5年後なら 3.83%", "※ 固定金利より高い", BADGE, BRAND,
                     size=96, sub_fs=32),
-    "naze": sl.card("なぜ3.14%を超えるか", "先に貯金ができている",
+    "naze": sl.card("なぜ3.14%を超えるか", "先取りの差額",
                     "※ 5年ぶんの差額 約197万円",
                     BADGE, BRAND, main_size=72, head_fs=32),
     "be10": _bars(3, highlight=2),
 
-    "katei3": sl.card("計算の仮定", "下がらない", "※ 実際の金利は上下する",
+    "katei3": sl.card("計算の仮定", "下がらない", "※ この表は上限側の目安",
                       BADGE, BRAND, main_size=140, head_fs=32),
 
     # ---- 第4章 逃げ切り
@@ -185,7 +185,7 @@ SCENES = {
                         [("5年後", 2634, "2634万円"), ("10年後", 2250, "2250万円"),
                          ("15年後", 1845, "1845万円"), ("20年後", 1418, "1418万円")],
                         BADGE, BRAND, ymax=3100),
-    "riyuu4": sl.card("効き方が変わる理由", "残高の大きさ", "※ 同じ1%でも金額がちがう",
+    "riyuu4": sl.card("効き方が変わる理由", "残高の大きさ", "※ 残高 × 金利 で効く",
                       BADGE, BRAND, main_size=104, head_fs=32),
 
     "genjitsu": sl.card("読みかた", "後半ほど遠のく", "※ 表の数字は仮定であって予測ではない",
@@ -236,7 +236,7 @@ SCENES = {
                      ["金利が上がる時期", "分かれ目の金利"],
                      [(_LABEL[y], f"{BE[y]:.2f}%") for y in _YEARS],
                      BADGE, BRAND, highlight=3, reveal_rows=False),
-    "jibun": sl.card("読む場所を決めるもの", "返済し終える年数", "※ 繰上返済の予定も入れて考える",
+    "jibun": sl.card("読む場所", "返済し終える年数", "※ 繰上返済の予定も入れて考える",
                      BADGE, BRAND, main_size=76, head_fs=32),
     "kateii": sl.card("表の前提", "一度上がったら続く", "※ 段階的に上がる場合はもっと緩やか",
                       BADGE, BRAND, main_size=88, head_fs=32),
@@ -351,6 +351,7 @@ UNITS = [
          face="troubled", speed=1.0),
     Unit("naze", "その理由は、先に安く返しているからなのだ。", anim=0.0, speed=1.05),
     Unit("naze", "つまり最初の5年ぶん、貯金ができている。", anim=0.0, speed=1.05),
+    Unit("naze", "その差額は、5年で197万円にもなるのだ。", anim=0.0, speed=1.05),
     Unit("be10", "では10年後に上がる場合は、どうなるか。", anim=1.8, speed=1.1),
     Unit("be10", "その分かれ目は、4.96%まで上がるのだ。", anim=0.0,
          se="pop", speed=1.05, intonation=1.2),
