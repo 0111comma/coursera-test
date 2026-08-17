@@ -282,17 +282,19 @@ SCENES = {
                        BADGE, BRAND, size=88, sub_fs=32),
     "kawaru": sl.card("この動画の時点", "2026年8月", "※ 税制改正で変わります",
                       BADGE, BRAND, main_size=104, head_fs=32),
-    "shime": sl.hero("消えるのは、損のほう", "※ 金額は自分で出せる",
-                     BADGE, BRAND, size=80, sub_fs=32),
+    "shime": sl.hero("売却の判断に、税は不要", "※ 課税口座では逆に効く",
+                     BADGE, BRAND, size=76, sub_fs=32),
 }
 
 # ---------------------------------------------------------------- 台本
 
 UNITS = [
     # ===== 第0章 冒頭(答えを先に出し切る。longform-design §1)
-    Unit("toi", "NISAで損をしたとき、税金はどうなるのか。", anim=1.4, cover=True,
+    Unit("toi", "NISA口座が、マイナスになっているとする。", anim=1.4, cover=True,
          se="pop", speed=1.05, intonation=1.25),
-    Unit("nakatta", "その損は、税金の計算では【無かったこと】になる。", anim=1.4,
+    Unit("toi", "そのマイナスは、税金の足しにならないのか。", anim=0.0,
+         face="troubled", speed=1.1, intonation=1.2),
+    Unit("nakatta", "でもその損は、税金では【無かったこと】になる。", anim=1.4,
          speed=1.1, intonation=1.2),
     Unit("kazei_wa", "でも課税口座なら、そうではないのだ。", anim=1.4, speed=1.1),
     Unit("kazei_wa", "その課税口座とは、NISAではない普通の口座のこと。", anim=0.0, speed=1.05),
@@ -501,9 +503,11 @@ UNITS = [
     Unit("kawaru", "その制度は、2026年8月時点の内容なのだ。", anim=0.0, speed=1.15),
     Unit("kawaru", "だから使うときには、そのときの制度を確かめてほしいのだ。", anim=0.0,
          speed=1.05),
-    Unit("shime", "つまりNISAの損は、税金では無かったことになる。", anim=1.4,
+    Unit("shime", "つまりNISAで売っても、税金の話は動かないのだ。", anim=1.4,
          speed=1.05, intonation=1.2),
-    Unit("shime", "その額がいくらなのかを、知っておいてほしいのだ。", anim=0.0, pad=0.2,
+    Unit("shime", "だから売るかどうかは、税金と切り離して決める。", anim=0.0,
+         speed=1.05, intonation=1.2),
+    Unit("shime", "その判断に、税金を持ちこまなくていいのだ。", anim=0.0, pad=0.2,
          face="smug", speed=1.05, intonation=1.15, pitch=-0.03),
 ]
 

@@ -1,3 +1,4 @@
 # レンダリングの中間生成物(フレームPNG・音声セグメント)
 videos/*/output/work/
 __pycache__/
+videos/_rejected/*/output/work/
