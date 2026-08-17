@@ -171,6 +171,10 @@ def main():
     assert round(risoku_fix / 10_000) == 1_948, round(risoku_fix / 10_000)
     assert round(risoku_fix / risoku_var, 1) == 3.4, round(risoku_fix / risoku_var, 2)
 
+    # --- 章3の追加: 分かれ目が固定金利より高くなる理由(先に貯めた差額) ---
+    sakidori = (m_fix - m_var) * 60
+    assert round(sakidori / 10_000) == 197, round(sakidori / 10_000)
+
     # --- 章4: 繰上返済すると分かれ目はどう動くか ---
     # 5年の時点で300万円を繰り上げ(返済額軽減)、そのあと金利が上がる場合。
     be5 = table[5]
@@ -192,6 +196,7 @@ def main():
     print(f"  毎月の内訳 1回目: 利息{i1:,.0f}円 + 元金{m_var - i1:,.0f}円"
           f" / 最終回: 利息{b_last * RATE_VAR / 100 / 12:,.0f}円")
     print(f"  1%上がった後の毎月 {m_up:,.0f}円(125%上限は {cap:,.0f}円)")
+    print(f"  5年ぶんに先取りできる差額 {sakidori:,.0f}円(画面は197万円)")
     print("  残高: " + " / ".join(f"{y}年後 {zan[y] / 10_000:,.0f}万円" for y in sorted(zan)))
     print("  ★ 上がる時期ごとの分かれ目(そこまで上がって最後まで続く前提):")
     for y in ys:
