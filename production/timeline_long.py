@@ -142,6 +142,52 @@ def main():
             print(f"  重複した継ぎ目の合計: {waste:.1f}s"
                   f"({waste / total:.0%})   ← 章札は問いを繰り返さず、答えの予告を言う")
 
+    # 拍の判定(04-rhythm.md)
+    # 変化率 = 標準偏差 ÷ 平均。1つの値に揃っているほど 0 に近づく = メトロノーム
+    lens = [len(u.subtitle) for u in units]
+    runs, cur = [], 1
+    for i in range(1, len(units)):
+        if units[i].scene == units[i - 1].scene:
+            cur += 1
+        else:
+            runs.append(cur)
+            cur = 1
+    runs.append(cur)
+    holds, acc = [], 0.0
+    for i, d in enumerate(durs):
+        acc += d
+        if i + 1 == len(durs) or units[i + 1].scene != units[i].scene:
+            holds.append(acc)
+            acc = 0.0
+
+    def cv(xs):
+        mean = sum(xs) / len(xs)
+        var = sum((x - mean) ** 2 for x in xs) / len(xs)
+        return (var ** 0.5) / mean if mean else 0.0
+
+    # 判定するのは「止め」の数だけ。
+    # ばらつきの比率(変化率・同じ長さの連続)は参考値に留める。理由:
+    #   ユーザーが「OK」と言った S012 と「ゴミ」と言った L001 で、
+    #   字数の変化率(0.13 / 0.14)も同じ長さ帯の連続(最長7 / 最長7)も一致してしまう。
+    #   人の合否と一致しない値をゲートにしない(ループ51の約束)。
+    print("\n拍の判定(04-rhythm.md):")
+    stops = [i for i, u in enumerate(units) if u.pad >= 0.5]
+    print(f"  止め(pad≥0.5s): {len(stops)}箇所 {[f'#{i}' for i in stops] or ''}"
+          + ("   ← 長尺に対比が無い。章の出口の判定の直前に置く"
+             if len(stops) < 3 else "   OK"))
+    print("  --- 以下は参考値。人の合否と一致しないのでゲートにしない ---")
+    print(f"  ユニットの尺   : 平均{sum(durs) / len(durs):.2f}s "
+          f"最短{min(durs):.2f}s 最長{max(durs):.2f}s 変化率{cv(durs):.2f}")
+    print(f"  字幕の字数     : 平均{sum(lens) / len(lens):.1f} "
+          f"最短{min(lens)} 最長{max(lens)} 変化率{cv(lens):.2f}")
+    short = sum(1 for x in lens if x <= 12)
+    print(f"  12字以下の短文 : {short}本({short / len(lens):.0%})")
+    print(f"  絵の持続       : 平均{sum(holds) / len(holds):.1f}s "
+          f"最長{max(holds):.1f}s 変化率{cv(holds):.2f}")
+    two = sum(1 for r in runs if r <= 2)
+    print(f"  2ユニット以下で切る絵: {two}枚({two / len(runs):.0%})")
+    print(f"  間(pad)の種類 : {sorted(set(u.pad for u in units))}")
+
     # 冒頭の判定
     fig_at = next((starts[i] for i, u in enumerate(units)
                    if kinds.get(u.scene) in FIGURE_KINDS), None)
