@@ -68,7 +68,11 @@ def main(video_dir: Path) -> int:
             frac = sum(_w(c) for c in line) * (SUB_PT / 72 * 100) / FIG_W
             if BLOCK_FIT / max(frac, 1e-9) < 0.75:
                 check(f"字幕縮小75%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
-    est = total_chars * SEC_PER_CHAR + len(units) * 0.15  # 実測2本(53.7s/265字, 55.9s/276字)から較正
+    # 実測から較正。0.152字/秒は平均値で、**数字が多い本ほど実測は伸びる**
+    #   S013 276字/18u → 推定55.8s / 実測55.9s(一致)
+    #   S012 345字/18u → 推定55.1s / 実測58.0s(+5%。金額の読み上げが多い)
+    # 上限55.5sは60秒に対する安全余裕として置いてある。定数は動かさない
+    est = total_chars * SEC_PER_CHAR + len(units) * 0.15
     if LONG:
         # 長尺は**8分を超えること**が条件(longform-design)。上限は設けない
         check("推定尺 8分以上", est >= 480, f"約{est / 60:.1f}分")

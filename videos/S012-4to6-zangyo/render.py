@@ -176,7 +176,7 @@ def tsumi():
 SCENES = {
     "nazo": sc.hero("4月〜6月の残業", "※ 標準報酬月額34万→38万で計算", BADGE, BRAND,
                     size=88, sub_fs=34),
-    "nazo__cover": sc.cover("残業したのに、手取りが減る月がある", "9月",
+    "nazo__cover": sc.cover("残業したのに、手取りが減るのはいつ?", "9月",
                             "決めたのは4〜6月", "会社員向け", BRAND, main_size=210),
     "riyuu": sc.card("減る理由は", "社会保険料", "(2026年度の料率で計算)",
                      BADGE, BRAND, main_size=76, head_fs=36),
