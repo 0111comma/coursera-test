@@ -94,17 +94,53 @@ def main():
     if not show_all and len(units) > limit:
         print(f"  ...(残り{len(units) - limit}ユニット。--all で全部出す)")
 
-    # 章の開始秒
-    first = {}
-    for i, u in enumerate(units):
-        first.setdefault(u.scene, i)
-    chapters = [(starts[i], k, units[i].subtitle)
-                for k, i in sorted(first.items(), key=lambda kv: kv[1])
-                if re.fullmatch(r"ch\d+", k)]
-    if chapters:
-        print("\n章の開始秒:")
-        for s, k, sub in chapters:
-            print(f"  {s:6.1f}s  {k}  {sub}")
+    # 章の区切り(章札のシーンが最初に出たユニット)
+    heads = [i for i, u in enumerate(units)
+             if re.fullmatch(r"ch\d+", u.scene) and (i == 0 or units[i - 1].scene != u.scene)]
+    blocks = [(0, "冒頭")] + [(i, units[i].scene) for i in heads]
+    chapters = [(starts[i], units[i].scene, units[i].subtitle) for i in heads]
+
+    if blocks[1:]:
+        print("\n章ブロックの尺と図の割合(03-structure.md):")
+        for j, (i, name) in enumerate(blocks):
+            e = blocks[j + 1][0] if j + 1 < len(blocks) else len(units)
+            end = starts[e] if e < len(units) else total
+            seg = units[i:e]
+            figs = sum(1 for u in seg if kinds.get(u.scene) in FIGURE_KINDS)
+            note = ""
+            if end - starts[i] > 150:
+                note = "  ← 長い。話題が2つ以上入っていないか"
+            elif end - starts[i] < 60:
+                note = "  ← 短い。章の切れ目にするほどの塊か"
+            if figs / len(seg) < 0.40:
+                note += "  ← 図が4割未満"
+            print(f"  {name:6} {starts[i]:6.1f}s → {end:6.1f}s  尺 {end - starts[i]:5.1f}s"
+                  f"  {len(seg):3}ユニット  図 {figs / len(seg):3.0%}{note}")
+        print(f"  章の数(冒頭を除く): {len(chapters)}"
+              + ("   ← 9分なら4〜5。多いと切れ目でのリセットが増える"
+                 if len(chapters) > 5 else "   OK"))
+
+        # 継ぎ目: 前章の出口と章札が同じ問いを2回言っていないか
+        print("\n章の継ぎ目(前章の出口 × 章札の重なり):")
+        waste = 0.0
+        for i in heads:
+            if i == 0:
+                continue
+            drop = re.compile(r"[。、では第0-9１-９章]")
+            a = set(drop.sub("", units[i - 1].subtitle))
+            b = set(drop.sub("", units[i].subtitle))
+            ov = len(a & b) / max(1, len(b))
+            d = durs[i - 1] + durs[i]
+            bad = ov >= 0.50
+            if bad:
+                waste += d
+            print(f"  {units[i].scene:6} 重なり {ov:3.0%}  2ユニット {d:4.1f}s"
+                  + ("   ← 同じ問いを2回言っている" if bad else ""))
+            print(f"         出口: {units[i - 1].subtitle}")
+            print(f"         章札: {units[i].subtitle}")
+        if waste:
+            print(f"  重複した継ぎ目の合計: {waste:.1f}s"
+                  f"({waste / total:.0%})   ← 章札は問いを繰り返さず、答えの予告を言う")
 
     # 冒頭の判定
     fig_at = next((starts[i] for i, u in enumerate(units)
