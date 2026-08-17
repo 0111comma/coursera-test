@@ -81,10 +81,13 @@ def main(video_dir: Path) -> int:
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
-    check("仮定バッジの描画", "draw_badge" in src, "利回り等の仮定明示")
+    # 横型(長尺)はシーンを scenes_long 側で組むので、render.py に draw_badge が出てこない。
+    # 代わりに BADGE を各シーンに渡しているかで見る(渡さないとバッジは描かれない)
+    has_badge = "draw_badge" in src or (LONG and re.search(r"BADGE\s*=", src) and "BADGE" in src)
+    check("仮定バッジの描画", bool(has_badge), "利回り等の仮定明示")
 
     # P系(ループ㊳: ユーザーレビュー第7弾)。前置き・生活翻訳・情景ユーモア・中盤の問い
-    cover_m = re.search(r'"[\w]+__cover":\s*sc\.cover\(\s*"([^"]*)"', src)
+    cover_m = re.search(r'"[\w]+__cover":\s*s[cl]\.cover\(\s*"([^"]*)"', src)
     lead_m = re.search(r'lead="([^"]*)"', src)
     cover_top = cover_m.group(1) if cover_m else ""
     check("D23 前置き(1フレーム目に問い)", "?" in cover_top or (lead_m and "?" in lead_m.group(1)),

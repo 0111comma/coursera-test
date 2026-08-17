@@ -54,7 +54,7 @@ SCENES = {
     # ---- 第0章 冒頭
     "toi": sl.hero("含み損のとき", "※ 金額はすべて仮定の例です",
                    BADGE, BRAND, size=140, sub_fs=32),
-    "toi__cover": sl.cover("NISAで損したら、いくら損するのか", "40,630円",
+    "toi__cover": sl.cover("NISAで損したら、いくら損するのか?", "40,630円",
                            "同じ年に課税口座で利益があると", "2026年8月時点の制度", BRAND),
     "nakatta": sl.card("税金の計算では", "無かったこと", "(NISAの損は、そう扱われる)",
                        BADGE, BRAND, main_size=88, head_fs=32),
