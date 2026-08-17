@@ -25,6 +25,8 @@ from shortlib import (  # noqa: E402
     Unit, render_video, require_voicevox, stroke_fx, outline_for,
     draw_badge, draw_footer_brand, INK, INK_2, MUTED, MUTED_BAR, EMPH, GOLD,
 )
+import matplotlib.pyplot as plt  # noqa: E402
+from shortlib import BASELINE  # noqa: E402
 import scenes_common as sc  # noqa: E402
 
 OUTDIR = Path(__file__).resolve().parent / "output"
@@ -159,15 +161,65 @@ def tsumi():
                                      transform=fig.transFigure,
                                      facecolor=MUTED_BAR, edgecolor="none", alpha=0.95))
         if a > 0.5:
-            fig.text(X, Y0 + h1 / 2, "3660円", ha="center", va="center",
-                     color=SURFACE_INK, fontsize=30, fontweight="black")
-            fig.text(X, Y0 + h1 + h2 / 2 + 0.004, "1970円", ha="center", va="center",
-                     color=INK, fontsize=30, fontweight="black")
+            fig.text(X, Y0 + h1 / 2, "厚生年金", ha="center", va="center",
+                     color=SURFACE_INK, fontsize=27, fontweight="black")
+            fig.text(X, Y0 + h1 + h2 / 2 + 0.004, "健康保険", ha="center", va="center",
+                     color=INK, fontsize=27, fontweight="black")
         fig.text(X, Y0 + HMAX + 0.046, "5676円", ha="center", va="center",
                  color=INK, fontsize=50, alpha=sc.clamp01(t * 2 - 0.5),
                  path_effects=stroke_fx(INK, outline=outline_for(50), fatten=2.6))
-        fig.text(X, Y0 - 0.040, "厚生年金 + 健康保険", ha="center", va="center",
+        fig.text(X, Y0 - 0.040, "2つを合わせた額", ha="center", va="center",
                  color=INK_2, fontsize=27, alpha=a)
+        draw_badge(fig, BADGE)
+        draw_footer_brand(fig, BRAND)
+    return painter
+
+
+def ichirei():
+    """固有シーン: 差額を変えても、取り返す年数が動かないことを表で見せる。
+
+    ユーザー指摘(ループ69):
+      「あたかも全員この年収と残業時間みたいに話してるけど、一例としてあげているだけでしょ?」
+    そのとおりで、34万→38万は等級表に実在する一例にすぎない。
+    ただし**引かれる額も増える年金も同じ差額に比例する**ので、
+    割り算をすると差額が消えて、年数は 25.89年 で一定になる。
+    だから「一例です」で終わらせず、**例を動かしても答えが同じ**ことを見せる。
+    """
+    ROWS = [("差 2万円", "年3万4056円", "年1315円"),
+            ("差 4万円", "年6万8112円", "年2631円"),
+            ("差 8万円", "年13万6224円", "年5262円")]
+    Y_TOP = 0.800
+    RH = 0.072
+    XS = (0.24, 0.53, 0.79)
+
+    def painter(fig, t):
+        from matplotlib.patches import Rectangle
+        fig.text(0.5, 0.905, "3つの例で確かめる", ha="center",
+                 color=INK_2, fontsize=34)
+        for c, h in zip(XS, ("上がった額", "1年でひかれる", "ふえる年金")):
+            fig.text(c, Y_TOP + 0.046, h, ha="center", va="center",
+                     color=MUTED, fontsize=24)
+        fig.add_artist(plt.Line2D([0.10, 0.92], [Y_TOP + 0.016] * 2,
+                                  transform=fig.transFigure,
+                                  color=BASELINE, linewidth=1.5))
+        for r, row in enumerate(ROWS):
+            a = sc.clamp01(t * 2.2 - r * 0.35)
+            if a <= 0:
+                continue
+            y = Y_TOP - RH * (r + 0.5)
+            if r == 1:
+                fig.patches.append(Rectangle((0.10, y - RH * 0.42), 0.82, RH * 0.84,
+                                             transform=fig.transFigure, facecolor=EMPH,
+                                             edgecolor="none", alpha=0.14 * a))
+            for c, cell in zip(XS, row):
+                fig.text(c, y, cell, ha="center", va="center",
+                         color=EMPH if r == 1 else INK, fontsize=27, alpha=a)
+        b = sc.clamp01(t * 2 - 0.9)
+        fig.text(0.5, 0.528, "どれも 26年", ha="center", va="center", color=INK,
+                 fontsize=58, alpha=b,
+                 path_effects=stroke_fx(INK, outline=outline_for(58), fatten=2.6))
+        fig.text(0.5, 0.482, "※ 同じ差額に比例するから", ha="center", va="center",
+                 color=MUTED, fontsize=24, alpha=b)
         draw_badge(fig, BADGE)
         draw_footer_brand(fig, BRAND)
     return painter
@@ -199,6 +251,9 @@ SCENES = {
                       ("健康保険", 1970, "1970円"),
                       BADGE, BRAND, ymax=4200),
     "gokei": tsumi(),
+    "ichirei": sc.card("ここまでの計算は", "一例", "※ 年収も残業の量も、人それぞれ",
+                       BADGE, BRAND, main_size=150, head_fs=36),
+    "hyo": ichirei(),
     "nenkan": sc.hero("1年で 6万8112円", "※ 5676円 × 12", BADGE, BRAND,
                       size=88, sub_fs=36),
     "nenkin": sc.card("見返りもある", "将来の年金", "(厚生年金の報酬比例部分)",
@@ -236,18 +291,19 @@ UNITS = [
     Unit("rei", "たとえば月34万円の人が、残業したとする。", anim=1.4, speed=1.05),
     Unit("heikin", "すると4月から6月は、平均38万円になった。", anim=1.6, speed=1.05),
     Unit("sa", "その差4万円に、厚生年金と健康保険がかかる。", anim=1.4, speed=1.05),
-    Unit("kosei", "まず厚生年金が、毎月3660円ふえる。", anim=1.6, speed=1.1),
-    Unit("kenko", "そして健康保険が、毎月1970円ふえる。", anim=0.0, speed=1.1),
-    Unit("gokei", "合わせて毎月、5676円ふえるのだ。", anim=1.4, speed=1.1),
+    Unit("gokei", "その保険料が毎月、5676円ふえるのだ。", anim=1.6, speed=1.1),
     Unit("nenkan", "それが1年で、6万8112円になるのだ。", anim=1.6,
          puchun=True, se="don", face="surprised", speed=1.05, intonation=1.2),
     Unit("nenkin", "でも65歳から、年金がふえるのだ。", anim=1.4, face="happy", speed=1.1),
     Unit("nenkingaku", "その額は、毎年2631円なのだ。", anim=1.4, speed=1.05),
-    Unit("warizan", "6万8112円を2631円で割ると、26年。", anim=1.6,
+    Unit("warizan", "これを2631円で割ると、26年になる。", anim=1.6,
          face="troubled", speed=1.0, intonation=1.2),
-    Unit("nenrei1", "つまり65歳から、26年かかるのだ。", anim=1.6, speed=1.1),
     Unit("nenrei2", "だから、91歳まで生きる計算なのだ。", anim=1.6,
          puchun=True, se="don", speed=1.0, intonation=1.25),
+    Unit("ichirei", "この計算は、あくまで一例なのだ。", anim=1.4, speed=1.1),
+    Unit("hyo", "でも額が変わっても、26年は動かないのだ。", anim=1.8,
+         se="pop", speed=1.05, intonation=1.2),
+    Unit("hyo", "どちらも同じ差額から、決まるからなのだ。", anim=0.0, speed=1.05),
     Unit("shime", "その残業を選べるなら、7月からなのだ。", anim=1.0, pad=0.15,
          face="smug", speed=1.05, intonation=1.15, pitch=-0.03),
 ]

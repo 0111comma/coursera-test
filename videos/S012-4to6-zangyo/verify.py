@@ -89,6 +89,26 @@ def main():
     ok.append(f"{HEIKIN_JUMYO_M}歳まで受け取っても {todoku:,.0f}円で、"
               f"引かれた{nenkan:,.0f}円には届かない")
 
+    # --- ユーザー指摘(ループ69): 34万→38万は**一例**にすぎない。
+    #     では例を変えると答えも変わるのか、を確かめる。
+    #     引かれる額も増える年金も**同じ差額に比例する**ので、比は差額によらず一定になる。
+    ratio = (KOSEI + KENKO + KODOMO) / NENKIN_RATE
+    for sa2 in (20_000, 40_000, 80_000, 120_000):
+        h = sa2 * (KOSEI + KENKO + KODOMO) * MONTHS
+        n2 = sa2 * NENKIN_RATE * MONTHS
+        assert abs(h / n2 - ratio) < 1e-9, sa2
+        assert round(65 + h / n2) == 91, sa2
+    assert round(ratio, 2) == 25.89, round(ratio, 2)
+    ok.append(f"★ 差額を{20_000:,}〜{120_000:,}円で動かしても、取り返す年数は"
+              f"{ratio:.2f}年で一定(引かれる額も年金も同じ差額に比例するため)")
+    # 画面に出す3例
+    for sa2, hik, nen in ((20_000, 34_056, 1_315), (40_000, 68_112, 2_631),
+                          (80_000, 136_224, 5_262)):
+        assert round(sa2 * (KOSEI + KENKO + KODOMO) * MONTHS) == hik, sa2
+        assert round(sa2 * NENKIN_RATE * MONTHS) == nen, sa2
+    ok.append("画面の3例: 差2万→年34,056円/年金1,315円 | 差4万→68,112/2,631 |"
+              " 差8万→136,224/5,262")
+
     print("\n".join("  " + line for line in ok))
     print("S012 verify: ALL OK")
 
