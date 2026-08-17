@@ -13,6 +13,7 @@
 使い方は videos/S001-*/render.py を参照。
 """
 
+import hashlib
 import json
 import os
 import math
@@ -253,6 +254,9 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
     wavs = []
     for i, u in enumerate(units):
         w = workdir / f"seg_{i:02d}.wav"
+        if w.exists() and w.stat().st_size > 0:
+            wavs.append(w)          # 再開: すでに合成済み(署名が一致した回のみ残っている)
+            continue
         if use_vv:
             tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation,
                          speed=(u.speed or DEFAULT_SPEED) * SPEED_SCALE, pitch=u.pitch,
@@ -825,10 +829,31 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     setup_fonts()
     workdir = outdir / "work"
     workdir.mkdir(parents=True, exist_ok=True)
-    for old in workdir.glob("frame_*.png"):
-        old.unlink()
-    for old in workdir.glob("seg_*.wav"):  # ユニット数が減った再レンダリングでの残留を防ぐ(㊲)
-        old.unlink()
+
+    # ---- 途中で死んでも再開できるようにする(ループ68)
+    #
+    # このコンテナはセッションがアイドルになると回収される。9分の動画は
+    # レンダリングに2〜3時間かかるので、**必ず途中で殺される**。
+    # 毎回ゼロからやり直していると永久に終わらないので、作業を残して再開する。
+    #
+    # ただし台本を直したのに古いフレームを使ってしまうと最悪なので、
+    # **台本と調声の署名が一致したときだけ**残す。1文字でも変えたら捨てる。
+    sig = hashlib.sha256(repr([
+        (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
+         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
+        for u in units
+    ] + [sorted(scene_painters), speaker, bgm, chara, out_name]).encode()).hexdigest()
+    sig_file = workdir / "signature.txt"
+    resumed = sig_file.exists() and sig_file.read_text().strip() == sig
+    if not resumed:
+        for old in workdir.glob("frame_*.png"):
+            old.unlink()
+        for old in workdir.glob("seg_*.wav"):  # ユニット数が減った再レンダリングでの残留(㊲)
+            old.unlink()
+        sig_file.write_text(sig)
+    else:
+        n_done = len(list(workdir.glob("frame_*.png")))
+        print(f"[resume] 署名が一致。フレーム{n_done}枚と音声を再利用します")
 
     wavs, engine = synthesize(units, workdir, speaker=speaker)
 
@@ -881,7 +906,10 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             if with_subtitle:
                 draw_subtitle(fig, u.subtitle, pop=pop)
             f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
-            save_frame(fig, f)
+            if resumed and f.exists() and f.stat().st_size > 0:
+                plt.close(fig)      # 再開: 描き直さない
+            else:
+                save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
             return f
