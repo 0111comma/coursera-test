@@ -670,22 +670,47 @@ def wrap_rich(text: str, width: int) -> list[list[tuple[str, bool]]]:
     return lines
 
 
+# (文字列, fontsize, weight, W) → 幅(図の割合)。フレームをまたいで使い回す。
+# 同じ字幕を何十枚も描くので、ここのキャッシュが効く(実測 1312ms → 後述)
+_WIDTH_CACHE: dict = {}
+
+
+def _measure_widths(fig, renderer, segs, fs, weight):
+    """セグメントごとの幅(図幅に対する割合)。測った値はキャッシュする。"""
+    out = []
+    for s, _ in segs:
+        key = (s, round(fs, 3), weight, W)
+        w = _WIDTH_CACHE.get(key)
+        if w is None:
+            tmp = fig.text(0, -1, s, fontsize=fs, fontweight=weight)
+            w = tmp.get_window_extent(renderer=renderer).width / W
+            tmp.remove()
+            _WIDTH_CACHE[key] = w
+        out.append(w)
+    return out
+
+
+def _needs_measure(segs, fs, weight):
+    return any((s, round(fs, 3), weight, W) not in _WIDTH_CACHE for s, _ in segs)
+
+
 def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
                    outline: float | None = None, ha_center_x: float = 0.5,
                    weight: str = "black"):
     """強調色の混在する1行を中央揃えで描く(実測幅で並べ、幅超過なら自動縮小)。"""
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
+    # canvas.draw() は1フレーム描くのと同じ重さ。測る必要があるときだけ呼ぶ
+    renderer = None
+    if _needs_measure(segs, fontsize, weight):
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
 
     def measure(fs):
-        ws = []
-        for s, _ in segs:
-            tmp = fig.text(0, -1, s, fontsize=fs, fontweight=weight)
-            ext = tmp.get_window_extent(renderer=renderer)
-            ws.append(ext.width / W)
-            tmp.remove()
-        return ws
+        nonlocal renderer
+        if renderer is None and _needs_measure(segs, fs, weight):
+            fig.canvas.draw()
+            renderer = fig.canvas.get_renderer()
+        return _measure_widths(fig, renderer, segs, fs, weight)
 
     widths = measure(fontsize)
     total = sum(widths)
@@ -716,15 +741,14 @@ def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
         outline = outline_for(fontsize)
     lines = wrap_rich(text, wrap) if wrap else [parse_rich(text)]
     if block_fit:
-        fig.canvas.draw()
-        renderer = fig.canvas.get_renderer()
+        need = any(_needs_measure(segs, fontsize, "black") for segs in lines)
+        renderer = None
+        if need:
+            fig.canvas.draw()
+            renderer = fig.canvas.get_renderer()
         worst = 0.0
         for segs in lines:
-            total = 0.0
-            for s, _ in segs:
-                tmp = fig.text(0, -1, s, fontsize=fontsize, fontweight="black")
-                total += tmp.get_window_extent(renderer=renderer).width / W
-                tmp.remove()
+            total = sum(_measure_widths(fig, renderer, segs, fontsize, "black"))
             worst = max(worst, total)
         if worst > block_fit:
             fontsize = fontsize * block_fit / worst
@@ -886,6 +910,13 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         def emit(t: float, sub_idx: int, dur: float, pop: float = 1.0,
                  painter=None, with_subtitle: bool = True,
                  t_unit: float = 0.0, static_chara: bool = False, no_chara: bool = False):
+            f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
+            # 再開: すでにあるフレームは**描かずに**飛ばす。
+            # 最初は savefig だけ飛ばしていたが、重いのは描画のほうなので効果が無かった。
+            if resumed and f.exists() and f.stat().st_size > 0:
+                frames.append(f)
+                durations.append(dur)
+                return f
             fig = new_canvas()
             (painter or scene_painters[u.scene])(fig, t)
             if chara_on and not no_chara:
@@ -905,11 +936,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                            u.face, dy)
             if with_subtitle:
                 draw_subtitle(fig, u.subtitle, pop=pop)
-            f = workdir / f"frame_{i:02d}_{sub_idx:03d}.png"
-            if resumed and f.exists() and f.stat().st_size > 0:
-                plt.close(fig)      # 再開: 描き直さない
-            else:
-                save_frame(fig, f)
+            save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
             return f
