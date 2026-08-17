@@ -35,6 +35,12 @@ HANTEI = re.compile(r"(得|損|差|払う|払わ|かかる|かから|引ける|�
 # 冒頭のロードマップ = 全体が何章あるかを言っている文
 ROADMAP = re.compile(r"([0-9０-９一二三四五六七八九]+\s*つの章|[0-9０-９]+\s*章で|"
                      r"これから[^。]*確かめ)")
+# 免責・時点表記。終了画面の枠(最後の20秒)に置くと「もう価値が無い」と伝わる
+MENSEKI = re.compile(r"(時点の(制度|内容|金利)|制度は.*変わる|確かめてほしい|"
+                     r"以上|終わり|ありがとう|参考まで)")
+# 次に見るものの名指し
+NEXT = re.compile(r"(次の動画|別の動画|概要欄|この続き|もう1本|関連|"
+                  r"[SL]0?\d{2,3}|ショート(で|も))")
 # 問いの形。章の出口の判定として数えない
 QUESTION = re.compile(r"(のか|のだろうか|だろうか|ますか|でしょうか)[。?？]?$")
 
@@ -241,6 +247,19 @@ def main():
             print(f"      25秒超の区間は{len(over)}箇所: "
                   + " / ".join(f"{sum(durs[i] for i in r):.0f}s(#{r[0]}〜#{r[-1]})"
                                for r in over))
+
+    # 締めの判定(10-ending.md)。
+    # 終了画面は最後の5〜20秒に出る。そこを免責や「以上です」で埋めると、
+    # 「もう価値は無い」と伝わってクリックされない(確度B)。
+    tail_i = [i for i in range(len(units)) if starts[i] >= total - 20]
+    print("\n締めの判定(10-ending.md):")
+    dis = [i for i in tail_i if MENSEKI.search(units[i].subtitle)]
+    nxt = [i for i in tail_i if NEXT.search(units[i].subtitle)]
+    print(f"  最後の20秒        : {len(tail_i)}ユニット(#{tail_i[0]}〜#{tail_i[-1]})")
+    print(f"  そこに免責・時点表記: {len(dis)}本"
+          + (f" {[f'#{i}' for i in dis]}   ← 終了画面の枠を免責で埋めない" if dis else "   OK"))
+    print(f"  次に見るものの名指し: {len(nxt)}本"
+          + ("   ← 名前を言って、見ると何が分かるかを言う" if not nxt else "   OK"))
 
     # 立ち絵の判定(09-character.md)。
     # 立ち絵は動機づけと社会的存在感を上げるが、**図への注視時間を奪う**(確度A)。

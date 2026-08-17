@@ -100,8 +100,91 @@ def extract(script: str, header: str) -> str:
     return "\n".join(lines).strip()
 
 
+# ---- 長尺(横型)。ループ71 フェーズ10 ----
+#
+# ショートと違うのは4点だけ:
+#   1. **チャプター**を概要欄の先頭に入れる(0:00 から。Shortsには無い機能)
+#   2. **終了画面**が使える。最後の5〜20秒に出る。10〜15秒が目安
+#   3. サムネイルの扱いは同じ(YPP前はフレーム選択のみ)
+#   4. 見る指標が「スワイプ継続率」ではなく「平均視聴率・平均視聴時間」
+L_SCHEDULE = {"L001": "8/21(金) 19:30", "L002": "8/23(日) 19:30"}
+L_TAGS = {
+    "L001": ["NISA", "ニーサ", "損益通算", "繰越控除", "NISA デメリット",
+             "確定申告", "課税口座", "投資 税金"],
+    "L002": ["住宅ローン", "変動金利", "固定金利", "フラット35", "金利上昇",
+             "繰り上げ返済", "住宅ローン シミュレーション"],
+}
+L_PLAYLISTS = {
+    "L001": ["数字で決める(長尺)", "NISA・投資の数字"],
+    "L002": ["数字で決める(長尺)", "貯金と暮らしの数字"],
+}
+# 終了画面に置く動画と、ナレーションで名前を言う相手。
+# 「次に見るものを名前で言う」が終了画面の効き所(10-ending.md 確度B)
+L_NEXT = {
+    "L001": "S017(NISAの損益通算・同じ話の1分版)",
+    "L002": "S013(変動と固定の5年後1点だけを扱ったショート)",
+}
+
+
+def long_kit(d: Path, lid: str) -> str:
+    script = (d / "script.md").read_text() if (d / "script.md").exists() else ""
+    m = re.search(r"\*\*投稿タイトル\*\*: ([^(\n]+)", script)
+    title = m.group(1).strip() if m else "(script.md参照)"
+    desc = extract(script, "概要欄テキスト")
+    ch = d / "output" / "chapters.txt"
+    chapters = ch.read_text().strip() if ch.exists() else "(未生成。render.py を走らせる)"
+    tags = ", ".join(L_TAGS.get(lid, []) + COMMON_TAGS)
+    return f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+{lid} 投稿キット(長尺・横型)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 予約投稿(JST): {L_SCHEDULE.get(lid, "(未定)")}
+
+■ ファイル
+  動画:     videos/{d.name}/output/{lid}.mp4
+  字幕:     uploads/{lid}.srt(手動字幕。言語=日本語)
+  サムネイル: 「フレーム選択」で冒頭のカバーフレームを指定
+
+■ タイトル(コピペ)
+{title}
+
+■ 概要欄(コピペ。**チャプターを先頭に置く**)
+{chapters}
+
+{desc}
+
+■ 検索タグ欄(コピペ)
+{tags}
+
+■ 再生リスト: {" / ".join(L_PLAYLISTS.get(lid, []))}
+
+■ 終了画面(長尺のみ。Shortsには無い)
+  置くもの: 動画1枚 + チャンネル登録
+  次の動画: {L_NEXT.get(lid, "(未定)")}
+  出す長さ: **10〜15秒**(YouTubeの上限は20秒だが、埋めるだけの20秒は逆効果)
+  ※ナレーションで**その動画の名前と、見ると何が分かるか**を言う。
+    「以上です」「終わりです」型の締めを使わない(もう価値が無いと伝わる)
+
+■ 設定チェック
+- [ ] 予約投稿: 上記日時
+- [ ] 子ども向け: いいえ
+- [ ] Altered content(AI開示): いいえ(架空キャラ+明示的な合成音声)
+- [ ] 言語: 日本語 / 字幕SRTアップロード
+- [ ] 有料プロモーション: チェックしない
+- [ ] **チャプターが概要欄の先頭にあり、0:00 から始まっているか**
+- [ ] **終了画面を設置したか**(最後の10〜15秒)
+- [ ] 48時間後にStudioで記録: **平均視聴率 / 平均視聴時間 /
+      30秒地点の残存率 / チャプター別の維持率 / 終了画面のクリック率**
+      (ショートの「スワイプ継続率」ではない)
+"""
+
+
 def main():
     OUT.mkdir(exist_ok=True)
+    for d in sorted(ROOT.glob("videos/L0*")):
+        lid = d.name.split("-")[0]
+        (OUT / f"{lid}_投稿キット.txt").write_text(long_kit(d, lid))
+        print(f"{lid} ✓(長尺)")
     for d in sorted(ROOT.glob("videos/S0*")):
         sid = d.name.split("-")[0]
         script = (d / "script.md").read_text()
