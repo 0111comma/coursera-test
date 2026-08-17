@@ -128,6 +128,49 @@ def main():
     assert abs(table[0] - RATE_FIX) < 0.02, table[0]
     assert table[5] == 3.83, table[5]
 
+    # --- 章1の追加: 毎月の返済の中身(元利均等は最初ほど利息が多い) ---
+    i1 = PRINCIPAL * RATE_VAR / 100 / 12
+    assert round(i1) == 25_625, round(i1)
+    assert round(m_var - i1) == 59_411, round(m_var - i1)
+    b_last = balance_after(PRINCIPAL, RATE_VAR, n, n - 1)
+    assert round(b_last * RATE_VAR / 100 / 12) == 73
+    assert round(m_var - b_last * RATE_VAR / 100 / 12) == 84_963
+
+    # --- 章2の追加: 5年ルールと125%ルール ---
+    # 金利が上がっても、毎月の額は5年ごとにしか見直されず、上がっても1.25倍まで。
+    # ただし**総額は変わらない**(減らなかった分は未払利息として残る)。
+    m_up = monthly(PRINCIPAL, RATE_VAR + 1.0, n)
+    cap = m_var * 1.25
+    assert round(m_up) == 99_764, round(m_up)
+    assert round(cap) == 106_295, round(cap)
+    assert m_up < cap, "この例では125%上限には当たらない(当たるのはもっと大きく上がったとき)"
+
+    # --- 章4の追加: 残高の推移(遅く上がるほど耐える理由) ---
+    zan = {y: balance_after(PRINCIPAL, RATE_VAR, n, y * 12) for y in (5, 10, 15, 20)}
+    assert round(zan[5] / 10_000) == 2_634, round(zan[5] / 10_000)
+    assert round(zan[10] / 10_000) == 2_250, round(zan[10] / 10_000)
+    assert round(zan[15] / 10_000) == 1_845, round(zan[15] / 10_000)
+    assert round(zan[20] / 10_000) == 1_418, round(zan[20] / 10_000)
+    assert all(zan[a] > zan[b] for a, b in ((5, 10), (10, 15), (15, 20)))
+
+    # --- 章4の追加: 15年後に上がった場合、上がる対象の残高は元の6割ほど ---
+    assert round(zan[15] / PRINCIPAL * 100) == 61, round(zan[15] / PRINCIPAL * 100)
+
+    # --- 章3の追加: 分かれ目を探す過程(画面に出す3点) ---
+    for r, expect in ((3.14, 4_581), (3.50, 4_769), (3.83, 4_945)):
+        got = round(total_if_steps_up(r, 5) / 10_000)
+        assert got == expect, (r, got, expect)
+    assert round(tf / 10_000) == 4_948          # 目標(固定の総額)
+    # 3.83%でも4,945万円で、固定の4,948万円ちょうどには届かない。
+    # 0.01%刻みの表示では、これ以上は寄せられない(差は約3万円)
+
+    # --- 章1の追加: 利息だけを比べた比率 ---
+    risoku_var = total_var - PRINCIPAL
+    risoku_fix = tf - PRINCIPAL
+    assert round(risoku_var / 10_000) == 571, round(risoku_var / 10_000)
+    assert round(risoku_fix / 10_000) == 1_948, round(risoku_fix / 10_000)
+    assert round(risoku_fix / risoku_var, 1) == 3.4, round(risoku_fix / risoku_var, 2)
+
     # --- 章4: 繰上返済すると分かれ目はどう動くか ---
     # 5年の時点で300万円を繰り上げ(返済額軽減)、そのあと金利が上がる場合。
     be5 = table[5]
@@ -146,6 +189,10 @@ def main():
           f"(画面は{tf / 10_000:.0f}万円)")
     print(f"  差   {diff:,.0f}円(画面は{diff / 10_000:.0f}万円)")
     print(f"  変動が1%上がると 毎月 +{monthly_up:,.0f}円(年+{monthly_up * 12:,.0f}円)")
+    print(f"  毎月の内訳 1回目: 利息{i1:,.0f}円 + 元金{m_var - i1:,.0f}円"
+          f" / 最終回: 利息{b_last * RATE_VAR / 100 / 12:,.0f}円")
+    print(f"  1%上がった後の毎月 {m_up:,.0f}円(125%上限は {cap:,.0f}円)")
+    print("  残高: " + " / ".join(f"{y}年後 {zan[y] / 10_000:,.0f}万円" for y in sorted(zan)))
     print("  ★ 上がる時期ごとの分かれ目(そこまで上がって最後まで続く前提):")
     for y in ys:
         print(f"      {y:2d}年後に上がる → {table[y]:.2f}%"
