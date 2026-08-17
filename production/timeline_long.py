@@ -170,6 +170,46 @@ def main():
     #   ユーザーが「OK」と言った S012 と「ゴミ」と言った L001 で、
     #   字数の変化率(0.13 / 0.14)も同じ長さ帯の連続(最長7 / 最長7)も一致してしまう。
     #   人の合否と一致しない値をゲートにしない(ループ51の約束)。
+    # 画面の判定(06-screen.md)。
+    # Mayer の基本形は「図 + 語り」で、図が無い画面は最も弱い組み合わせになる。
+    # ショートには当てはめない(55秒では文字カードで数字を言っても通っている)。
+    num_units = [i for i, u in enumerate(units) if NUM.search(u.subtitle)]
+    naked = [i for i in num_units if kinds.get(units[i].scene) not in FIGURE_KINDS]
+    figless, cur = [], []
+    for i, u in enumerate(units):
+        if kinds.get(u.scene) in FIGURE_KINDS:
+            if cur:
+                figless.append(cur)
+            cur = []
+        else:
+            cur.append(i)
+    if cur:
+        figless.append(cur)
+    figless.sort(key=lambda r: -sum(durs[i] for i in r))
+    fig_units = sum(1 for u in units if kinds.get(u.scene) in FIGURE_KINDS)
+
+    print("\n画面の判定(06-screen.md):")
+    print(f"  図のあるユニット   : {fig_units}/{len(units)}({fig_units / len(units):.0%})"
+          + ("   ← 6割以上にする" if fig_units / len(units) < 0.60 else "   OK"))
+    if num_units:
+        r = len(naked) / len(num_units)
+        print(f"  数字を図なしで言う : {len(naked)}/{len(num_units)}本({r:.0%})"
+              f" 計{sum(durs[i] for i in naked):.1f}秒"
+              + ("   ← 数字は図の上で言う" if r > 0.10 else "   OK"))
+        if naked:
+            print("      " + " / ".join(f"#{i}" for i in naked[:10])
+                  + (" ..." if len(naked) > 10 else ""))
+    if figless:
+        worst = sum(durs[i] for i in figless[0])
+        print(f"  図が出ない最長区間 : {worst:.1f}秒"
+              f"(#{figless[0][0]}〜#{figless[0][-1]})"
+              + ("   ← 25秒を超えたら図を割りこませる" if worst > 25 else "   OK"))
+        over = [r for r in figless if sum(durs[i] for i in r) > 25]
+        if len(over) > 1:
+            print(f"      25秒超の区間は{len(over)}箇所: "
+                  + " / ".join(f"{sum(durs[i] for i in r):.0f}s(#{r[0]}〜#{r[-1]})"
+                               for r in over))
+
     # 話速の判定(05-tempo.md)。日本語の目安は
     #   ゆっくり200〜250 / 標準300〜350 / 速め400〜(字/分)
     # 長尺は「標準の上限」に置く。押し付けられるショートの速さを8分続けない。
