@@ -63,6 +63,15 @@ ACTIONS = (
 # これだけで終わっていたら雑学。ユーザーの言う「へえ、で終わる動画」
 KNOW_ONLY = ("知る", "分かる", "わかる", "気づく", "理解", "納得", "へえ")
 
+# 欲求は**視聴者の側の言葉**で書く。「〜について知りたい」は主題であって欲求ではない。
+# これを課さないと「社会保険料の仕組みを知りたい」のような、
+# トピック名を言い換えただけの行が通ってしまう(それが旧S012だった)。
+WANT_MARKERS = (
+    "したい", "たい。", "たい,", "たくない", "しくない", "嫌", "いやだ",
+    "不安", "困", "迷", "心配", "怖", "避け", "減らし", "増やし", "守り",
+    "損はしたく", "無駄にしたく", "間違えたく", "取られたく",
+)
+
 
 def _load_units(vdir: Path):
     rp = vdir / "render.py"
@@ -91,6 +100,17 @@ def _line_after(text: str, pattern: re.Pattern) -> str:
     return ""
 
 
+# 公開済みの本は作り直せない(過去の記録とズレる)。
+# 判定は出すが、**この一覧の走行そのものは落とさない**。
+# 落とすべきは「これから作る本」であって、済んだ本を赤いままにしても直せない。
+# 新しく公開したらここに足すこと(CLAUDE.md のID方針と揃える)。
+PUBLISHED = {f"S{n:03d}" for n in range(1, 12)}      # 2026-08-16時点で S001〜S011
+
+
+def is_published(vdir: Path) -> bool:
+    return vdir.name.split("-")[0] in PUBLISHED
+
+
 def check_video(vdir: Path):
     plan = vdir / "plan.md"
     if not plan.exists():
@@ -104,6 +124,11 @@ def check_video(vdir: Path):
                        "「**この人の欲求**」を1行書くこと。"
                        "トピック名(住宅ローン・社会保険料)ではなく、"
                        "その人が何をしたい/したくないのかを書く"))
+    elif not any(w in yokkyu for w in WANT_MARKERS):
+        issues.append(("plan.md", "欲求が主題になっている",
+                       f"「{yokkyu[:40]}」は主題であって欲求ではない。"
+                       "「〜したい」「〜したくない」の形で、"
+                       "視聴者の側の言葉で書くこと(docs/research/yokkyu-map.md §4)"))
 
     kettei = _line_after(text, KETTEI_HEAD)
     if not kettei:
@@ -127,8 +152,12 @@ def main():
     for vdir in targets:
         issues = check_video(vdir)
         if issues:
-            total += len(issues)
-            print(f"[NG] {vdir.name} — {len(issues)}件")
+            pub = is_published(vdir)
+            if not pub:
+                total += len(issues)
+            print(f"[{'記録' if pub else 'NG'}] {vdir.name} — {len(issues)}件"
+                  + ("(公開済みなので作り直さない。次に同じ型を作らないための記録)"
+                     if pub else ""))
             for where, kind, detail in issues:
                 print(f"       {where:9} [{kind}] {detail}")
         else:
