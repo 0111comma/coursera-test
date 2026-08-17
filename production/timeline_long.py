@@ -170,6 +170,19 @@ def main():
     #   ユーザーが「OK」と言った S012 と「ゴミ」と言った L001 で、
     #   字数の変化率(0.13 / 0.14)も同じ長さ帯の連続(最長7 / 最長7)も一致してしまう。
     #   人の合否と一致しない値をゲートにしない(ループ51の約束)。
+    # 話速の判定(05-tempo.md)。日本語の目安は
+    #   ゆっくり200〜250 / 標準300〜350 / 速め400〜(字/分)
+    # 長尺は「標準の上限」に置く。押し付けられるショートの速さを8分続けない。
+    chars = sum(len(re.sub(r"[。、【】]", "", u.tts_text())) for u in units)
+    cpm = chars / total * 60
+    note = ""
+    if cpm > 360:
+        note = "   ← 速すぎる。8分続けると疲れる(速めは400字/分〜)"
+    elif cpm < 290:
+        note = "   ← 遅すぎる。標準は300〜350字/分"
+    print(f"\n話速の判定(05-tempo.md):")
+    print(f"  {cpm:.0f}字/分(無音込み {total:.1f}s / {chars}字){note or '   OK'}")
+
     print("\n拍の判定(04-rhythm.md):")
     stops = [i for i, u in enumerate(units) if u.pad >= 0.5]
     print(f"  止め(pad≥0.5s): {len(stops)}箇所 {[f'#{i}' for i in stops] or ''}"

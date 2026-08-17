@@ -82,9 +82,14 @@ def use_landscape():
       少し大きめの40pt(4.9%)を採る
     - 折り返しは横幅が1.78倍になるので12字→26字
     - バッジとフッターは Shorts のUIを避ける必要がないので、四隅に寄せる
+
+    話速も下げる(ループ71 フェーズ5)。ショートの 1.3 のままだと
+    L001 は **398字/分** で、押し付けられる側の速さを8分続けることになる。
+    日本語の目安は 標準300〜350字/分・速め400字/分〜 なので、
+    長尺は **標準の上限(約340字/分)** に置く。実測の対応は 05-tempo.md。
     """
     global W, H, FIGSIZE, SUBTITLE_Y, SUB_FS, SUB_WRAP, SUB_BLOCK_FIT, SUB_LINE_H
-    global BADGE_XY, BADGE_FS, BRAND_XY, BRAND_FS, SAFE_L, SAFE_R
+    global BADGE_XY, BADGE_FS, BRAND_XY, BRAND_FS, SAFE_L, SAFE_R, SPEED_SCALE
     W, H = 1920, 1080
     FIGSIZE = (W / DPI, H / DPI)
     SAFE_L, SAFE_R = 0.05, 0.95
@@ -98,6 +103,9 @@ def use_landscape():
     # 立ち絵: 縦型と同じピクセル寸法(約369×422px)を右下に置き、字幕の上に載せる
     CHARA_RECTS["bl"] = [0.010, 0.200, 0.192, 0.391]
     CHARA_RECTS["br"] = [0.798, 0.200, 0.192, 0.391]
+    # 環境変数で明示指定されているときは、それを尊重して上書きしない
+    if "SHORTLIB_SPEED_SCALE" not in os.environ:
+        SPEED_SCALE = LONG_SPEED_SCALE
 
 # ループ3: テロップの定番は源ノ角ゴシック(=Noto Sans CJK JP)。太ウェイトを実際に使う
 _JP_FONT_CANDIDATES = [
@@ -196,6 +204,10 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 #   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
 # 各Unitの speed に、さらにこの倍率を掛ける。1本ずつ直さなくても全体を調整できる
 SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
+# 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
+# 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
+# ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
+LONG_SPEED_SCALE = 1.15
 
 
 def _http(url: str, data: bytes | None = None, headers: dict | None = None, timeout=120) -> bytes:
@@ -866,7 +878,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
          u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
         for u in units
-    ] + [sorted(scene_painters), speaker, bgm, chara, out_name]).encode()).hexdigest()
+    # SPEED_SCALE と画面比も署名に入れる(ループ71 フェーズ5)。
+    # u.speed だけ見ていると、全体の話速だけ変えたときに
+    # 古い音声をそのまま使い回してしまう(長尺の話速を1.3→1.15にしたときに気づいた)。
+    ] + [sorted(scene_painters), speaker, bgm, chara, out_name,
+         SPEED_SCALE, W, H]).encode()).hexdigest()
     sig_file = workdir / "signature.txt"
     resumed = sig_file.exists() and sig_file.read_text().strip() == sig
     if not resumed:
