@@ -30,6 +30,13 @@ sys.path.insert(0, str(PRODUCTION))
 # scenes_long のうち、位置や長さが意味を持つ「図」の型
 FIGURE_KINDS = {"barsN", "compare2", "band", "curve", "timeline", "table", "checklist"}
 NUM = re.compile(r"[0-9][0-9,\.]*\s*(?:円|%|歳|年|万円|万)")
+# 章の出口の「判定」= 損得を言い切る語。数字が無くてもこれがあれば判定とみなす
+HANTEI = re.compile(r"(得|損|差|払う|払わ|かかる|かから|引ける|引けない|安く|高く|戻る|減る)")
+# 冒頭のロードマップ = 全体が何章あるかを言っている文
+ROADMAP = re.compile(r"([0-9０-９一二三四五六七八九]+\s*つの章|[0-9０-９]+\s*章で|"
+                     r"これから[^。]*確かめ)")
+# 問いの形。章の出口の判定として数えない
+QUESTION = re.compile(r"(のか|のだろうか|だろうか|ますか|でしょうか)[。?？]?$")
 
 
 def load(vdir: Path):
@@ -165,11 +172,36 @@ def main():
         var = sum((x - mean) ** 2 for x in xs) / len(xs)
         return (var ** 0.5) / mean if mean else 0.0
 
-    # 判定するのは「止め」の数だけ。
-    # ばらつきの比率(変化率・同じ長さの連続)は参考値に留める。理由:
-    #   ユーザーが「OK」と言った S012 と「ゴミ」と言った L001 で、
-    #   字数の変化率(0.13 / 0.14)も同じ長さ帯の連続(最長7 / 最長7)も一致してしまう。
-    #   人の合否と一致しない値をゲートにしない(ループ51の約束)。
+    # 進行感の判定(07-progress.md)。
+    # 章の出口に損得の判定が無いと、90秒付き合った見返りが返ってこない。
+    # 最後の2ユニットに、数字か損得の語のどちらかが出ていることを求める。
+    if blocks[1:]:
+        print("\n進行感の判定(07-progress.md):")
+        missing = []
+        for j, (i, name) in enumerate(blocks):
+            e = blocks[j + 1][0] if j + 1 < len(blocks) else len(units)
+            tail = units[max(i, e - 2):e]
+            # 問いの形(「〜のか」「〜だろうか」)は判定ではない。
+            # これを除かないと「では、NISAの損はどうなるのだろうか」が
+            # 「損」を含むだけで判定として通ってしまう
+            has = any((NUM.search(u.subtitle) or HANTEI.search(u.subtitle))
+                      and not QUESTION.search(u.subtitle) for u in tail)
+            if not has:
+                missing.append((name, e - 1, units[e - 1].subtitle))
+        if missing:
+            print(f"  章の出口に判定が無い章: {len(missing)}章"
+                  "   ← 章の出口は損得で言い切る")
+            for name, i, sub in missing:
+                print(f"      {name:6} #{i:3} {sub}")
+        else:
+            print("  章の出口の判定: 全章にある   OK")
+        road = next((starts[i] for i, u in enumerate(units)
+                     if ROADMAP.search(u.subtitle)), None)
+        print(f"  全体量の予告       : "
+              f"{'なし' if road is None else f'{road:.1f}s'}"
+              + ("   ← 冒頭60秒で「何章あるか」を言う"
+                 if road is None or road > 60 else "   OK"))
+
     # 画面の判定(06-screen.md)。
     # Mayer の基本形は「図 + 語り」で、図が無い画面は最も弱い組み合わせになる。
     # ショートには当てはめない(55秒では文字カードで数字を言っても通っている)。
@@ -223,6 +255,11 @@ def main():
     print(f"\n話速の判定(05-tempo.md):")
     print(f"  {cpm:.0f}字/分(無音込み {total:.1f}s / {chars}字){note or '   OK'}")
 
+    # 拍で判定するのは「止め」の数だけ。
+    # ばらつきの比率(変化率・同じ長さの連続)は参考値に留める。理由:
+    #   ユーザーが「OK」と言った S012 と「ゴミ」と言った L001 で、
+    #   字数の変化率(0.13 / 0.14)も同じ長さ帯の連続(最長7 / 最長7)も一致してしまう。
+    #   人の合否と一致しない値をゲートにしない(ループ51の約束)。
     print("\n拍の判定(04-rhythm.md):")
     stops = [i for i, u in enumerate(units) if u.pad >= 0.5]
     print(f"  止め(pad≥0.5s): {len(stops)}箇所 {[f'#{i}' for i in stops] or ''}"
