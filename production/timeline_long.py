@@ -242,6 +242,22 @@ def main():
                   + " / ".join(f"{sum(durs[i] for i in r):.0f}s(#{r[0]}〜#{r[-1]})"
                                for r in over))
 
+    # 立ち絵の判定(09-character.md)。
+    # 立ち絵は動機づけと社会的存在感を上げるが、**図への注視時間を奪う**(確度A)。
+    # だから図が主役のユニットでは引き、文字だけのユニットでは出す。
+    on_fig = [i for i, u in enumerate(units)
+              if kinds.get(u.scene) in FIGURE_KINDS and u.chara != "none"]
+    print("\n立ち絵の判定(09-character.md):")
+    if fig_units:
+        r = len(on_fig) / fig_units
+        print(f"  図の上に立ち絵がいる: {len(on_fig)}/{fig_units}本({r:.0%})"
+              + ("   ← 図が主役のときは引く(注視時間を奪う)" if r > 0.50 else "   OK"))
+    faces = sorted(set(u.face for u in units))
+    main = max(faces, key=lambda f: sum(1 for u in units if u.face == f))
+    n_main = sum(1 for u in units if u.face == main)
+    print(f"  表情の偏り          : {main} が {n_main}/{len(units)}({n_main / len(units):.0%})"
+          + ("   ← 判定のところで表情を変える" if n_main / len(units) > 0.80 else "   OK"))
+
     # 話速の判定(05-tempo.md)。日本語の目安は
     #   ゆっくり200〜250 / 標準300〜350 / 速め400〜(字/分)
     # 長尺は「標準の上限」に置く。押し付けられるショートの速さを8分続けない。
