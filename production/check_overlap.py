@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""レイアウト衝突の機械チェック(ループ㊵)。
+"""レイアウト衝突と画面外へのはみ出しの機械チェック(ループ㊵ / はみ出しはループ71)。
 
 目視でしか見つけられなかった不具合を恒久的に潰すためのゲート。
 各動画の render.py の SCENES を実際に描画し、すべての Text/Patch の
@@ -8,6 +8,12 @@
   1. 立ち絵(CHARA_RECTS["bl"] = x 0.000-0.342 / y 0.245-0.465)
   2. 注記バッジ(draw_badge。右上 y=0.83 付近)
   3. 字幕帯(画面下部 y<0.245)
+
+さらに **画面の外にはみ出していないか**(ループ71)。
+S016 の締めの見出し「いまの積立額は、証券会社の画面で見られます」が
+左右どちらも画面外に切れたまま、**11本のゲートを全部通って納品された**。
+ユーザー指摘:「なんでこういうのが全ゲート合格してるわけ?」
+重なりだけを見ていて、**枠の外に出ていること**を誰も見ていなかった。
 
 重なると「文字の上に立ち絵が乗る」「バッジと見出しが重なる」といった
 読めない画面になる。人が見る前にここで落とす。
@@ -55,6 +61,7 @@ FOOTER_ANCHOR = (0.5, 0.045)
 
 SAMPLE_T = (0.35, 0.7, 1.0)
 MARGIN = 0.004   # 数px以内のかすりは許容
+OUT_MARGIN = 0.002  # 画面外へのはみ出しは、ほぼゼロ許容
 
 
 def _overlap(a, b):
@@ -137,12 +144,29 @@ def check_video(vdir: Path):
                     if _overlap(box, zone) > 0:
                         issues.append((key, t, name, f"<{label}>"))
 
+            # 画面外へのはみ出し(ループ71)。文字も図形も、枠の中に収まっていること
+            for label, box in shapes:
+                if box[2] - box[0] <= 0:
+                    continue
+                if box[0] < -OUT_MARGIN or box[2] > 1 + OUT_MARGIN:
+                    issues.append((key, t, "画面外(左右)", f"<{label}>"))
+                elif box[1] < -OUT_MARGIN or box[3] > 1 + OUT_MARGIN:
+                    issues.append((key, t, "画面外(上下)", f"<{label}>"))
+
             for art in list(fig.texts):
                 txt = art.get_text()
                 if not txt.strip() or art is badge_art:
                     continue
                 if anchored_at(art, FOOTER_ANCHOR):      # ブランド表記は意図した位置
                     continue
+                if art.get_alpha() is None or art.get_alpha() >= 0.15:
+                    b = box_of(art)
+                    if b[0] < -OUT_MARGIN or b[2] > 1 + OUT_MARGIN:
+                        issues.append((key, t, "画面外(左右)",
+                                       txt.replace("\n", "/")[:28]))
+                    elif b[1] < -OUT_MARGIN or b[3] > 1 + OUT_MARGIN:
+                        issues.append((key, t, "画面外(上下)",
+                                       txt.replace("\n", "/")[:28]))
                 if art.get_alpha() is not None and art.get_alpha() < 0.15:
                     continue
                 box = box_of(art)

@@ -38,7 +38,7 @@ def clamp01(x):
 
 def _frame(fig, title, badge, brand):
     if title:
-        fig.text((PLOT_L + PLOT_R) / 2, TITLE_Y, title, ha="center",
+        S.text_fit(fig, (PLOT_L + PLOT_R) / 2, TITLE_Y, title, ha="center",
                  color=INK_2, fontsize=30)
     if badge:
         draw_badge(fig, badge)
@@ -64,7 +64,7 @@ def chapter(no: int, title: str, question: str, badge: str, brand: str, total: i
         # total を渡すと「第N章 / 全M章」になる。どこまで来たかを画面に出す
         # (合図の原則。09/07-progress.md)。分数だけなので短い語句のまま
         head = f"第{no}章 / 全{total}章" if total else f"第{no}章"
-        fig.text((PLOT_L + PLOT_R) / 2, 0.680, head, ha="center", va="center",
+        S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.680, head, ha="center", va="center",
                  color=EMPH, fontsize=40, alpha=a)
         draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.500, title, 92 * (1 + 0.04 * (1 - a)),
                        wrap=12, line_h=0.090, block_fit=0.60)
@@ -79,7 +79,7 @@ def hero(main: str, sub: str, badge: str, brand: str, size: int = 96, sub_fs: in
         draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.620, main, size * (1 + 0.05 * (1 - a)),
                        wrap=14, line_h=0.085, block_fit=0.68)
         if sub:
-            fig.text((PLOT_L + PLOT_R) / 2, 0.440, sub, ha="center", va="center",
+            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.440, sub, ha="center", va="center",
                      color=INK_2, fontsize=sub_fs, alpha=clamp01(t * 2 - 0.4))
         _frame(fig, "", badge, brand)
     return painter
@@ -88,13 +88,13 @@ def hero(main: str, sub: str, badge: str, brand: str, size: int = 96, sub_fs: in
 def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: int = 190):
     """サムネ兼、冒頭の静止フレーム。数字を1つだけ大きく(longform-design §5)。"""
     def painter(fig, t):
-        fig.text(0.5, 0.855, top, ha="center", va="center", color=INK_2, fontsize=44)
+        S.text_fit(fig, 0.5, 0.855, top, ha="center", va="center", color=INK_2, fontsize=44)
         draw_rich_text(fig, 0.5, 0.560, main, main_size, wrap=10, line_h=0.13, block_fit=0.86)
-        fig.text(0.5, 0.320, bottom, ha="center", va="center", color=EMPH, fontsize=54,
+        S.text_fit(fig, 0.5, 0.320, bottom, ha="center", va="center", color=EMPH, fontsize=54,
                  path_effects=stroke_fx(EMPH, outline=outline_for(54), fatten=2.5))
         # 字幕帯(上端 SUBTITLE_Y + 行分)より上に置く。カバーは字幕を出さないが、
         # 同じ位置に注記を置くと通常フレームと視線の置き場がずれる
-        fig.text(0.5, 0.225, note, ha="center", va="center", color=MUTED, fontsize=30)
+        S.text_fit(fig, 0.5, 0.225, note, ha="center", va="center", color=MUTED, fontsize=30)
         draw_footer_brand(fig, brand)
     return painter
 
@@ -104,15 +104,15 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
     """見出し + 主役語 + 補足。"""
     def painter(fig, t):
         a = clamp01(t * 2.4)
-        fig.text((PLOT_L + PLOT_R) / 2, 0.780, headline, ha="center", va="center",
+        S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.780, headline, ha="center", va="center",
                  color=INK_2, fontsize=head_fs)
         draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.590, main,
                        main_size * (1 + 0.06 * (1 - a)), wrap=14, line_h=0.085, block_fit=0.66)
         if sub:
-            fig.text((PLOT_L + PLOT_R) / 2, 0.410, sub, ha="center", va="center",
+            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.410, sub, ha="center", va="center",
                      color=MUTED, fontsize=28, alpha=clamp01(t * 2 - 0.5))
         if ask:
-            fig.text((PLOT_L + PLOT_R) / 2, 0.320, ask, ha="center", va="center",
+            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.320, ask, ha="center", va="center",
                      color=EMPH, fontsize=30, alpha=clamp01(t * 2 - 0.8))
         _frame(fig, "", badge, brand)
     return painter
@@ -147,13 +147,13 @@ def barsN(title, items, badge, brand, ymax=None, unit="", highlight=None):
             h = HMAX * (val / top) * a
             fig.patches.append(Rectangle((x - bw / 2, Y0), bw, h, transform=fig.transFigure,
                                          facecolor=color, edgecolor="none", alpha=0.95))
-            fig.text(x, Y0 + h + 0.036, inner, ha="center", va="center", color=INK,
+            S.text_fit(fig, x, Y0 + h + 0.036, inner, ha="center", va="center", color=INK,
                      fontsize=30, alpha=a,
                      path_effects=stroke_fx(INK, outline=outline_for(30), fatten=1.8))
-            fig.text(x, Y0 - 0.042, head, ha="center", va="center", color=INK_2,
+            S.text_fit(fig, x, Y0 - 0.042, head, ha="center", va="center", color=INK_2,
                      fontsize=25, alpha=a)
         if unit:
-            fig.text(PLOT_L, Y0 + HMAX + 0.030, unit, ha="left", va="center",
+            S.text_fit(fig, PLOT_L, Y0 + HMAX + 0.030, unit, ha="left", va="center",
                      color=MUTED, fontsize=22)
         _frame(fig, title, badge, brand)
     return painter
@@ -179,7 +179,7 @@ def compare2(title, left, right, badge, brand, note_l="", note_r=""):
             fig.patches.append(Rectangle((x - 0.165, Y0 - 0.075), 0.330, HMAX + 0.160,
                                          transform=fig.transFigure, facecolor="none",
                                          edgecolor=BASELINE, linewidth=1.5, alpha=a))
-            fig.text(x, Y0 + HMAX + 0.062, head, ha="center", va="center",
+            S.text_fit(fig, x, Y0 + HMAX + 0.062, head, ha="center", va="center",
                      color=INK_2, fontsize=28, alpha=a)
             m = len(items)
             for k, (label, val, color) in enumerate(items):
@@ -188,17 +188,17 @@ def compare2(title, left, right, badge, brand, note_l="", note_r=""):
                 fig.patches.append(Rectangle((bx - 0.055, Y0), 0.110, h,
                                              transform=fig.transFigure,
                                              facecolor=color, edgecolor="none", alpha=0.95))
-                fig.text(bx, Y0 + h + 0.030, label, ha="center", va="center",
+                S.text_fit(fig, bx, Y0 + h + 0.030, label, ha="center", va="center",
                          color=INK, fontsize=26, alpha=a,
                          path_effects=stroke_fx(INK, outline=outline_for(26), fatten=1.6))
-            fig.text(x, Y0 - 0.048, total, ha="center", va="center", color=EMPH,
+            S.text_fit(fig, x, Y0 - 0.048, total, ha="center", va="center", color=EMPH,
                      fontsize=34, alpha=clamp01(t * 2 - 0.6 - col * 0.4),
                      path_effects=stroke_fx(EMPH, outline=outline_for(34), fatten=2))
         # 注記は枠の外に出す(枠の下端は Y0-0.075 = 0.255)
         if note_l:
-            fig.text(cx[0], 0.212, note_l, ha="center", va="center", color=MUTED, fontsize=24)
+            S.text_fit(fig, cx[0], 0.212, note_l, ha="center", va="center", color=MUTED, fontsize=24)
         if note_r:
-            fig.text(cx[1], 0.212, note_r, ha="center", va="center", color=MUTED, fontsize=24)
+            S.text_fit(fig, cx[1], 0.212, note_r, ha="center", va="center", color=MUTED, fontsize=24)
         _frame(fig, title, badge, brand)
     return painter
 
@@ -217,22 +217,22 @@ def band(title, total_label, part_ratio, part_label, rest_label, badge, brand,
         a = clamp01(t * 2.4)
         fig.patches.append(Rectangle((X0, Y), X1 - X0, H, transform=fig.transFigure,
                                      facecolor=MUTED_BAR, edgecolor="none", alpha=0.55))
-        fig.text((X0 + X1) / 2, Y + H + 0.046, total_label, ha="center", va="center",
+        S.text_fit(fig, (X0 + X1) / 2, Y + H + 0.046, total_label, ha="center", va="center",
                  color=INK_2, fontsize=30)
         fig.patches.append(Rectangle((X0, Y), (xm - X0) * a, H, transform=fig.transFigure,
                                      facecolor=GOLD, edgecolor="none", alpha=0.95))
         if a > 0.5:
-            fig.text((X0 + xm) / 2, Y + H / 2, part_label, ha="center", va="center",
+            S.text_fit(fig, (X0 + xm) / 2, Y + H / 2, part_label, ha="center", va="center",
                      color=SURFACE, fontsize=32, fontweight="black")
         if show_rest:
             b = clamp01(t * 2.2 - 0.3)
             fig.patches.append(Rectangle((xm, Y), X1 - xm, H, transform=fig.transFigure,
                                          facecolor=EMPH, edgecolor="none", alpha=0.95 * b))
-            fig.text((xm + X1) / 2, Y - 0.050, rest_label, ha="center", va="center",
+            S.text_fit(fig, (xm + X1) / 2, Y - 0.050, rest_label, ha="center", va="center",
                      color=EMPH, fontsize=30, alpha=b,
                      path_effects=stroke_fx(EMPH, outline=outline_for(30), fatten=2))
         if big:
-            fig.text((X0 + X1) / 2, 0.720, big, ha="center", va="center", color=INK,
+            S.text_fit(fig, (X0 + X1) / 2, 0.720, big, ha="center", va="center", color=INK,
                      fontsize=56, alpha=clamp01(t * 2 - 0.4),
                      path_effects=stroke_fx(INK, outline=outline_for(56), fatten=2.6))
         _frame(fig, title, badge, brand)
@@ -305,11 +305,11 @@ def timeline(title, years, badge, brand, arrow=None, note=""):
             fig.patches.append(Rectangle((x - bw / 2, Y), bw, H, transform=fig.transFigure,
                                          facecolor=SURFACE, edgecolor=EMPH if emph else BASELINE,
                                          linewidth=2.0, alpha=a))
-            fig.text(x, Y + H + 0.040, ylab, ha="center", va="center",
+            S.text_fit(fig, x, Y + H + 0.040, ylab, ha="center", va="center",
                      color=INK_2, fontsize=30, alpha=a)
-            fig.text(x, Y + H * 0.62, body, ha="center", va="center",
+            S.text_fit(fig, x, Y + H * 0.62, body, ha="center", va="center",
                      color=INK, fontsize=30, alpha=a)
-            fig.text(x, Y + H * 0.26, val, ha="center", va="center",
+            S.text_fit(fig, x, Y + H * 0.26, val, ha="center", va="center",
                      color=EMPH if emph else INK_2, fontsize=36, alpha=a,
                      path_effects=stroke_fx(EMPH if emph else INK_2,
                                             outline=outline_for(36), fatten=2))
@@ -323,7 +323,7 @@ def timeline(title, years, badge, brand, arrow=None, note=""):
                 connectionstyle="arc3,rad=0.42", arrowstyle="-|>,head_width=6,head_length=10",
                 color=EMPH, linewidth=3.0, alpha=clamp01(t * 2 - 1.0)))
         if note:
-            fig.text((PLOT_L + PLOT_R) / 2, 0.232, note, ha="center", va="center",
+            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.232, note, ha="center", va="center",
                      color=MUTED, fontsize=26)
         _frame(fig, title, badge, brand)
     return painter
@@ -353,9 +353,9 @@ def checklist(title, items, badge, brand, lit=0):
                                          linewidth=1.6, alpha=(0.16 if (on and k == lit - 1)
                                                                else 0.9) * a))
             cur = on and k == lit - 1        # いま話している行だけを強調する
-            fig.text(PLOT_L + 0.035, y, f"{k + 1}", ha="center", va="center",
+            S.text_fit(fig, PLOT_L + 0.035, y, f"{k + 1}", ha="center", va="center",
                      color=EMPH if cur else (INK_2 if on else MUTED), fontsize=32, alpha=a)
-            fig.text(PLOT_L + 0.075, y, label, ha="left", va="center",
+            S.text_fit(fig, PLOT_L + 0.075, y, label, ha="left", va="center",
                      color=INK if on else MUTED, fontsize=34, alpha=a)
         _frame(fig, title, badge, brand)
     return painter
@@ -386,7 +386,7 @@ def table(title, headers, rows, badge, brand, highlight=None, reveal_rows=True):
 
     def painter(fig, t):
         for c, h in enumerate(headers):
-            fig.text(xs[c], Y_TOP + 0.048, h, ha="center", va="center",
+            S.text_fit(fig, xs[c], Y_TOP + 0.048, h, ha="center", va="center",
                      color=MUTED, fontsize=26)
         fig.add_artist(plt.Line2D([PLOT_L, PLOT_R], [Y_TOP + 0.014] * 2,
                                   transform=fig.transFigure, color=BASELINE, linewidth=1.5))
@@ -402,7 +402,7 @@ def table(title, headers, rows, badge, brand, highlight=None, reveal_rows=True):
                                              edgecolor="none", alpha=0.14 * a))
             for c, cell in enumerate(row):
                 color = EMPH if (highlight == r and c > 0) else INK
-                fig.text(xs[c], y, str(cell), ha="center", va="center", color=color,
+                S.text_fit(fig, xs[c], y, str(cell), ha="center", va="center", color=color,
                          fontsize=30 if c == 0 else NUM_FS, alpha=a,
                          fontweight="black" if c > 0 else "normal")
             fig.add_artist(plt.Line2D([PLOT_L, PLOT_R], [y - ROW_H / 2] * 2,

@@ -1,34 +1,35 @@
 #!/usr/bin/env python3
-"""読み間違いの機械チェック(ループ61)。
+"""読み間違いの機械チェック(ループ71で作り直し)。
 
-ユーザー指摘:「S17はNISAをえぬあいえすえーと読んでるけど。にーさでしょ?
-              こんな初歩的なミスなんで治せなかった?」
+ユーザー指摘:
+  「相続税の動画、マジゴミだと思う。何の話してるかわかんないし、**読み間違いもあるし**」
 
-なぜ直っていなかったかの診断(言い訳なしの事実):
-  **同じ問題は S002 で既に見つけて直していた。** そこにはこう書いてある:
-      narration="でもニーサなら、税金ゼロ。",  # エヌアイエスエー読み回避(kana照合済み)
-  つまり「NISAはニーサと書き直す」という知識は、去年の自分がコードのコメントとして
-  リポジトリに残していた。**コメントに書いただけで、チェックにしなかった。**
-  だから S017 を新しく書いたとき、その知識は一緒に運ばれてこなかった。
-  ユーザーに何度も言われている「文章で書いたルールは守られない」が、そのまま起きた。
+実際に S018 で「相続人」を **ソオゾクジン** と読んでいた(正しくは そうぞくにん)。
+前の版のこのファイルは**手で書いた誤読しやすい語の一覧**で、
+「相続人」が入っていなかったので [OK] を返していた。**登録し忘れは黙って通っていた。**
 
-何を検査するか:
-  VOICEVOX の /audio_query は、実際に読み上げる**カナ**を返す。
-  レンダリングと同じ文字列を投げて、返ってきたカナを見れば読み間違いは機械で分かる。
+作り直した判定:
+  1. VOICEVOX に実際に読ませ、その読み(カナ)をもらう
+  2. 同じ文を形態素解析(janome)して、辞書の読みを並べる
+  3. **語ごとに突き合わせ**、辞書の読みが音声の中に見つからない語を落とす
 
-  1. 誤読    : 要注意語が台本にあるのに、カナが正しい読みになっていない
-  2. 未登録  : 半角アルファベットが2文字以上続くのに、下の表に無い
-               (新しい略語が出るたび「読みをどうするか」を必ず決めさせる)
+数字・記号・辞書に読みの無い語は突き合わせから外し、その先で位置を取り直す。
+長音の書き方のゆれ(ソオ/ソウ、ゼエ/ゼイ)は畳んでから比べる。
+
+正しいのに落ちる組み合わせは production/yomi_ok.txt に「語:読み」で足す。
+**一覧に無い語は落ちる**向きにしてあるので、登録し忘れは黙って通らない。
+
+VOICEVOX が起動していないと走らない(bash production/setup_voicevox.sh)。
 
 使い方:
-    python3 production/check_yomi.py                 # 全動画
-    python3 production/check_yomi.py videos/S017-... # 1本だけ
-VOICEVOX が起動していること(bash production/setup_voicevox.sh)。
+    python3 production/check_yomi.py                    # 全動画
+    python3 production/check_yomi.py videos/S018-...    # 1本だけ
 """
 import importlib.util
 import json
 import re
 import sys
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -37,108 +38,202 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 sys.path.insert(0, str(PRODUCTION))
 
-VOICEVOX_URL = "http://127.0.0.1:50021"
+OK_FILE = PRODUCTION / "yomi_ok.txt"
+ENDPOINT = "http://127.0.0.1:50021"
 SPEAKER = 3
+WINDOW = 14          # 何モーラ先まで探しにいくか(数字や未知語を飛ばすため)
 
-# 台本に出たら、カナがこう読まれていなければならない語。
-# 「誤読の実例」は、そう読まれてしまった記録(再発したらすぐ分かるように残す)。
-YOMI = {
-    # 語        : (正しい読みのカナ, 誤読の実例)
-    "NISA":      ("ニーサ", "エヌアイエスエー"),      # S002で発見 → S017で再発(ループ61)
-    "iDeCo":     ("イデコ", "アイデコ"),
-    "ATM":       ("エーティーエム", ""),
-    "PER":       ("ピーイーアール", ""),
-    "S&P":       ("エスアンドピー", ""),
-    "ETF":       ("イーティーエフ", ""),
-    "GDP":       ("ジーディーピー", ""),
-    "IPO":       ("アイピーオー", ""),
-}
-# 半角アルファベットの連なり。ここに出た語は必ず YOMI に登録されていること
-ALPHA_RUN = re.compile(r"[A-Za-z][A-Za-z&.]+")
+try:
+    from janome.tokenizer import Tokenizer
+except ImportError:
+    print("[NG] janome が入っていません。`pip install janome` を実行してください。",
+          file=sys.stderr)
+    sys.exit(2)
+
+_T = Tokenizer()
+
+# オ段・エ段の長音の書き方のゆれを畳む(VOICEVOXは「ソオ」、辞書は「ソウ」)。
+# **文字列を for で回すと1文字ずつになる**。「チョ」が「チ」と「ョ」に割れて
+# 「ミチオ」を「ミチウ」に変えてしまい、助詞の「を」が行方不明になった。並びで持つ。
+_O_ROW = ["オ", "コ", "ソ", "ト", "ノ", "ホ", "モ", "ヨ", "ロ", "ゴ", "ゾ", "ド", "ボ", "ポ",
+          "キョ", "ショ", "チョ", "ニョ", "ヒョ", "ミョ", "リョ", "ギョ", "ジョ", "ビョ", "ピョ"]
+_E_ROW = ["エ", "ケ", "セ", "テ", "ネ", "ヘ", "メ", "レ", "ゲ", "ゼ", "デ", "ベ", "ペ"]
+
+
+
+def loose(k: str) -> str:
+    """記号と表記ゆれだけを落とす。**長音の畳み込みはここでやらない。**
+
+    音声の側で畳むと語をまたいで壊れる。「ダト|オモッテ」の「トオ」を
+    長音と見て「ダトウモッテ」にしてしまい、「思っ」が行方不明になった。
+    長音のゆれは、**辞書側の1語だけ**を variants() で開いて吸収する。
+    """
+    k = re.sub(r"[’'_/、。?!\s]", "", k)
+    return k.replace("ヴ", "ブ").replace("ー", "").replace("ヅ", "ズ").replace("ヂ", "ジ")
+
+
+def variants(reading: str):
+    """辞書の読み1語を、VOICEVOXの書き方のゆれまで開く(ソウゾク→ソオゾク)。"""
+    out = {reading}
+    if reading == "ウ":
+        out.add("オ")          # 「だろ|う」の う は、音では オ(ダロオ)
+    for a in _O_ROW:
+        if a + "ウ" in reading:
+            out |= {v.replace(a + "ウ", a + "オ") for v in list(out)}
+    for a in _E_ROW:
+        if a + "イ" in reading:
+            out |= {v.replace(a + "イ", a + "エ") for v in list(out)}
+    return out
+
+
+def voicevox_kana(text: str) -> str:
+    url = f"{ENDPOINT}/audio_query?text={urllib.parse.quote(text)}&speaker={SPEAKER}"
+    with urllib.request.urlopen(urllib.request.Request(url, method="POST"), timeout=30) as r:
+        return json.load(r)["kana"]
+
+
+def load_ok():
+    if not OK_FILE.exists():
+        return set()
+    out = set()
+    for ln in OK_FILE.read_text().splitlines():
+        ln = ln.split("#")[0].strip()
+        if not ln:
+            continue
+        if ":" in ln:
+            w, y = ln.split(":", 1)
+            out.add((w.strip(), loose(y.strip())))
+        else:
+            out.add((ln, None))          # 語だけ = その語の読みは確認済み
+    return out
+
+
+def expected_tokens(text: str):
+    """(表層, 期待する読み) の並び。読みが分からない語は読み None。"""
+    out = []
+    for t in _T.tokenize(text):
+        surf, pos = t.surface, t.part_of_speech.split(",")[0]
+        rd = t.reading
+        if pos in ("助詞", "接続詞") and surf.endswith("は"):
+            rd = loose(rd)[:-1] + "ワ"      # は・では・とは・には … 助詞のハはワ
+        elif pos == "助詞" and surf == "を":
+            rd = "オ"
+        elif pos == "助詞" and surf == "へ":
+            rd = "エ"
+        if rd == "*" or re.search(r"[0-9０-９]", surf) or pos == "記号":
+            out.append((surf, None))
+        else:
+            out.append((surf, loose(rd)))
+    return out
+
+
+def compounds(text: str):
+    """辞書に1語として載っていない複合名詞を返す(ループ71)。
+
+    「相続人」は IPADIC に無く、「相続」+「人」に割れる。
+    そして IPADIC はここの「人」を **ジン** と読む。VOICEVOX も同じ辞書系なので
+    **辞書と音声が同じように間違える**。語ごとの突き合わせでは一致してしまい、
+    ソオゾクジンがそのまま通った。
+
+    だから「辞書が1語として知らない複合語」は、読みが保証されていないものとして
+    ぜんぶ出す。正しく読めていることを耳で確かめたら yomi_ok.txt に足す。
+    """
+    toks = [(t.surface, t.part_of_speech.split(",")[0], t.part_of_speech.split(",")[1])
+            for t in _T.tokenize(text)]
+    runs, cur = [], []
+    for surf, pos, sub in toks:
+        if pos == "名詞" and sub not in ("数", "代名詞", "非自立"):
+            cur.append(surf)
+        else:
+            if len(cur) >= 2:
+                runs.append("".join(cur))
+            cur = []
+    if len(cur) >= 2:
+        runs.append("".join(cur))
+    out = []
+    for r in runs:
+        if len(r) < 3 or not re.search(r"[一-龥]", r):
+            continue
+        if not re.fullmatch(r"[一-龥ヶァ-ヴーA-Za-z々]+", r):
+            continue                      # ひらがなが混じる並びは複合語ではない
+        if len(list(_T.tokenize(r))) == 1:
+            continue                      # 辞書に1語としてある
+        out.append(r)
+    return out
+
+
+def check_line(text: str, ok):
+    kana = loose(voicevox_kana(text))
+    pos = 0
+    bad = []
+    for surf, want in expected_tokens(text):
+        if not want:
+            continue                      # 数字・記号・未知語はここで位置を進めない
+        if (surf, want) in ok or (surf, None) in ok:
+            continue
+        hit = -1
+        for v in variants(want):
+            i = kana.find(v, pos)
+            if i != -1 and i <= pos + WINDOW and (hit == -1 or i < hit):
+                hit, want_hit = i, v
+        if hit == -1:
+            near = kana[pos:pos + len(want) + 4]
+            bad.append((surf, want, near))
+            # ズレの連鎖を止める。窓の外でも見つかればそこまで位置を進める
+            for v in variants(want):
+                j = kana.find(v, pos)
+                if j != -1:
+                    pos = j + len(v)
+                    break
+        else:
+            pos = hit + len(want_hit)
+    return bad
 
 
 def _load(render_py: Path):
-    spec = importlib.util.spec_from_file_location(f"y_{render_py.parent.name}", render_py)
+    spec = importlib.util.spec_from_file_location(f"v_{render_py.parent.name}", render_py)
     mod = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = mod
     spec.loader.exec_module(mod)
     return mod
 
 
-def kana_of(text: str) -> str:
-    """VOICEVOX が実際に読むカナを取る(レンダリングと同じ文字列を投げる)。"""
-    url = f"{VOICEVOX_URL}/audio_query?speaker={SPEAKER}&text={urllib.parse.quote(text)}"
-    req = urllib.request.Request(url, method="POST")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r).get("kana", "")
-
-
-# VOICEVOX の kana は長音「ー」を母音で書く(ニーサ → ニイサ / エーティーエム → エエティイエム)。
-# 照合する側も同じ書き方に直さないと、正しく読めているのに不合格になる。
-VOWEL_OF = {}
-for _row, _v in (("アカサタナハマヤラワガザダバパャァ", "ア"),
-                 ("イキシチニヒミリギジヂビピィ", "イ"),
-                 ("ウクスツヌフムユルグズヅブプュゥヴ", "ウ"),
-                 ("エケセテネヘメレゲゼデベペェ", "エ"),
-                 ("オコソトノホモヨロヲゴゾドボポョォ", "オ")):
-    for _c in _row:
-        VOWEL_OF[_c] = _v
-
-
-def expand_choon(kana: str) -> str:
-    """「ー」を直前のカナの母音に開く(VOICEVOXのkana表記に合わせる)。"""
-    out = []
-    for ch in kana:
-        out.append(VOWEL_OF.get(out[-1], "") if ch == "ー" and out else ch)
-    return "".join(out)
-
-
-def plain(kana: str) -> str:
-    """アクセント記号と区切りを外して、語の照合だけができる形にする。"""
-    s = kana.replace("'", "").replace("/", "").replace("、", "").replace("_", "")
-    return expand_choon(s)
-
-
-def check_video(vdir: Path):
+def check_video(vdir: Path, ok):
     render_py = vdir / "render.py"
     if not render_py.exists():
         return []
     units = getattr(_load(render_py), "UNITS", [])
     issues = []
+    seen = set()
     for i, u in enumerate(units, 1):
-        src = u.subtitle.replace("【", "").replace("】", "")   # 画面に出る文
-        spoken = u.tts_text()                                  # 実際に読ませる文
-        kana = plain(kana_of(spoken))
-        for word, (want, seen_before) in YOMI.items():
-            if word not in src and word not in spoken:
+        for surf, want, near in check_line(u.subtitle, ok):
+            issues.append((f"#{i}", "読み間違いの疑い",
+                           f"「{surf}」を {want} と読むはずが、音声は「{near}」。"
+                           f"正しければ production/yomi_ok.txt に「{surf}:{near}」を足すこと"))
+        for c in compounds(u.subtitle):
+            if c in seen or any(w == c for w, _ in ok):
                 continue
-            if expand_choon(want) in kana:
-                continue
-            hint = f"(過去に「{seen_before}」と読まれた)" if seen_before else ""
-            issues.append((f"#{i}", "誤読",
-                           f"「{word}」を「{want}」と読んでいない{hint}。"
-                           f"実際のカナ「{kana}」。"
-                           f"Unit(narration=...) でカナ書きに置き換えること"))
-        # 表に無い略語は、読みを決めないまま通さない
-        for run in ALPHA_RUN.findall(spoken):
-            if run not in YOMI and run.upper() not in YOMI:
-                issues.append((f"#{i}", "未登録の略語",
-                               f"「{run}」の読みが check_yomi.py の YOMI に無い。"
-                               f"実際のカナ「{kana}」を確かめて、表に足すこと"))
+            seen.add(c)
+            kana = loose(voicevox_kana(c))
+            issues.append((f"#{i}", "読みが未確認の複合語",
+                           f"「{c}」は辞書に1語として無い。音声は「{kana}」。"
+                           f"合っていれば production/yomi_ok.txt に「{c}:{kana}」を足すこと"))
     return issues
 
 
 def main():
     try:
-        urllib.request.urlopen(f"{VOICEVOX_URL}/version", timeout=5).read()
+        urllib.request.urlopen(f"{ENDPOINT}/version", timeout=5).read()
     except Exception:
-        print("VOICEVOX が起動していない。bash production/setup_voicevox.sh を先に実行すること")
+        print("[NG] VOICEVOX が起動していません。"
+              "`bash production/setup_voicevox.sh` を実行してください。", file=sys.stderr)
         sys.exit(2)
+    ok = load_ok()
     targets = [Path(a) for a in sys.argv[1:]] or sorted(
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
     total = 0
     for vdir in targets:
-        issues = check_video(vdir)
+        issues = check_video(vdir, ok)
         if issues:
             total += len(issues)
             print(f"[NG] {vdir.name} — {len(issues)}件")
@@ -148,8 +243,7 @@ def main():
             print(f"[OK] {vdir.name}")
     print()
     if total:
-        print(f"結果: {total}件の読み間違い。字幕は元の表記のまま、"
-              f"Unit(narration=...) で読み上げ用の文だけカナにすること。")
+        print(f"結果: {total}件。読みが違う語は、かなで書くか言い換えること。")
         sys.exit(1)
     print("結果: 読み間違いなし")
 

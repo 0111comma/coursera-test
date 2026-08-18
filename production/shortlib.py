@@ -770,6 +770,42 @@ def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
         x += w
 
 
+def fit_fontsize(fig, text: str, fontsize: float,
+                 max_w: float = 0.92, min_scale: float = 0.55) -> float:
+    """画面幅の max_w に収まる字の大きさを返す(ループ71)。
+
+    S016 の締めの見出しが左右とも画面外に切れたまま、11本のゲートを全部通った。
+    原因は**字の大きさが固定**で、長い文はそのまま枠の外に出ていたこと。
+    ここで測って縮める。収まっているときは元の大きさをそのまま返すので、
+    既存の画面は1ドットも変わらない。
+
+    min_scale より小さくはしない。そこまで縮めないと入らない文は、
+    縮めても読めないので**文のほうを短くするべき**であり、
+    check_overlap.py の「画面外」で落として書き直させる。
+    """
+    if not text or not text.strip():
+        return fontsize
+    try:
+        r = fig.canvas.get_renderer()
+    except Exception:
+        return fontsize
+    fw = fig.canvas.get_width_height()[0]
+    probe = fig.text(0.0, -1.0, text, fontsize=fontsize)
+    try:
+        w = probe.get_window_extent(renderer=r).width / fw
+    finally:
+        probe.remove()
+    if w <= max_w or w <= 0:
+        return fontsize
+    return max(fontsize * max_w / w, fontsize * min_scale)
+
+
+def text_fit(fig, x: float, y: float, s: str, fontsize: float,
+             max_w: float = 0.92, **kw):
+    """fig.text と同じだが、画面幅に収まるまで字を縮める。"""
+    return fig.text(x, y, s, fontsize=fit_fontsize(fig, s, fontsize, max_w), **kw)
+
+
 def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                    base_color: str = INK, emph_color: str = EMPH,
                    outline: float | None = None, wrap: int = 0, line_h: float = 0.034,

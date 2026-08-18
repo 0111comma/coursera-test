@@ -8,6 +8,7 @@ from shortlib import (
     stroke_fx, outline_for, draw_badge, draw_footer_brand, draw_glow_text,
     SURFACE, INK, INK_2, MUTED, MUTED_BAR, EMPH, GOLD, SERIES_1,
 )
+import shortlib as S
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 
@@ -28,7 +29,7 @@ def hero_count(value: float, fmt: str, badge: str, brand: str, size: int = 112, 
         scale = 0.25 + 0.75 * appear
         v = value * ease_out(clamp01(t * 1.15))
         if lead:
-            fig.text(0.5, 0.775, lead, ha="center", va="center", color=INK, fontsize=42,
+            S.text_fit(fig, 0.5, 0.775, lead, ha="center", va="center", color=INK, fontsize=42,
                      path_effects=stroke_fx(INK, outline=outline_for(42), fatten=2))
         draw_glow_text(fig, 0.5, 0.62, fmt.format(round(v, decimals) if decimals else round(v)),
                        size * max(scale, 0.05))
@@ -40,7 +41,7 @@ def hero_count(value: float, fmt: str, badge: str, brand: str, size: int = 112, 
 def hero(main: str, sub: str, badge: str, brand: str, size: int = 108, sub_fs: int = 32):
     def painter(fig, t):
         draw_glow_text(fig, 0.5, 0.62, main, size)
-        fig.text(0.5, 0.51, sub, ha="center", va="center",
+        S.text_fit(fig, 0.5, 0.51, sub, ha="center", va="center",
                  color=INK_2, fontsize=sub_fs, alpha=clamp01(t * 2))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
@@ -49,12 +50,12 @@ def hero(main: str, sub: str, badge: str, brand: str, size: int = 108, sub_fs: i
 
 def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: int = 128):
     def painter(fig, t):
-        fig.text(0.5, 0.795, top, ha="center", va="center", color=INK_2,
+        S.text_fit(fig, 0.5, 0.795, top, ha="center", va="center", color=INK_2,
                  fontsize=44, path_effects=stroke_fx(INK_2, outline=outline_for(44), fatten=1.5))
         draw_glow_text(fig, 0.5, 0.615, main, main_size)
-        fig.text(0.5, 0.435, bottom, ha="center", va="center", color=INK,
+        S.text_fit(fig, 0.5, 0.435, bottom, ha="center", va="center", color=INK,
                  fontsize=42, path_effects=stroke_fx(INK, outline=outline_for(42), fatten=2))
-        fig.text(0.5, 0.88, note, ha="center", va="center", color=INK_2, fontsize=28)
+        S.text_fit(fig, 0.5, 0.88, note, ha="center", va="center", color=INK_2, fontsize=28)
         draw_footer_brand(fig, brand)
     return painter
 
@@ -68,16 +69,16 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
     視聴者に「自分はどうだろう」と考えさせながら最後まで見せる。
     """
     def painter(fig, t):
-        fig.text(0.5, 0.90, headline, ha="center", color=INK_2, fontsize=head_fs)
+        S.text_fit(fig, 0.5, 0.90, headline, ha="center", color=INK_2, fontsize=head_fs)
         if ask:
-            fig.text(0.5, 0.775, ask, ha="center", color=EMPH, fontsize=31,
+            S.text_fit(fig, 0.5, 0.775, ask, ha="center", color=EMPH, fontsize=31,
                      alpha=clamp01(t * 1.6 - 0.5))
         a = clamp01(t * 2)
-        fig.text(0.5, 0.62, main, ha="center", va="center", color=main_color,
+        S.text_fit(fig, 0.5, 0.62, main, ha="center", va="center", color=main_color,
                  fontsize=main_size * max(ease_out_back(a), 0.05), alpha=a,
                  path_effects=stroke_fx(main_color, outline=outline_for(main_size), fatten=2.5))
         if sub:
-            fig.text(0.5, 0.50, sub, ha="center", va="center",
+            S.text_fit(fig, 0.5, 0.50, sub, ha="center", va="center",
                      color=sub_color, fontsize=sub_fs, alpha=clamp01(t * 2 - 0.8))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
@@ -86,16 +87,16 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
 
 def quiz(headline: str, line1: str, line2: str, note: str, badge: str, brand: str):
     def painter(fig, t):
-        fig.text(0.5, 0.88, headline, ha="center", color=INK, fontsize=36,
+        S.text_fit(fig, 0.5, 0.88, headline, ha="center", color=INK, fontsize=36,
                  path_effects=stroke_fx(INK, outline=outline_for(36), fatten=2))
-        fig.text(0.5, 0.68, line1, ha="center", va="center", color=INK_2, fontsize=38)
-        fig.text(0.5, 0.60, line2, ha="center", va="center", color=INK, fontsize=44,
+        S.text_fit(fig, 0.5, 0.68, line1, ha="center", va="center", color=INK_2, fontsize=38)
+        S.text_fit(fig, 0.5, 0.60, line2, ha="center", va="center", color=INK, fontsize=44,
                  path_effects=stroke_fx(INK, outline=outline_for(44), fatten=2))
         # 注記は立ち絵(y<0.465)より上に置く。「?」は細いので立ち絵の右側に落としてよい
         if note:
-            fig.text(0.5, 0.52, note, ha="center", va="center", color=INK_2, fontsize=28)
+            S.text_fit(fig, 0.5, 0.52, note, ha="center", va="center", color=INK_2, fontsize=28)
         a = clamp01(t * 2 - 0.5)
-        fig.text(0.5, 0.42, "?", ha="center", va="center", color=EMPH,
+        S.text_fit(fig, 0.5, 0.42, "?", ha="center", va="center", color=EMPH,
                  fontsize=110 * max(ease_out_back(a), 0.05), alpha=a,
                  path_effects=stroke_fx(EMPH, outline=outline_for(110), fatten=4))
         draw_badge(fig, badge)
@@ -110,10 +111,10 @@ def reveal(main: str, sub: str, formula: str, badge: str, brand: str, size: int 
     """
     def painter(fig, t):
         draw_glow_text(fig, 0.5, 0.66, main, size)
-        fig.text(0.5, 0.565, sub, ha="center", va="center",
+        S.text_fit(fig, 0.5, 0.565, sub, ha="center", va="center",
                  color=INK_2, fontsize=32, alpha=clamp01(t * 2 - 0.3))
         if formula:
-            fig.text(0.5, 0.495, formula, ha="center", va="center",
+            S.text_fit(fig, 0.5, 0.495, formula, ha="center", va="center",
                      color=INK_2, fontsize=28, alpha=clamp01(t * 2 - 0.7))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
@@ -131,7 +132,7 @@ def hayami(title: str, rows: list, note: str, badge: str, brand: str,
     - note には出典・時点(・仮定)を必ず入れる(スクショは単独で流通するため)
     """
     def painter(fig, t):
-        fig.text(0.5, 0.885, title, ha="center", color=INK, fontsize=40,
+        S.text_fit(fig, 0.5, 0.885, title, ha="center", color=INK, fontsize=40,
                  path_effects=stroke_fx(INK, outline=outline_for(40), fatten=2))
         y0 = 0.795
         dy = 0.066
@@ -142,9 +143,9 @@ def hayami(title: str, rows: list, note: str, badge: str, brand: str,
                 continue
             y = y0 - i * dy
             f = (focal == i)
-            fig.text(xl, y, n, ha="left", va="center", alpha=a,
+            S.text_fit(fig, xl, y, n, ha="left", va="center", alpha=a,
                      color=INK if f else INK_2, fontsize=29)
-            fig.text(xr, y, v, ha="right", va="center", alpha=a,
+            S.text_fit(fig, xr, y, v, ha="right", va="center", alpha=a,
                      color=EMPH if f else INK, fontsize=40,
                      path_effects=stroke_fx(EMPH if f else INK,
                                             outline=outline_for(40), fatten=2) if f else None)
@@ -153,7 +154,7 @@ def hayami(title: str, rows: list, note: str, badge: str, brand: str,
                                           transform=fig.transFigure, color=MUTED,
                                           linewidth=1, alpha=0.35 * a))
         if note:
-            fig.text(0.5, y0 - len(rows) * dy - 0.005, note, ha="center",
+            S.text_fit(fig, 0.5, y0 - len(rows) * dy - 0.005, note, ha="center",
                      color=INK_2, fontsize=26, alpha=clamp01(t * 2.4 - len(rows) * 0.35))
         draw_footer_brand(fig, brand)
     return painter
@@ -161,7 +162,7 @@ def hayami(title: str, rows: list, note: str, badge: str, brand: str,
 
 def chips(question: str, options: list, badge: str, brand: str, q_fs: int = 48):
     def painter(fig, t):
-        fig.text(0.5, 0.76, question, ha="center", color=INK, fontsize=q_fs,
+        S.text_fit(fig, 0.5, 0.76, question, ha="center", color=INK, fontsize=q_fs,
                  path_effects=stroke_fx(INK, outline=outline_for(q_fs), fatten=3))
         for i, c in enumerate(options):
             a = clamp01(t * 3.2 - i * 0.7)
@@ -169,10 +170,10 @@ def chips(question: str, options: list, badge: str, brand: str, q_fs: int = 48):
                 continue
             x = 0.29 + (i % 2) * 0.42
             y = 0.66 - (i // 2) * 0.10
-            fig.text(x, y, c, ha="center", va="center", color=INK, fontsize=30, alpha=a,
+            S.text_fit(fig, x, y, c, ha="center", va="center", color=INK, fontsize=30, alpha=a,
                      bbox=dict(boxstyle="round,pad=0.6", facecolor=SURFACE,
                                edgecolor=EMPH, linewidth=2.5, alpha=a))
-        fig.text(0.5, 0.49, "▼ コメントで教えて ▼", ha="center", va="center",
+        S.text_fit(fig, 0.5, 0.49, "▼ コメントで教えて ▼", ha="center", va="center",
                  color=MUTED, fontsize=30, alpha=clamp01(t * 2 - 1.0))
         draw_badge(fig, badge)
         draw_footer_brand(fig, brand)
@@ -257,12 +258,12 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
         # 先に「動かせないもの」を占有させる(見出し・バッジ)。ラベルはここを避ける
         placed = [(0.52, 0.965, 0.800, 0.862)] if badge else []
         if title:
-            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+            S.text_fit(fig, 0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
             placed.append((0.04, 0.96, 0.882, 0.928))
 
         def chip(x, y, text, color, size, ha="center"):
             """線の上に置いても読めるよう、背景を敷いたラベル。"""
-            fig.text(x, y, text, ha=ha, va="center", color=color, fontsize=size,
+            S.text_fit(fig, x, y, text, ha=ha, va="center", color=color, fontsize=size,
                      bbox=dict(boxstyle="round,pad=0.28", facecolor=SURFACE,
                                edgecolor="none", alpha=0.92), zorder=8)
             placed.append(_box(x, y, text, size, ha))
@@ -308,7 +309,7 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
             if idx >= max(2, int(len(prices) * clamp01(reveal))):
                 continue
             v = prices[idx]
-            fig.text(X0 - 0.014, py(v), f"{v:,.0f}{unit}", ha="right", va="center",
+            S.text_fit(fig, X0 - 0.014, py(v), f"{v:,.0f}{unit}", ha="right", va="center",
                      color=INK_2, fontsize=24)
 
         # 株価の線
@@ -363,9 +364,9 @@ def price_chart(prices, marks, band=None, title="", badge="", brand="",
                                               transform=fig.transFigure, color=GOLD,
                                               linewidth=4, alpha=a_b, zorder=4))
                 if bx1 - bx0 > 0.30:      # 帯が十分に伸びてからラベルを出す
-                    fig.text((bx0 + bx1) / 2, Y_BORROW, blab, ha="center", va="center",
+                    S.text_fit(fig, (bx0 + bx1) / 2, Y_BORROW, blab, ha="center", va="center",
                              color=INK, fontsize=23, alpha=a_b, zorder=5)
-            fig.text(X0 - 0.014, Y_BORROW, "株", ha="right", va="center",
+            S.text_fit(fig, X0 - 0.014, Y_BORROW, "株", ha="right", va="center",
                      color=INK_2, fontsize=22)
         if badge:
             draw_badge(fig, badge)
@@ -394,7 +395,7 @@ def bars2(title, left, right, badge, brand, gap=None, unit="", ymax=None):
     def painter(fig, t):
         from matplotlib.patches import Rectangle
         if title:
-            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+            S.text_fit(fig, 0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
         fig.add_artist(plt.Line2D([0.10, 0.90], [Y0, Y0], transform=fig.transFigure,
                                   color=MUTED, linewidth=1.5, alpha=0.5))
         cols = [(0.30, left, MUTED_BAR, clamp01(t * 2.2)),
@@ -407,10 +408,10 @@ def bars2(title, left, right, badge, brand, gap=None, unit="", ymax=None):
             fig.patches.append(Rectangle((x - 0.13, Y0), 0.26, h, transform=fig.transFigure,
                                          facecolor=color, edgecolor="none", alpha=0.95))
             tops[x] = Y0 + h
-            fig.text(x, Y0 + h + 0.032, inner, ha="center", va="center", color=INK,
+            S.text_fit(fig, x, Y0 + h + 0.032, inner, ha="center", va="center", color=INK,
                      fontsize=32, alpha=a,
                      path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
-            fig.text(x, Y0 - 0.030, head, ha="center", va="center", color=INK_2,
+            S.text_fit(fig, x, Y0 - 0.030, head, ha="center", va="center", color=INK_2,
                      fontsize=28, alpha=a)
         if gap and len(tops) == 2 and clamp01(t * 2.2 - 1.2) > 0:
             a = clamp01(t * 2.2 - 1.2)
@@ -418,7 +419,7 @@ def bars2(title, left, right, badge, brand, gap=None, unit="", ymax=None):
             fig.patches.append(Rectangle((0.838, min(y1, y2)), 0.050, abs(y2 - y1),
                                          transform=fig.transFigure, facecolor=GOLD,
                                          edgecolor="none", alpha=0.55 * a))
-            fig.text(0.863, (y1 + y2) / 2, gap, ha="center", va="center", color=INK,
+            S.text_fit(fig, 0.863, (y1 + y2) / 2, gap, ha="center", va="center", color=INK,
                      fontsize=27, alpha=a, rotation=90,
                      path_effects=stroke_fx(INK, outline=outline_for(27), fatten=1.5))
         if badge:
@@ -443,7 +444,7 @@ def lines2(title, series, badge, brand, ymin=None, ymax=None, xlabels=None, reve
 
     def painter(fig, t):
         if title:
-            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+            S.text_fit(fig, 0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
         for k in range(5):
             gy = Y0 + (Y1 - Y0) * k / 4
             fig.add_artist(plt.Line2D([X0, X1], [gy, gy], transform=fig.transFigure,
@@ -464,12 +465,12 @@ def lines2(title, series, badge, brand, ymin=None, ymax=None, xlabels=None, reve
             fig.add_artist(plt.Line2D([xs[-1]], [py[-1]], transform=fig.transFigure, marker="o",
                                       markersize=18, color=color, markeredgecolor=SURFACE,
                                       markeredgewidth=4, linestyle="none", zorder=6))
-            fig.text(X1 + 0.022, ends[i], name, ha="left", va="center", color=color,
+            S.text_fit(fig, X1 + 0.022, ends[i], name, ha="left", va="center", color=color,
                      fontsize=29, zorder=8,
                      path_effects=stroke_fx(color, outline=outline_for(29), fatten=1.5))
         for j, lab in enumerate(xlabels or []):
             if j < shown:
-                fig.text(X0 + (X1 - X0) * (j / (n_pt - 1)), Y0 - 0.032, lab,
+                S.text_fit(fig, X0 + (X1 - X0) * (j / (n_pt - 1)), Y0 - 0.032, lab,
                          ha="center", va="center", color=INK_2, fontsize=25)
         if badge:
             draw_badge(fig, badge)
@@ -485,7 +486,7 @@ def stack(title, n_blocks, block_label, total_label, badge, brand, cols=5, focus
     def painter(fig, t):
         from matplotlib.patches import Rectangle
         if title:
-            fig.text(0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
+            S.text_fit(fig, 0.5, 0.905, title, ha="center", color=INK_2, fontsize=34)
         rows = (n_blocks + cols - 1) // cols
         # 行が増えても立ち絵(y<0.465)に届かないよう、間隔を行数に合わせて詰める
         pitch = min(0.065, 0.270 / max(rows, 1))
@@ -505,10 +506,10 @@ def stack(title, n_blocks, block_label, total_label, badge, brand, cols=5, focus
                                          edgecolor="none", alpha=0.95))
         y_bottom = y_top - rows * (bh + gy)
         if block_label:
-            fig.text(0.5, y_bottom - 0.012, block_label, ha="center", va="top",
+            S.text_fit(fig, 0.5, y_bottom - 0.012, block_label, ha="center", va="top",
                      color=INK_2, fontsize=27)
         if total_label:
-            fig.text(x0, 0.866, total_label, ha="left", va="center", color=INK,
+            S.text_fit(fig, x0, 0.866, total_label, ha="left", va="center", color=INK,
                      fontsize=32, path_effects=stroke_fx(INK, outline=outline_for(32), fatten=1.8))
         if badge:
             draw_badge(fig, badge)
