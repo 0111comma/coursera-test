@@ -52,7 +52,7 @@ SCENES = {
 }
 
 UNITS = [
-    Unit("yameru", "会社を辞めたいけれど、給料が止まるのが怖い。", anim=1.0,
+    Unit("yameru", "会社を辞めたら、給料は何ヶ月止まる?", anim=1.0,
          cover=True, se="pop", speed=1.05, intonation=1.25),
     Unit("mukashi", "その空白は、3ヶ月だと聞いていないか。", anim=1.4,
          face="troubled", speed=1.05),

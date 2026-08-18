@@ -18,7 +18,7 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 
 # 縦横で共通のゲート
-COMMON = ["teinei", "flow", "figure", "overlap", "ikko", "yomi",
+COMMON = ["toi", "teinei", "flow", "figure", "overlap", "ikko", "yomi",
           "ryakugo", "goi", "bunsho", "yokkyu", "video"]
 LONG_ONLY = ["long"]                       # 横型だけ
 

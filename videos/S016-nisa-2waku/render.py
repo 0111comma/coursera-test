@@ -38,11 +38,11 @@ assert (TSUMITATE_YEAR + SEICHO_YEAR) // 12 == 300_000
 
 SCENES = {
     # 入口は日常語。「投資枠」は3ユニット目でその場で意味を言う
-    "fuyasu": sc.card("毎月の積立を", "増やしたい", "※ 金額はすべて仮定の例です",
-                      BADGE, BRAND, main_size=118, head_fs=32),
-    "fuyasu__cover": sc.cover("つみたて投資枠は、月いくらで止まる?", "10万円",
-                              "それを超えたい月だけ、成長投資枠を足す",
-                              "2026年8月時点", BRAND),
+    "toi": sc.card("この動画の問い", "月いくらまで?", "※ 金額はすべて仮定の例です",
+                   BADGE, BRAND, main_size=104, head_fs=32),
+    "toi__cover": sc.cover("NISAの積立、月いくらまで入る?", "10万円",
+                           "超えたい月だけ、成長投資枠を足す",
+                           "2026年8月時点", BRAND),
     "kabe": sc.card("ここで止まる", "月10万円", "※ 年120万円を12で割った額",
                     BADGE, BRAND, main_size=124, head_fs=32),
     "futatsu": sc.bars2("1年で入れられる額",
@@ -60,20 +60,20 @@ SCENES = {
                         "※ 2026年8月時点。金額はすべて仮定の例です",
                         BADGE, BRAND, col1="いくら積み立てるか", col2="どちらで設定するか",
                         focal=0),
-    "shime": sc.chips("いまの積立額は、証券会社の画面で見られます",
+    "shime": sc.chips("いまの積立額は?",
                       ["月10万円未満", "ちょうど10万円", "超えている", "これから始める"],
                       BADGE, BRAND),
 }
 
 UNITS = [
-    Unit("fuyasu", "給料から、積立を増やしたいとする。", anim=1.0, cover=True,
-         se="pop", speed=1.05, intonation=1.25),
-    Unit("kabe", "でもその積立には、月10万円の壁がある。", anim=1.4,
-         face="troubled", speed=1.05),
-    Unit("kabe", "その壁は、つみたて投資枠の上限なのだ。", anim=0.0, speed=1.05),
+    # 1ユニット目は、欲求を問いの形にして言う(ループ71のユーザー指摘)。
+    #   「最初の1、2秒で、どの欲望に訴求してるのかを質問として言語化しろ」
+    Unit("toi", "NISAの積立、月いくらまで入る?", anim=1.0, cover=True,
+         se="pop", speed=1.05, intonation=1.3),
+    Unit("kabe", "その上限は、つみたて投資枠で決まるのだ。", anim=1.4, speed=1.05),
     Unit("kabe", "その投資枠とは、1年に買える上限のこと。", anim=0.0, speed=1.05),
     Unit("futatsu", "つみたて投資枠は、いま年120万円なのだ。", anim=1.6, speed=1.05),
-    Unit("futatsu", "だから12で割ると、月10万円になるのだ。", anim=0.0, speed=1.05),
+    Unit("futatsu", "だから月にすると、10万円になるのだ。", anim=0.0, speed=1.05),
     Unit("futatsu", "では、それ以上は入れられないのか。", anim=0.0,
          face="troubled", speed=1.05),
     Unit("futatsu", "実はもうひとつ、成長投資枠があるのだ。", anim=0.0,
