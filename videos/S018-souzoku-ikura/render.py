@@ -70,7 +70,7 @@ UNITS = [
     Unit("toi", "親の家、相続税はいくらからかかる?", anim=1.0, cover=True,
          se="pop", speed=1.05, intonation=1.3),
     Unit("kiso", "その線は、3000万円から始まるのだ。", anim=1.4, speed=1.05),
-    Unit("kiso", "そこに、ひとりぶん600万円を足すのだ。", anim=0.0, speed=1.05),
+    Unit("kiso", "そこに、ひとり600万円を足すのだ。", anim=0.0, speed=1.05),
     Unit("kiso_z", "だからふたりなら、4200万円までなのだ。", anim=1.6,
          speed=1.05, intonation=1.2),
     Unit("kiso_z", "その中なら、申告そのものが要らないのだ。", anim=0.0,
