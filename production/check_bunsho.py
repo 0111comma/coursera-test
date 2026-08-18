@@ -37,9 +37,31 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 sys.path.insert(0, str(PRODUCTION))
 
-# D1: 文頭の指示語。3つ以上続いたら落とす
+# D1: 文頭の指示語。2つ続いたら落とす(ループ71でユーザー指摘により3→2)
 SHIJI = ("その", "この", "それ", "これ")
-SHIJI_RUN = 3
+SHIJI_RUN = 2
+
+# D3〜D5(ループ71)。ユーザー指摘:
+#   「そのっていうのが2回続いたり、だからっていうのが2回続いたり、
+#     接続語が同じものが2回続くのは、喋り方としてバカっぽい」
+#   「指示語を使いすぎかな。1分の動画で20回30回出てるのって普通に考えるとおかしい。
+#     3から4回しか指示語を使わない縛りみたいなのもつけていい」
+#
+# なぜこうなったかの診断(言い訳なしの事実):
+#   check_flow.py が「接続語を置くか、前の文に出た語を受けること」を要求する。
+#   その要求を満たすいちばん安い形が「その〜」と「だから〜」だった。
+#   **ゲートが欠陥を作った5回目**。だから数え上げのほうもゲートにする。
+#   前の文を受けるなら、指示語ではなく**名詞をもう一度言う**のが正しい。
+SHIJI_ANY = ("この", "その", "あの", "どの", "これ", "それ", "あれ", "どれ",
+             "ここ", "そこ", "あそこ", "こう", "そう")
+SHIJI_MAX = 4              # 1本で使ってよい指示語の総数
+SETSUZOKU = ("だから", "そして", "でも", "しかも", "つまり", "では", "まず",
+             "ただし", "すると", "ちなみに", "たとえば", "そこで", "しかし")
+SETSUZOKU_MAX = 3          # 同じ接続語を1本で何回まで使ってよいか
+
+# D6: 重言(同じ意味を2回言う)。ユーザー指摘「頭痛が痛いみたいな感じ」
+JUGEN = (("お礼", "返礼品"), ("まず最初", ""), ("約", "ほど"), ("いま現在", ""),
+         ("一番最初", ""), ("あとで後悔", ""), ("必ず必要", ""))
 
 # D2: 木下是雄「なくても済む言葉は一つも書かない」に当たる言い方
 # 「のほう」は入れない。「小さいほう」「固定金利のほうが」は比較として要る語で、
@@ -63,6 +85,28 @@ def sentences(units):
             s = s.strip()
             if s:
                 out.append((i, s))
+    return out
+
+
+def tate(units):
+    """台本を縦に並べて、指示語と接続語に印をつける。
+
+    ユーザー指摘:「縦に書いてもらえるとわかると思うんだけど、
+    そのっていうのが2回続いたり、だからっていうのが2回続いたり」
+    目で見れば一発で分かるものを、目で見られる形で出す。
+    """
+    out = []
+    for i, u in enumerate(units, 1):
+        t = u.subtitle
+        marks = [w for w in SHIJI_ANY if w in t]
+        head = next((w for w in sorted(SETSUZOKU, key=len, reverse=True)
+                     if t.startswith(w)), "")
+        tag = ""
+        if head:
+            tag += f" [{head}]"
+        if marks:
+            tag += " [指示語:" + "".join(marks) + "]"
+        out.append(f"  {i:2} {t}{tag}")
     return out
 
 
@@ -90,6 +134,48 @@ def check_video(vdir: Path):
     if run_word and len(run) >= SHIJI_RUN:
         bad.append((f"#{run[0]}", "指示語の連続",
                     f"「{run_word}」で始まる文が{len(run)}連続 (#{run[0]}〜#{run[-1]})"))
+
+    # D3: 指示語の総数
+    subs = [u.subtitle for u in units]
+    joined = "".join(subs)
+    n_shiji = sum(joined.count(w) for w in SHIJI_ANY)
+    if n_shiji > SHIJI_MAX:
+        naka = [f"#{i}「{w}」" for i, t in enumerate(subs, 1)
+                for w in SHIJI_ANY if w in t]
+        bad.append(("(動画全体)", "指示語が多い",
+                    f"{n_shiji}回。{SHIJI_MAX}回まで。"
+                    f"前の文を受けるなら、指示語ではなく名詞をもう一度言うこと: "
+                    f"{' '.join(naka[:10])}"))
+
+    # D4: 同じ語で始まる文が2つ続く
+    def head_of(t):
+        for w in sorted(SETSUZOKU + SHIJI_ANY, key=len, reverse=True):
+            if t.startswith(w):
+                return w
+        return None
+
+    for i in range(1, len(subs)):
+        a, b = head_of(subs[i - 1]), head_of(subs[i])
+        if a and a == b:
+            bad.append((f"#{i + 1}", "同じ出だしが連続",
+                        f"「{a}」で始まる文が2つ続いている: "
+                        f"「{subs[i - 1]}」/「{subs[i]}」"))
+
+    # D5: 同じ接続語の使いすぎ
+    for w in SETSUZOKU:
+        n = sum(1 for t in subs if t.startswith(w))
+        if n > SETSUZOKU_MAX:
+            bad.append(("(動画全体)", "同じ接続語が多い",
+                        f"「{w}」で始まる文が{n}個。{SETSUZOKU_MAX}個まで"))
+
+    # D6: 重言
+    for i, t in enumerate(subs, 1):
+        for a, b in JUGEN:
+            if b and a in t and b in t:
+                bad.append((f"#{i}", "同じ意味を2回",
+                            f"「{a}」と「{b}」は同じことを言っている: 「{t}」"))
+            elif not b and a in t:
+                bad.append((f"#{i}", "同じ意味を2回", f"「{a}」— 「{t}」"))
 
     # D2: なくても済む言葉
     for i, s in sents:

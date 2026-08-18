@@ -35,17 +35,17 @@ SCENES = {
     "toi__cover": sc.cover("ふるさと納税、やらないと年いくら損?", "1万6千円",
                            "10年やらなければ、16万円",
                            "2026年8月時点", BRAND),
-    "jogen": sc.card("この人が出せる目安", "6万円", "※ 年収と家族の人数で変わります",
-                     BADGE, BRAND, main_size=128, head_fs=32),
+    "jogen": sc.card("年収500万円・独身なら", "上限6万円", "※ 年収と家族の人数で変わります",
+                     BADGE, BRAND, main_size=104, head_fs=32),
     "nagare": sc.bars2("6万円を出したとき",
                        ("税から引かれる", 5.8, "5万8千円"),
-                       ("じぶんの持ち出し", 0.2, "2千円"), BADGE, BRAND, ymax=7),
-    "henrei": sc.card("そのとき届くもの", "1万8千円ぶん", "※ 品物は自治体が選んでいます",
+                       ("自分で払う額", 0.2, "2千円"), BADGE, BRAND, ymax=7),
+    "henrei": sc.card("届く返礼品", "1万8千円ぶん", "※ 品物は自治体が選んでいます",
                       BADGE, BRAND, main_size=94, head_fs=32,
                       ask="あなたは今年、やりましたか?"),
     "sashi": sc.bars2("差し引きすると",
                       ("届いたもの", 1.8, "1万8千円"),
-                      ("持ち出し", 0.2, "2千円"), BADGE, BRAND, ymax=2.4),
+                      ("自分で払った額", 0.2, "2千円"), BADGE, BRAND, ymax=2.4),
     "matome": sc.hayami("やらないと消える額",
                         [("1年", "1万6千円"), ("10年", "16万円"),
                          ("月あたり", "1333円"), ("税金の総額", "変わらない")],
@@ -58,29 +58,42 @@ SCENES = {
 }
 
 UNITS = [
+    # ループ71のユーザー指摘をそのまま反映した組み直し:
+    #   ・「その人が出せる目安」→ 年収500万円なら上限は6万円と**決まっている**
+    #   ・「6万円を出したとする」→ ふるさと納税で**納めた**
+    #   ・「持ち出し」→ **自分で払う額**
+    #   ・「お礼に返礼品が届く」→ 重言(お礼=返礼)。「返礼品が届く」だけにする
+    #   ・「差し引きで1万6千円が残る」→ **誰の手元に**残るのかを書く
+    #   ・「これをやらないと、その分が消える」→ 指示語が続いて何の話か分からない
+    #   ・「しかもこれを10年やらないと」→「もし10年間、〜しなかったら?」
+    #   ・指示語は1本で4回まで(ここでは2回)
     Unit("toi", "ふるさと納税、やらないと年いくら損?", anim=1.0, cover=True,
          se="pop", speed=1.05, intonation=1.3),
-    Unit("jogen", "たとえば年収500万円で、独身だとする。", anim=1.4, speed=1.05),
-    Unit("jogen", "その人が出せる目安は、6万円なのだ。", anim=0.0, speed=1.05),
-    Unit("nagare", "その6万円を、出したとするのだ。", anim=1.6, speed=1.05),
-    Unit("nagare", "するとそのうち5万8千円が、税から引かれる。", anim=0.0, speed=1.05),
-    Unit("nagare", "だから持ち出しは、2千円だけなのだ。", anim=0.0, speed=1.05),
-    Unit("henrei", "そしてお礼に、返礼品が届くのだ。", anim=1.6, speed=1.05),
-    Unit("henrei", "その返礼品は、寄付した額の3割まで。", anim=0.0, speed=1.05),
-    Unit("henrei", "だから6万円なら、1万8千円ぶんになるのだ。", anim=0.0,
-         face="happy", se="impact", se_at=0.30, speed=1.05, intonation=1.25),
-    Unit("sashi", "だから差し引きで、1万6千円が残るのだ。", anim=1.6,
-         se="don", speed=1.05, intonation=1.2),
-    Unit("sashi", "これをやらないと、その分が消えるのだ。", anim=0.0,
-         face="troubled", speed=1.05),
-    Unit("matome", "しかもこれを10年やらないと、どうなるか。", anim=1.6,
+    Unit("jogen", "たとえば年収500万円の独身で、上限を見る。", anim=1.4,
+         speed=1.05),
+    Unit("jogen", "上限は6万円と、決まっているのだ。", anim=0.0,
          speed=1.05, intonation=1.2),
-    Unit("matome", "その10年ぶんは、16万円になるのだ。", anim=0.0,
+    Unit("nagare", "ふるさと納税で、6万円を納めたとする。", anim=1.6, speed=1.05),
+    Unit("nagare", "すると5万8千円が、あとで税から引かれる。", anim=0.0, speed=1.05),
+    Unit("nagare", "だから自分で払う額は、2千円だけになる。", anim=0.0, speed=1.05),
+    Unit("henrei", "そのかわりに、返礼品が届くのだ。", anim=1.6,
+         face="happy", speed=1.05),
+    Unit("henrei", "返礼品は、寄付した額の3割まで。", anim=0.0,
+         speed=1.05),
+    Unit("henrei", "つまり6万円なら、1万8千円ぶんが届く。", anim=0.0,
+         se="impact", se_at=0.30, speed=1.05, intonation=1.25),
+    Unit("sashi", "自分で払った2千円を引くと、1万6千円ぶんが残る。", anim=1.6,
+         se="don", speed=1.05, intonation=1.2),
+    Unit("sashi", "やらない人は、この1万6千円をもらっていない。", anim=0.0,
+         face="troubled", speed=1.05),
+    Unit("matome", "もし10年間、ふるさと納税をしなかったら?", anim=1.6, speed=1.05),
+    Unit("matome", "もらえない額は、10年で16万円になるのだ。", anim=0.0,
          speed=1.05, intonation=1.2),
     Unit("matome", "ただし払う税金そのものは、減っていない。", anim=0.0, speed=1.05),
-    Unit("matome", "その税金は、払う先が変わるだけなのだ。", anim=0.0, speed=1.05),
-    Unit("matome", "だから返礼品のぶんだけ、まるごと得なのだ。", anim=0.0, speed=1.05),
-    Unit("shime", "だから今年ぶんだけでも、出してほしいのだ。", anim=1.4,
+    Unit("matome", "税金は、払う先が変わるだけなのだ。", anim=0.0, speed=1.05),
+    Unit("matome", "だから返礼品のぶんが、まるごと得になるのだ。", anim=0.0, speed=1.05),
+    Unit("shime", "なお上限は、いまの年収と家族の人数で変わる。", anim=1.4, speed=1.05),
+    Unit("shime", "だから今年のうちに、上限を調べてほしいのだ。", anim=0.0,
          face="happy", puchun=True, speed=1.1, intonation=1.2),
 ]
 
