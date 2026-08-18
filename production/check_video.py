@@ -92,7 +92,10 @@ def main(video_dir: Path) -> int:
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
     # 横型(長尺)はシーンを scenes_long 側で組むので、render.py に draw_badge が出てこない。
     # 代わりに BADGE を各シーンに渡しているかで見る(渡さないとバッジは描かれない)
-    has_badge = "draw_badge" in src or (LONG and re.search(r"BADGE\s*=", src) and "BADGE" in src)
+    # 縦型も同じ。scenes_common の card/bars2/hayami/chips は BADGE を受け取って
+    # 内部で draw_badge を呼ぶので、render.py に "draw_badge" の字面は出てこない。
+    # 字面ではなく「BADGE を定義して各シーンに渡しているか」で見る(ループ71)
+    has_badge = "draw_badge" in src or (re.search(r"BADGE\s*=", src) and "BADGE" in src)
     check("仮定バッジの描画", bool(has_badge), "利回り等の仮定明示")
 
     # P系(ループ㊳: ユーザーレビュー第7弾)。前置き・生活翻訳・情景ユーモア・中盤の問い
