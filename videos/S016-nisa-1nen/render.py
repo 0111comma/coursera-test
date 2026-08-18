@@ -38,7 +38,7 @@ assert MAN20 - MAN19 == 95
 SCENES = {
     "toi": sc.card("この動画の問い", "いくら損する?", "※ 毎月3万円・年5%と仮定した例です",
                    BADGE, BRAND, main_size=104, head_fs=32),
-    "toi__cover": sc.cover("積立、1年おくらせるといくら損する?", "95万円",
+    "toi__cover": sc.cover("積立、1年おくらせるといくら損?", "95万円",
                            "出したお金の差は、36万円だけ",
                            "年5%は仮定", BRAND),
     "tsumi": sc.card("この例の積み立て方", "月3万円", "※ 増える保証はありません",
@@ -64,7 +64,7 @@ SCENES = {
 
 UNITS = [
     # 1ユニット目は、欲求を問いの形にして言う(ループ71)
-    Unit("toi", "積立、1年おくらせるといくら損する?", anim=1.0, cover=True,
+    Unit("toi", "積立、1年おくらせるといくら損?", anim=1.0, cover=True,
          se="pop", speed=1.05, intonation=1.3),
     Unit("tsumi", "たとえば毎月3万円を、積み立てるとする。", anim=1.4, speed=1.05),
     Unit("tsumi", "その積立を、20年つづけるとする。", anim=0.0, speed=1.05),
