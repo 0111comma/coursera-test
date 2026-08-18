@@ -166,15 +166,21 @@ def check_line(text: str, ok):
     kana = loose(voicevox_kana(text))
     pos = 0
     bad = []
+    skipped = False
     for surf, want in expected_tokens(text):
         if not want:
-            continue                      # 数字・記号・未知語はここで位置を進めない
+            skipped = True                # 数字・記号・未知語はここで位置を進めない
+            continue
         if (surf, want) in ok or (surf, None) in ok:
             continue
+        # 直前に数字や未知語を飛ばしていたら、その読みぶん先まで探す。
+        # 「1469円」は数字が16モーラあり、窓を固定にすると「円」を見失う
+        limit = len(kana) if skipped else pos + WINDOW
+        skipped = False
         hit = -1
         for v in variants(want):
             i = kana.find(v, pos)
-            if i != -1 and i <= pos + WINDOW and (hit == -1 or i < hit):
+            if i != -1 and i <= limit and (hit == -1 or i < hit):
                 hit, want_hit = i, v
         if hit == -1:
             near = kana[pos:pos + len(want) + 4]
