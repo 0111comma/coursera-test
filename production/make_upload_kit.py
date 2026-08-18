@@ -91,6 +91,25 @@ PLAYLISTS = {
 }
 
 
+# 視聴者が読むのは概要欄とタイトルのほうで、そこにも同じ略語が残っていた(ループ71)。
+# S016 は台本を「投資枠」に直したあとも、タイトルが「枠はいくら戻る?」のままだった。
+# 正式名の一部になっている「枠」は通し、裸の「枠」だけを落とす。
+SEISHIKI = ("生涯投資枠", "年間投資枠", "つみたて投資枠", "投資枠", "非課税枠")
+
+
+def assert_no_bare_ryakugo(sid: str, *texts: str):
+    for t in texts:
+        for i, ch in enumerate(t):
+            if ch != "枠":
+                continue
+            if any(t[max(0, i - len(k) + 1):i + 1] == k for k in SEISHIKI):
+                continue
+            around = t[max(0, i - 8):i + 8].replace("\n", " ")
+            return (f"[NG] {sid}: 「枠」を裸で使っています: 「…{around}…」。"
+                    f"「投資枠」と呼ぶこと(ループ71のユーザー指摘)")
+    return None
+
+
 def assert_tags_match(sid: str, script: str):
     """タグが**その動画の中身**を指しているか確かめる(ループ71)。
 
@@ -213,7 +232,8 @@ def main():
         title = m.group(1).strip() if m else "(script.md参照)"
         desc = extract(script, "概要欄テキスト")
         pinned = extract(script, "固定コメント(投稿直後に設置)")
-        _bad = assert_tags_match(sid, script)
+        _bad = assert_tags_match(sid, script) or assert_no_bare_ryakugo(
+            sid, title, desc, pinned)
         if _bad:
             MISMATCH.append(_bad)
         tags = ", ".join(TAGS[sid] + COMMON_TAGS)
