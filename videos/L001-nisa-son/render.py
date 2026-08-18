@@ -65,11 +65,22 @@ _TABLE_ROWS = [("損だけの年", "0円", "0円", "0円"),
 _TABLE_HEAD = ["どんな年か", "課税口座だけ", "NISAを使うと", "差"]
 
 SCENES = {
-    # ---- 冒頭(0〜40秒。答えを出し切る)
-    "toi": sl.hero("含み損のとき", "※ 金額はすべて仮定の例です",
-                   BADGE, BRAND, size=140, sub_fs=32),
-    "toi__cover": sl.cover("NISAで損したら、いくら損するのか?", "40,630円",
-                           "同じ年に課税口座で利益があると", "2026年8月時点の制度", BRAND),
+    # ---- 冒頭(0〜45秒。「損は税金を消せる」を先に渡してから、NISAの例外に落とす)
+    "son": sl.hero("株で20万円の損", "※ 金額はすべて仮定の例です",
+                   BADGE, BRAND, size=120, sub_fs=32),
+    "son__cover": sl.cover("損した株は、税金を消してくれる", "40,630円",
+                           "ただしNISAだけは、それができない", "2026年8月時点の制度", BRAND),
+    "sousai0": sl.compare2("その年に売った2本",
+                           ("もうけた株", [("益20万", 20, GOLD)], ""),
+                           ("損した株", [("損20万", 20, MUTED_BAR)], ""), BADGE, BRAND),
+    "sousai1": sl.compare2("その年に売った2本",
+                           ("もうけた株", [("益20万", 20, GOLD)], "税 40,630円"),
+                           ("損した株", [("損20万", 20, MUTED_BAR)], ""), BADGE, BRAND,
+                           note_l="※ 売った年にかかる"),
+    "sousai2": sl.compare2("2本を合わせた後",
+                           ("差し引いた後", [("残り 0円", 0.4, MUTED_BAR)], "税 0円"),
+                           ("消えた税", [("40,630円", 20, GOLD)], ""), BADGE, BRAND,
+                           note_l="※ 同じ年どうしに限る", note_r="※ 確定申告が要る場合あり"),
     "rei0": sl.compare2("ある1年を切り出すと",
                         ("すべて課税口座", _L20, ""),
                         ("NISAで損", _L20, ""), BADGE, BRAND),
@@ -81,6 +92,10 @@ SCENES = {
                         ("すべて課税口座", _L20, "税 0円"),
                         ("NISAで損", _L20, "税 40,630円"), BADGE, BRAND,
                         note_l="※ 相殺できる", note_r="※ 相殺できない"),
+    "reigai": sl.card("この差し引きが", "使えない口座", "※ 損が無かったことになる",
+                      BADGE, BRAND, main_size=88, head_fs=32),
+    "sorenisa": sl.card("その口座の名前", "NISA", "※ 利益が非課税になる、あの口座",
+                        BADGE, BRAND, main_size=150, head_fs=32),
     "jouken": sl.card("適用範囲", "限定的", "※ 毎年起きるわけではない",
                       BADGE, BRAND, main_size=140, head_fs=32),
     "yotei": sl.card("この動画の道すじ", "4つの章", "(所要 約9分)",
@@ -214,26 +229,37 @@ SCENES = {
 #   - 接続語のあとに読点を打たない(04b。本多勝一の読点2原則に当たらないため)
 
 UNITS = [
-    # ===== 冒頭(0〜約40秒)。答えの金額を15秒以内、図を20秒以内に出す
-    Unit("toi", "NISA口座が、マイナスになっているとする。", anim=1.4, cover=True,
+    # ===== 冒頭(0〜約45秒)
+    #
+    # **順序がいちばん大事なところ。** ユーザー指摘(ループ71):
+    #   「15秒で見たくなくなる。他の株で損したら儲かった株の税金を払わなくていいことを
+    #     基本的に人は知らない。これは初心者向けの動画なんだから」
+    #
+    # 前の版は「NISA口座がマイナス」で始めて5.8秒で40630円を出した。
+    # だが**損が利益と相殺できることを知らない人**には、その金額の意味が無い。
+    # 「引けない」と言われても、引けるのが普通だと知らなければ何も起きない。
+    # だから **得の話(損は税金を消せる)を先に渡してから、NISAの例外に落とす。**
+    Unit("son", "株を売って、20万円の損が出たとする。", anim=1.4, cover=True,
          se="pop", speed=1.05, intonation=1.25),
-    Unit("toi", "そのマイナスは、税金の足しになるのか。", anim=0.0,
+    Unit("son", "その損は、ただ消えるだけだと思っていないか。", anim=0.0,
          face="troubled", speed=1.1, intonation=1.2),
-    Unit("rei0", "まず答えを言うと、逆に40630円を払う年があるのだ。", anim=1.4,
-         se="impact", se_at=0.30, speed=1.05, intonation=1.25, chara="none"),
-    Unit("rei0", "その年はNISAで、20万円の損が出ている。", anim=0.0,
+    Unit("sousai0", "でも同じ年に、別の株で20万円もうけていたとする。", anim=1.4,
          speed=1.05, chara="none"),
-    Unit("rei1", "そして同じ年の課税口座では、20万円の利益が出ている。", anim=1.4,
+    Unit("sousai1", "そのもうけには、ふつう40630円の税金がかかるのだ。", anim=1.4,
          speed=1.05, chara="none"),
-    Unit("rei1", "まず全部が課税口座なら、この年の税金は0円。", anim=0.0,
-         speed=1.1, chara="none"),
-    Unit("rei2", "でもNISAを使っていると、40630円かかるのだ。", anim=1.6,
-         se="don", speed=1.05, intonation=1.25, chara="none"),
-    Unit("jouken", "ただしこれは、条件がそろった年だけの話なのだ。", anim=1.4,
-         speed=1.1),
-    Unit("yotei", "だからこれから4つの章で、その条件と金額を確かめるのだ。", anim=1.4,
+    Unit("sousai2", "ところが損と差し引くと、その40630円が消えるのだ。", anim=1.6,
+         se="impact", se_at=0.32, speed=1.0, intonation=1.3, chara="none"),
+    Unit("sousai2", "つまり損した株が、税金を減らしてくれるのだ。", anim=0.0,
+         speed=1.05, chara="none"),
+    Unit("reigai", "ただしこの差し引きが、使えない口座があるのだ。", anim=1.4,
+         face="troubled", speed=1.1),
+    Unit("sorenisa", "その口座の名前が、NISAなのだ。", anim=1.4,
+         se="don", speed=1.0, intonation=1.25),
+    Unit("rei2", "だからNISAで損した年は、40630円を払うのだ。", anim=1.4,
+         speed=1.05, chara="none"),
+    Unit("yotei", "だから4つの章で、その条件を確かめていくのだ。", anim=1.4,
          face="happy", speed=1.15, pad=0.6),
-    Unit("rei2", "まず覚えてほしいのは、引けない損の値段が40630円になること。",
+    Unit("rei2", "まず消せたはずの40630円を、覚えておくのだ。",
          anim=0.0, speed=1.05, intonation=1.2, chara="none"),
 
     # ===== 第1章 引けない損(約100〜125秒)
