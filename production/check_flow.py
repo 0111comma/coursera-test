@@ -29,6 +29,14 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 sys.path.insert(0, str(PRODUCTION))
 
+# 逆接の接続語。打ち消す相手が無いのに置くと、聞き手は身構えて裏切られる
+GYAKUSETSU = ("でも", "しかし", "ところが", "けれど", "だが")
+# まとめ・言いかえの接続語。前の文を受けていないなら、まとめていない
+KETSURON = ("つまり", "要するに", "すなわち")
+# 逆接が成り立つために、その文の中にあるべき語
+COUNTER = re.compile(r"(ない|ぬ|しか|だけ|ではなく|じゃなく|逆に|むしろ|一方|"
+                     r"わけでは|とは限ら|止まる|変わらない|減ら|増え)")
+
 # 文頭に置かれたら「前を受けている」とみなす接続語
 CONNECTIVES = (
     "でも", "だから", "では", "じゃあ", "つまり", "まず", "ただし", "しかも", "さらに",
@@ -148,12 +156,37 @@ def check_video(vdir: Path):
     last = len(lines) - TAIL_EXEMPT
     for i in range(1, last):
         cur, prev = lines[i], lines[i - 1]
-        if cur.startswith(CONNECTIVES):
-            continue
         shared = content_words(cur) & content_words(prev)
+        head = next((c for c in CONNECTIVES if cur.startswith(c)), None)
+
+        # ループ71で足した判定。ユーザー指摘:
+        #   「急に『でも』って言われるのムカつくからやめて」
+        #   「つまりって何? 別になんの説明もしてないし結論ぽくいうのまじで何w」
+        #
+        # 診断: このゲートは「接続語を置けば通る」を許していた。だから
+        # 前の文とつながらない文に「でも」「つまり」を貼るのが**いちばん安い直し方**
+        # になり、私はそれを6回やった。接続語は関係を宣言する語なので、
+        # **宣言した関係が成り立っていないと嘘になる**。そこだけを落とす。
+        #
+        # 全部の文に共通語を要求する形も試したが、それは行き過ぎだった。
+        # 日本語は主語を省くので、そうすると同じ名詞を毎文並べることになり、
+        # かえって読めなくなる(S019で10件出て、うち8件は自然な文だった)。
+        if head in GYAKUSETSU and not (COUNTER.search(cur) or shared):
+            breaks.append((i + 1, prev, cur,
+                           f"「{head}」に打ち消す相手がない。"
+                           f"前の文を否定していないなら、逆接を使わないこと"))
+            continue
+        if head in KETSURON and not shared:
+            breaks.append((i + 1, prev, cur,
+                           f"「{head}」なのに、前の文の語を1つも受けていない。"
+                           f"まとめでないなら、まとめの接続語を使わないこと"))
+            continue
+        if head:
+            continue
         if shared:
             continue
         breaks.append((i + 1, prev, cur, "接続語も共通語もない"))
+
     # 接続語があっても「指す先」がなければ繋がっていない(ループ54)
     for n, kind, detail in referent_issues(lines, TAIL_EXEMPT):
         breaks.append((n, lines[n - 2] if n >= 2 else "", lines[n - 1], f"{kind}: {detail}"))
@@ -179,7 +212,7 @@ def main():
 
     print()
     if total:
-        print(f"結果: {total}件の断絶。接続語を置くか、前の文に出た語を受けること。")
+        print(f"結果: {total}件の断絶。**前の文に出た語を受けること。**接続語を貼っても繋がらない。")
         sys.exit(1)
     print("結果: 断絶なし")
 
