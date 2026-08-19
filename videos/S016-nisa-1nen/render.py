@@ -83,7 +83,7 @@ UNITS = [
     Unit("uchiwake", "では毎月1万円の人なら、どうなるのか。", anim=0.0, speed=1.05),
     Unit("uchiwake", "差はおよそ32万円と、小さくなるのだ。", anim=0.0, speed=1.05),
     Unit("matome", "しかもNISAなら、増えた分に税金がかからない。", anim=1.6, speed=1.05),
-    Unit("matome", "でもふつうの口座なら、2割が引かれるのだ。", anim=0.0, speed=1.05),
+    Unit("matome", "でもNISAでなければ、2割が引かれるのだ。", anim=0.0, speed=1.05),
     Unit("matome", "つまり待つほど、減るのは増える分なのだ。", anim=0.0, speed=1.05),
     Unit("shime", "だから今月ぶんだけでも、出してほしいのだ。", anim=1.4,
          face="happy", puchun=True, speed=1.1, intonation=1.2),
