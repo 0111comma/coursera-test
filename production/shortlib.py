@@ -52,6 +52,34 @@ SERIES_1 = "#3987e5"     # 青(スロット1)
 SERIES_2 = "#d95926"     # 橙(スロット2)
 # テロップ強調色(R8: 黄色+黒縁の定番)。チャートの系列色としては使わない
 EMPH = "#fab219"
+
+# カテゴリ別のアクセント色(ループ71。ユーザー「画面構成飽きてきた」への対策1)。
+# 全動画が同じ黄色だったので、テーマ系統で色を変える。
+#   invest=NISA・投資(緑) / tax=税・取られる系(珊瑚) / save=貯金・預金(青) /
+#   pension=年金・老後(紫) / default=時事・その他(従来の黄)
+ACCENTS = {
+    "invest":  ("#3ecf8e", "#1f9c63"),
+    "tax":     ("#ff7a6b", "#d14b3c"),
+    "save":    ("#5aa9ff", "#2f6fc0"),
+    "pension": ("#c39bff", "#8f63e0"),
+    "default": ("#fab219", "#c98500"),
+}
+
+
+def set_accent(name: str):
+    """アクセント色をカテゴリで切り替える。render_video より前に呼ぶ。
+
+    scenes_common / scenes_long は import 時に EMPH/GOLD を写し取るので、
+    読み込み済みならそちらの束縛も貼り替える。
+    """
+    global EMPH, GOLD, SERIES_1
+    EMPH, GOLD = ACCENTS[name]
+    SERIES_1 = EMPH                    # 主役の棒もテーマ色に合わせる
+    import sys as _sys
+    for mod in ("scenes_common", "scenes_long"):
+        m = _sys.modules.get(mod)
+        if m is not None:
+            m.EMPH, m.GOLD, m.SERIES_1 = EMPH, GOLD, SERIES_1
 # お金・成功の系列色(ループ2: 金融は金がアクセント。青とのCVD/コントラスト検証済み)
 GOLD = "#c98500"
 
@@ -225,7 +253,7 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
          u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
-         bgm, chara, out_name, SPEED_SCALE, W, H]).encode()).hexdigest()
+         bgm, chara, out_name, SPEED_SCALE, W, H, EMPH]).encode()).hexdigest()
 # 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
 # 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
 # ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
@@ -606,7 +634,10 @@ def new_canvas():
     return fig
 
 
-def draw_glow_text(fig, x: float, y: float, text: str, fontsize: float, color: str = EMPH):
+def draw_glow_text(fig, x: float, y: float, text: str, fontsize: float, color: str = None):
+    # 既定値を def 時に写すと set_accent が効かない。呼び出し時に解決する(ループ71)
+    if color is None:
+        color = EMPH
     """ヒーロー数字用: 影+グロー+縁取りの3層で立体感を出す(深掘りループ①)。"""
     fig.text(x, y - 0.007, text, ha="center", va="center", color="#000000",
              fontsize=fontsize, alpha=0.5,
@@ -737,9 +768,11 @@ def _needs_measure(segs, fs, weight):
 
 
 def draw_rich_line(fig, y: float, segs: list[tuple[str, bool]], fontsize: float,
-                   base_color: str = INK, emph_color: str = EMPH,
+                   base_color: str = INK, emph_color: str = None,
                    outline: float | None = None, ha_center_x: float = 0.5,
                    weight: str = "black"):
+    if emph_color is None:
+        emph_color = EMPH
     """強調色の混在する1行を中央揃えで描く(実測幅で並べ、幅超過なら自動縮小)。"""
     # canvas.draw() は1フレーム描くのと同じ重さ。測る必要があるときだけ呼ぶ
     renderer = None
@@ -807,9 +840,11 @@ def text_fit(fig, x: float, y: float, s: str, fontsize: float,
 
 
 def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
-                   base_color: str = INK, emph_color: str = EMPH,
+                   base_color: str = INK, emph_color: str = None,
                    outline: float | None = None, wrap: int = 0, line_h: float = 0.034,
                    block_fit: float | None = None):
+    if emph_color is None:
+        emph_color = EMPH
     """【】強調に対応したテキスト描画(中央揃え)。wrap>0で折り返し。
 
     block_fit: 最長行がこの幅(図の割合)に収まるようブロック全体を等縮小する。

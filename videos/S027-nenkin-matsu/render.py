@@ -14,6 +14,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "production"))
 from shortlib import Unit, render_video, require_voicevox  # noqa: E402
 import scenes_common as sc  # noqa: E402
+import shortlib as _sl  # noqa: E402
+
+_sl.set_accent("pension")  # カテゴリ色(docs/research/sakubun-gensoku.md とは別の画面施策)
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 BRAND = "数字で見るお金の教科書"

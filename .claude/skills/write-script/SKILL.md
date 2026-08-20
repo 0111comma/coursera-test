@@ -12,6 +12,21 @@ description: 企画書(videos/<ID>-<slug>/plan.md)から台本(script.md)を作�
 1つでも不合格なら書き直す。事実の羅列+小技はプロットではない(敵・賭け金・
 フリオチ・感情アークのない台本はボツ)。参考実装: videos/S001-tsumitate-fukuri/script.md(v3)
 
+## 書く工程(ループ71で固定。docs/research/sakubun-gensoku.md)
+
+**ゲートは検収であって、作文の道具ではない。** 次の順でしか書かない。
+
+```
+A. 鎖       plan.md の計算の鎖(1本)を先に完成させる
+B. 口で通す 聞き手ひとりに声に出して説明するつもりで、一気に最後まで書き下ろす。
+            途中でゲートを見ない
+C. 縦読み   python3 production/check_bunsho.py --tate videos/<ID>-<slug> で全文を
+            縦に並べ、通しで読む。「音読して恥ずかしくないか」で自分が先に落とす
+D. 検収     python3 production/check_all.py videos/<ID>-<slug>
+E. 不合格が出たら**段落ごと書き直す**。1行だけの差し替えは禁止
+   (1行パッチが「でも」「つまり」「その」の連続と、ぼかし語を生んだ。2週間の却下ログ参照)
+```
+
 ## 手順
 
 1. 対象の `videos/<ID>-<slug>/plan.md` を読む(引数でID指定。なければステータス「企画中」の最古のもの)

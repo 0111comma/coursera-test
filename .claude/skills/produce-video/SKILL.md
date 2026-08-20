@@ -37,3 +37,14 @@ description: 台本済みの動画(videos/<ID>-<slug>/script.md)からmp4をレ�
 - 音声のクレジット: VOICEVOX使用時は概要欄に「VOICEVOX:<キャラクター名>」を必ず入れる(既定は speaker=3 ずんだもん)
 - Shortsのセーフエリア: 重要情報は画面の左右8%・上部12%・下部20%を避ける(shortlibのヘルパを使えば自動で収まる)
 - 動画内の数値は必ず verify.py と同じ計算式から生成する(手打ちコピーしない)
+
+## 画面の単調さ対策(ループ71。ユーザー「画面構成飽きてきた」)
+
+1. **カテゴリ色**: render.py の import 直後に `shortlib.set_accent(<カテゴリ>)` を呼ぶ。
+   invest=NISA・投資(緑) / tax=税・取られる系(珊瑚) / save=貯金・預金(青) /
+   pension=年金・老後(紫) / default=時事・その他(黄)。
+   公開済み動画(S001〜)は触らない。色は動画単位で固定し、途中で変えない
+2. **図の型を1本で3種類以上使う**。card・bars2 だけの構成にしない。
+   scenes_common には hero / stack(積み上げ) / band(帯) / 株価チャート(price_path)が
+   すでにあるのに使っていなかった。テーマに合う型を判定表(figure-forms.md)から選ぶ
+3. カードは全ユニットの半分以下(check_figure の「図が足りない」が最低線)

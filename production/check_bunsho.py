@@ -217,6 +217,19 @@ def check_video(vdir: Path):
 
 
 def main():
+    if "--tate" in sys.argv:
+        sys.argv.remove("--tate")
+        for a in sys.argv[1:]:
+            vdir = Path(a)
+            spec = importlib.util.spec_from_file_location(f"t_{vdir.name}", vdir / "render.py")
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = mod
+            spec.loader.exec_module(mod)
+            print(f"===== {vdir.name}(縦読み用。工程C: 音読して恥ずかしくないか)")
+            for line in tate(mod.UNITS):
+                print(line)
+        return
+
     targets = [Path(a) for a in sys.argv[1:]] or sorted(
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
     total = 0

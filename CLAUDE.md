@@ -32,7 +32,9 @@
    ↓           **一行目は「この人の欲求」と「視聴後に決められること」**。
    ↓           ここが動作で書けないなら、その企画は捨てる
    ↓
-/write-script  企画書から videos/<ID>-<slug>/script.md(台本)を作る
+/write-script  企画書から videos/<ID>-<slug>/script.md(台本)を作る。
+   ↓           **書く工程は docs/research/sakubun-gensoku.md に従う**(鎖→書き下ろし→
+   ↓           縦読み→検収。ゲート不合格は段落ごと書き直す。1行パッチ禁止)
    ↓           計算を含む場合は verify.py で数値を検証してから台本に反映
 /produce-video 台本から videos/<ID>-<slug>/output/<ID>.mp4 をレンダリングする
    ↓           (production/shortlib.py + VOICEVOX + ffmpeg。詳細はスキル参照)

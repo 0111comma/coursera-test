@@ -61,7 +61,7 @@ def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: in
 
 
 def card(headline: str, main: str, sub: str, badge: str, brand: str,
-         main_color=EMPH, main_size: int = 54, sub_color=INK_2, sub_fs: int = 30,
+         main_color=None, main_size: int = 54, sub_color=INK_2, sub_fs: int = 30,
          head_fs: int = 34, ask: str = ""):
     """見出し+ポップインする主役語+補足の汎用カード。
 
@@ -69,14 +69,15 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
     視聴者に「自分はどうだろう」と考えさせながら最後まで見せる。
     """
     def painter(fig, t):
+        mc = main_color if main_color is not None else EMPH
         S.text_fit(fig, 0.5, 0.90, headline, ha="center", color=INK_2, fontsize=head_fs)
         if ask:
             S.text_fit(fig, 0.5, 0.775, ask, ha="center", color=EMPH, fontsize=31,
                      alpha=clamp01(t * 1.6 - 0.5))
         a = clamp01(t * 2)
-        S.text_fit(fig, 0.5, 0.62, main, ha="center", va="center", color=main_color,
+        S.text_fit(fig, 0.5, 0.62, main, ha="center", va="center", color=mc,
                  fontsize=main_size * max(ease_out_back(a), 0.05), alpha=a,
-                 path_effects=stroke_fx(main_color, outline=outline_for(main_size), fatten=2.5))
+                 path_effects=stroke_fx(mc, outline=outline_for(main_size), fatten=2.5))
         if sub:
             S.text_fit(fig, 0.5, 0.50, sub, ha="center", va="center",
                      color=sub_color, fontsize=sub_fs, alpha=clamp01(t * 2 - 0.8))
