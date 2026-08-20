@@ -63,7 +63,7 @@ UNITS = [
     Unit("tesu", "だから5000円のうち、元が減るのは3750円。", anim=0.0, speed=1.05),
     Unit("kakan", "では完済まで続けると、どうなるのか。", anim=1.6, speed=1.05),
     Unit("kakan", "すると完済には、まる2年かかるのだ。", anim=0.0, speed=1.05),
-    Unit("gokei", "2年ぶんの手数料は、1万5795円なのだ。", anim=1.6, speed=1.05),
+    Unit("gokei", "その2年でかかる手数料が、1万5795円。", anim=1.6, speed=1.05),
     Unit("gokei", "1万5795円が、10万円に上乗せされるのだ。", anim=0.0,
          face="surprised", se="don", speed=1.05, intonation=1.25),
     Unit("gokei", "だから払うのは、あわせて11万5795円。", anim=0.0, speed=1.05),
