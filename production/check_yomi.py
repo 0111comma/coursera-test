@@ -61,6 +61,30 @@ _E_ROW = ["エ", "ケ", "セ", "テ", "ネ", "ヘ", "メ", "レ", "ゲ", "ゼ", 
 
 
 
+_VOWEL = {}
+for _row, _v in [("アカサタナハマヤラワガザダバパャァヮ", "ア"),
+                 ("イキシチニヒミリギジヂビピィ", "イ"),
+                 ("ウクスツヌフムユルグズヅブプュゥヴ", "ウ"),
+                 ("エケセテネヘメレゲゼデベペェ", "エ"),
+                 ("オコソトノホモヨロゴゾドボポョォ", "オ")]:
+    for _ch in _row:
+        _VOWEL[_ch] = _v
+
+
+def _expand_choon(k: str) -> str:
+    """「ー」を直前の音の母音に開く(ボーナス→ボオナス)。
+
+    VOICEVOX の kana は長音を母音の文字で書く。辞書側の「ー」を消すだけだと
+    ボナス vs ボオナスで、音声が正しくても不一致になる。"""
+    out = []
+    for ch in k:
+        if ch == "ー" and out:
+            out.append(_VOWEL.get(out[-1], ""))
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
 def loose(k: str) -> str:
     """記号と表記ゆれだけを落とす。**長音の畳み込みはここでやらない。**
 
@@ -69,7 +93,12 @@ def loose(k: str) -> str:
     長音のゆれは、**辞書側の1語だけ**を variants() で開いて吸収する。
     """
     k = re.sub(r"[’'_/、。?!\s]", "", k)
-    return k.replace("ヴ", "ブ").replace("ー", "").replace("ヅ", "ズ").replace("ヂ", "ジ")
+    k = _expand_choon(k)
+    return k.replace("ヴ", "ブ").replace("ヅ", "ズ").replace("ヂ", "ジ")
+
+
+_RENDAKU = str.maketrans("カキクケコサシスセソタチツテトハヒフヘホ",
+                         "ガギグゲゴザジズゼゾダヂヅデドバビブベボ")
 
 
 def variants(reading: str):
@@ -77,6 +106,10 @@ def variants(reading: str):
     out = {reading}
     if reading == "ウ":
         out.add("オ")          # 「だろ|う」の う は、音では オ(ダロオ)
+    if reading == "ナニ":
+        out.add("ナン")        # 何% や 何歳 の 何 は ナン
+    if reading and reading[0] in "カキクケコサシスセソタチツテトハヒフヘホ":
+        out.add(reading[0].translate(_RENDAKU) + reading[1:])  # 連濁: リボ払い=バライ
     for a in _O_ROW:
         if a + "ウ" in reading:
             out |= {v.replace(a + "ウ", a + "オ") for v in list(out)}
@@ -113,6 +146,7 @@ def expected_tokens(text: str):
     out = []
     for t in _T.tokenize(text):
         surf, pos = t.surface, t.part_of_speech.split(",")[0]
+        sub = t.part_of_speech.split(",")[1]
         rd = t.reading
         if pos in ("助詞", "接続詞") and surf.endswith("は"):
             rd = loose(rd)[:-1] + "ワ"      # は・では・とは・には … 助詞のハはワ
@@ -120,7 +154,12 @@ def expected_tokens(text: str):
             rd = "オ"
         elif pos == "助詞" and surf == "へ":
             rd = "エ"
-        if rd == "*" or re.search(r"[0-9０-９]", surf) or pos == "記号":
+        sub2 = t.part_of_speech.split(",")[2]
+        # 数詞(万・千)と助数詞(円・月・歳)も飛ばす。「3千」は連濁でサンゼン、
+        # 「12月」はガツで、辞書のセン・ツキと突き合わせると音声が正しくても落ちる。
+        # 飛ばした並びは check_line が数字ごと VOICEVOX に単体で聞いて照合する
+        if (rd == "*" or re.search(r"[0-9０-９]", surf) or pos == "記号"
+                or sub == "数" or sub2 == "助数詞"):
             out.append((surf, None))
         else:
             out.append((surf, loose(rd)))
@@ -166,17 +205,42 @@ def check_line(text: str, ok):
     kana = loose(voicevox_kana(text))
     pos = 0
     bad = []
-    skipped = False
+    pending = []
     for surf, want in expected_tokens(text):
         if not want:
-            skipped = True                # 数字・記号・未知語はここで位置を進めない
+            pending.append(surf)          # 数字・記号・未知語。まとめて後で位置を進める
             continue
         if (surf, want) in ok or (surf, None) in ok:
             continue
-        # 直前に数字や未知語を飛ばしていたら、その読みぶん先まで探す。
-        # 「1469円」は数字が16モーラあり、窓を固定にすると「円」を見失う
-        limit = len(kana) if skipped else pos + WINDOW
-        skipped = False
+        # 直前に数字や未知語を飛ばしていたら、その読みを VOICEVOX に単体で聞き、
+        # 本文の読みの中で探して位置をそこまで進める。窓を開けるだけだと
+        # 「20.21%に」の助詞ニが数字の読みの中のニに食いつき、後続がずれる
+        limit = pos + WINDOW
+        if pending:
+            joined = "".join(pending)
+            g = loose(voicevox_kana(joined)) if loose(joined) != "" else ""
+            i = kana.find(g, pos) if g else -1
+            # 飛ばした並びの読みは今の位置のすぐ先にあるはず。遠くの一致は
+            # 別の語の一部(「2」のニが後ろの助詞ニに食いつく)なので採らない
+            if i != -1 and i - pos > 4:
+                i = -1
+            if i != -1:
+                pos = i + len(g)
+                limit = pos + WINDOW
+                pending = []
+            else:
+                # 数字は後ろの助数詞で読みが変わる(2つめ=フタツメ、単体の2=ニ)。
+                # 今の語まで含めて聞き直し、見つかればその語ごと照合済みにする。
+                # 数字を含まない飛ばし(読点だけ等)でやると逆に壊すので、数字の時だけ
+                j = -1
+                if re.search(r"[0-9０-９]", joined):
+                    g2 = loose(voicevox_kana(joined + surf))
+                    j = kana.find(g2, pos) if g2 else -1
+                pending = []
+                if j != -1:
+                    pos = j + len(g2)
+                    continue
+                limit = len(kana)         # それでも読みが違う数字は窓を全開に
         hit = -1
         for v in variants(want):
             i = kana.find(v, pos)
@@ -212,11 +276,14 @@ def check_video(vdir: Path, ok):
     issues = []
     seen = set()
     for i, u in enumerate(units, 1):
-        for surf, want, near in check_line(u.subtitle, ok):
+        # 照合するのは実際に読み上げるテキスト(narration上書きとREADING表を通した後)。
+        # 字幕の生テキストで照合すると、上書きで直してある NISA や 令和 が誤検出になる
+        text = u.tts_text()
+        for surf, want, near in check_line(text, ok):
             issues.append((f"#{i}", "読み間違いの疑い",
                            f"「{surf}」を {want} と読むはずが、音声は「{near}」。"
                            f"正しければ production/yomi_ok.txt に「{surf}:{near}」を足すこと"))
-        for c in compounds(u.subtitle):
+        for c in compounds(text):
             if c in seen or any(w == c for w, _ in ok):
                 continue
             seen.add(c)
