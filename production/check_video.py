@@ -5,13 +5,55 @@
 台本・レンダースクリプト・出力mp4を機械検証できる範囲で照合する。
 (物語面のチェックリストD1〜D22は docs/research/plot-playbook.md で人が照合する)
 """
+import importlib.util
+import json
 import re
 import subprocess
 import sys
+import urllib.parse
+import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from shortlib import SUB_WRAP, wrap_plain  # noqa: E402
+from shortlib import SPEED_SCALE, SUB_WRAP, wrap_plain  # noqa: E402
+
+
+def vv_total_sec(video_dir: Path):
+    """VOICEVOX の音素長から尺を出す(S030で実測較正: 誤差±0.05秒/ユニット)。
+
+    字数からの推定は数字の多い本ほど実測より短く出る(7172円=4字だが10モーラ)。
+    S027/S028/S030 が「推定合格→焼いたら55.5秒超過」を繰り返したので、
+    エンジンが起きていれば読み上げそのものの長さで判定する。
+    式: (モーラ長合計 + 前後の無音0.15) ÷ 話速 + pad
+    """
+    try:
+        urllib.request.urlopen("http://127.0.0.1:50021/version", timeout=3).read()
+    except Exception:
+        return None
+    try:
+        spec = importlib.util.spec_from_file_location(
+            f"cv_{video_dir.name}", video_dir / "render.py")
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = mod
+        spec.loader.exec_module(mod)
+        units = mod.UNITS
+    except Exception:
+        return None
+    total = 0.0
+    for u in units:
+        url = ("http://127.0.0.1:50021/audio_query?text="
+               f"{urllib.parse.quote(u.tts_text())}&speaker=3")
+        q = json.load(urllib.request.urlopen(
+            urllib.request.Request(url, method="POST"), timeout=30))
+        raw = 0.0
+        for ap in q["accent_phrases"]:
+            for mo in ap["moras"]:
+                raw += (mo.get("consonant_length") or 0) + (mo["vowel_length"] or 0)
+            if ap.get("pause_mora"):
+                pm = ap["pause_mora"]
+                raw += (pm.get("consonant_length") or 0) + (pm["vowel_length"] or 0)
+        total += (raw + 0.15) / (u.speed * SPEED_SCALE) + u.pad
+    return total
 
 # 戦略§6(コンプライアンス): 断定・投資助言に当たる表現の禁止
 # 1文字あたりの秒数(ループ58で再較正)。話速を1.3倍にしたので、
@@ -100,6 +142,9 @@ def main(video_dir: Path) -> int:
     #   S012 345字/18u → 推定55.1s / 実測58.0s(+5%。金額の読み上げが多い)
     # 上限55.5sは60秒に対する安全余裕として置いてある。定数は動かさない
     est = total_chars * SEC_PER_CHAR + len(units) * 0.15
+    vv = vv_total_sec(video_dir)
+    if vv is not None:
+        est = vv          # エンジンが起きていれば音素長ベース(誤差±1秒未満)を使う
     if LONG:
         # 尺は**下限で縛らない**(ループ70 フェーズ1)。
         # 「8分以上」を不合格条件にしていたら、8分に届かせるために内容を足した。
