@@ -471,6 +471,21 @@ UNITS = [
          face="happy", speed=1.05),
 ]
 
+CHAPTER_MARKS_TITLES = [
+    "NISAで損したら、いくら損するのか",
+    "第1章 NISAの損は、利益から引けるのか",
+    "第2章 来年の利益からは、引けるのか",
+    "第3章 この不利は、いくらまで効くのか",
+    "第4章 自分の場合は、どう出すのか",
+]
+# 章の先頭ユニットは台本から拾う。手で添字を書くと、台本を直したとき必ずずれる
+_first = {}
+for _i, _u in enumerate(UNITS):
+    _first.setdefault(_u.scene, _i)
+CHAPTER_MARKS = list(zip(
+    [0] + [_first[f"ch{k}"] for k in range(1, 5)], CHAPTER_MARKS_TITLES))
+assert [i for i, _ in CHAPTER_MARKS] == sorted(i for i, _ in CHAPTER_MARKS)
+
 
 if __name__ == "__main__":
     require_voicevox()
