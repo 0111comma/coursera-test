@@ -5,6 +5,10 @@
 - **設計の根拠**: `docs/research/longform-design.md`(長尺の型)、
   `docs/research/competitive-positioning.md`(後発の立ち回り)
 
+## 最初の一言(問い)
+
+株で損したら、税金はどうなるのか?
+
 ## この人の欲求
 
 **株で損した。この損を、せめて税金の足しにしたい。無駄にしたくない。**

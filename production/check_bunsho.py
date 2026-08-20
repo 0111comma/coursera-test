@@ -124,6 +124,16 @@ def check_video(vdir: Path):
     sents = sentences(units)
     bad, warn = [], []
 
+    # 指示語・接続語の上限はショート(約17ユニット)で決めた**密度**の基準。
+    # 横型の長尺(100ユニット超)に絶対数のまま当てると「1本で指示語4回」になり、
+    # 日本語として不自然な縛りになる。CLAUDE.md「縦型と横型で基準が変わるものは
+    # 形式を見て切り替える」に従い、長尺はユニット数に比例して上限を伸ばす。
+    # 密度そのものはショートと同じ(緩めてはいない)
+    src = (vdir / "render.py").read_text()
+    scale = max(1, round(len(units) / 17)) if "use_landscape" in src else 1
+    shiji_max = SHIJI_MAX * scale
+    setsuzoku_max = SETSUZOKU_MAX * scale
+
     # D1: 同じ指示語で始まる文が3つ以上続く
     run_word, run = None, []
     for i, s in enumerate(units):
@@ -144,11 +154,11 @@ def check_video(vdir: Path):
     subs = [u.subtitle for u in units]
     joined = "".join(subs)
     n_shiji = sum(joined.count(w) for w in SHIJI_ANY)
-    if n_shiji > SHIJI_MAX:
+    if n_shiji > shiji_max:
         naka = [f"#{i}「{w}」" for i, t in enumerate(subs, 1)
                 for w in SHIJI_ANY if w in t]
         bad.append(("(動画全体)", "指示語が多い",
-                    f"{n_shiji}回。{SHIJI_MAX}回まで。"
+                    f"{n_shiji}回。{shiji_max}回まで。"
                     f"前の文を受けるなら、指示語ではなく名詞をもう一度言うこと: "
                     f"{' '.join(naka[:10])}"))
 
@@ -169,9 +179,9 @@ def check_video(vdir: Path):
     # D5: 同じ接続語の使いすぎ
     for w in SETSUZOKU:
         n = sum(1 for t in subs if t.startswith(w))
-        if n > SETSUZOKU_MAX:
+        if n > setsuzoku_max:
             bad.append(("(動画全体)", "同じ接続語が多い",
-                        f"「{w}」で始まる文が{n}個。{SETSUZOKU_MAX}個まで"))
+                        f"「{w}」で始まる文が{n}個。{setsuzoku_max}個まで"))
 
     # D7: ぼかし語
     for i, t in enumerate(subs, 1):
