@@ -24,7 +24,7 @@ def fmt(t: float) -> str:
 
 
 def main():
-    for d in sorted(ROOT.glob("videos/S0*")):
+    for d in sorted(ROOT.glob("videos/[SL]0*")):
         sid = d.name.split("-")[0]
         if not (d / "render.py").exists():
             continue          # verify.pyだけの下ごしらえ段階(台本前)はスキップ
