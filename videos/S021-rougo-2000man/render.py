@@ -66,7 +66,7 @@ UNITS = [
     Unit("unyo", "この場合は毎月5万2300円、要るのだ。", anim=1.6,
          speed=1.05, intonation=1.2),
     Unit("unyo", "では積立が年5%で、増えたと仮定する。", anim=0.0, speed=1.05),
-    Unit("unyo", "仮定どおりなら毎月2万4000円で、足りる。", anim=0.0,
+    Unit("unyo", "仮定どおりなら、毎月2万4000円で足りる。", anim=0.0,
          face="surprised", se="impact", se_at=0.30, speed=1.05, intonation=1.25),
     Unit("sa", "毎月の差は、2万8300円になるのだ。", anim=1.6,
          se="don", speed=1.05, intonation=1.2),
