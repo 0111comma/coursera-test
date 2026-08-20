@@ -205,6 +205,9 @@ def main(video_dir: Path) -> int:
     smd = sp.read_text() if sp.exists() else ""
     check("script.md 存在", bool(smd))
     check("VOICEVOXクレジット", "VOICEVOX:" in smd, "キャラ利用ガイドライン必須")
+    if "use_duo" in src:
+        check("四国めたんクレジット(二人会話)", "VOICEVOX:四国めたん" in smd,
+              "二人会話の動画は両方の音源クレジットが必須(duo-skit-2026-08.md)")
     # ループ㉛: #shortsは判定に不要(自動判定)。日本語ハッシュタグ2〜4個の行が方針
     tagline = re.search(r"^(#\S+(?:\s+#\S+)+)\s*$", smd, re.M)
     ntags = len(tagline.group(1).split()) if tagline else 0

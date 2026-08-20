@@ -41,8 +41,18 @@ def main(vdir: Path, meta: dict):
     chars = sum(len(u.subtitle.replace("【", "").replace("】", "")) for u in units)
     est = chars * SEC_PER_CHAR + len(units) * 0.15
     # 横型の長尺かどうか(render.py が use_landscape() を呼んでいるか)で見出しを変える
-    long_form = "use_landscape" in (vdir / "render.py").read_text()
+    src = (vdir / "render.py").read_text()
+    long_form = "use_landscape" in src
     kind = "長尺・横型" if long_form else "ショート"
+    # 二人会話(use_duo)なら四国めたんのクレジットを足す(必須。duo-skit-2026-08.md)
+    global CREDITS
+    if "use_duo" in src or any(getattr(u, "speaker", 0) == 2 for u in units):
+        CREDITS = CREDITS.replace(
+            "音声: VOICEVOX:ずんだもん",
+            "音声: VOICEVOX:ずんだもん / VOICEVOX:四国めたん").replace(
+            "立ち絵: 坂本アヒル 様(ずんだもん立ち絵素材)/ずんだもんは",
+            "立ち絵: 坂本アヒル 様(ずんだもん立ち絵素材)・VOICEVOX公式(四国めたん)/"
+            "ずんだもん・四国めたんは")
     length = f"約{est / 60:.1f}分" if long_form else f"約{est:.0f}秒"
 
     body = f"""# 台本({kind}): {meta['title']}

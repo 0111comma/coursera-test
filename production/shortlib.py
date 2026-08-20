@@ -197,6 +197,7 @@ class Unit:
     puchun: bool = False     # ユニット頭に「プチュン」を鳴らす(音だけのフリーズ演出。映像の暗転はしない)
     face: str = "normal"     # 立ち絵の表情 normal/surprised/troubled/happy/smug(deep-loops ㉙: 1本で2〜4種)
     chara: str = "bl"        # 立ち絵の位置 "bl"(左下)/"br"(右下)/"none"(そのユニットで非表示)
+    speaker: int = 0         # 話者の上書き(0=render_videoの既定)。二人会話は 3=ずんだもん/2=めたん
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -227,6 +228,21 @@ READING = {
 
 VOICEVOX_URL = "http://127.0.0.1:50021"
 DEFAULT_SPEAKER = 3      # ずんだもん(ノーマル)。概要欄に「VOICEVOX:ずんだもん」必須(R13)
+METAN_SPEAKER = 2        # 四国めたん(ノーマル)。概要欄に「VOICEVOX:四国めたん」必須
+
+# 二人会話(寸劇)モード。duo-skit-2026-08.md の調査に基づく:
+#   ずんだもん=聞き手(左・反転して内側向き) / 四国めたん=解説役(右・公式ポートレート)。
+#   話者は Unit.speaker で切り替え、字幕に名札(緑/ピンク)、非話者は減光。
+DUO = False
+ZUNDA_TAG_COLOR = "#3ecf8e"   # ずんだもんの名札(緑)
+METAN_TAG_COLOR = "#f28bb4"   # めたんの名札(ピンク。髪色由来の慣行)
+
+
+def use_duo():
+    """二人会話(ずんだもん×四国めたん)に切り替える。render.py の先頭で
+    use_landscape() と同じく new_canvas() より前に1回だけ呼ぶ。"""
+    global DUO
+    DUO = True
 DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 # 全体の話速の倍率(ループ58)。ユーザー指摘:
 #   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
@@ -250,10 +266,11 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
     """
     return hashlib.sha256(repr([
         (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
-         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara)
+         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara,
+         u.speaker)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
-         bgm, chara, out_name, SPEED_SCALE, W, H, EMPH]).encode()).hexdigest()
+         bgm, chara, out_name, SPEED_SCALE, W, H, EMPH, DUO]).encode()).hexdigest()
 # 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
 # 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
 # ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
@@ -320,7 +337,8 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
             wavs.append(w)          # 再開: すでに合成済み(署名が一致した回のみ残っている)
             continue
         if use_vv:
-            tts_voicevox(u.tts_text(), w, speaker=speaker, intonation=u.intonation,
+            tts_voicevox(u.tts_text(), w, speaker=(u.speaker or speaker),
+                         intonation=u.intonation,
                          speed=(u.speed or DEFAULT_SPEED) * SPEED_SCALE, pitch=u.pitch,
                          pause_scale=u.pause_scale)
         else:
@@ -872,15 +890,35 @@ def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                        outline=outline, ha_center_x=x)
 
 
-def draw_subtitle(fig, text: str, pop: float = 1.0):
+def draw_subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
     """R6/R7/R8: ナレーション文そのものを縁取りテロップで。【】は黄色。
 
     pop>1 で表示直後の「ポン」(スケール収束)を表現する(ループ10)。
     block_fit=0.70: 字幕はShorts右ボタン列(x>0.85)に掛けない(x 0.15〜0.85。ループ⑫)。
     横型(use_landscape)ではUIを避ける必要がないので 0.86 まで広げる。
+    tag: 予備(未使用)。二人会話の話者表示は draw_speaker_plate(頭上の名前プレート)で行う。
+    字幕ブロックは上から下に積まれるため、字幕側に名札を足すと本文と衝突する。
     """
     draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=SUB_LINE_H,
                    block_fit=SUB_BLOCK_FIT)
+
+
+def draw_speaker_plate(fig, name: str):
+    """二人会話: 話している側の頭上に名前プレートを出す(緑=ずんだもん/ピンク=めたん)。
+    位置は立ち絵rectから計算するので縦型・横型どちらでも合う。"""
+    import metan as _metan
+    if name == "めたん":
+        x0, y0, w_fr, h_fr = CHARA_RECTS["br"]
+        art_w_fr = h_fr * H * (_metan.ART_W / _metan.ART_H) / W
+        cx = x0 + w_fr - art_w_fr / 2
+        color = METAN_TAG_COLOR
+    else:
+        x0, y0, w_fr, h_fr = CHARA_RECTS["bl"]
+        cx = x0 + w_fr / 2
+        color = ZUNDA_TAG_COLOR
+    fig.text(cx, y0 + h_fr + 0.028, name, ha="center", va="center",
+             color="#17202a", fontsize=BADGE_FS * 0.95, fontweight="bold",
+             bbox=dict(boxstyle="round,pad=0.45", facecolor=color, edgecolor="none"))
 
 
 def draw_badge(fig, text: str):
@@ -942,14 +980,29 @@ CHARA_RECTS = {
 }
 
 
-def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0):
+def draw_chara(fig, pos: str, mouth: int, eyes: str, expr: str, dy: float = 0.0,
+               alpha: float = 1.0):
     from zunda import draw_zunda
     ax = fig.add_axes(CHARA_RECTS[pos])
     ax.axis("off")
     # dyは13スケール単位 → 素材915pxに換算(呼吸±0.10→7px、ジャンプ0.5→35px)。
     # 素材は左向きなので、左下配置では反転して画面内側(右)を向かせる(ミラー定石)
     draw_zunda(ax, mouth=mouth, eyes=eyes, expr=expr, dy_px=dy / 13.0 * 915.0,
-               flip=(pos == "bl"))
+               flip=(pos == "bl"), alpha=alpha)
+
+
+def draw_metan_chara(fig, talking: bool, t: float, alpha: float = 1.0):
+    """めたん(右下・公式ポートレート)。素材300×500の縦横比を保つため、
+    右下rectの高さを使い、幅は比から出して**右端に寄せる**。"""
+    import metan
+    from zunda import breath_offset
+    x0, y0, w_fr, h_fr = CHARA_RECTS["br"]
+    art_w_fr = h_fr * H * (metan.ART_W / metan.ART_H) / W
+    ax = fig.add_axes([x0 + w_fr - art_w_fr, y0, art_w_fr, h_fr])
+    ax.axis("off")
+    dy = breath_offset(t * 0.93, 13, 2.4) / 13.0 * metan.ART_H
+    dy += metan.talk_bob_px(t, talking)
+    metan.draw_metan(ax, dy_px=dy, alpha=alpha)
 
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
@@ -1047,8 +1100,20 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                     bt = t_unit - (0.07 if u.cover else 0.0)
                     if 0 <= bt < 0.35:
                         dy += 0.5 * math.sin(math.pi * bt / 0.35)
-                draw_chara(fig, u.chara, mouth, blink.eyes(tg) if not static_chara else "open",
-                           u.face, dy)
+                if DUO:
+                    # 二人会話: ずんだもん左(聞き手)・めたん右(解説役)。
+                    # 口パク/ボブは話者側だけ、非話者は減光(duo-skit-2026-08.md)。
+                    z_active = (u.speaker or DEFAULT_SPEAKER) != METAN_SPEAKER
+                    draw_chara(fig, "bl", mouth if z_active else 0,
+                               blink.eyes(tg) if not static_chara else "open",
+                               u.face, dy if z_active else breath_offset(tg, 13, breath_phase),
+                               alpha=1.0 if z_active else 0.72)
+                    draw_metan_chara(fig, talking=(not z_active and mouth > 0 and not static_chara),
+                                     t=tg, alpha=0.72 if z_active else 1.0)
+                    draw_speaker_plate(fig, "ずんだもん" if z_active else "めたん")
+                else:
+                    draw_chara(fig, u.chara, mouth,
+                               blink.eyes(tg) if not static_chara else "open", u.face, dy)
             if with_subtitle:
                 draw_subtitle(fig, u.subtitle, pop=pop)
             save_frame(fig, f)

@@ -38,13 +38,15 @@ def _img(expr: str, mouth: int, eyes: str, flip: bool = False):
     return _IMG_CACHE[key]
 
 
-def draw_zunda(ax, mouth=0, eyes="open", expr="normal", dy_px: float = 0.0, flip: bool = False):
+def draw_zunda(ax, mouth=0, eyes="open", expr="normal", dy_px: float = 0.0, flip: bool = False,
+               alpha: float = 1.0):
     """立ち絵を描く。ax=専用オーバーレイaxes(縦横比は呼び出し側のrectで合わせる)。
     mouth: 0閉/1半/2開 / eyes: open/closed(まばたき) / dy_px: 上下 / flip: 左右反転
+    alpha: 減光(二人会話で話していない側=0.72)
     """
     arr = _img(expr, mouth, eyes, flip)
     h, w = arr.shape[:2]
-    ax.imshow(arr, extent=[0, w, h, 0], interpolation="bilinear", aspect="auto")
+    ax.imshow(arr, extent=[0, w, h, 0], interpolation="bilinear", aspect="auto", alpha=alpha)
     ax.set_xlim(0, w)
     ax.set_ylim(h - dy_px, -dy_px)
     ax.autoscale(False)
