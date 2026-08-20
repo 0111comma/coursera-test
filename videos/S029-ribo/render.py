@@ -27,7 +27,7 @@ assert SOGAKU - 100_000 == 15_795
 SCENES = {
     "toi": sc.card("この動画の問い", "総額いくら?", "※ 金額はすべて仮定の例です",
                    BADGE, BRAND, main_size=110, head_fs=32),
-    "toi__cover": sc.cover("10万円の買い物、リボだと総額いくら?", "11万5795円",
+    "toi__cover": sc.cover("10万円の買い物、リボだと総額いくら?", "??万円",
                            "一括で払えば、手数料はゼロ",
                            "2026年8月時点", BRAND),
     "shikumi": sc.card("リボ払いとは", "毎月決まった額", "※ この例では毎月5000円",
@@ -73,7 +73,7 @@ UNITS = [
     Unit("matome", "ちなみに一括払いなら、手数料はゼロ。", anim=1.6,
          speed=1.05, intonation=1.2),
     Unit("matome", "つまり一括とくらべ、1万5795円高いのだ。", anim=0.0, speed=1.05),
-    Unit("shime", "だから買う前に、支払いの方式を見てほしい。", anim=1.4,
+    Unit("shime", "買い物の前に、リボになっていないか見る。", anim=1.4,
          face="happy", puchun=True, speed=1.1, intonation=1.2),
 ]
 

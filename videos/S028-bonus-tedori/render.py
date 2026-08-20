@@ -27,8 +27,8 @@ assert 500_000 - TEDORI == 108_291
 SCENES = {
     "toi": sc.card("この動画の問い", "手取りはいくら?", "※ 東京の会社員の例です",
                    BADGE, BRAND, main_size=92, head_fs=32),
-    "toi__cover": sc.cover("ボーナス50万、手取りはいくら?", "39万円",
-                           "10万8291円は、引かれて消える",
+    "toi__cover": sc.cover("ボーナス50万、手取りはいくら?", "??万円",
+                           "答えの額を見て、使い道を決めてほしい",
                            "2026年度", BRAND),
     "gaku": sc.card("この例のボーナス", "50万円", "※ 金額はすべて仮定の例です",
                     BADGE, BRAND, main_size=132, head_fs=32),
@@ -71,7 +71,7 @@ UNITS = [
     Unit("kekka", "そして残りの10万8291円は、消えたのだ。", anim=0.0, speed=1.05),
     Unit("matome", "ちなみに住民税は、ここでは0円なのだ。", anim=1.6, speed=1.05),
     Unit("matome", "住民税は毎月の給料から、引かれているのだ。", anim=0.0, speed=1.05),
-    Unit("shime", "だから使い道は、手取りの39万円で立ててほしい。", anim=1.4,
+    Unit("shime", "ボーナスの予定は、手取りの39万円で立てる。", anim=1.4,
          face="happy", puchun=True, speed=1.1, intonation=1.2),
 ]
 
