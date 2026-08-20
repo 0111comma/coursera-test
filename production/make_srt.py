@@ -26,6 +26,8 @@ def fmt(t: float) -> str:
 def main():
     for d in sorted(ROOT.glob("videos/S0*")):
         sid = d.name.split("-")[0]
+        if not (d / "render.py").exists():
+            continue          # verify.pyだけの下ごしらえ段階(台本前)はスキップ
         src = (d / "render.py").read_text()
         subs = [s.replace("【", "").replace("】", "")
                 for s in re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)]
