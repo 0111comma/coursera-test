@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S019: 積立の手数料0.9%の差が、20年でいくらになるのか。
+"""S017: 積立の手数料0.9%の差が、20年でいくらになるのか。
 
 企画書は plan.md、数値は verify.py。
 
@@ -93,5 +93,5 @@ UNITS = [
 
 if __name__ == "__main__":
     require_voicevox()
-    r = render_video(UNITS, SCENES, OUTDIR, "S019.mp4")
+    r = render_video(UNITS, SCENES, OUTDIR, "S017.mp4")
     print(f"total: {r['total_sec']:.1f}s / mp4: {r['mp4']}")

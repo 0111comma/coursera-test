@@ -54,14 +54,14 @@ SCENES = {
 UNITS = [
     Unit("toi", "ふるさと納税の2000円、何回払うの?", anim=1.0, cover=True,
          se="pop", speed=1.05, intonation=1.3),
-    Unit("ichi", "たとえば自治体ひとつに、1万円を納めたとする。", anim=1.4, speed=1.05),
+    Unit("ichi", "たとえば自治体ひとつに、1万円を納める。", anim=1.4, speed=1.05),
     Unit("ichi", "その寄付に、返礼品が届くのだ。", anim=0.0, speed=1.05),
     Unit("ichi", "返礼品は寄付の3割までと、決まっている。", anim=0.0, speed=1.05),
-    Unit("ichi", "つまり3000円ぶんが届くのだ。", anim=0.0,
+    Unit("ichi", "つまり返礼品は、3000円ぶん届くのだ。", anim=0.0,
          speed=1.05),
     Unit("ichi", "そこから2000円を引くと、1000円ぶんが残る。", anim=0.0,
          speed=1.05),
-    Unit("juu", "では10の自治体に、1万円ずつ納めたとする。", anim=1.6, speed=1.05),
+    Unit("juu", "では10の自治体に、1万円ずつ納めると?", anim=1.6, speed=1.05),
     Unit("juu", "すると納めた額は、10万円になるのだ。", anim=0.0, speed=1.05),
     Unit("juu", "返礼品も10倍で、3万円ぶんが届く。", anim=0.0,
          face="happy", speed=1.05),
@@ -78,7 +78,7 @@ UNITS = [
     Unit("matome", "ただし上限を超えた分は、税から引かれない。", anim=0.0,
          face="troubled", speed=1.05),
     Unit("matome", "超えた分は、まるごと自腹になるのだ。", anim=0.0, speed=1.05),
-    Unit("shime", "だから今年は、上限まで分けて使ってほしい。", anim=1.4,
+    Unit("shime", "だから今年は、分けて使ってほしいのだ。", anim=1.4,
          face="happy", puchun=True, speed=1.1, intonation=1.2),
 ]
 

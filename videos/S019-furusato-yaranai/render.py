@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""S017: ふるさと納税をやらないと、年にいくら損しているのか。
+"""S019: ふるさと納税をやらないと、年にいくら損しているのか。
 
 企画書は plan.md、数値は verify.py。
 
@@ -101,5 +101,5 @@ UNITS = [
 
 if __name__ == "__main__":
     require_voicevox()
-    r = render_video(UNITS, SCENES, OUTDIR, "S017.mp4")
+    r = render_video(UNITS, SCENES, OUTDIR, "S019.mp4")
     print(f"total: {r['total_sec']:.1f}s / mp4: {r['mp4']}")

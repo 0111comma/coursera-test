@@ -86,3 +86,5 @@ NISA
 iDeCo
 ATM
 毎月
+リボ
+買い物
