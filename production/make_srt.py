@@ -31,7 +31,12 @@ def main():
         src = (d / "render.py").read_text()
         subs = [s.replace("【", "").replace("】", "")
                 for s in re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)]
-        segs = sorted((d / "output" / "work").glob("seg_*_pad.wav"))
+        # **辞書順で並べてはいけない。** seg_{i:02d} は i>=100 で3桁になるため、
+        # sorted() だと seg_09 の次に seg_100 が来て、100ユニットを超える長尺の
+        # 字幕の時刻が最大14.6秒ずれる(L001で実際に出荷してしまった。2026-08-21に発見)。
+        # 動画本体は shortlib が順序どおりのリストで結合しているので無事だった。
+        segs = sorted((d / "output" / "work").glob("seg_*_pad.wav"),
+                      key=lambda q: int(re.search(r"seg_(\d+)_pad", q.name).group(1)))
         if len(segs) != len(subs):
             print(f"{sid}: seg数{len(segs)} != unit数{len(subs)} — スキップ(再レンダリングが必要)")
             continue
