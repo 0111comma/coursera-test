@@ -486,14 +486,40 @@ CHAPTER_MARKS = list(zip(
     [0] + [_first[f"ch{k}"] for k in range(1, 5)], CHAPTER_MARKS_TITLES))
 assert [i for i, _ in CHAPTER_MARKS] == sorted(i for i, _ in CHAPTER_MARKS)
 
+# 章チップ(左上に常時表示。章ごとに色が替わる。video-elements-2026-08.md #5)
+BANDS = list(zip(
+    [i for i, _ in CHAPTER_MARKS],
+    ["今日の問い", "第1章 引けない損", "第2章 翌年も払う", "第3章 差の上限", "第4章 自分の場合"],
+    ["#fab219", "#ff7a6b", "#c39bff", "#5aa9ff", "#3ecf8e"],
+))
+
+
+def make_thumbnail():
+    """サムネ専用描画(定番=キャラの顔+大文字+色背景。video-elements-2026-08.md #10)。
+    カバー構図に、驚き顔のずんだもん(左・大きめ)とめたん(右)を重ねる。"""
+    from zunda import draw_zunda
+    import metan as mt
+    fig = S.new_canvas(0.0)
+    SCENES["son__cover"](fig, 1.0)
+    ax = fig.add_axes([0.000, 0.020, 0.305, 0.620])
+    ax.axis("off")
+    draw_zunda(ax, mouth=2, eyes="open", expr="surprised", flip=True)
+    h_fr = 0.46
+    w_fr = h_fr * S.H * (mt.ART_W / mt.ART_H) / S.W
+    ax2 = fig.add_axes([0.995 - w_fr, 0.020, w_fr, h_fr])
+    ax2.axis("off")
+    mt.draw_metan(ax2)
+    S.save_frame(fig, OUTDIR / "thumbnail.png")
+
 
 if __name__ == "__main__":
     require_voicevox()
-    result = render_video(UNITS, SCENES, OUTDIR, "L001.mp4")
+    result = render_video(UNITS, SCENES, OUTDIR, "L001.mp4", bands=BANDS)
     print(f"total: {result['total_sec']:.1f}s")
     lines = sl.chapter_lines(result["unit_secs"], CHAPTER_MARKS)
     (OUTDIR / "chapters.txt").write_text("\n".join(lines) + "\n")
     print("chapters:")
     for ln in lines:
         print("  " + ln)
+    make_thumbnail()
     print(f"mp4: {result['mp4']}")

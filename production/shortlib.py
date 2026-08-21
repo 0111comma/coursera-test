@@ -134,6 +134,9 @@ def use_landscape():
     # 環境変数で明示指定されているときは、それを尊重して上書きしない
     if "SHORTLIB_SPEED_SCALE" not in os.environ:
         SPEED_SCALE = LONG_SPEED_SCALE
+    # 長尺はリッチ背景(背景+テロップ帯+素材枠+章チップ)を標準にする
+    # (video-elements-2026-08.md。ショートは実測検証済みの現行ルックを維持)
+    use_rich_bg()
 
 # ループ3: テロップの定番は源ノ角ゴシック(=Noto Sans CJK JP)。太ウェイトを実際に使う
 _JP_FONT_CANDIDATES = [
@@ -253,7 +256,7 @@ LONG_STOP_PAD = 0.5
 
 
 def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
-                     out_name="") -> str:
+                     out_name="", bands=None) -> str:
     """レンダリング結果を一意に決める署名。
 
     `render_video` の再開判定に使うほか、**`check_long.py` が
@@ -270,7 +273,8 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
          u.speaker)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
-         bgm, chara, out_name, SPEED_SCALE, W, H, EMPH, DUO]).encode()).hexdigest()
+         bgm, chara, out_name, SPEED_SCALE, W, H, EMPH, DUO, RICH_BG,
+         bands]).encode()).hexdigest()
 # 長尺(横型)の倍率。use_landscape() が環境変数の指定が無いときに差し替える。
 # 実測(05-tempo.md): 実効speed 1.25 = 約340字/分 = 日本語の「標準」の上限。
 # ショートの 1.3 は L001 で 398字/分 = 「速め」になり、8分続けると疲れる。
@@ -561,7 +565,9 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
         # 深掘り③: ダッキング(発話中はBGMが自動で下がる。動画ミックスの定石)
         filters.append("[0:a]asplit=2[nara][narb]")
         filters.append(
-            f"[{n_in}:a]volume=0.6[bgv];"
+            # 0.6→0.15(video-elements-2026-08.md #12)。実測: 声RMS-27.4dB/BGM生-25.2dB。
+            # 0.15でダッキング込みの発話中ギャップ約-22dB(定石: 声より-20dB、ゆっくり系は更に下)
+            f"[{n_in}:a]volume=0.15[bgv];"
             "[bgv][narb]sidechaincompress=threshold=0.015:ratio=6:attack=8:release=300:makeup=1[bg]"
         )
         if bgm_mute:
@@ -643,11 +649,85 @@ def _bg_image():
     return _BG_CACHE
 
 
-def new_canvas():
+# 長尺のリッチ背景(video-elements-2026-08.md)。定番の「背景+テロップ帯+素材枠」構成:
+#   ベース=教科書モチーフ(罫線ノート+紙目+ビネット、明度一段上げ)
+#   動き=薄い円貨(¥)モチーフが斜めにゆっくり流れる(「常にどこかが動く」の定石)
+#   枠=中央コンテンツ領域の角丸パネル / 章チップ=左上に常時表示(章ごとに色替え)
+RICH_BG = False
+DRIFT_FPS = 4            # 静止ユニットでも背景を流すためのフレームレート
+CURRENT_BAND = None      # (章ラベル, 色)。render_video が bands から units ごとに設定
+_BG_CACHE_RICH = None
+
+
+def use_rich_bg():
+    global RICH_BG
+    RICH_BG = True
+
+
+def _bg_image_rich():
+    global _BG_CACHE_RICH
+    if _BG_CACHE_RICH is None:
+        import numpy as np
+        h, w = 240, 135
+        y, x = np.mgrid[0:h, 0:w]
+        cx, cy = w / 2, h * 0.38
+        r = np.sqrt(((x - cx) / (w * 0.85)) ** 2 + ((y - cy) / (h * 0.85)) ** 2)
+        base = np.array([0x2b, 0x2a, 0x25], float)   # 中心(明るめの紙色がかった黒)
+        edge = np.array([0x17, 0x16, 0x14], float)
+        t = np.clip(r, 0, 1)[..., None]
+        img = base * (1 - t) + edge * t
+        vin = 1 - 0.12 * np.clip((r - 0.70) / 0.40, 0, 1)
+        img = img * vin[..., None]
+        _BG_CACHE_RICH = (img / 255).clip(0, 1)
+    return _BG_CACHE_RICH
+
+
+def _draw_rich_layers(fig, bg_ax, t: float):
+    import numpy as np
+    # 罫線ノート(横罫+左の縦罫。ごく薄く)
+    for k in range(1, 12):
+        bg_ax.axhline(k / 12, color="#8a8578", linewidth=0.7, alpha=0.055)
+    bg_ax.axvline(0.045, color="#b0846a", linewidth=1.0, alpha=0.10)
+    # 流れる円貨モチーフ(疑似乱数は添字から決める。Date系は使わない)
+    for i in range(7):
+        sx = ((i * 0.161 + 0.07) + t * 0.010) % 1.16 - 0.08
+        sy = ((i * 0.379 + 0.15) + t * 0.006) % 1.16 - 0.08
+        rr = 0.025 + (i % 3) * 0.013
+        c = plt.Circle((sx, sy), rr, fill=False, color="#c8bfa5",
+                       linewidth=1.4, alpha=0.05)
+        bg_ax.add_patch(c)
+        bg_ax.text(sx, sy, "¥", ha="center", va="center", color="#c8bfa5",
+                   fontsize=rr * 900, alpha=0.05)
+    # 素材表示枠(中央コンテンツの角丸パネル)
+    from matplotlib.patches import FancyBboxPatch
+    panel = FancyBboxPatch((0.030, 0.225), 0.940, 0.680,
+                           boxstyle="round,pad=0.008,rounding_size=0.015",
+                           facecolor="#ffffff", alpha=0.030,
+                           edgecolor="#8a8578", linewidth=1.2)
+    panel.set_alpha(None)
+    panel.set_facecolor((1, 1, 1, 0.030))
+    panel.set_edgecolor((0.54, 0.52, 0.47, 0.28))
+    bg_ax.add_patch(panel)
+    # 章チップ(左上に常時表示。色は章ごと)
+    if CURRENT_BAND:
+        label, color = CURRENT_BAND
+        fig.text(0.028, 0.945, label, ha="left", va="center", color="#17202a",
+                 fontsize=BADGE_FS, fontweight="bold",
+                 bbox=dict(boxstyle="round,pad=0.45", facecolor=color, edgecolor="none"))
+
+
+def new_canvas(t_global: float = 0.0):
     fig = plt.figure(figsize=FIGSIZE, dpi=DPI)
     fig.patch.set_facecolor(SURFACE)
     bg = fig.add_axes([0, 0, 1, 1], zorder=-10)
-    bg.imshow(_bg_image(), extent=[0, 1, 0, 1], aspect="auto", interpolation="bicubic")
+    if RICH_BG:
+        bg.imshow(_bg_image_rich(), extent=[0, 1, 0, 1], aspect="auto",
+                  interpolation="bicubic")
+        bg.set_xlim(0, 1)
+        bg.set_ylim(0, 1)
+        _draw_rich_layers(fig, bg, t_global)
+    else:
+        bg.imshow(_bg_image(), extent=[0, 1, 0, 1], aspect="auto", interpolation="bicubic")
     bg.axis("off")
     return fig
 
@@ -896,9 +976,23 @@ def draw_subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
     pop>1 で表示直後の「ポン」(スケール収束)を表現する(ループ10)。
     block_fit=0.70: 字幕はShorts右ボタン列(x>0.85)に掛けない(x 0.15〜0.85。ループ⑫)。
     横型(use_landscape)ではUIを避ける必要がないので 0.86 まで広げる。
-    tag: 予備(未使用)。二人会話の話者表示は draw_speaker_plate(頭上の名前プレート)で行う。
-    字幕ブロックは上から下に積まれるため、字幕側に名札を足すと本文と衝突する。
+    tag: 話者名(二人会話)。リッチ背景では字幕帯の左端に話者色ラインを敷き、
+    立ち絵を消した図ユニットでも話者が視覚で分かるようにする(video-elements-2026-08.md)。
+    頭上の名前プレート(draw_speaker_plate)と併用。
     """
+    if RICH_BG:
+        # テロップ帯(定番の「テロップ背景」)。行数で高さを変えるとユニット間で
+        # ちらつくので、2行ぶんの固定帯にする
+        top = SUBTITLE_Y + SUB_LINE_H * 0.80
+        bot = SUBTITLE_Y - SUB_LINE_H * 1.55
+        fig.add_artist(plt.Rectangle((0.0, bot), 1.0, top - bot,
+                                     transform=fig.transFigure,
+                                     facecolor="#0b0b0a", alpha=0.52, zorder=2.4))
+        if tag:
+            color = METAN_TAG_COLOR if tag == "めたん" else ZUNDA_TAG_COLOR
+            fig.add_artist(plt.Rectangle((0.0, bot), 0.007, top - bot,
+                                         transform=fig.transFigure,
+                                         facecolor=color, alpha=0.95, zorder=2.5))
     draw_rich_text(fig, 0.5, SUBTITLE_Y, text, SUB_FS * pop, wrap=SUB_WRAP, line_h=SUB_LINE_H,
                    block_fit=SUB_BLOCK_FIT)
 
@@ -1007,7 +1101,8 @@ def draw_metan_chara(fig, talking: bool, t: float, alpha: float = 1.0):
 
 def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name: str,
                  speaker: int = DEFAULT_SPEAKER, bgm: bool = True,
-                 chara: bool = True, bgm_variant: int | None = None) -> dict:
+                 chara: bool = True, bgm_variant: int | None = None,
+                 bands: list[tuple[int, str, str]] | None = None) -> dict:
     """ユニット列とシーン描画関数からmp4を作る。
 
     scene_painters: {scene名: painter(fig, t)}。tはユニット内アニメーションの進行度
@@ -1028,7 +1123,8 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     #
     # ただし台本を直したのに古いフレームを使ってしまうと最悪なので、
     # **台本と調声の署名が一致したときだけ**残す。1文字でも変えたら捨てる。
-    sig = render_signature(units, scene_painters, speaker, bgm, chara, out_name)
+    sig = render_signature(units, scene_painters, speaker, bgm, chara, out_name,
+                           bands=bands)
     sig_file = workdir / "signature.txt"
     resumed = sig_file.exists() and sig_file.read_text().strip() == sig
     if not resumed:
@@ -1056,6 +1152,13 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     elapsed = 0.0
     thumbnail = None
     for i, (u, w) in enumerate(zip(units, wavs)):
+        # 章チップ(左上)の表示内容をこのユニットの章に合わせる
+        global CURRENT_BAND
+        CURRENT_BAND = None
+        if bands:
+            for start, label, color in bands:
+                if i >= start:
+                    CURRENT_BAND = (label, color)
         pw = workdir / f"seg_{i:02d}_pad.wav"
         pad_wav(w, pw, u.pad)
         d_total = duration_of(pw)
@@ -1085,7 +1188,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 frames.append(f)
                 durations.append(dur)
                 return f
-            fig = new_canvas()
+            fig = new_canvas(elapsed + t_unit)
             (painter or scene_painters[u.scene])(fig, t)
             if chara_on and not no_chara:
                 tg = elapsed + t_unit
@@ -1115,7 +1218,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                     draw_chara(fig, u.chara, mouth,
                                blink.eyes(tg) if not static_chara else "open", u.face, dy)
             if with_subtitle:
-                draw_subtitle(fig, u.subtitle, pop=pop)
+                tag = None
+                if DUO:
+                    tag = ("めたん" if (u.speaker or DEFAULT_SPEAKER) == METAN_SPEAKER
+                           else "ずんだもん")
+                draw_subtitle(fig, u.subtitle, pop=pop, tag=tag)
             save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
@@ -1144,12 +1251,22 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                     for j in range(m):
                         emit(1.0, n + j, hold / m,
                              t_unit=head + anim + hold * (j + 0.5) / m)
+                elif RICH_BG:
+                    # 背景が流れるので、立ち絵なしの静止区間も低fpsで割る(常に動く画面)
+                    m = max(1, int(round(hold * DRIFT_FPS)))
+                    for j in range(m):
+                        emit(1.0, n + j, hold / m,
+                             t_unit=head + anim + hold * (j + 0.5) / m)
                 else:
                     emit(1.0, n, hold)
         else:
             body = d_total - head
             if chara_on:
                 m = max(1, int(round(body * CHARA_FPS)))
+                for j in range(m):
+                    emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
+            elif RICH_BG:
+                m = max(1, int(round(body * DRIFT_FPS)))
                 for j in range(m):
                     emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
             else:
