@@ -70,7 +70,7 @@ def scene_kinds(src, scenes):
     return out
 
 
-def durations(vdir: Path, units, scenes, out_name):
+def durations(vdir: Path, units, scenes, out_name, bands=None):
     """音声があれば実測、無ければ字数から推定する。
 
     **署名が一致しないときは実測を使わない。** 台本を作り直したあとに
@@ -84,7 +84,11 @@ def durations(vdir: Path, units, scenes, out_name):
     sig_file = wd / "signature.txt"
     if not sig_file.exists():
         return est, "推定"
-    want = S.render_signature(units, scenes, out_name=out_name)
+    # bands を渡し忘れると署名が**永久に一致せず、実測が一度も使われない**。
+    # 2026-08-21のDeep Research(批評役)が発見: 章チップ(bands)を signature に足した際に
+    # ここを直しておらず、長尺の秒は全部「推定」になっていた。推定は約5%長い側にずれるので、
+    # 章の尺・話速の下限ゲートを実際より安全に見せていた。
+    want = S.render_signature(units, scenes, out_name=out_name, bands=bands)
     if sig_file.read_text().strip() != want:
         return est, "推定(音声は古い台本のもの)"
     out = []
@@ -104,7 +108,8 @@ def check_video(vdir: Path):
         return None, None, "横型ではない(このゲートは長尺専用)"
     units, kinds = mod.UNITS, scene_kinds(src, mod.SCENES)
     m = re.search(r'render_video\([^)]*?"([^"]+\.mp4)"', src, re.S)
-    durs, how = durations(vdir, units, mod.SCENES, m.group(1) if m else "")
+    durs, how = durations(vdir, units, mod.SCENES, m.group(1) if m else "",
+                          bands=getattr(mod, "BANDS", None))
     starts, t = [], 0.0
     for d in durs:
         starts.append(t)
