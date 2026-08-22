@@ -603,8 +603,12 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
                 # AACエンコードがサンプル間ピークを持ち上げるため。ヘッドルームが
                 # 無いと、YouTube側の再エンコードで歪む。
                 # リミッタを足して測り直した結果: -14.3 LUFS / -0.6 dBTP(0.4dBぶん改善)。
-                # ※ 0.841 ≒ -1.5 dBFS。これ以上絞ると統合ラウドネスが-14を割る(実測)
-                ",loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.841:level=false",
+                # ※ 値は実測で決めた。0.841(≒-1.5dBFS)ではL002は-0.8まで下がったが、
+                #   **L001は-0.3までしか下がらなかった**。L001はSEが18個(15.9%)と多く、
+                #   立ち上がりが鋭いぶんAACのサンプル間ピークが立ちやすい。
+                #   0.750 にすると真のピーク-0.9・統合-14.7(実測)。統合は0.3LU下がるが
+                #   -14±1.0 の内側なので、ヘッドルームを取るほうを選ぶ
+                ",loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.750:level=false",
                 str(mixed)]
         subprocess.run(cmd, check=True)
         audio_in = mixed
