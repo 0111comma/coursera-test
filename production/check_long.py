@@ -139,6 +139,32 @@ def check_video(vdir: Path):
     fail("離脱の山の切れ目", not near60,
          f"45〜75秒に章の切れ目 {[f'{s:.1f}s' for s in near60]}(ずらす)")
 
+    # ---- 画面が動かない時間(2026-08-22 実測。ループ72)
+    # 実測でわかったこと: anim=0.0 で同じ場面が続くあいだ、**字幕帯より上の画素は
+    # 1つも変わらない**(L001 の uchiwake/sashihiki/nikai/jibun2/pat1/nashi で 0.00%)。
+    # 背景の漂う¥は alpha 0.05・毎秒 1%移動なので、最大画素差が8/255しかなく
+    # 「常に動く画面」にはなっていなかった。立ち絵を消す図のユニットでは
+    # 画面は**完全な静止画**になる。L001 は最長19.6秒、L002(書き直し前)は23.8秒。
+    # 数字を図の上で言わせるゲートを足した副作用でもあるので、ここで測る。
+    runs, cur, cur_scene, cur_i = [], 0.0, None, 0
+    for i, u in enumerate(units):
+        if u.anim == 0.0 and u.scene == cur_scene:
+            cur += durs[i]
+        else:
+            if cur_scene is not None:
+                runs.append((cur_scene, cur, cur_i))
+            cur, cur_scene, cur_i = durs[i], u.scene, i
+    if cur_scene is not None:
+        runs.append((cur_scene, cur, cur_i))
+    long_runs = [r for r in runs if r[1] > 14]
+    fail("静止の連続", not long_runs,
+         "画面が変わらないまま14秒を超える区間: "
+         + "、".join(f"{n}({t:.1f}s・{starts[i]:.0f}s〜)" for n, t, i in long_runs)
+         + "。同じ図でも highlight/reveal/lit を進めて、話に合わせて画面を変えること")
+    still = sum(t for _, t, _ in runs if t > 14)
+    note("静止の割合", still / max(total, 1) <= 0.20,
+         f"14秒を超える静止が {still:.0f}s({still/max(total,1)*100:.0f}%)。20%まで")
+
     # ---- 構成(03-structure.md)
     fail("章の数", len(heads) <= 5, f"{len(heads)}章(9分なら4〜5)")
     for j, (i, name) in enumerate(blocks):
