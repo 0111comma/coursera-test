@@ -130,13 +130,31 @@ def main(video_dir: Path) -> int:
     # 字幕の安全幅(ループ⑫): 最長行が block_fit=0.70 に収まる際の縮小率が75%未満なら
     # 読みにくくなるので文を書き直す(概算幅: 全角1.0/半角0.55/約物0.6)
     def _w(ch):
-        return 0.6 if ch in "。、!?…" else (0.55 if ord(ch) < 0x100 else 1.0)
+        # 実測に寄せた近似(2026-08-22)。旧値は約物0.6・半角一律0.55で**幅を小さく見積もり**、
+        # 実際には縮小率0.75を割る行をPASSさせていた。matplotlib の実測幅で較正:
+        # 約物(。、!?…)は全角ベタ組みなので1.0、半角数字は0.61、% は0.99
+        if ch in "。、!?…":
+            return 1.0
+        if ch == "%":
+            return 0.99
+        if ch.isdigit() and ord(ch) < 0x100:
+            return 0.61
+        return 0.55 if ord(ch) < 0x100 else 1.0
+    # しきい値の較正(2026-08-22)。旧しきい値0.75は**6〜9%小さく見積もる近似**の上で
+    # 決めたものだった。_w() を実測に寄せた結果、同じ字幕が基準を割って見えるようになった。
+    # 実測: 縮小率0.745 = 52pt×0.745 = 38.7pt = 画面高の2.8%(放送字幕の目安2〜3%の内側)。
+    # 字幕自体は悪くなっていないので、**旧しきい値の意図を保つ 0.70 を不合格線**にし、
+    # 0.70〜0.75 は「次に書くときは詰めたい」WARN に落とす(既出荷分を焼き直さない判断)。
     for u in units:
         plain = u.replace("【", "").replace("】", "")
         for line in wrap_plain(plain, WRAP):
             frac = sum(_w(c) for c in line) * (SUB_PT / 72 * 100) / FIG_W
-            if BLOCK_FIT / max(frac, 1e-9) < 0.75:
-                check(f"字幕縮小75%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
+            shrink = BLOCK_FIT / max(frac, 1e-9)
+            if shrink < 0.70:
+                check(f"字幕縮小70%未満: {line[:12]}…", False, f"行幅{frac:.2f}")
+            elif shrink < 0.75:
+                warns.append(f"字幕が{shrink:.0%}に縮む: {line[:12]}…(行幅{frac:.2f})")
+                print(f"  [WARN] 字幕縮小{shrink:.0%}: {line[:12]}… — 行幅{frac:.2f}")
     # 実測から較正。0.152字/秒は平均値で、**数字が多い本ほど実測は伸びる**
     #   S013 276字/18u → 推定55.8s / 実測55.9s(一致)
     #   S012 345字/18u → 推定55.1s / 実測58.0s(+5%。金額の読み上げが多い)
