@@ -70,6 +70,49 @@ def scene_kinds(src, scenes):
     return out
 
 
+def _estimate(units):
+    """秒の見積り。VOICEVOXが起きていれば**音素長**から、いなければ字数から。
+
+    2026-08-22の実測で分かったこと: 字数からの推定はL002で 391.8秒、
+    実際は 398.2秒(1.6%短く出る)。たった1.6%でも、**しきい値をまたぐ**。
+    L002は推定で「章の切れ目 43.x秒」=合格だったのが、実測では45.7秒で
+    離脱の山(45〜75秒)に入り不合格になった。静止15.7秒も同じく見落としていた。
+    ショートで55秒を何度も超えたのと同じ原因なので、同じ直しかたをする
+    (check_video.vv_total_sec と同じ、音素長ベース)。
+    """
+    import json
+    import urllib.parse
+    import urllib.request
+    import shortlib as S
+    try:
+        urllib.request.urlopen("http://127.0.0.1:50021/version", timeout=2).read()
+    except Exception:
+        return [len(re.sub(r"[。、【】]", "", u.tts_text())) * SEC_PER_CHAR_LONG + u.pad
+                for u in units]
+    out = []
+    for u in units:
+        text = u.tts_text()
+        for a, b in S.READING.items():
+            text = text.replace(a, b)
+        try:
+            q = json.load(urllib.request.urlopen(urllib.request.Request(
+                "http://127.0.0.1:50021/audio_query?text="
+                f"{urllib.parse.quote(text)}&speaker={getattr(u, 'speaker', 0) or 3}",
+                method="POST"), timeout=30))
+        except Exception:
+            return [len(re.sub(r"[。、【】]", "", v.tts_text())) * SEC_PER_CHAR_LONG + v.pad
+                    for v in units]
+        raw = 0.0
+        for ap in q["accent_phrases"]:
+            for mo in ap["moras"]:
+                raw += (mo.get("consonant_length") or 0) + (mo["vowel_length"] or 0)
+            if ap.get("pause_mora"):
+                pm = ap["pause_mora"]
+                raw += (pm.get("consonant_length") or 0) + (pm["vowel_length"] or 0)
+        out.append((raw + 0.15) / (u.speed * S.SPEED_SCALE) + u.pad)
+    return out
+
+
 def durations(vdir: Path, units, scenes, out_name, bands=None):
     """音声があれば実測、無ければ字数から推定する。
 
@@ -78,8 +121,7 @@ def durations(vdir: Path, units, scenes, out_name, bands=None):
     (フェーズ12で実際に踏んだ。93ユニットの新台本を、157ユニットの旧音声で測っていた)。
     """
     import shortlib as S
-    est = [len(re.sub(r"[。、【】]", "", u.tts_text())) * SEC_PER_CHAR_LONG + u.pad
-           for u in units]
+    est = _estimate(units)
     wd = vdir / "output" / "work"
     sig_file = wd / "signature.txt"
     if not sig_file.exists():
