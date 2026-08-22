@@ -57,8 +57,13 @@ def vv_durations(subs):
 
 
 def main():
+    # 引数で1本だけ作れるようにする(2026-08-22)。
+    # 出来上がった動画の中間生成物(output/work/)は容量のために消すことがあり、
+    # そのあと全本を作り直すと、**実測で出来ていた字幕が推定に置き換わって劣化する**。
+    # 直す相手だけを指定できれば、その事故は起きない。
+    targets = [Path(a).resolve() for a in sys.argv[1:]]
     stale, estimated = [], []
-    for d in sorted(ROOT.glob("videos/[SL]0*")):
+    for d in (targets or sorted(ROOT.glob("videos/[SL]0*"))):
         sid = d.name.split("-")[0]
         if not (d / "render.py").exists():
             continue          # verify.pyだけの下ごしらえ段階(台本前)はスキップ
