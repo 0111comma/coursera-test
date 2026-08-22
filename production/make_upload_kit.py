@@ -188,12 +188,17 @@ L_LEAD = {
 }
 
 L_NEXT = {
-    "L001": "S017(NISAの損益通算・同じ話の1分版)",
+    # 旧S017(当時は存在しない番号)を指していた誤りを2026-08-22に修正
+    "L001": "S002(投資の利益にかかる税金の1分版)",
     "L002": "S013(変動と固定の5年後1点だけを扱ったショート)",
 }
 
 
 def long_kit(d: Path, lid: str) -> str:
+    # 動画が無いのに完成品のキットを出すと、概要欄のチャプター欄に
+    # 「(未生成。render.py を走らせる)」がそのまま貼られる事故になる(2026-08-22に発覚)
+    if not (d / "output" / f"{lid}.mp4").exists():
+        return ""
     script = (d / "script.md").read_text() if (d / "script.md").exists() else ""
     # 固定コメントは長尺のキットに一度も出ていなかった(D6L。ショートには出ている)
     pinned = extract(script, "固定コメント(投稿直後に設置)")
@@ -265,7 +270,14 @@ def main():
     OUT.mkdir(exist_ok=True)
     for d in sorted(ROOT.glob("videos/L0*")):
         lid = d.name.split("-")[0]
-        (OUT / f"{lid}_投稿キット.txt").write_text(long_kit(d, lid))
+        body = long_kit(d, lid)
+        out = OUT / f"{lid}_投稿キット.txt"
+        if not body:
+            if out.exists():
+                out.unlink()
+            print(f"{lid} …(mp4が無いのでキットを出さない。焼いてから再実行)")
+            continue
+        out.write_text(body)
         print(f"{lid} ✓(長尺)")
     for d in sorted(ROOT.glob("videos/S0*")):
         sid = d.name.split("-")[0]

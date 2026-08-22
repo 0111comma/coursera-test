@@ -19,7 +19,7 @@ ROOT = PRODUCTION.parent
 
 # 縦横で共通のゲート
 COMMON = ["toi", "hold", "teinei", "flow", "figure", "overlap", "ikko", "yomi",
-          "ryakugo", "goi", "bunsho", "yokkyu", "video"]
+          "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 
