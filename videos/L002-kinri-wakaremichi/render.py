@@ -472,4 +472,5 @@ if __name__ == "__main__":
     print("chapters:")
     for ln in lines:
         print("  " + ln)
+    sl.save_thumbnail(SCENES["ie__cover"], OUTDIR / "thumbnail.png")
     print(f"mp4: {result['mp4']}")

@@ -460,3 +460,31 @@ def chapter_lines(unit_secs, marks):
             out.append(f"{m}:{s:02d} {table_[i]}")
         acc += sec
     return out
+
+
+def save_thumbnail(cover_painter, out_path):
+    """カバー構図に立ち絵2体を重ねて、サムネを書き出す(2026-08-22)。
+
+    **動画ごとに render.py へ書くのをやめて、ここに1つ置く。**
+    そうしていなかったせいで、L001では章チップの消し忘れを直したのに
+    L002には make_thumbnail() 自体が無く、章チップ付きのカバーフレームが
+    そのままサムネになっていた(「今日の問い」が左上に焼き込まれていた)。
+
+    章チップは必ず消す。render_video() は最後に描いた章の CURRENT_BAND を
+    残したまま返すので、消さずに描くと「第4章」がサムネに焼き込まれる。
+    """
+    from zunda import draw_zunda
+    import metan as mt
+    S.CURRENT_BAND = None
+    fig = S.new_canvas(0.0)
+    cover_painter(fig, 1.0)
+    ax = fig.add_axes([0.000, 0.020, 0.305, 0.620])
+    ax.axis("off")
+    draw_zunda(ax, mouth=2, eyes="open", expr="surprised", flip=True)
+    h_fr = 0.46
+    w_fr = h_fr * S.H * (mt.ART_W / mt.ART_H) / S.W
+    ax2 = fig.add_axes([0.995 - w_fr, 0.020, w_fr, h_fr])
+    ax2.axis("off")
+    mt.draw_metan(ax2)
+    S.save_frame(fig, out_path)
+    return out_path

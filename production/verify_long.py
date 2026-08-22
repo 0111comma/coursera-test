@@ -101,10 +101,27 @@ def main():
         if runs is None:
             print("  静止: 中間フレームが無いので測れない(work/を消したあと)")
         else:
-            longest = max((b - a + 1 for a, b in runs), default=0)
-            print(f"  静止: 変わらない区間 {len(runs)}個 / 最長 {longest}ユニット連続")
-            if longest >= 4:
-                bad.append(f"画面が変わらないまま {longest}ユニット続く区間がある")
+            # **ユニット数ではなく秒で見る。** check_long と基準を揃える(14秒超で不合格)。
+            # 数で見ると、短い相づちが並んだだけの区間まで落として誤報になる(2026-08-22)。
+            import wave
+            wd = vdir / "output" / "work"
+
+            def sec(i):
+                f = wd / f"seg_{i:02d}_pad.wav"
+                if not f.exists():
+                    return 0.0
+                with wave.open(str(f)) as w:
+                    return w.getnframes() / w.getframerate()
+
+            longest, worst = 0.0, None
+            for a, b in runs:
+                t = sum(sec(i) for i in range(a, b + 1))
+                if t > longest:
+                    longest, worst = t, (a, b)
+            print(f"  静止: 変わらない区間 {len(runs)}個 / 最長 {longest:.1f}秒")
+            if longest > 14:
+                bad.append(f"画面が変わらないまま {longest:.1f}秒続く区間がある"
+                           f"(ユニット{worst[0]}〜{worst[1]})")
         th = vdir / "output" / "thumbnail.png"
         if th.exists():
             import numpy as np

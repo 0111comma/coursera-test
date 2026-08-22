@@ -525,28 +525,6 @@ BANDS = list(zip(
 ))
 
 
-def make_thumbnail():
-    """サムネ専用描画(定番=キャラの顔+大文字+色背景。video-elements-2026-08.md #10)。
-    カバー構図に、驚き顔のずんだもん(左・大きめ)とめたん(右)を重ねる。"""
-    from zunda import draw_zunda
-    import metan as mt
-    # render_video() が最後の章の CURRENT_BAND を残したままなので、消してから描く。
-    # これを忘れると**サムネの左上に「第4章」の緑チップが焼き込まれる**
-    # (2026-08-22の批評で発覚。納品済みのサムネに実際に入っていた)
-    S.CURRENT_BAND = None
-    fig = S.new_canvas(0.0)
-    SCENES["son__cover"](fig, 1.0)
-    ax = fig.add_axes([0.000, 0.020, 0.305, 0.620])
-    ax.axis("off")
-    draw_zunda(ax, mouth=2, eyes="open", expr="surprised", flip=True)
-    h_fr = 0.46
-    w_fr = h_fr * S.H * (mt.ART_W / mt.ART_H) / S.W
-    ax2 = fig.add_axes([0.995 - w_fr, 0.020, w_fr, h_fr])
-    ax2.axis("off")
-    mt.draw_metan(ax2)
-    S.save_frame(fig, OUTDIR / "thumbnail.png")
-
-
 if __name__ == "__main__":
     require_voicevox()
     result = render_video(UNITS, SCENES, OUTDIR, "L001.mp4", bands=BANDS)
@@ -556,5 +534,5 @@ if __name__ == "__main__":
     print("chapters:")
     for ln in lines:
         print("  " + ln)
-    make_thumbnail()
+    sl.save_thumbnail(SCENES["son__cover"], OUTDIR / "thumbnail.png")
     print(f"mp4: {result['mp4']}")
