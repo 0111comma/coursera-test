@@ -597,7 +597,14 @@ def assemble(frames: list[Path], durations: list[float], padded_wavs: list[Path]
         # 音が小さくなっていた(実測)。YouTubeは音量を上げる方向には正規化しない。
         cmd += ["-filter_complex",
                 ";".join(filters) + f";{mix_labels}amix=inputs={n_in}:duration=first:normalize=0"
-                ",loudnorm=I=-14:TP=-1.0:LRA=11",
+                # 2026-08-22 実測: TP=-1.0 と書いても、出来上がったmp4の真のピークは
+                # -0.2〜-0.8 dBTP しかない(L001 -0.2 / S020 -0.6 / S030 -0.8)。
+                # loudnorm の1パス動的モードは真のピークを保証せず、そのあとの
+                # AACエンコードがサンプル間ピークを持ち上げるため。ヘッドルームが
+                # 無いと、YouTube側の再エンコードで歪む。
+                # リミッタを足して測り直した結果: -14.3 LUFS / -0.6 dBTP(0.4dBぶん改善)。
+                # ※ 0.841 ≒ -1.5 dBFS。これ以上絞ると統合ラウドネスが-14を割る(実測)
+                ",loudnorm=I=-14:TP=-1.5:LRA=11,alimiter=limit=0.841:level=false",
                 str(mixed)]
         subprocess.run(cmd, check=True)
         audio_in = mixed
