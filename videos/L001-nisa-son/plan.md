@@ -1,6 +1,6 @@
 # 企画書(長尺): NISAで損したらどうなるのか(L001)
 
-- **公開予定**: 2026-08-22(土) 12:00
+- **公開予定**: 2026-08-22(土) 18:00(長尺は土18時。make_upload_kit の L_SCHEDULE と合わせる)
 - **形式**: 横型 1920×1080 / 6分47秒(実測)
 - **設計の根拠**: `docs/research/longform-design.md`(長尺の型)、
   `docs/research/competitive-positioning.md`(後発の立ち回り)
