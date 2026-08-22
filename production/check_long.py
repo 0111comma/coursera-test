@@ -140,6 +140,16 @@ def durations(vdir: Path, units, scenes, out_name, bands=None):
             return est, "推定"
         with wave.open(str(p)) as w:
             out.append(w.getnframes() / w.getframerate())
+    # **署名はレイアウトを見ていない。** render_signature() が見るのは units と
+    # SCENES の「キー」だけなので、scenes_long.py や shortlib.py の中で
+    # 文字の位置や幅を直しても署名は変わらない。再開キャッシュが効くと
+    # **古いレイアウトのフレームが残ったまま「再レンダリング済み」の動画が出る**
+    # (2026-08-22に実際に踏みかけた。両方の work/ を消して回避した)。
+    # 署名の形を変えると既存の焼き上がりが全部「推定」に落ちるので、
+    # ここでは**描画コードのほうが署名より新しくないか**だけを見る。
+    # 描画コードが署名より新しい場合の対処は **render_video 側**に置いた
+    # (再開せずに描き直す)。ここで警告すると、フレームに関係ない直し
+    # (サムネ関数の追加など)まで「作り直せ」と言い出して、うるさいだけになる。
     return out, "実測"
 
 

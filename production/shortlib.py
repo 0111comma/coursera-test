@@ -1134,6 +1134,21 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                            bands=bands)
     sig_file = workdir / "signature.txt"
     resumed = sig_file.exists() and sig_file.read_text().strip() == sig
+    # **署名は「何を描くか」しか見ていない。「どこにどう描くか」は見ていない。**
+    # render_signature が見るのは units と SCENES の**キー**なので、
+    # scenes_long.py / shortlib.py の中で文字の位置や幅を直しても署名は変わらない。
+    # そのまま再開すると、**古いレイアウトのフレームが残ったまま
+    # 「再レンダリング済み」の動画が出る**(2026-08-22に踏みかけた)。
+    # 描画モジュールが署名より新しければ、再開せずに全部描き直す。
+    if resumed:
+        _src = [Path(__file__).resolve(),
+                Path(__file__).resolve().parent / "scenes_long.py",
+                Path(__file__).resolve().parent / "scenes_common.py"]
+        newest = max((f.stat().st_mtime for f in _src if f.exists()), default=0)
+        if newest > sig_file.stat().st_mtime:
+            print("[resume] 描画モジュールが署名より新しい。"
+                  "レイアウトが変わっている可能性があるのでフレームを捨てて描き直します")
+            resumed = False
     if not resumed:
         for old in workdir.glob("frame_*.png"):
             old.unlink()
