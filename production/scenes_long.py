@@ -72,14 +72,34 @@ def chapter(no: int, title: str, question: str, badge: str, brand: str, total: i
     return painter
 
 
+def _duo_center_fit(default_fit: float):
+    """立ち絵のあいだに収まる「中心」と「幅の上限」を返す(2026-08-22)。
+
+    PLOT_L/PLOT_R の中点(0.415)は、**横型に立ち絵が右の1体だけだった頃**の値。
+    左が空いていたので、そこへ寄せて大きく見せていた。二人会話にして左にも
+    1体増えたとき、ここを直し忘れたので、card/hero の主役語が
+    **ずんだもんの上に乗ったまま10件、全ゲートを通っていた**
+    (実測: 中心0.415・block_fit0.66 だと左端が0.075。絵は0.180から始まる)。
+
+    立ち絵があるあいだは、絵と絵のまんなかに置き、はみ出さない幅まで縮める。
+    """
+    if not getattr(S, "DUO", False):
+        return (PLOT_L + PLOT_R) / 2, default_fit
+    l = S.CHARA_RECTS["bl"][0] + S.CHARA_RECTS["bl"][2]      # 左の立ち絵の右端
+    r = S.CHARA_RECTS["br"][0]                                # 右の立ち絵の左端
+    c = (l + r) / 2
+    return c, min(default_fit, 2 * min(c - l, r - c) - 0.02)
+
+
 def hero(main: str, sub: str, badge: str, brand: str, size: int = 96, sub_fs: int = 36):
     """大きい1行 + 補足。冒頭と締めに使う。"""
     def painter(fig, t):
         a = clamp01(t * 2.2)
-        draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.620, main, size * (1 + 0.05 * (1 - a)),
-                       wrap=14, line_h=0.085, block_fit=0.68)
+        cx, fit = _duo_center_fit(0.68)
+        draw_rich_text(fig, cx, 0.620, main, size * (1 + 0.05 * (1 - a)),
+                       wrap=14, line_h=0.085, block_fit=fit)
         if sub:
-            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.440, sub, ha="center", va="center",
+            S.text_fit(fig, cx, 0.440, sub, ha="center", va="center",
                      color=INK_2, fontsize=sub_fs, alpha=clamp01(t * 2 - 0.4))
         _frame(fig, "", badge, brand)
     return painter
@@ -109,15 +129,16 @@ def card(headline: str, main: str, sub: str, badge: str, brand: str,
     """見出し + 主役語 + 補足。"""
     def painter(fig, t):
         a = clamp01(t * 2.4)
-        S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.780, headline, ha="center", va="center",
-                 color=INK_2, fontsize=head_fs)
-        draw_rich_text(fig, (PLOT_L + PLOT_R) / 2, 0.590, main,
-                       main_size * (1 + 0.06 * (1 - a)), wrap=14, line_h=0.085, block_fit=0.66)
+        cx, fit = _duo_center_fit(0.66)
+        S.text_fit(fig, cx, 0.780, headline, ha="center", va="center",
+                 color=INK_2, fontsize=head_fs, max_w=fit)
+        draw_rich_text(fig, cx, 0.590, main,
+                       main_size * (1 + 0.06 * (1 - a)), wrap=14, line_h=0.085, block_fit=fit)
         if sub:
-            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.410, sub, ha="center", va="center",
+            S.text_fit(fig, cx, 0.410, sub, ha="center", va="center", max_w=fit,
                      color=MUTED, fontsize=28, alpha=clamp01(t * 2 - 0.5))
         if ask:
-            S.text_fit(fig, (PLOT_L + PLOT_R) / 2, 0.320, ask, ha="center", va="center",
+            S.text_fit(fig, cx, 0.320, ask, ha="center", va="center", max_w=fit,
                      color=EMPH, fontsize=30, alpha=clamp01(t * 2 - 0.8))
         _frame(fig, "", badge, brand)
     return painter
