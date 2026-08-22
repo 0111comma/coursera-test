@@ -281,6 +281,13 @@ def curve(title, xs, ys, badge, brand, xlabel="", ylabel="", reveal=1.0,
             ax.set_xlabel(xlabel, color=MUTED, fontsize=24, labelpad=10)
         if ylabel:
             ax.set_ylabel(ylabel, color=MUTED, fontsize=24, labelpad=10)
+        # **目盛の値そのものを整数に固定する。** yfmt="{:.0f}" だけだと、matplotlib が
+        # 2.5 / 7.5 / 12.5 に格子線を引き、Python の偶数丸めで「2」「8」「12」と表示する。
+        # 格子線の位置と数字が食い違い、視聴者がグラフから値を読むと直接まちがえる
+        # (2026-08-22に発覚。L002は「自分の返済年数を当てて何%まで耐えられるか読む」動画)
+        if yfmt.endswith(".0f}"):
+            from matplotlib.ticker import MaxNLocator
+            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.yaxis.set_major_formatter(lambda v, _: yfmt.format(v))
         _frame(fig, title, badge, brand)
     return painter
