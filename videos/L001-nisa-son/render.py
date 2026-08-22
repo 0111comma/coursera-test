@@ -500,6 +500,10 @@ def make_thumbnail():
     カバー構図に、驚き顔のずんだもん(左・大きめ)とめたん(右)を重ねる。"""
     from zunda import draw_zunda
     import metan as mt
+    # render_video() が最後の章の CURRENT_BAND を残したままなので、消してから描く。
+    # これを忘れると**サムネの左上に「第4章」の緑チップが焼き込まれる**
+    # (2026-08-22の批評で発覚。納品済みのサムネに実際に入っていた)
+    S.CURRENT_BAND = None
     fig = S.new_canvas(0.0)
     SCENES["son__cover"](fig, 1.0)
     ax = fig.add_axes([0.000, 0.020, 0.305, 0.620])

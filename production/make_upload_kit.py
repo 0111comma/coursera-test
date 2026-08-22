@@ -177,8 +177,14 @@ L_PLAYLISTS = {
 # 「次に見るものを名前で言う」が終了画面の効き所(10-ending.md 確度B)
 # 概要欄の折りたたみ前2行に置く結論(element-taxonomy D2。冒頭2行に結論+検索語)
 L_LEAD = {
-    "L001": "NISAの損は「損益通算」できず、消せたはずの税金40,630円をそのまま払います。\n"
-            "その条件と、自分の場合の余分な税額の出し方(かけ算1回)を7分で解説。",
+    # 折りたたみ前に見えるのは冒頭の数行だけなので、1行を全角24幅までに抑える
+    # (element-taxonomy R2 meta-long D2L。実測: 現行は1行44.5幅で途中で切れていた)
+    "L001": "NISAの損は損益通算できません。\n"
+            "消せたはずの税金40,630円を、\n"
+            "そのまま払うことになります。",
+    "L002": "変動金利が何%まで上がると、\n"
+            "固定金利より損になるのか。\n"
+            "3000万円・35年で計算しました。",
 }
 
 L_NEXT = {
@@ -189,11 +195,15 @@ L_NEXT = {
 
 def long_kit(d: Path, lid: str) -> str:
     script = (d / "script.md").read_text() if (d / "script.md").exists() else ""
+    # 固定コメントは長尺のキットに一度も出ていなかった(D6L。ショートには出ている)
+    pinned = extract(script, "固定コメント(投稿直後に設置)")
     m = re.search(r"\*\*投稿タイトル\*\*: ([^(\n]+)", script)
     title = m.group(1).strip() if m else "(script.md参照)"
     desc = extract(script, "概要欄テキスト")
     ch = d / "output" / "chapters.txt"
     chapters = ch.read_text().strip() if ch.exists() else "(未生成。render.py を走らせる)"
+    # 「第N章 」は折りたたみ前の貴重な幅を全角3.0ぶん食うだけで情報が無い(D3L)
+    chapters = re.sub(r"(\d+:\d\d) 第\d+章 ", r"\1 ", chapters)
     tags = ", ".join(L_TAGS.get(lid, []) + COMMON_TAGS)
     return f"""━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 {lid} 投稿キット(長尺・横型)
@@ -205,6 +215,8 @@ def long_kit(d: Path, lid: str) -> str:
   動画:     videos/{d.name}/output/{lid}.mp4
   字幕:     uploads/{lid}.srt(手動字幕。言語=日本語)
   サムネイル: 「フレーム選択」で冒頭のカバーフレームを指定
+        ※ フレーム選択は**スマホのYouTubeアプリ**から(PCブラウザでは選べない)
+        ※ 公開後も選び直せる(2024年9月以降)。カスタム画像はYPP参加後
 
 ■ タイトル(コピペ)
 {title}
@@ -218,6 +230,10 @@ def long_kit(d: Path, lid: str) -> str:
 
 ■ 検索タグ欄(コピペ)
 {tags}
+
+■ 固定コメント(投稿直後に貼って固定。URLは貼らない=クリック不可+スパム判定)
+{pinned}
+⚠このチャンネルがLINEや投資グループに誘導することは絶対にないのだ。誘導コメントは詐欺なので通報してほしいのだ。
 
 ■ 再生リスト: {" / ".join(L_PLAYLISTS.get(lid, []))}
 
