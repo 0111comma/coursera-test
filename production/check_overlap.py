@@ -48,13 +48,17 @@ def zones_for_format():
     **占有域は shortlib のレイアウト定数から引く**(use_landscape が書き換える)。
     """
     if S.W == 1920:
-        r = S.CHARA_RECTS["br"]                      # 横型は右下に置く
-        chara = (r[0], r[1], r[0] + r[2], r[1] + r[3])
+        # 2026-08-22の修正: **横型は右下だけを見ていた。**
+        # 二人会話にしたとき左にもう1体増えたのに、ここを直し忘れていたので、
+        # **左の立ち絵に文字が重なっても全ゲートを通っていた**
+        # (L001のサムネで、金の行が左右の立ち絵を突き抜けていた)。
+        rs = [S.CHARA_RECTS["br"], S.CHARA_RECTS["bl"]]
+        chara = [(r[0], r[1], r[0] + r[2], r[1] + r[3]) for r in rs]
         # 字幕は SUBTITLE_Y を上端に2行ぶん下へ伸びる。その下端はフッターの上まで
         band_top = S.SUBTITLE_Y + 0.030
         subtitle = (0.000, S.BRAND_XY[1] + 0.018, 1.000, band_top)
         return chara, subtitle
-    return CHARA, SUBTITLE
+    return [CHARA], SUBTITLE
 # バッジは draw_badge のアンカー(0.90, 0.83)で実体を特定し、実測範囲を禁止領域にする
 BADGE_ANCHOR = (0.90, 0.83)
 FOOTER_ANCHOR = (0.5, 0.045)
@@ -137,7 +141,7 @@ def check_video(vdir: Path):
                     continue
                 zones = []
                 if has_chara:
-                    zones.append(("立ち絵", chara_zone))
+                    zones += [("立ち絵", z) for z in chara_zone]
                 if badge_box is not None:
                     zones.append(("バッジ", badge_box))
                 for name, zone in zones:
@@ -172,7 +176,7 @@ def check_video(vdir: Path):
                 box = box_of(art)
                 zones = [("字幕帯", subtitle_zone)]
                 if has_chara:
-                    zones.append(("立ち絵", chara_zone))
+                    zones += [("立ち絵", z) for z in chara_zone]
                 if badge_box is not None:
                     zones.append(("バッジ", badge_box))
                 for name, zone in zones:

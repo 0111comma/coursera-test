@@ -90,7 +90,12 @@ def cover(top: str, main: str, bottom: str, note: str, brand: str, main_size: in
     def painter(fig, t):
         S.text_fit(fig, 0.5, 0.855, top, ha="center", va="center", color=INK_2, fontsize=44)
         draw_rich_text(fig, 0.5, 0.560, main, main_size, wrap=10, line_h=0.13, block_fit=0.86)
+        # max_w は既定の0.92ではなく0.48。2026-08-22にサムネを実測したところ、
+        # この金の行が**左右の立ち絵を突き抜けていた**(文字は幅の10.6%〜89.4%を使い、
+        # 立ち絵の空き帯は25.5%〜77.3%しかなかった)。両端が読めず、事故に見える。
+        # 画面幅ではなく**立ち絵のあいだ**に収まるまで縮める。
         S.text_fit(fig, 0.5, 0.320, bottom, ha="center", va="center", color=EMPH, fontsize=54,
+                 max_w=0.48,
                  path_effects=stroke_fx(EMPH, outline=outline_for(54), fatten=2.5))
         # 字幕帯(上端 SUBTITLE_Y + 行分)より上に置く。カバーは字幕を出さないが、
         # 同じ位置に注記を置くと通常フレームと視線の置き場がずれる
