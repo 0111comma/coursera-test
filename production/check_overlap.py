@@ -40,6 +40,53 @@ CHARA = (0.000, 0.245, 0.342, 0.465)     # 立ち絵(bl)。縦型
 SUBTITLE = (0.000, 0.000, 1.000, 0.245)  # 字幕帯。縦型
 
 
+_ART_CACHE = {}
+
+
+def _art_box(pos: str):
+    """立ち絵の**絵が実際にある範囲**を測って返す(figure座標 x0,y0,x1,y1)。
+
+    2026-08-22。CHARA_RECTS は matplotlib の axes の矩形で、絵のまわりの
+    透明な余白まで含んでいる。実測すると宣言より幅で2〜3%小さい
+    (bl: 宣言 x0.010-0.202 / 実際 x0.012-0.180、br: 宣言 x0.798-0.990 / 実際 x0.796-0.959)。
+    宣言のまま判定すると、**絵に触れてもいない文字を6件不合格にする**。
+    ゲートが直す気のない指摘を出しはじめると、赤いのが普通になって誰も見なくなる。
+    """
+    if pos in _ART_CACHE:
+        return _ART_CACHE[pos]
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from PIL import Image
+    import tempfile
+    rich = S.RICH_BG
+    S.RICH_BG = False
+    fig = plt.figure(figsize=S.FIGSIZE, dpi=S.DPI)
+    fig.patch.set_facecolor("#000000")
+    try:
+        if pos == "bl":
+            S.draw_chara(fig, "bl", 2, "open", "normal")
+        else:
+            S.draw_metan_chara(fig, talking=False, t=1.0)
+        with tempfile.NamedTemporaryFile(suffix=".png") as tf:
+            fig.savefig(tf.name, dpi=100, facecolor="#000000")
+            a = np.asarray(Image.open(tf.name).convert("RGB"), dtype=np.int16)
+    except Exception:
+        r = S.CHARA_RECTS[pos]                 # 測れないときは宣言どおり(安全側)
+        _ART_CACHE[pos] = (r[0], r[1], r[0] + r[2], r[1] + r[3])
+        return _ART_CACHE[pos]
+    finally:
+        plt.close(fig)
+        S.RICH_BG = rich
+    h, w, _ = a.shape
+    ys, xs = np.where(a.max(axis=2) > 30)
+    if not len(xs):
+        r = S.CHARA_RECTS[pos]
+        _ART_CACHE[pos] = (r[0], r[1], r[0] + r[2], r[1] + r[3])
+    else:
+        _ART_CACHE[pos] = (xs.min() / w, 1 - ys.max() / h, xs.max() / w, 1 - ys.min() / h)
+    return _ART_CACHE[pos]
+
+
 def zones_for_format():
     """立ち絵と字幕帯の占有域を、いまの画面比から出す。
 
@@ -52,8 +99,7 @@ def zones_for_format():
         # 二人会話にしたとき左にもう1体増えたのに、ここを直し忘れていたので、
         # **左の立ち絵に文字が重なっても全ゲートを通っていた**
         # (L001のサムネで、金の行が左右の立ち絵を突き抜けていた)。
-        rs = [S.CHARA_RECTS["br"], S.CHARA_RECTS["bl"]]
-        chara = [(r[0], r[1], r[0] + r[2], r[1] + r[3]) for r in rs]
+        chara = [_art_box("br"), _art_box("bl")]
         # 字幕は SUBTITLE_Y を上端に2行ぶん下へ伸びる。その下端はフッターの上まで
         band_top = S.SUBTITLE_Y + 0.030
         subtitle = (0.000, S.BRAND_XY[1] + 0.018, 1.000, band_top)
@@ -97,6 +143,12 @@ def check_video(vdir: Path):
     # カバー(*__cover)は立ち絵を出さないので立ち絵判定から外す
     cover_keys = {k for k in scenes if k.endswith("__cover")}
     used = {u.scene for u in units} | cover_keys
+    # 立ち絵が本当に出る場面だけを判定する(2026-08-22)。
+    # 以前は「カバー以外はすべて立ち絵あり」と決め打ちしていた。横型では
+    # 右下しか見ていなかったので実害が出ていなかったが、左の立ち絵も見るように
+    # したとたん、**chara="none" の図まで144件の誤検出**になった。
+    # longform-design の「図が主役のユニットは立ち絵を消す」を、ゲート側も知る必要がある。
+    chara_scenes = {u.scene for u in units if getattr(u, "chara", None) != "none"}
 
     chara_zone, subtitle_zone = zones_for_format()
     issues = []
@@ -104,7 +156,7 @@ def check_video(vdir: Path):
         painter = scenes.get(key)
         if painter is None:
             continue
-        has_chara = key not in cover_keys
+        has_chara = key not in cover_keys and key in chara_scenes
         for t in SAMPLE_T:
             fig = S.new_canvas()
             painter(fig, t)
