@@ -39,10 +39,17 @@ def vv_total_sec(video_dir: Path):
         units = mod.UNITS
     except Exception:
         return None
+    # **話者を3(ずんだもん)に決め打ちしてはいけない。**
+    # 2026-08-23に新デザインで冥鳴ひまり(id=14)を使ったとき、
+    # ひまりは約15%速いのに3で見積もったため、実測56.1秒を「約64秒」と出していた。
+    # テーマが差し替えた DEFAULT_SPEAKER を使う。
+    import shortlib as _S
+    default_spk = getattr(_S, "DEFAULT_SPEAKER", 3)
     total = 0.0
     for u in units:
+        spk = getattr(u, "speaker", 0) or default_spk
         url = ("http://127.0.0.1:50021/audio_query?text="
-               f"{urllib.parse.quote(u.tts_text())}&speaker=3")
+               f"{urllib.parse.quote(u.tts_text())}&speaker={spk}")
         q = json.load(urllib.request.urlopen(
             urllib.request.Request(url, method="POST"), timeout=30))
         raw = 0.0
@@ -191,7 +198,9 @@ def main(video_dir: Path) -> int:
     check_comment_question(src, check)
 
     # P系(ループ㊳: ユーザーレビュー第7弾)。前置き・生活翻訳・情景ユーモア・中盤の問い
-    cover_m = re.search(r'"[\w]+__cover":\s*s[cl]\.cover\(\s*"([^"]*)"', src)
+    # sf.cover(新デザイン)も見る。2026-08-23に新テーマを足したとき、
+    # 正規表現が sc./sl. しか見ておらず、問いがあるのに不合格になった
+    cover_m = re.search(r'"[\w]+__cover":\s*s[cfl]\.cover\(\s*"([^"]*)"', src)
     lead_m = re.search(r'lead="([^"]*)"', src)
     cover_top = cover_m.group(1) if cover_m else ""
     check("D23 前置き(1フレーム目に問い)", "?" in cover_top or (lead_m and "?" in lead_m.group(1)),

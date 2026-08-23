@@ -34,16 +34,18 @@ TELOP_EDGE = "#8a3b00"     # テロップの縁(濃く・太く。実測で細�
 INK_DARK = "#2b2b28"
 
 TITLE = ""                 # 上部の帯に出す文字(use_fp_theme で設定)
+BADGE = ""                 # 仮定の明示(戦略§6-2「利回りは仮定と明示」)
 _POSE_CACHE: dict[str, Image.Image] = {}
 
 
-def use_fp_theme(title: str, speaker: int = 14):
+def use_fp_theme(title: str, speaker: int = 14, badge: str = ""):
     """明るい背景・大きい字幕・上部のタイトル帯に切り替える。
 
     speaker=14 は冥鳴ひまり(2026-08-23 決定)。
     """
-    global TITLE
+    global TITLE, BADGE
     TITLE = title
+    BADGE = badge
     S.SURFACE = CREAM
     S.INK = INK_DARK
     S.DEFAULT_SPEAKER = speaker
@@ -82,6 +84,10 @@ def _canvas(t_global: float = 0.0):
     if TITLE:
         S.text_fit(fig, 0.5, 1 - h / 2, TITLE, ha="center", va="center",
                    color=BAND_INK, fontsize=44, fontweight="bold", max_w=0.92, zorder=3.1)
+    if BADGE:
+        # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)
+        S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
+                   color="#8a7f6c", fontsize=26, max_w=0.92, zorder=3.1)
     return fig
 
 

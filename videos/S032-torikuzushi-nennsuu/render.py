@@ -14,7 +14,9 @@ import shortlib as S  # noqa: E402
 import fplib as F     # noqa: E402
 
 TITLE = "1000万円 月5万で何歳まで?"
-F.use_fp_theme(TITLE, speaker=14)      # 冥鳴ひまり
+BADGE = "※ 利回りは仮定。元本保証ではありません"
+F.use_fp_theme(TITLE, speaker=14,
+               badge=BADGE)      # 冥鳴ひまり
 
 from shortlib import Unit, render_video, require_voicevox  # noqa: E402
 import scenes_fp as sf  # noqa: E402
@@ -29,7 +31,7 @@ assert M0[0] == 200 and round(M0[2]) == 82
 
 SCENES = {
     "ie": sf.person("01_base"),
-    "ie__cover": sf.cover("老後のお金", "1000万円を月5万で", "何歳まで持つ?"),
+    "ie__cover": sf.cover("老後のお金、どこまで使える?", "1000万円を月5万で", "何歳まで持つ?"),
     "toi": sf.person_bubble("03_troubled", "いくら使っていいの?"),
     "warizan": sf.hero("200か月", "1000万 ÷ 5万", name="01_base"),
     "odoroki": sf.person("04_surprised"),
@@ -64,13 +66,13 @@ UNITS = [
          se="pop", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 本編
-    Unit("toi", "1000万円の貯金、いくら使っていいか分からないですよね。", anim=1.2,
+    Unit("toi", "1000万円の貯金、いくら使っていいですか?", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("toi", "貯める話は多いのに、貯金を【使う】話は少ないんです。", anim=0.0,
+    Unit("toi", "貯める話は多いのに、【使う】話は少ない。", anim=0.0,
          speed=1.05, chara="none"),
     Unit("warizan", "まず、運用しない場合から考えます。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("warizan", "その1000万円を月5万で割ると、【200か月】。", anim=0.0,
+    Unit("warizan", "1000万円を月5万で割ると、【200か月】。", anim=0.0,
          se="don", speed=1.0, intonation=1.2, chara="none"),
     Unit("odoroki", "200か月は、【16年】ほどです。", anim=1.2,
          se="impact", se_at=0.2, speed=1.05, chara="none"),
@@ -78,7 +80,7 @@ UNITS = [
          speed=1.05, chara="none"),
     Unit("odoroki", "すると、【82歳】で尽きます。", anim=0.0,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("hyo", "では、運用しながら取り崩すとどうなるか。", anim=1.2,
+    Unit("hyo", "では運用したら、どうなるか。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("hyo", "運用の利回りとは、1年でふえる割合のこと。", anim=0.0,
          speed=1.05, chara="none"),
@@ -91,18 +93,17 @@ UNITS = [
     Unit("kari", "でも利回りは【仮定】です。ふえない年もあります。", anim=1.2,
          speed=1.05, pad=0.35, chara="none"),
     Unit("gyaku", "そこで、逆から決めます。", anim=1.2, speed=1.05, chara="none"),
-    Unit("gyaku", "もし【95歳】まで持たせるなら、毎月いくらまでか。", anim=0.0,
+    Unit("gyaku", "あなたは【95歳】まで持たせたいですか?", anim=0.0,
          speed=1.05, chara="none"),
     Unit("gyaku0", "運用しないなら、毎月【2万7000円】まで。", anim=1.2,
          se="impact", se_at=0.25, speed=1.05, chara="none"),
 
     # ---- 結論
-    Unit("kime", "先に【何歳まで】を決めれば、毎月の額が決まります。", anim=1.2,
+    Unit("kime", "先に【何歳まで】かを決めれば、額が決まります。", anim=1.2,
          se="don", speed=1.05, chara="none"),
 
     # ---- CTA
-    Unit("cta1", "このチャンネルでは今後も、", anim=1.2, speed=1.05, chara="none"),
-    Unit("cta1", "お金の数字を、ひとつずつ確かめていきます。", anim=0.0,
+    Unit("cta1", "このチャンネルでは、お金の数字を確かめます。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("cta2", "よかったらチャンネル登録をお願いします。", anim=1.2,
          speed=1.05, chara="none"),
