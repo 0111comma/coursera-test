@@ -80,13 +80,13 @@ UNITS = [
          se="pop", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 前提1: なぜ65歳からなのか(年金が始まる年齢)
-    Unit("kaishi", "年金が始まる【65歳】から、毎月5万円ずつ使います。", anim=1.2,
+    Unit("kaishi", "年金が始まる【65歳】から、毎月5万円使います。", anim=1.2,
          speed=1.05, chara="none"),
 
     # ---- 割り算1回。**声は丸め、画面は正確なまま**(端数の連続は聞き手を置いていく)
     Unit("keisan0", "1000万円を5万円で割ると、【200か月】。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("keisan1", "200か月は、【16年】以上です。", anim=1.2,
+    Unit("keisan1", "200か月は16年以上です。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("kara", "65歳に【16年】を足すと、【81歳】をすぎます。", anim=1.2,
          speed=1.05, chara="none"),
@@ -99,34 +99,39 @@ UNITS = [
     Unit("seizon2", "女性なら、【2人に1人】が90歳まで。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("obi", "90歳まで生きたら、【8年】以上も足りません。", anim=1.2,
-         se="impact", se_at=0.2, speed=1.0, intonation=1.2, pad=0.3, chara="none"),
+         se="impact", se_at=0.2, speed=1.0, intonation=1.2, chara="none"),
+
+    # ---- **恐怖**。尽きるのは貯金であって収入ではない。年金だけの暮らしが残る。
+    #      算数を、視聴者が思い浮かべる場面に変える一行(2026-08-23のレビュー)
+    Unit("obi", "その【8年】は、年金だけの暮らしです。", anim=0.0,
+         se="don", speed=1.0, intonation=1.15, pad=0.35, chara="none"),
 
     # ---- 上限もまた割り算1回
     Unit("keisan2", "65歳から90歳までは、【300か月】。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("keisan3", "1000万円を300か月で割ると、【3万3000円】。", anim=1.2,
+    Unit("keisan3", "300か月で割ると、【3万3000円】。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
 
-    # ---- 痛みは金額の差ではなく、**暮らしがどうなるか**で言う
+    # ---- **いちばん強く出す一行**。差額ではなく、何が起きるかで言う
     Unit("hikaku", "毎月5万円のつもりが、使えるのは【3万3000円】。", anim=1.2,
          speed=1.0, chara="none"),
-    Unit("hikaku", "毎月【1万7000円】ぶん、暮らしが縮みます。", anim=0.0,
-         se="impact", se_at=0.25, speed=1.0, pad=0.35, chara="none"),
+    Unit("hikaku", "毎月【1万7000円】。何かをあきらめる額です。", anim=0.0,
+         se="impact", se_at=0.25, speed=1.0, intonation=1.2, pad=0.4, chara="none"),
 
-    # ---- 結論は1行に圧縮する(「金額ではない」を2回言わない)
+    # ---- 結論は1行。方法も1行
     Unit("kime", "決めるのは【金額】ではなく、【何歳まで】です。", anim=1.2,
          se="don", speed=1.05, chara="none"),
+    Unit("shiki", "【何歳】までかを月に直し、貯金を割ります。", anim=1.2,
+         speed=1.05, chara="none"),
 
-    # ---- 持ち帰る式。「月数」は耳で引っかかるので言わない
-    Unit("shiki", "何歳までかが決まれば、【何か月】かが決まります。", anim=1.2,
-         speed=1.05, chara="none"),
-    Unit("shiki", "貯金を、その【何か月】かで割ります。", anim=0.0,
-         speed=1.05, chara="none"),
+    # ---- **安心**。恐怖を出したなら、出口も同じ強さで出す
+    Unit("shiki", "【貯金】を先に割っておけば、心配は要りません。", anim=0.0,
+         speed=1.05, pad=0.3, chara="none"),
+
+    # ---- コメントを求める(登録だけを言わない。つながりを作る)
     Unit("toi2", "あなたの貯金は、何歳まで持たせますか?", anim=1.2,
          speed=1.05, chara="none"),
-
-    # ---- CTA。**視聴者が次に何を得られるか**を名指しする
-    Unit("cta2", "【2000万円】の貯金なら? 登録して次の動画へ。", anim=1.2,
+    Unit("cta2", "【何歳】までか、コメントで教えてください。", anim=1.2,
          speed=1.05, chara="none"),
 ]
 
