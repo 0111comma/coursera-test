@@ -46,18 +46,18 @@ SCENES = {
                         empty_label="81歳", title="1000万円を毎月5万円ずつ"),
 
     # ---- 90歳の根拠。**男女ならべず、長いほうの1点に絞る**
-    "seizon": sf.people(10, 5, "2人に1人", title="女性の場合"),
+    "seizon": sf.people(2, 1, "2人に1人", title="女性の場合"),
     "obi": sf.timeline(65, 65 + 200 / 12, 90, "お金がある", "貯金ゼロ 8年",
                        empty_label="81歳", title="90歳まで生きたら"),
 
-    # ---- 上限も結果だけ
-    "ue": sf.hero("3万3000円", "1000万円 ÷ 90歳まで", name="02_point"),
-    "hikaku": sf.bars([("つもり", 50000, "5万円"), ("使える額", 33000, "3万3000円")],
+    # ---- 上限と痛みを1つの棒で見せる(結果を2度言わない)
+    "hikaku": sf.bars([("予定", 50000, "5万円"), ("使える額", 33000, "3万3000円")],
                       highlight=1, title="毎月の取り崩し額"),
 
     # ---- 持ち帰る式
     "kime": sf.person("02_point"),
-    "shiki": sf.formula("貯金額 ÷ 持たせる月数", "= 毎月使っていい額"),
+    # 図はナレーションと同義にしない(Mayer 冗長性)。**道標として短く**
+    "shiki": sf.formula("貯金額 ÷ 月数", "= 毎月使える額"),
     "toi2": sf.person("01_base"),
     "cta2": sf.cta("", "02_point", show_button=True),
 }
@@ -87,20 +87,16 @@ UNITS = [
     Unit("obi", "【貯金】はゼロ。年金だけで【8年】です。", anim=0.0,
          se="don", speed=1.0, intonation=1.15, pad=0.4, chara="none"),
 
-    # ---- 上限も結果だけ
-    Unit("ue", "90歳まで持たせるなら、毎月【3万3000円】。", anim=1.2,
+    # ---- **結果は1度だけ言う。**そのまま痛みへ繋ぐ(2026-08-23のレビュー)
+    Unit("hikaku", "90歳まで持たせるなら、使えるのは毎月【3万3000円】。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("hikaku", "毎月5万円のつもりが、使えるのは【3万3000円】。", anim=1.2,
-         speed=1.0, chara="none"),
-
-    # ---- **いちばん強い一行**。差額ではなく、何が消えるかで言う
-    Unit("hikaku", "毎月【1万7000円】分、暮らしを削ることになります。", anim=0.0,
+    Unit("hikaku", "予定より毎月【1万7000円】、暮らしを削ることになります。", anim=0.0,
          se="impact", se_at=0.25, speed=1.0, intonation=1.2, pad=0.4, chara="none"),
 
     # ---- 結論と方法を1行ずつ
-    Unit("kime", "決めるのは金額ではなく、【何歳まで持たせるか】です。", anim=1.2,
+    Unit("kime", "決めるのは金額ではなく、持たせる【年齢】です。", anim=1.2,
          se="don", speed=1.05, chara="none"),
-    Unit("shiki", "【何歳】までかを月に直し、貯金額を割り算します。", anim=1.2,
+    Unit("shiki", "その【年齢】を月数にして、貯金額を割るだけです。", anim=1.2,
          speed=1.05, chara="none"),
 
     # ---- **安心**。恐怖と同じ言葉(通帳)で返す
@@ -108,7 +104,7 @@ UNITS = [
          speed=1.05, pad=0.3, chara="none"),
 
     # ---- コメントを求める
-    Unit("toi2", "あなたの貯金は、何歳まで持たせますか?", anim=1.2,
+    Unit("toi2", "あなたは貯金を、何歳まで持たせたいですか?", anim=1.2,
          speed=1.05, chara="none"),
     Unit("cta2", "【何歳】までか、コメントで教えてください。", anim=1.2,
          speed=1.05, chara="none"),

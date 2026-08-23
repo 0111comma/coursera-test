@@ -185,24 +185,30 @@ def people(total: int, hit: int, label: str, title: str = ""):
                                       boxstyle="round,pad=0,rounding_size=0.030",
                                       transform=fig.transFigure, facecolor="#fffdf7",
                                       edgecolor="#e0d3ba", linewidth=3.0, zorder=2.1))
+        # **人数は声とそろえる。**声が「2人に1人」なのに絵が10人中5人だと、
+        # 視聴者の頭の中で 5/10 = 1/2 の変換が起きる(2026-08-23のレビュー)
         x0, x1 = 0.10, 0.90
-        step = (x1 - x0) / total
-        cy = 0.545
+        span = min((x1 - x0) / total, 0.24)      # 人数が少ないときは大きくしすぎない
+        left = 0.5 - span * total / 2
+        cy = 0.520          # 見出しと頭がぶつからない高さ
+        head_w = span * 0.42
+        body_w = span * 0.50
+        body_h = min(0.135, max(0.070, span * 0.62))
         n_lit = int(round(hit * min(1.0, t * 1.6)))
         for i in range(total):
-            cx = x0 + step * (i + 0.5)
+            cx = left + span * (i + 0.5)
             col = RED if i < n_lit else "#c9c2b4"
             # 頭
-            fig.add_artist(Ellipse((cx, cy + 0.042), step * 0.44,
-                                   step * 0.44 * S.W / S.H, transform=fig.transFigure,
+            fig.add_artist(Ellipse((cx, cy + body_h * 0.62), head_w,
+                                   head_w * S.W / S.H, transform=fig.transFigure,
                                    facecolor=col, edgecolor="none", zorder=2.3))
             # 胴
-            fig.add_artist(FancyBboxPatch((cx - step * 0.26, cy - 0.055),
-                                          step * 0.52, 0.082,
-                                          boxstyle="round,pad=0,rounding_size=0.016",
+            fig.add_artist(FancyBboxPatch((cx - body_w / 2, cy - body_h * 0.5),
+                                          body_w, body_h,
+                                          boxstyle="round,pad=0,rounding_size=0.018",
                                           transform=fig.transFigure, facecolor=col,
                                           edgecolor="none", zorder=2.3))
-        S.text_fit(fig, 0.5, 0.443, label, ha="center", va="center",
+        S.text_fit(fig, 0.5, 0.432, label, ha="center", va="center",
                    color=RED, fontsize=52, max_w=0.80, zorder=2.4)
         if title:
             S.text_fit(fig, 0.5, 0.672, title, ha="center", va="center",
