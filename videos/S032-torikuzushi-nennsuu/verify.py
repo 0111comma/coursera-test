@@ -81,9 +81,29 @@ if __name__ == "__main__":
           f" = {EMPTY_Y}歳{EMPTY_M}か月 ✓")
     print(f"      {TARGET_AGE}歳まで {GAP_MONTHS // 12}年{GAP_MONTHS % 12}か月 足りない ✓")
 
+    # --- 台本で**声に出す**丸めた値。画面は正確なままにする(2026-08-23)
+    # ユーザー指摘「16年8か月・81歳8か月・8年4か月と端数が続くと、
+    #   視聴者は頭の中で計算しようとして話に置いていかれる」
+    # 丸めが嘘になっていないかを、ここで機械で確かめる。
+    ROUND_Y = MONTHS_0 // 12                 # 「16年以上」
+    ROUND_AGE = EMPTY_Y                      # 「81歳をすぎます」
+    ROUND_GAP = GAP_MONTHS // 12             # 「8年以上も足りません」
+    assert MONTHS_0 / 12 > ROUND_Y, "「16年以上」が嘘になっていないか"
+    assert EMPTY_M > 0, "「81歳をすぎます」が嘘になっていないか"
+    assert GAP_MONTHS / 12 > ROUND_GAP, "「8年以上」が嘘になっていないか"
+    print(f"\n台本で言う丸めた値: {ROUND_Y}年以上 / {ROUND_AGE}歳をすぎる / "
+          f"{ROUND_GAP}年以上 足りない ✓")
+
     print(f"\n{TARGET_AGE}歳({TARGET_AGE - START_AGE}年)まで持たせるなら、毎月いくらまでか:")
     for r, label in CASES:
         print(f"  {label:10s}: 毎月 {CAP[r]:,}円まで")
     print(f"\n運用しない場合: {DRAW:,}円 → {CAP_0:,}円。**{CUT:,}円 減らすことになる** ✓")
     print(f"検算: {PRINCIPAL:,} ÷ {(TARGET_AGE - START_AGE) * 12}か月 "
           f"= {PRINCIPAL / ((TARGET_AGE - START_AGE) * 12):,.0f}円/月")
+
+    # --- 締めで名前を出す「ほかの貯金額」。言う以上は計算しておく
+    print(f"\nほかの貯金額(運用しない・{TARGET_AGE}歳まで):")
+    for other in (5_000_000, 20_000_000, 30_000_000):
+        cap = other / ((TARGET_AGE - START_AGE) * 12)
+        man, rest = divmod(other, 10_000)
+        print(f"  {man}万円 → 毎月 {int(cap // 1000 * 1000):,}円まで")
