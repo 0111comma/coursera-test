@@ -57,7 +57,7 @@ SCENES = {
 
     # ---- 持ち帰る式
     "kime": sf.person("02_point"),
-    "shiki": sf.formula("貯金 ÷ 持たせたい月数", "= 毎月使っていい額"),
+    "shiki": sf.formula("貯金額 ÷ 持たせる月数", "= 毎月使っていい額"),
     "toi2": sf.person("01_base"),
     "cta2": sf.cta("", "02_point", show_button=True),
 }
@@ -74,13 +74,13 @@ UNITS = [
     # ---- 答えだけ。割り算は画面の「1000万円 ÷ 毎月5万円」が見せる
     Unit("kara", "【81歳】で、その貯金が底をつきます。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("kara", "その【81歳】で、足りますか?", anim=0.0,
+    Unit("kara", "【貯金】がゼロのあと、生活費はどうしますか?", anim=0.0,
          speed=1.05, pad=0.3, chara="none"),
 
     # ---- 前提2: なぜ90歳まで考えるのか(厚労省 令和7年簡易生命表)
     Unit("seizon", "いま【90歳】まで生きる女性は、2人に1人です。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("obi", "90歳まで生きたら、【8年】以上も足りません。", anim=1.2,
+    Unit("obi", "90歳まで生きたら、【8年】分の生活費が足りません。", anim=1.2,
          se="impact", se_at=0.2, speed=1.0, intonation=1.2, chara="none"),
 
     # ---- **恐怖**。通帳はゼロ。でも収入がゼロになるわけではなく、年金だけが残る
@@ -94,17 +94,17 @@ UNITS = [
          speed=1.0, chara="none"),
 
     # ---- **いちばん強い一行**。差額ではなく、何が消えるかで言う
-    Unit("hikaku", "毎月【1万7000円】、たのしみに回せません。", anim=0.0,
+    Unit("hikaku", "毎月【1万7000円】分、暮らしを削ることになります。", anim=0.0,
          se="impact", se_at=0.25, speed=1.0, intonation=1.2, pad=0.4, chara="none"),
 
     # ---- 結論と方法を1行ずつ
-    Unit("kime", "決めるのは【金額】ではなく、【何歳まで】です。", anim=1.2,
+    Unit("kime", "決めるのは金額ではなく、【何歳まで持たせるか】です。", anim=1.2,
          se="don", speed=1.05, chara="none"),
-    Unit("shiki", "【何歳】までかを月に直し、貯金を割ります。", anim=1.2,
+    Unit("shiki", "【何歳】までかを月に直し、貯金額を割り算します。", anim=1.2,
          speed=1.05, chara="none"),
 
     # ---- **安心**。恐怖と同じ言葉(通帳)で返す
-    Unit("shiki", "先に【貯金】を割っておけば、ゼロになりません。", anim=0.0,
+    Unit("shiki", "こうすれば、【貯金】が途中で尽きません。", anim=0.0,
          speed=1.05, pad=0.3, chara="none"),
 
     # ---- コメントを求める
