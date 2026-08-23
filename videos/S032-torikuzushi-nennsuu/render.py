@@ -59,42 +59,50 @@ SCENES = {
 }
 
 UNITS = [
-    # ---- カバー(0〜5%)
-    Unit("ie", "1000万円、月5万でいつまで持つ?", anim=1.0, cover=True,
+    # ---- カバー
+    Unit("ie", "貯金1000万円、月5万でいつまで持つ?", anim=1.0, cover=True,
          se="pop", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 本編
-    Unit("toi", "老後のお金、いくら使っていいか分からないですよね。", anim=1.2,
+    Unit("toi", "1000万円の貯金、いくら使っていいか分からないですよね。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("toi", "貯める話は多いのに、【使う】話は少ないんです。", anim=0.0,
+    Unit("toi", "貯める話は多いのに、貯金を【使う】話は少ないんです。", anim=0.0,
          speed=1.05, chara="none"),
-    Unit("warizan", "まず、運用しない場合から。", anim=1.2, speed=1.05, chara="none"),
-    Unit("warizan", "1000万円を月5万で割ると、【200か月】。", anim=0.0,
+    Unit("warizan", "まず、運用しない場合から考えます。", anim=1.2,
+         speed=1.05, chara="none"),
+    Unit("warizan", "その1000万円を月5万で割ると、【200か月】。", anim=0.0,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("odoroki", "16年8か月しか持ちません。", anim=1.2,
+    Unit("odoroki", "200か月は、【16年】ほどです。", anim=1.2,
          se="impact", se_at=0.2, speed=1.05, chara="none"),
-    Unit("odoroki", "65歳から始めると、【82歳】で尽きます。", anim=0.0,
+    Unit("odoroki", "16年を、【65歳】から始めるとします。", anim=0.0,
          speed=1.05, chara="none"),
-    Unit("hyo", "運用しながら取り崩すと、どうなるか。", anim=1.2, speed=1.05, chara="none"),
-    Unit("hyo0", "運用しないなら、【82歳】。", anim=1.2, speed=1.05, chara="none"),
-    Unit("hyo3", "年3%で回せば、【88歳】まで。", anim=1.2, speed=1.05, chara="none"),
-    Unit("hyo5", "年5%なら、【101歳】まで持ちます。", anim=1.2,
+    Unit("odoroki", "すると、【82歳】で尽きます。", anim=0.0,
+         se="don", speed=1.0, intonation=1.2, chara="none"),
+    Unit("hyo", "では、運用しながら取り崩すとどうなるか。", anim=1.2,
+         speed=1.05, chara="none"),
+    Unit("hyo", "運用の利回りとは、1年でふえる割合のこと。", anim=0.0,
+         speed=1.05, chara="none"),
+    Unit("hyo0", "運用しないなら、さっきの【82歳】。", anim=1.2, speed=1.05, chara="none"),
+    Unit("hyo3", "では利回りが【3%】なら、どうでしょう。", anim=1.2, speed=1.05, chara="none"),
+    Unit("hyo3", "3%なら、【88歳】まで持ちます。", anim=0.0, speed=1.05, chara="none"),
+    Unit("hyo5", "さらに【5%】だと、", anim=1.2, speed=1.05, chara="none"),
+    Unit("hyo5", "5%なら、【101歳】まで持ちます。", anim=0.0,
          se="don", speed=1.05, chara="none"),
-    Unit("kari", "ただし利回りは【仮定】です。減る年もあります。", anim=1.2,
+    Unit("kari", "でも利回りは【仮定】です。ふえない年もあります。", anim=1.2,
          speed=1.05, pad=0.35, chara="none"),
     Unit("gyaku", "そこで、逆から決めます。", anim=1.2, speed=1.05, chara="none"),
-    Unit("gyaku", "95歳まで持たせるなら、毎月いくらまでか。", anim=0.0,
+    Unit("gyaku", "もし【95歳】まで持たせるなら、毎月いくらまでか。", anim=0.0,
          speed=1.05, chara="none"),
-    Unit("gyaku0", "運用しないなら、【2万7000円】まで。", anim=1.2,
+    Unit("gyaku0", "運用しないなら、毎月【2万7000円】まで。", anim=1.2,
          se="impact", se_at=0.25, speed=1.05, chara="none"),
 
-    # ---- 結論(73〜76%)
+    # ---- 結論
     Unit("kime", "先に【何歳まで】を決めれば、毎月の額が決まります。", anim=1.2,
          se="don", speed=1.05, chara="none"),
 
-    # ---- CTA(76〜100%)
+    # ---- CTA
     Unit("cta1", "このチャンネルでは今後も、", anim=1.2, speed=1.05, chara="none"),
-    Unit("cta1", "お金の数字をひとつずつ確かめていきます。", anim=0.0,
+    Unit("cta1", "お金の数字を、ひとつずつ確かめていきます。", anim=0.0,
          speed=1.05, chara="none"),
     Unit("cta2", "よかったらチャンネル登録をお願いします。", anim=1.2,
          speed=1.05, chara="none"),
