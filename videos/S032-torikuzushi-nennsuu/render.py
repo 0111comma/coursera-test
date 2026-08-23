@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "producti
 import shortlib as S  # noqa: E402
 import fplib as F     # noqa: E402
 
-TITLE = "1000万円 月5万で何歳まで?"
+TITLE = "1000万円を毎月5万円ずつ使うと?"
 BADGE = "※ 利回りは仮定。元本保証ではありません"
 F.use_fp_theme(TITLE, speaker=14,
                badge=BADGE)      # 冥鳴ひまり
@@ -31,10 +31,10 @@ assert M0[0] == 200 and round(M0[2]) == 82
 
 SCENES = {
     "ie": sf.person("01_base"),
-    "ie__cover": sf.cover("老後のお金、どこまで使える?", "1000万円を月5万で", "何歳まで持つ?"),
+    "ie__cover": sf.cover("老後のお金、どこまで使える?", "1000万円を毎月5万円ずつ", "何歳まで持つ?"),
 
     # ---- 答えを先に出す(競合の型: 冒頭で言い切る)
-    "kotae": sf.hero("82歳", "65歳から 月5万ずつ", name="04_surprised"),
+    "kotae": sf.hero("82歳", "65歳から 毎月5万円ずつ", name="04_surprised"),
 
     # ---- 中身は割り算1回。表は出しっぱなしで赤枠を1行ずつ動かす
     "keisan0": sf.table(["", ""], [("1000万 ÷ 5万", "200か月"), ("200か月", "16年と少し")],
@@ -44,7 +44,7 @@ SCENES = {
 
     # ---- この動画の芯: 足りない13年
     "obi": sf.timeline(65, 82, 95, "お金がある", "", show_gap=False,
-                       title="65歳から月5万ずつ"),
+                       title="65歳から毎月5万円ずつ"),
     "obi2": sf.timeline(65, 82, 95, "お金がある", "13年 足りない",
                         title="95歳まで生きたら"),
 
@@ -52,21 +52,21 @@ SCENES = {
     "nobiru": sf.person("02_point"),
     "hyo": sf.table(["利回り", "尽きる年齢"],
                     [("0%", "82歳"), ("3%", "88歳"), ("5%", "101歳")],
-                    title="65歳から月5万ずつ"),
+                    title="65歳から毎月5万円ずつ"),
     "hyo3": sf.table(["利回り", "尽きる年齢"],
                      [("0%", "82歳"), ("3%", "88歳"), ("5%", "101歳")],
-                     highlight=1, title="65歳から月5万ずつ"),
+                     highlight=1, title="65歳から毎月5万円ずつ"),
     "hyo5": sf.table(["利回り", "尽きる年齢"],
                      [("0%", "82歳"), ("3%", "88歳"), ("5%", "101歳")],
-                     highlight=2, title="65歳から月5万ずつ"),
+                     highlight=2, title="65歳から毎月5万円ずつ"),
     "hyo0": sf.table(["利回り", "尽きる年齢"],
                      [("0%", "82歳"), ("3%", "88歳"), ("5%", "101歳")],
-                     highlight=0, title="65歳から月5万ずつ"),
+                     highlight=0, title="65歳から毎月5万円ずつ"),
     "kari": sf.person("03_troubled"),
 
     # ---- 本当の答え
     "ue": sf.hero("2万7000円", "95歳まで使うなら 毎月", name=None),
-    "hikaku": sf.bars([("つもり", 50000, "5万"), ("実際", 27000, "2万7000円")],
+    "hikaku": sf.bars([("つもり", 50000, "5万円"), ("実際", 27000, "2万7000円")],
                       highlight=1, title="毎月使える額"),
 
     # ---- 持ち帰る式
@@ -78,21 +78,21 @@ SCENES = {
 
 UNITS = [
     # ---- カバー
-    Unit("ie", "貯金1000万円、月5万でいつまで持つ?", anim=1.0, cover=True,
+    Unit("ie", "貯金1000万円。毎月5万円で何歳まで?", anim=1.0, cover=True,
          se="pop", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 答えを先に
-    Unit("kotae", "月5万で使うと、【82歳】で尽きます。", anim=1.2,
+    Unit("kotae", "毎月5万円ずつ使うと、【82歳】で尽きます。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 中身は割り算1回
-    Unit("keisan0", "1000万円を月5万で割ると、【200か月】。", anim=1.2,
+    Unit("keisan0", "1000万円を5万円で割ると、【200か月】。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("keisan1", "200か月は、【16年】と少し。", anim=1.2,
          speed=1.05, chara="none"),
 
     # ---- 芯: 13年足りない
-    Unit("obi", "【65歳】から始めて、その【16年】で足りますか?", anim=1.2,
+    Unit("obi", "【65歳】から使い始めて、その【16年】で足りますか?", anim=1.2,
          speed=1.05, chara="none"),
     Unit("obi2", "【95歳】まで生きたら、【13年】足りません。", anim=1.2,
          se="impact", se_at=0.2, speed=1.0, intonation=1.2, pad=0.3, chara="none"),
@@ -120,7 +120,7 @@ UNITS = [
          speed=1.05, chara="none"),
     Unit("ue", "答えは、毎月【2万7000円】。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("hikaku", "毎月【5万】のつもりが、半分ちょっとです。", anim=1.2,
+    Unit("hikaku", "毎月【5万円】のつもりが、半分ちょっとです。", anim=1.2,
          se="impact", se_at=0.25, speed=1.0, pad=0.35, chara="none"),
 
     # ---- 持ち帰る式
@@ -130,7 +130,7 @@ UNITS = [
          speed=1.05, chara="none"),
     Unit("shiki", "あなたは、その【年数】を何年にしますか?", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("shiki", "その【年数】で、貯金を割るだけです。", anim=0.0,
+    Unit("shiki", "貯金を、その【年数】と12で割ります。", anim=0.0,
          se="don", speed=1.05, chara="none"),
 
     # ---- CTA

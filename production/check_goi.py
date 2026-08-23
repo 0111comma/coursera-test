@@ -178,7 +178,58 @@ def check_video(vdir: Path, futsu):
         issues.append((f"#{n}", "略語",
                        f"「{longer[0]}」があるのに「{short}」だけで{len(hits)}回使っている: "
                        f"「{line}」。普通の語なら production/goi_futsu.txt に足すこと"))
+    issues += tan_i_nuke(subs, vdir)
     return sorted(set(issues))
+
+
+# 「月5万で」のように**助数詞(円)を落とす**のを見つける(2026-08-23)。
+# ユーザー指摘「月五万でって何? 月五万円切り崩したら何年で無くなる? ってこと?
+#               言葉足らずじゃない?」
+#
+# check_goi の本体は「語」を見ていて、**数のうしろの単位**は見ていなかった。
+# 「5万」は形態素としては数詞+助数詞で、略語一覧にも専門語一覧にも載らない。
+# だから32本ぜんぶ素通りしていた。
+#
+# 判定: ナレーションの中の「数字+万/億」で、うしろに円・人・年などの単位も
+# 桁の続き(2万7000円 の 7000)も無いもの。
+# 「年収500万」「ボーナス50万」は口語では自然だが、**耳で聞く初心者**が相手なので
+# 落とす。自然だと判断したら gate_exempt.txt に理由つきで入れること。
+TAN_I = re.compile(r"[0-9]+(?:万|億)(?![0-9千百万億]|円|人|年|か月|ヶ月|ドル|分の|倍|回|件|本|台|%)")
+
+
+def tan_i_nuke(subs, vdir: Path):
+    ex = load_exempt("goi").get(vdir.name.split("-")[0], set())
+    out = []
+    for i, s in enumerate(subs, 1):
+        if i in ex:
+            continue
+        for m in TAN_I.finditer(s):
+            out.append((f"#{i}", "単位ぬけ",
+                        f"「{m.group(0)}」に単位がない: 「{s}」。"
+                        f"耳で聞く人には何の{m.group(0)[-1]}か分からない。"
+                        f"「{m.group(0)}円」のように言い切ること"))
+    return out
+
+
+def load_exempt(gate: str):
+    """production/gate_exempt.txt から、このゲートの免除を読む(理由の無い行は無効)。"""
+    f = ROOT / "production" / "gate_exempt.txt"
+    out = {}
+    if not f.exists():
+        return out
+    for ln in f.read_text().splitlines():
+        body, _, reason = ln.partition("#")
+        body = body.strip()
+        if not body or not reason.strip():
+            continue
+        parts = body.split(":")
+        if len(parts) != 3 or parts[1] != gate:
+            continue
+        try:
+            out.setdefault(parts[0], set()).add(int(parts[2]))
+        except ValueError:
+            continue
+    return out
 
 
 def main():
