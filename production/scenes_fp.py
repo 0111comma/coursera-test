@@ -120,6 +120,71 @@ def table(headers, rows, highlight=None, title=""):
     return painter
 
 
+def timeline(start: int, empty: int, end: int, fill_label: str, gap_label: str,
+             show_gap: bool = True, title: str = ""):
+    """年齢の帯。**お金が続く区間と、足りない区間を1本の線で見せる。**
+
+    start=65 / empty=82 / end=95 のように渡す。
+    show_gap=False なら足りない側をまだ塗らない(1拍ためる)。
+    """
+    def painter(fig, t):
+        # 帯だけを宙に置くと上下が空く。**白いパネルに載せて1つの塊にする**
+        fig.add_artist(FancyBboxPatch((0.05, 0.355), 0.90, 0.365,
+                                      boxstyle="round,pad=0,rounding_size=0.030",
+                                      transform=fig.transFigure, facecolor="#fffdf7",
+                                      edgecolor="#e0d3ba", linewidth=3.0, zorder=2.1))
+        x0, x1 = 0.11, 0.89
+        y, h = 0.500, 0.115
+        def px(age):
+            return x0 + (x1 - x0) * (age - start) / (end - start)
+        xm = px(empty)
+        fig.add_artist(FancyBboxPatch((x0, y), xm - x0, h,
+                                      boxstyle="round,pad=0,rounding_size=0.018",
+                                      transform=fig.transFigure, facecolor="#3f9a5c",
+                                      edgecolor="none", zorder=2.2))
+        S.text_fit(fig, (x0 + xm) / 2, y + h / 2, fill_label, ha="center", va="center",
+                   color="#ffffff", fontsize=34, max_w=(xm - x0) * 0.92, zorder=2.4)
+        if show_gap:
+            fig.add_artist(FancyBboxPatch((xm, y), x1 - xm, h,
+                                          boxstyle="round,pad=0,rounding_size=0.018",
+                                          transform=fig.transFigure, facecolor="#f4e0e0",
+                                          edgecolor=RED, linewidth=4.0, hatch="//",
+                                          zorder=2.2))
+            S.text_fit(fig, (xm + x1) / 2, y + h / 2, gap_label, ha="center", va="center",
+                       color=RED, fontsize=38, max_w=(x1 - xm) * 0.88, zorder=2.4)
+        for age, x, ha in ((start, x0, "left"), (empty, xm, "center"), (end, x1, "right")):
+            if not show_gap and age == end:
+                continue
+            fig.add_artist(plt.Line2D([x, x], [y - 0.030, y], transform=fig.transFigure,
+                                      color=INK, linewidth=3.0, zorder=2.3))
+            S.text_fit(fig, x, y - 0.058, f"{age}歳", ha=ha, va="center",
+                       color=INK, fontsize=44, max_w=0.20, zorder=2.4)
+        if title:
+            S.text_fit(fig, 0.5, 0.668, title, ha="center", va="center",
+                       color=SUB, fontsize=40, max_w=0.84, zorder=2.3)
+    return painter
+
+
+def formula(line: str, note: str = "", name: str = "02_point"):
+    """持ち帰る式を1枚。**手順ではなく、その場で使える形**で置く。"""
+    def painter(fig, t):
+        if name:
+            F.draw_pose(fig, name, cx=0.5, top=0.845, height=0.315)
+            top, bot = 0.495, 0.320
+        else:
+            top, bot = 0.660, 0.480
+        fig.add_artist(FancyBboxPatch((0.06, bot), 0.88, top - bot,
+                                      boxstyle="round,pad=0,rounding_size=0.030",
+                                      transform=fig.transFigure, facecolor="#fffdf7",
+                                      edgecolor=RED, linewidth=5.0, zorder=2.2))
+        S.text_fit(fig, 0.5, (top + bot) / 2 + 0.012, line, ha="center", va="center",
+                   color="#b32020", fontsize=64, max_w=0.80, zorder=2.4)
+        if note:
+            S.text_fit(fig, 0.5, bot + 0.030, note, ha="center", va="center",
+                       color=SUB, fontsize=32, max_w=0.78, zorder=2.4)
+    return painter
+
+
 def bars(items, highlight=None, title="", ymax=None):
     """棒。items = [(見出し, 値, 棒の上の語句), ...]"""
     vals = [v for _, v, _ in items]
