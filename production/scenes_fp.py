@@ -7,7 +7,7 @@
 - 数字はその語だけ色を変える(【】で囲む)
 """
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyBboxPatch
+from matplotlib.patches import Ellipse, FancyBboxPatch
 
 import fplib as F
 import shortlib as S
@@ -172,6 +172,41 @@ def timeline(start: int, empty: float, end: int, fill_label: str, gap_label: str
         if title:
             S.text_fit(fig, 0.5, 0.668, title, ha="center", va="center",
                        color=SUB, fontsize=40, max_w=0.84, zorder=2.3)
+    return painter
+
+
+def people(total: int, hit: int, label: str, title: str = ""):
+    """人の絵を並べて、割合を数で見せる。**棒より、割合は「何人のうち何人」が速い。**
+
+    total=10 / hit=5 なら、10人のうち5人を赤くする。
+    """
+    def painter(fig, t):
+        fig.add_artist(FancyBboxPatch((0.05, 0.395), 0.90, 0.315,
+                                      boxstyle="round,pad=0,rounding_size=0.030",
+                                      transform=fig.transFigure, facecolor="#fffdf7",
+                                      edgecolor="#e0d3ba", linewidth=3.0, zorder=2.1))
+        x0, x1 = 0.10, 0.90
+        step = (x1 - x0) / total
+        cy = 0.545
+        n_lit = int(round(hit * min(1.0, t * 1.6)))
+        for i in range(total):
+            cx = x0 + step * (i + 0.5)
+            col = RED if i < n_lit else "#c9c2b4"
+            # 頭
+            fig.add_artist(Ellipse((cx, cy + 0.042), step * 0.44,
+                                   step * 0.44 * S.W / S.H, transform=fig.transFigure,
+                                   facecolor=col, edgecolor="none", zorder=2.3))
+            # 胴
+            fig.add_artist(FancyBboxPatch((cx - step * 0.26, cy - 0.055),
+                                          step * 0.52, 0.082,
+                                          boxstyle="round,pad=0,rounding_size=0.016",
+                                          transform=fig.transFigure, facecolor=col,
+                                          edgecolor="none", zorder=2.3))
+        S.text_fit(fig, 0.5, 0.443, label, ha="center", va="center",
+                   color=RED, fontsize=52, max_w=0.80, zorder=2.4)
+        if title:
+            S.text_fit(fig, 0.5, 0.672, title, ha="center", va="center",
+                       color=SUB, fontsize=38, max_w=0.84, zorder=2.3)
     return painter
 
 
