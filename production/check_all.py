@@ -17,9 +17,12 @@ from pathlib import Path
 PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 
-# 縦横で共通のゲート
-COMMON = ["toi", "hold", "teinei", "flow", "figure", "overlap", "ikko", "yomi",
-          "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
+# 縦横で共通のゲート。
+# **zentei は先頭に置く。**「説明していない数字を画面に出さない」は
+# 2026-08-23 にユーザーが「第一優先で絶対今後落としてほしくない」と言ったゲート。
+# 台本の直しよりも前に、企画(前提と根拠)が立っているかを見る。
+COMMON = ["zentei", "toi", "hold", "teinei", "flow", "figure", "overlap", "ikko",
+          "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 

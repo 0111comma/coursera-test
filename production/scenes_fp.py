@@ -120,8 +120,8 @@ def table(headers, rows, highlight=None, title=""):
     return painter
 
 
-def timeline(start: int, empty: int, end: int, fill_label: str, gap_label: str,
-             show_gap: bool = True, title: str = ""):
+def timeline(start: int, empty: float, end: int, fill_label: str, gap_label: str,
+             show_gap: bool = True, title: str = "", empty_label: str = ""):
     """年齢の帯。**お金が続く区間と、足りない区間を1本の線で見せる。**
 
     start=65 / empty=82 / end=95 のように渡す。
@@ -152,13 +152,23 @@ def timeline(start: int, empty: int, end: int, fill_label: str, gap_label: str,
                                           zorder=2.2))
             S.text_fit(fig, (xm + x1) / 2, y + h / 2, gap_label, ha="center", va="center",
                        color=RED, fontsize=38, max_w=(x1 - xm) * 0.88, zorder=2.4)
-        for age, x, ha in ((start, x0, "left"), (empty, xm, "center"), (end, x1, "right")):
-            if not show_gap and age == end:
+        # 目盛の文字。**empty は端数を持てる**(81歳8か月のような値を丸めない)
+        # 境目の札は、右端の札とぶつかりやすい。**近いときは左に寄せる**
+        mid_ha, mid_x = "center", xm
+        if x1 - xm < 0.26:
+            mid_ha, mid_x = "right", xm - 0.012
+        ticks = [(f"{start}歳", x0, "left"),
+                 (empty_label or f"{empty:g}歳", mid_x, mid_ha),
+                 (f"{end}歳", x1, "right")]
+        for lab, x, ha in ticks:
+            if not show_gap and lab == f"{end}歳":
                 continue
-            fig.add_artist(plt.Line2D([x, x], [y - 0.030, y], transform=fig.transFigure,
+            tick_x = xm if lab == (empty_label or f"{empty:g}歳") else x
+            fig.add_artist(plt.Line2D([tick_x, tick_x], [y - 0.030, y],
+                                      transform=fig.transFigure,
                                       color=INK, linewidth=3.0, zorder=2.3))
-            S.text_fit(fig, x, y - 0.058, f"{age}歳", ha=ha, va="center",
-                       color=INK, fontsize=44, max_w=0.20, zorder=2.4)
+            S.text_fit(fig, x, y - 0.058, lab, ha=ha, va="center",
+                       color=INK, fontsize=40, max_w=0.26, zorder=2.4)
         if title:
             S.text_fit(fig, 0.5, 0.668, title, ha="center", va="center",
                        color=SUB, fontsize=40, max_w=0.84, zorder=2.3)

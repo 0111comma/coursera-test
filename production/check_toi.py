@@ -59,7 +59,7 @@ def plan_toi(vdir: Path):
     plan = vdir / "plan.md"
     if not plan.exists():
         return None
-    m = re.search(r"##\s*最初の一言.*?\n+(.+?)\n", plan.read_text())
+    m = re.search(r"##\s*[0-9.]*\s*最初の一言.*?\n+(.+?)\n", plan.read_text())
     return m.group(1).strip().strip("*「」") if m else None
 
 

@@ -50,13 +50,13 @@ PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
 sys.path.insert(0, str(PRODUCTION))
 
-YOKKYU_HEAD = re.compile(r"\*\*?この人の欲求\*\*?|^#+\s*この人の欲求", re.M)
-KETTEI_HEAD = re.compile(r"\*\*?視聴後に決められること\*\*?|^#+\s*視聴後に決められること", re.M)
+YOKKYU_HEAD = re.compile(r"\*\*?この人の欲求\*\*?|^#+\s*[0-9.]*\s*この人の欲求", re.M)
+KETTEI_HEAD = re.compile(r"\*\*?視聴後に決められること\*\*?|^#+\s*[0-9.]*\s*視聴後に決められること", re.M)
 # 長尺だけ: 尺の見込みを**企画の段階で**書かせる(ループ70 フェーズ1)。
 # check_video に「8分以上」を不合格条件で置いていたら、8分に届かせるために
 # 内容を足した(L002は66ユニットで書き終えたあと尺のために+89ユニット足した)。
 # 尺は書き上がってから測るものではなく、**企画のときに見込むもの**である。
-SHAKU_HEAD = re.compile(r"\*\*?尺の見込み\*\*?|^#+\s*尺の見込み", re.M)
+SHAKU_HEAD = re.compile(r"\*\*?尺の見込み\*\*?|^#+\s*[0-9.]*\s*尺の見込み", re.M)
 
 # 「決めること」に入っていなければならない動作。視聴者が手足を動かすか、選ぶか。
 ACTIONS = (
