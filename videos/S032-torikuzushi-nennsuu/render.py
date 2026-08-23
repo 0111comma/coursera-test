@@ -58,8 +58,7 @@ SCENES = {
     "kime": sf.person("02_point"),
     # 図はナレーションと同義にしない(Mayer 冗長性)。**道標として短く**
     "shiki": sf.formula("貯金額 ÷ 月数", "= 毎月使える額"),
-    "toi2": sf.person("01_base"),
-    "cta2": sf.cta("", "02_point", show_button=True),
+    "cta2": sf.cta("", "02_point", show_comment=True),
 }
 
 UNITS = [
@@ -80,12 +79,8 @@ UNITS = [
     # ---- 前提2: なぜ90歳まで考えるのか(厚労省 令和7年簡易生命表)
     Unit("seizon", "いま【90歳】まで生きる女性は、2人に1人です。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("obi", "90歳まで生きたら、【8年】分の生活費が足りません。", anim=1.2,
-         se="impact", se_at=0.2, speed=1.0, intonation=1.2, chara="none"),
-
-    # ---- **恐怖**。通帳はゼロ。でも収入がゼロになるわけではなく、年金だけが残る
-    Unit("obi", "【貯金】はゼロ。年金だけで【8年】です。", anim=0.0,
-         se="don", speed=1.0, intonation=1.15, pad=0.4, chara="none"),
+    Unit("obi", "貯金はゼロ。【90歳】までの【8年】は年金だけ。", anim=1.2,
+         se="impact", se_at=0.2, speed=1.0, intonation=1.2, pad=0.35, chara="none"),
 
     # ---- **結果は1度だけ言う。**そのまま痛みへ繋ぐ(2026-08-23のレビュー)
     Unit("hikaku", "90歳まで持たせるなら、使えるのは毎月【3万3000円】。", anim=1.2,
@@ -103,10 +98,8 @@ UNITS = [
     Unit("shiki", "こうすれば、【貯金】が途中で尽きません。", anim=0.0,
          speed=1.05, pad=0.3, chara="none"),
 
-    # ---- コメントを求める
-    Unit("toi2", "あなたは貯金を、何歳まで持たせたいですか?", anim=1.2,
-         speed=1.05, chara="none"),
-    Unit("cta2", "【何歳】までか、コメントで教えてください。", anim=1.2,
+    # ---- 締めは1行。**問いとお願いを分けない**
+    Unit("cta2", "あなたの貯金は何歳まで?コメントで教えてください。", anim=1.2,
          speed=1.05, chara="none"),
 ]
 
