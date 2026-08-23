@@ -14,7 +14,7 @@ import shortlib as S  # noqa: E402
 import fplib as F     # noqa: E402
 
 TITLE = "1000万円を毎月5万円ずつ使うと?"
-BADGE = "※ 運用の結果は仮定。元本保証ではありません"
+BADGE = "※ 運用しない場合の計算。物価の変動は考えていません"
 F.use_fp_theme(TITLE, speaker=14,
                badge=BADGE)      # 冥鳴ひまり
 
@@ -57,23 +57,20 @@ SCENES = {
     "obi": sf.timeline(65, 65 + 200 / 12, 90, "お金がある", "8年4か月 空",
                        empty_label="81歳8か月", title="90歳まで生きたら"),
 
-    # ---- 上限も割り算1回で出る
+    # ---- 上限もまた割り算1回
     "keisan2": sf.table(["", ""],
                         [("90歳までの月数", "300か月"), ("毎月使える額", "3万3000円")],
                         highlight=0, title="貯金1000万円を90歳まで"),
     "keisan3": sf.table(["", ""],
                         [("90歳までの月数", "300か月"), ("毎月使える額", "3万3000円")],
                         highlight=1, title="貯金1000万円を90歳まで"),
-    "hikaku": sf.bars([("つもり", 50000, "5万円"), ("上限", 33000, "3万3000円")],
-                      highlight=1, title="毎月使える額"),
-
-    # ---- 運用の話は3カットだけ。数字は出さない(仮定を積み増さない)
-    "unyou": sf.person("02_point"),
-    "kari": sf.person("03_troubled"),
+    "hikaku": sf.bars([("つもり", 50000, "5万円"), ("使える額", 33000, "3万3000円")],
+                      highlight=1, title="毎月の取り崩し額"),
 
     # ---- 持ち帰る式
     "kime": sf.person("02_point"),
     "shiki": sf.formula("貯金 ÷ 持たせたい月数", "= 毎月使っていい額"),
+    "toi2": sf.person("01_base"),
     "cta2": sf.cta("", "02_point", show_button=True),
 }
 
@@ -83,56 +80,51 @@ UNITS = [
          se="pop", speed=1.0, intonation=1.2, chara="none"),
 
     # ---- 前提1: なぜ65歳からなのか(年金が始まる年齢)
-    Unit("kaishi", "毎月【5万円】ずつ、年金が始まる【65歳】から。", anim=1.2,
+    Unit("kaishi", "年金が始まる【65歳】から、毎月5万円ずつ使います。", anim=1.2,
          speed=1.05, chara="none"),
 
-    # ---- 割り算1回。答えまで一段ずつ
+    # ---- 割り算1回。答えまで一段ずつ見せる
     Unit("keisan0", "1000万円を5万円で割ると、【200か月】。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("keisan1", "200か月は、【16年8か月】です。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("kara", "65歳に足すと、【81歳8か月】で空です。", anim=1.2,
-         se="don", speed=1.0, intonation=1.2, pad=0.3, chara="none"),
+    Unit("kara", "65歳から使い始めると、【81歳8か月】で底をつきます。", anim=1.2,
+         se="don", speed=1.0, intonation=1.2, chara="none"),
+    Unit("kara", "その【81歳8か月】で、足りますか?", anim=0.0,
+         speed=1.05, pad=0.3, chara="none"),
 
     # ---- 前提2: なぜ90歳まで考えるのか(令和7年簡易生命表)
     Unit("seizon", "いま【90歳】まで生きる人は、男性の4人に1人。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("seizon2", "女性なら、【2人に1人】が90歳まで。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("obi", "【90歳】まで、【8年4か月】足りません。", anim=1.2,
+    Unit("obi", "90歳まで生きたら、【8年4か月】ぶん足りません。", anim=1.2,
          se="impact", se_at=0.2, speed=1.0, intonation=1.2, pad=0.3, chara="none"),
-
-    # ---- 「でも運用すれば?」に、ここで先に答える。
-    #      **新しい仮定の数字は足さない**(3%を出すと、その3%の根拠がまた要る)
-    Unit("unyou", "その【8年4か月】は、運用でうめられます。", anim=1.2,
-         speed=1.05, chara="none"),
-    Unit("kari", "ただし、運用に保証はありません。", anim=1.2,
-         speed=1.05, chara="none"),
-    Unit("kari", "運用は、ふえる年も減る年もあります。", anim=0.0,
-         speed=1.05, pad=0.35, chara="none"),
-    Unit("unyou", "では、運用なしで【90歳】まで考えます。", anim=1.2,
-         speed=1.05, chara="none"),
 
     # ---- 上限もまた割り算1回
     Unit("keisan2", "65歳から90歳までは、【300か月】。", anim=1.2,
          speed=1.05, chara="none"),
     Unit("keisan3", "1000万円を300か月で割ると、【3万3000円】。", anim=1.2,
          se="don", speed=1.0, intonation=1.2, chara="none"),
-    Unit("hikaku", "5万円のつもりが、【1万7000円】少ない。", anim=1.2,
+    Unit("hikaku", "毎月5万円のつもりが、使えるのは【3万3000円】。", anim=1.2,
+         speed=1.0, chara="none"),
+    Unit("hikaku", "毎月【1万7000円】、少ないのです。", anim=0.0,
          se="impact", se_at=0.25, speed=1.0, pad=0.35, chara="none"),
 
     # ---- 持ち帰る式
-    Unit("kime", "だから、【金額】から決めないでください。", anim=1.2,
+    Unit("kime", "先に決めるのは、毎月の【金額】ではありません。", anim=1.2,
          speed=1.05, chara="none"),
-    Unit("kime", "決めるのは【金額】ではなく、【月数】です。", anim=0.0,
-         speed=1.05, chara="none"),
-    Unit("shiki", "貯金を、その【月数】で割ります。", anim=1.2,
-         speed=1.05, chara="none"),
-    Unit("shiki", "あなたの貯金は、何歳まで要りますか?", anim=0.0,
+    Unit("kime", "その【金額】ではなく、【何歳】まで持たせるかです。", anim=0.0,
          se="don", speed=1.05, chara="none"),
+    Unit("shiki", "何歳までかが決まれば、【月数】が出ます。", anim=1.2,
+         speed=1.05, chara="none"),
+    Unit("shiki", "貯金を、その【月数】で割るだけです。", anim=0.0,
+         speed=1.05, chara="none"),
+    Unit("toi2", "あなたの貯金は、何歳まで持たせますか?", anim=1.2,
+         speed=1.05, chara="none"),
 
     # ---- CTA
-    Unit("cta2", "【1000万円】の続きは、チャンネル登録で。", anim=1.2,
+    Unit("cta2", "【貯金】が違う人も計算します。チャンネル登録を。", anim=1.2,
          speed=1.05, chara="none"),
 ]
 
