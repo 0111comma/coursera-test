@@ -35,7 +35,7 @@ from PIL import Image, ImageFilter
 
 WHITE_TH = 232     # 白背景とみなす明るさ
 GREEN_TOL = 70     # 緑背景からの許容色差
-NEAR_EDGE = 40     # 白背景のとき「外に近い囲み」を背景とみなす距離(画素)
+KEEP_X0, KEEP_X1 = 0.42, 0.68   # 白背景のとき、この横帯の中の囲みだけ「服・目」として残す
 FEATHER = 1
 
 
@@ -100,10 +100,10 @@ def cutout(src: Path):
         bg = _flood_from_border(bg) | bg          # 囲まれた緑も背景
         note = "緑背景(色で判定。目もインナーも自動で残る)"
     elif kind == "white":
+        # **中央の帯にある囲みだけ残す。** 目とインナーは中央、
+        # 髪のあいだ・腕と腰のあいだは左右の端にある。位置で分ければ済む話だった。
         light = A.min(axis=2) >= WHITE_TH
         bg = _flood_from_border(light)
-        # 外に近い囲み(髪のあいだ等)だけ背景に足す。**目は奥にあるので残る**
-        dist = _dist_from(bg)
         rest = light & ~bg
         H, W = bg.shape
         seen = np.zeros((H, W), dtype=bool)
@@ -119,10 +119,11 @@ def cutout(src: Path):
                         ny, nx = y + dy, x + dx
                         if 0 <= ny < H and 0 <= nx < W and rest[ny, nx] and not seen[ny, nx]:
                             seen[ny, nx] = True; q.append((ny, nx))
-                if min(dist[y, x] for y, x in px) <= NEAR_EDGE:
+                cx = sum(x for _, x in px) / len(px) / W
+                if not (KEEP_X0 <= cx <= KEEP_X1):     # 中央の帯の外 = 背景の隙間
                     for y, x in px:
                         bg[y, x] = True
-        note = "白背景(近似。奥の隙間は残る。**緑背景を推奨**)"
+        note = f"白背景(中央 x{KEEP_X0}〜{KEEP_X1} の囲みだけ残した)"
     else:
         raise SystemExit(f"{src.name}: 背景が白でも緑でもない(四隅 {corner.round(0)})")
 
