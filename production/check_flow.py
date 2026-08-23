@@ -146,6 +146,31 @@ def _load(render_py: Path):
     return mod
 
 
+
+def load_exempt(gate: str):
+    """production/gate_exempt.txt から、このゲートの免除を読む。
+
+    **理由(#以降)が無い行は無効**にしてある。黙って外せないようにするため。
+    返り値: {動画ID: {ユニット番号, ...}}
+    """
+    f = PRODUCTION / "gate_exempt.txt"
+    out = {}
+    if not f.exists():
+        return out
+    for ln in f.read_text().splitlines():
+        body, _, reason = ln.partition("#")
+        body = body.strip()
+        if not body or not reason.strip():
+            continue
+        parts = body.split(":")
+        if len(parts) != 3 or parts[1] != gate:
+            continue
+        try:
+            out.setdefault(parts[0], set()).add(int(parts[2]))
+        except ValueError:
+            continue
+    return out
+
 def check_video(vdir: Path):
     render_py = vdir / "render.py"
     if not render_py.exists():
@@ -190,6 +215,10 @@ def check_video(vdir: Path):
     # 接続語があっても「指す先」がなければ繋がっていない(ループ54)
     for n, kind, detail in referent_issues(lines, TAIL_EXEMPT):
         breaks.append((n, lines[n - 2] if n >= 2 else "", lines[n - 1], f"{kind}: {detail}"))
+    # gate_exempt.txt に理由つきで登録された誤検出は外す(2026-08-23)
+    ex = load_exempt("flow").get(vdir.name.split("-")[0], set())
+    if ex:
+        breaks = [b for b in breaks if b[0] not in ex]
     return sorted(breaks)
 
 

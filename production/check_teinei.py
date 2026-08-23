@@ -118,6 +118,31 @@ def is_longform(mod) -> bool:
     return getattr(shortlib, "W", 1080) == 1920
 
 
+
+def load_exempt(gate: str):
+    """production/gate_exempt.txt から、このゲートの免除を読む。
+
+    **理由(#以降)が無い行は無効**にしてある。黙って外せないようにするため。
+    返り値: {動画ID: {ユニット番号, ...}}
+    """
+    f = PRODUCTION / "gate_exempt.txt"
+    out = {}
+    if not f.exists():
+        return out
+    for ln in f.read_text().splitlines():
+        body, _, reason = ln.partition("#")
+        body = body.strip()
+        if not body or not reason.strip():
+            continue
+        parts = body.split(":")
+        if len(parts) != 3 or parts[1] != gate:
+            continue
+        try:
+            out.setdefault(parts[0], set()).add(int(parts[2]))
+        except ValueError:
+            continue
+    return out
+
 def check_video(vdir: Path):
     render_py = vdir / "render.py"
     if not render_py.exists():
@@ -218,6 +243,12 @@ def check_video(vdir: Path):
                 issues.append((f"#{first + 1}", "説明が後(WARN)",
                                f"「{term}」を#{first + 1}で使い、#{gloss_at + 1}で説明している。"
                                f"使う前に言い換える"))
+    ex = load_exempt("teinei").get(vdir.name.split("-")[0], set())
+    if ex:
+        def _num(tag):
+            m = re.match(r"#(\d+)", str(tag))
+            return int(m.group(1)) if m else -1
+        issues = [i for i in issues if _num(i[0]) not in ex]
     return sorted(set(issues))
 
 

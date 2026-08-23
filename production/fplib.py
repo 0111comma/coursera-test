@@ -60,6 +60,9 @@ def use_fp_theme(title: str, speaker: int = 14, badge: str = ""):
     S.save_frame = _save_frame
 
 
+CHROME_GID = "fp_chrome"   # 帯・バッジ。ゲートの集計から外す印
+
+
 def _canvas(t_global: float = 0.0):
     fig = plt.figure(figsize=S.FIGSIZE, dpi=S.DPI)
     fig.patch.set_facecolor(CREAM)
@@ -80,15 +83,30 @@ def _canvas(t_global: float = 0.0):
     # 上部のタイトル帯(途中から見た人にも何の話か分かる)
     h = 0.098
     fig.add_artist(plt.Rectangle((0, 1 - h), 1, h, transform=fig.transFigure,
-                                 facecolor=BAND, edgecolor="none", zorder=3.0))
+                                 facecolor=BAND, edgecolor="none",
+                                 zorder=3.0)).set_gid(CHROME_GID)
+    # 帯とバッジは**全フレーム共通の装飾**なので、gid で印を付けて
+    # 図のゲート(figure/align/overlap)の集計から外す。印が無いと
+    # 「15字以上の文字列が2個」が全ユニットで鳴り、本当の指摘が埋もれる
     if TITLE:
         S.text_fit(fig, 0.5, 1 - h / 2, TITLE, ha="center", va="center",
-                   color=BAND_INK, fontsize=44, fontweight="bold", max_w=0.92, zorder=3.1)
+                   color=BAND_INK, fontsize=44, fontweight="bold",
+                   max_w=0.92, zorder=3.1).set_gid(CHROME_GID)
     if BADGE:
         # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)
         S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
-                   color="#8a7f6c", fontsize=26, max_w=0.92, zorder=3.1)
+                   color="#8a7f6c", fontsize=26,
+                   max_w=0.92, zorder=3.1).set_gid(CHROME_GID)
     return fig
+
+
+def hide_chrome(fig):
+    """帯・バッジを消す。カバーとサムネは全面を使うので、上から重ねない。
+    帯は zorder 3.0 でカバーの黄色(1.5)より上にいるため、消さないと
+    カバーの1行目に文字が重なる(check_overlap がループ72で検出)。"""
+    for art in list(fig.artists) + list(fig.texts):
+        if art.get_gid() == CHROME_GID:
+            art.remove()
 
 
 def _subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
@@ -111,7 +129,14 @@ def pose(name: str) -> Image.Image:
         p = POSE_DIR / f"{name}.png"
         if not p.exists():
             raise SystemExit(f"立ち絵がない: {p}")
-        _POSE_CACHE[name] = Image.open(p).convert("RGBA")
+        im = Image.open(p).convert("RGBA")
+        # **透明の余白を切り落とす。** 切り抜きPNGは1024×1024の中に人物が
+        # 浮いているので、そのまま置くと軸の枠だけが画面外にはみ出し、
+        # check_overlap が「画面外」を毎シーン鳴らす(絵は見えていないのに)。
+        box = im.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox()
+        if box:
+            im = im.crop(box)
+        _POSE_CACHE[name] = im
     return _POSE_CACHE[name]
 
 

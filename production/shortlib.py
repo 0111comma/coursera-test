@@ -1145,9 +1145,10 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     # 「再レンダリング済み」の動画が出る**(2026-08-22に踏みかけた)。
     # 描画モジュールが署名より新しければ、再開せずに全部描き直す。
     if resumed:
-        _src = [Path(__file__).resolve(),
-                Path(__file__).resolve().parent / "scenes_long.py",
-                Path(__file__).resolve().parent / "scenes_common.py"]
+        _here = Path(__file__).resolve().parent
+        _src = [Path(__file__).resolve()] + [
+            _here / n for n in ("scenes_long.py", "scenes_common.py",
+                                "scenes_fp.py", "fplib.py")]
         newest = max((f.stat().st_mtime for f in _src if f.exists()), default=0)
         if newest > sig_file.stat().st_mtime:
             print("[resume] 描画モジュールが署名より新しい。"

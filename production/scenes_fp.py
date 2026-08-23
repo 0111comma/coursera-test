@@ -7,6 +7,7 @@
 - 数字はその語だけ色を変える(【】で囲む)
 """
 import matplotlib.pyplot as plt
+from matplotlib.patches import FancyBboxPatch
 
 import fplib as F
 import shortlib as S
@@ -43,6 +44,7 @@ def cover(line1: str, line2: str, line3: str, name: str = "01_base"):
     2026-08-23 の下見で、帯とキャラが窮屈だったので全面を黄色にして上に寄せた。
     """
     def painter(fig, t):
+        F.hide_chrome(fig)          # 全面カバー。帯とバッジは重ねない
         fig.add_artist(plt.Rectangle((0, 0), 1, 1, transform=fig.transFigure,
                                      facecolor="#f7c130", edgecolor="none", zorder=1.5))
         S.text_fit(fig, 0.5, 0.935, line1, ha="center", va="center",
@@ -50,12 +52,12 @@ def cover(line1: str, line2: str, line3: str, name: str = "01_base"):
         S.draw_rich_text(fig, 0.5, 0.845, line2, 104, base_color="#ffffff",
                          emph_color="#fff3b0", outline=16.0, wrap=12,
                          line_h=0.055, block_fit=0.92)
-        fig.add_artist(plt.Rectangle((0.05, 0.700), 0.90, 0.100,
+        fig.add_artist(plt.Rectangle((0.05, 0.680), 0.90, 0.100,
                                      transform=fig.transFigure, facecolor="#ef5a7a",
                                      edgecolor="none", zorder=2.4))
-        S.text_fit(fig, 0.5, 0.750, line3, ha="center", va="center",
+        S.text_fit(fig, 0.5, 0.730, line3, ha="center", va="center",
                    color="#ffffff", fontsize=84, max_w=0.86, zorder=2.5)
-        F.draw_pose(fig, name, top=0.68, height=0.62)
+        F.draw_pose(fig, name, top=0.66, height=0.62)
     return painter
 
 
@@ -139,20 +141,24 @@ def hero(main: str, sub: str = "", name: str = None):
             S.text_fit(fig, 0.5, y - 0.11, sub, ha="center", va="center",
                        color=SUB, fontsize=36, max_w=0.86)
         if name:
-            F.draw_pose(fig, name, top=0.90, height=0.26)
+            # バッジ(y≈0.876)より下に置く。上に置くと打消し表示が隠れる
+            F.draw_pose(fig, name, cx=0.80, top=0.845, height=0.22)
     return painter
 
 
 def cta(line: str, name: str = "02_point", show_button: bool = False):
     """締めの定型カット。競合は結論のあと**4カット**使っていた。"""
     def painter(fig, t):
-        F.draw_pose(fig, name, top=0.82, height=0.44)
+        # 立ち絵は上に寄せ、ボタンは**体に重ねない**。灰色の板だと
+        # 置き忘れの矩形に見えるので、角丸の黒 + 白文字にする
+        F.draw_pose(fig, name, top=0.855, height=0.44)
         if show_button:
-            fig.add_artist(plt.Rectangle((0.28, 0.335), 0.44, 0.075,
-                                         transform=fig.transFigure, facecolor="#8a8a8a",
-                                         edgecolor="none", zorder=2.5))
-            S.text_fit(fig, 0.5, 0.3725, "チャンネル登録", ha="center", va="center",
-                       color="#ffffff", fontsize=44, max_w=0.40, zorder=2.6)
+            fig.add_artist(FancyBboxPatch((0.30, 0.325), 0.40, 0.075,
+                                          boxstyle="round,pad=0,rounding_size=0.037",
+                                          transform=fig.transFigure, facecolor="#1f1f1f",
+                                          edgecolor="none", zorder=2.5))
+            S.text_fit(fig, 0.5, 0.3625, "チャンネル登録", ha="center", va="center",
+                       color="#ffffff", fontsize=40, max_w=0.34, zorder=2.6)
         if line:
             S.text_fit(fig, 0.5, 0.30, line, ha="center", va="center",
                        color=SUB, fontsize=34, max_w=0.86, zorder=2.3)

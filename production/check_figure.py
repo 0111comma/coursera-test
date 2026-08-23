@@ -94,6 +94,7 @@ def money_values(text: str) -> set:
 
 
 # 常に出る要素(バッジ・ブランド)は判定から除く
+CHROME_GID = "fp_chrome"   # fplib のテーマが帯・バッジに付ける印
 BADGE_ANCHOR = (0.90, 0.83)
 FOOTER_ANCHOR = (0.5, 0.045)
 
@@ -161,6 +162,8 @@ def check_video(vdir: Path):
 
         texts = []
         for art in fig.texts:
+            if art.get_gid() == CHROME_GID:
+                continue          # テーマの帯・バッジ。図の中身ではない
             x, y = art.get_position()
             if abs(x - BADGE_ANCHOR[0]) < 1e-6 and abs(y - BADGE_ANCHOR[1]) < 1e-6:
                 continue

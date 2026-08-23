@@ -50,7 +50,7 @@ import shortlib as S  # noqa: E402
 # 入れ忘れると豆腐(□)で描かれ、あとで幅や位置を見る判定を足したときに静かに狂う
 S.setup_fonts()
 from check_figure import (  # noqa: E402
-    BADGE_ANCHOR, FOOTER_ANCHOR, TABLE_NUMS, money_values, _load,
+    CHROME_GID, BADGE_ANCHOR, FOOTER_ANCHOR, TABLE_NUMS, money_values, _load,
 )
 
 
@@ -61,6 +61,8 @@ def scene_values(painter):
     fig.canvas.draw()
     vals = set()
     for art in fig.texts:
+        if art.get_gid() == CHROME_GID:
+            continue              # テーマの帯・バッジ
         x, y = art.get_position()
         if abs(x - BADGE_ANCHOR[0]) < 1e-6 and abs(y - BADGE_ANCHOR[1]) < 1e-6:
             continue
