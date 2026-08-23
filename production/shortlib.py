@@ -760,14 +760,27 @@ def draw_glow_text(fig, x: float, y: float, text: str, fontsize: float, color: s
              path_effects=stroke_fx(color, outline=outline_for(fontsize) * 1.0, fatten=4))
 
 
+# 縁取りの色と影。**テーマが差し替える**(既定は旧デザインの黒縁・影なし)。
+# 競合のテロップは「太い色つきの縁 + 下に落ちる影」で、背景から浮いている。
+# 黒縁だけだと明るい背景の上でべたっと沈む(2026-08-23の見比べ)
+STROKE_EDGE = "#000000"
+STROKE_SHADOW = None       # (dx_pt, dy_pt, 色, 濃さ) または None
+
+
 def stroke_fx(text_color: str, outline: float = 7.0, fatten: float = 2.0):
-    """R7: 黒縁取り+同色ストローク。縁取りは文字サイズの約10%が基準(深掘り⑥)。
+    """R7: 縁取り+同色ストローク。縁取りは文字サイズの約10%が基準(深掘り⑥)。
     呼び出し側は outline_for(fontsize) を使うこと。"""
-    return [
-        path_effects.Stroke(linewidth=outline, foreground="#000000"),
+    fx = []
+    if STROKE_SHADOW:
+        dx, dy, col, al = STROKE_SHADOW
+        fx.append(path_effects.Stroke(offset=(dx, dy), linewidth=outline * 1.10,
+                                      foreground=col, alpha=al))
+    fx += [
+        path_effects.Stroke(linewidth=outline, foreground=STROKE_EDGE),
         path_effects.Stroke(linewidth=fatten, foreground=text_color),
         path_effects.Normal(),
     ]
+    return fx
 
 
 def outline_for(fontsize: float) -> float:

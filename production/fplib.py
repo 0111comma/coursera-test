@@ -15,6 +15,7 @@ competitor-shorts-teardown-2026-08-23.md の実測にもとづく:
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
 import numpy as np
 from PIL import Image
 
@@ -22,15 +23,24 @@ import shortlib as S
 
 ROOT = Path(__file__).resolve().parent.parent
 POSE_DIR = ROOT / "assets" / "character"
+FONT_DIR = ROOT / "assets" / "fonts"
+
+# **丸ゴシック**。競合のテロップはこれで、Noto Sans CJK の角ばった字形とは
+# 別物に見える(2026-08-23、ユーザー指摘「まずフォントどうにかして」)。
+# M PLUS Rounded 1c は SIL Open Font License 1.1。assets/fonts/README.md 参照
+FONT_FAMILY = "Rounded Mplus 1c Black"
 
 # ---- 配色(競合の実測値に寄せた)
 CREAM = "#f3e7d3"          # 背景。明るさ 0.75 前後
 DOT = "#faf1e2"            # 背景のドット
-BAND = "#f7c130"           # 上部のタイトル帯
+BAND = "#f9cb45"           # 上部のタイトル帯(下側)
+BAND_LO = "#eda520"        # 帯の上側。**縦のグラデーション**にする
 BAND_INK = "#3b2c10"       # 帯の文字
 TELOP = "#ffffff"          # テロップの本文
 TELOP_EMPH = "#ffd93d"     # テロップの強調(数字)
-TELOP_EDGE = "#8a3b00"     # テロップの縁(濃く・太く。実測で細いと読めなかった)
+TELOP_EDGE = "#7b2d00"     # テロップの縁。**stroke_fx が黒を焼いていて、この色は
+                           # 使われていなかった**(2026-08-23に接続)
+TELOP_SHADOW = (3.0, -4.0, "#4a2a05", 0.42)   # 下に落ちる影。背景から浮かせる
 INK_DARK = "#2b2b28"
 
 TITLE = ""                 # 上部の帯に出す文字(use_fp_theme で設定)
@@ -55,9 +65,25 @@ def use_fp_theme(title: str, speaker: int = 14, badge: str = ""):
     S.SUB_BLOCK_FIT = 0.86
     S.SUB_LINE_H = 0.052
     S.SUBTITLE_Y = 0.235
+    S.STROKE_EDGE = TELOP_EDGE
+    S.STROKE_SHADOW = TELOP_SHADOW
     S.new_canvas = _canvas
     S.draw_subtitle = _subtitle
     S.save_frame = _save_frame
+    _setup_font()
+
+
+def _setup_font():
+    """丸ゴシックを登録して、この動画のあいだだけ既定にする。
+    **shortlib.setup_fonts() は触らない**(既存30本の見た目を変えないため)。"""
+    from matplotlib import font_manager
+    files = sorted(FONT_DIR.glob("MPLUSRounded1c-*.ttf"))
+    if not files:
+        raise SystemExit(f"丸ゴシックが無い: {FONT_DIR}/MPLUSRounded1c-900.ttf")
+    for f in files:
+        font_manager.fontManager.addfont(str(f))
+    plt.rcParams["font.family"] = FONT_FAMILY
+    plt.rcParams["font.weight"] = 900        # Black の1ウェイトしかない
 
 
 CHROME_GID = "fp_chrome"   # 帯・バッジ。ゲートの集計から外す印
@@ -69,29 +95,38 @@ def _canvas(t_global: float = 0.0):
     ax = fig.add_axes([0, 0, 1, 1], zorder=-10)
     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
     # ドット(競合と同じ質感)
-    step = 0.024
-    r = 0.0065
+    # **大きく・まばらに**(競合の実測: 間隔が幅の約5.3%、半径が約1.0%)。
+    # 0.024/0.0065 は目が細かすぎて、網目の生地のように見えていた
+    step = 0.053
+    r = 0.0100
     j = 0
     y = 0.0
     while y < 1.0:
         x = (j % 2) * step / 2
         while x < 1.0:
-            ax.add_patch(plt.Circle((x, y), r, color=DOT, zorder=-9))
+            # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
+            # 楕円で縦横比を打ち消して、競合と同じ真円にする
+            ax.add_patch(Ellipse((x, y), 2 * r, 2 * r * S.W / S.H,
+                                 color=DOT, zorder=-9))
             x += step
         y += step * (S.W / S.H)
         j += 1
-    # 上部のタイトル帯(途中から見た人にも何の話か分かる)
-    h = 0.098
-    fig.add_artist(plt.Rectangle((0, 1 - h), 1, h, transform=fig.transFigure,
-                                 facecolor=BAND, edgecolor="none",
-                                 zorder=3.0)).set_gid(CHROME_GID)
-    # 帯とバッジは**全フレーム共通の装飾**なので、gid で印を付けて
+    # 上部のタイトル帯。**単色の板ではなく縦のグラデーション**にする。
+    # 帯とバッジは全フレーム共通の装飾なので gid で印を付けて、
     # 図のゲート(figure/align/overlap)の集計から外す。印が無いと
     # 「15字以上の文字列が2個」が全ユニットで鳴り、本当の指摘が埋もれる
+    from matplotlib.colors import LinearSegmentedColormap
+    h = 0.098
+    bax = fig.add_axes([0, 1 - h, 1, h], zorder=3.0)
+    bax.imshow(np.linspace(1, 0, 64).reshape(-1, 1), aspect="auto", extent=(0, 1, 0, 1),
+               cmap=LinearSegmentedColormap.from_list("fpband", [BAND_LO, BAND]))
+    bax.axis("off")
+    bax.set_gid(CHROME_GID)
     if TITLE:
+        # 白抜き + 濃い縁 + 影(競合と同じ)。濃い字を黄色に乗せるより遠くで読める
         S.text_fit(fig, 0.5, 1 - h / 2, TITLE, ha="center", va="center",
-                   color=BAND_INK, fontsize=44, fontweight="bold",
-                   max_w=0.92, zorder=3.1).set_gid(CHROME_GID)
+                   color="#ffffff", fontsize=44, max_w=0.92, zorder=3.1,
+                   path_effects=S.stroke_fx("#ffffff", outline=7.0)).set_gid(CHROME_GID)
     if BADGE:
         # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)
         S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
@@ -104,7 +139,7 @@ def hide_chrome(fig):
     """帯・バッジを消す。カバーとサムネは全面を使うので、上から重ねない。
     帯は zorder 3.0 でカバーの黄色(1.5)より上にいるため、消さないと
     カバーの1行目に文字が重なる(check_overlap がループ72で検出)。"""
-    for art in list(fig.artists) + list(fig.texts):
+    for art in list(fig.artists) + list(fig.texts) + list(fig.axes):
         if art.get_gid() == CHROME_GID:
             art.remove()
 
@@ -136,8 +171,24 @@ def pose(name: str) -> Image.Image:
         box = im.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox()
         if box:
             im = im.crop(box)
-        _POSE_CACHE[name] = im
+        _POSE_CACHE[name] = _fade_bottom(im)
     return _POSE_CACHE[name]
+
+
+def _fade_bottom(im: Image.Image, frac: float = 0.07) -> Image.Image:
+    """絵の下端を透明へ落とす。
+
+    素材は腰のあたりで真横に切れているので、そのまま置くと
+    ドットの背景の上に**硬い水平の切り口**が出る(2026-08-23の見比べ)。
+    """
+    a = np.asarray(im.getchannel("A"), dtype=np.float32)
+    h = a.shape[0]
+    n = max(1, int(h * frac))
+    ramp = np.linspace(1.0, 0.0, n, dtype=np.float32)[:, None]
+    a[h - n:] *= ramp
+    out = im.copy()
+    out.putalpha(Image.fromarray(a.astype("uint8"), mode="L"))
+    return out
 
 
 def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float = 0.46,

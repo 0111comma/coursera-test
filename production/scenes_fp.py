@@ -28,12 +28,24 @@ def person_bubble(name: str, text: str, height: float = 0.54, top: float = 0.855
     """キャラ + 吹き出し(視聴者の心の声を代弁する。競合の70.8%の技法)。"""
     def painter(fig, t):
         F.draw_pose(fig, name, cx=0.58, top=top, height=height)
+        # **角丸 + しっぽ**。角の立った白い箱は、置き忘れの矩形に見える
         x, y = 0.26, top - 0.08
-        fig.add_artist(plt.Rectangle((x - 0.20, y - 0.055), 0.40, 0.11,
+        fig.add_artist(FancyBboxPatch((x - 0.20, y - 0.055), 0.40, 0.11,
+                                      boxstyle="round,pad=0,rounding_size=0.030",
+                                      transform=fig.transFigure, facecolor="#ffffff",
+                                      edgecolor=INK, linewidth=3.5, zorder=2.5))
+        tail = plt.Polygon([[x + 0.14, y - 0.050], [x + 0.20, y - 0.098],
+                            [x + 0.19, y - 0.044]],
+                           transform=fig.transFigure, facecolor="#ffffff",
+                           edgecolor=INK, linewidth=3.5, zorder=2.55,
+                           joinstyle="miter")
+        fig.add_artist(tail)
+        # しっぽの付け根の線を白で塗りつぶして、吹き出しと一体に見せる
+        fig.add_artist(plt.Rectangle((x + 0.135, y - 0.049), 0.060, 0.008,
                                      transform=fig.transFigure, facecolor="#ffffff",
-                                     edgecolor=INK, linewidth=3.0, zorder=2.5))
+                                     edgecolor="none", zorder=2.57))
         S.text_fit(fig, x, y, text, ha="center", va="center", color=INK,
-                   fontsize=38, max_w=0.36, zorder=2.6)
+                   fontsize=38, max_w=0.34, zorder=2.6)
     return painter
 
 
@@ -69,7 +81,9 @@ def table(headers, rows, highlight=None, title=""):
     """
     n = len(rows)
     def painter(fig, t):
-        top, bot = 0.775, 0.775 - 0.088 * (n + 1)
+        # 行を厚くして下に伸ばす。0.088だと表の下に空白が0.19ぶん残り、
+        # 画面がすかすかに見えていた(2026-08-23の見比べ)
+        top, bot = 0.775, 0.775 - 0.105 * (n + 1)
         left, right = 0.06, 0.94
         split = left + (right - left) * 0.30
         rh = (top - bot) / (n + 1)
@@ -130,19 +144,33 @@ def bars(items, highlight=None, title="", ymax=None):
     return painter
 
 
-def hero(main: str, sub: str = "", name: str = None):
-    """大きい数字を1つ。必要ならキャラも添える。"""
+def hero(main: str, sub: str = "", name: str = "01_base"):
+    """大きい数字を1つ。**キャラを上、数字を白いカードで下**に置く。
+
+    数字だけを宙に浮かせると、画面の上半分が空きっぱなしになる。
+    競合は必ず絵で埋めている(2026-08-23の見比べ)。
+    name=None にすると数字だけになる(figure が主役の場面用)。
+    """
     def painter(fig, t):
-        y = 0.60 if name else 0.55
-        S.draw_rich_text(fig, 0.5, y, main, 150, base_color="#b32020",
-                         emph_color="#b32020", outline=10.0, wrap=9,
-                         line_h=0.08, block_fit=0.88)
-        if sub:
-            S.text_fit(fig, 0.5, y - 0.11, sub, ha="center", va="center",
-                       color=SUB, fontsize=36, max_w=0.86)
         if name:
-            # バッジ(y≈0.876)より下に置く。上に置くと打消し表示が隠れる
-            F.draw_pose(fig, name, cx=0.80, top=0.845, height=0.22)
+            # バッジ(y≈0.876)より下から。上に出すと打消し表示が髪で隠れる
+            F.draw_pose(fig, name, cx=0.5, top=0.845, height=0.395)
+            top, bot = 0.450, 0.285
+        else:
+            top, bot = 0.700, 0.420
+        fig.add_artist(FancyBboxPatch((0.08, bot), 0.84, top - bot,
+                                      boxstyle="round,pad=0,rounding_size=0.028",
+                                      transform=fig.transFigure, facecolor="#fffdf7",
+                                      edgecolor="#e0d3ba", linewidth=3.0, zorder=2.2))
+        # 式は**カードの上のほう**に小さく、答えはその下に大きく。
+        # 下に置くと数字の下端と重なった(2026-08-23)
+        head = 0.038 if sub else 0.0
+        if sub:
+            S.text_fit(fig, 0.5, top - 0.028, sub, ha="center", va="center",
+                       color=SUB, fontsize=34, max_w=0.74, zorder=2.4)
+        S.draw_rich_text(fig, 0.5, (top - head + bot) / 2, main, 150,
+                         base_color="#b32020", emph_color="#b32020", outline=10.0,
+                         wrap=9, line_h=0.08, block_fit=0.74)
     return painter
 
 

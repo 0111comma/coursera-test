@@ -106,6 +106,7 @@ def zones_for_format():
         return chara, subtitle
     return [CHARA], SUBTITLE
 # バッジは draw_badge のアンカー(0.90, 0.83)で実体を特定し、実測範囲を禁止領域にする
+CHROME_GID = "fp_chrome"   # fplib のテーマが帯・バッジに付ける印
 BADGE_ANCHOR = (0.90, 0.83)
 FOOTER_ANCHOR = (0.5, 0.045)
 
@@ -181,6 +182,8 @@ def check_video(vdir: Path):
                 e = pat.get_window_extent(renderer)
                 shapes.append(("図形", (e.x0 / W, e.y0 / H, e.x1 / W, e.y1 / H)))
             for ax in list(fig.axes):
+                if ax.get_gid() == CHROME_GID:
+                    continue          # テーマの帯。図ではない
                 pos = ax.get_position()
                 if pos.width > 0.9 and pos.height > 0.9:
                     continue          # new_canvas() の全面背景アックスは判定対象外
