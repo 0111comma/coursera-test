@@ -92,7 +92,9 @@ def table(headers, rows, highlight=None, title=""):
         top = 0.775
         bot = max(FLOOR, top - 0.105 * (n + 1))
         left, right = 0.06, 0.94
-        split = left + (right - left) * 0.30
+        # 左の列は**いちばん長い項目名が入る幅**にする(2026-08-24)。
+        # 0.30 だと「Amazonプライム」が入らず、列ぜんぶが小さくなっていた。
+        split = left + (right - left) * 0.44
         rh = (top - bot) / (n + 1)
         fig.add_artist(plt.Rectangle((left, bot), right - left, top - bot,
                                      transform=fig.transFigure, facecolor="#fffdf7",
@@ -103,9 +105,15 @@ def table(headers, rows, highlight=None, title=""):
                                      transform=fig.transFigure, facecolor="#f6ecd8",
                                      edgecolor="none", zorder=2.1))
         S.text_fit(fig, (left + split) / 2, hy, headers[0], ha="center", va="center",
-                   color=INK, fontsize=40, max_w=0.24, zorder=2.3)
+                   color=INK, fontsize=40, max_w=0.36, zorder=2.3)
         S.text_fit(fig, (split + right) / 2, hy, headers[1], ha="center", va="center",
-                   color=INK, fontsize=40, max_w=0.58, zorder=2.3)
+                   color=INK, fontsize=40, max_w=0.44, zorder=2.3)
+        # **列の中で字の大きさをそろえる。**(2026-08-24)
+        # text_fit はセルごとに縮めるので、「Netflix」より長い「Amazonプライム」
+        # だけが小さくなり、表がガタついて見えた(ユーザー指摘)。
+        # 列でいちばん長いセルに合わせた1つの大きさを、その列の全セルに使う。
+        fs_a = min([S.fit_fontsize(fig, a, 46, max_w=0.36) for a, _ in rows] or [46])
+        fs_b = min([S.fit_fontsize(fig, b, 42, max_w=0.44) for _, b in rows] or [38])
         for i, (a, b) in enumerate(rows):
             y0 = top - rh * (i + 2)
             yc = y0 + rh / 2
@@ -114,9 +122,9 @@ def table(headers, rows, highlight=None, title=""):
                                              transform=fig.transFigure,
                                              facecolor="#fdf8ee", edgecolor="none", zorder=2.05))
             S.text_fit(fig, (left + split) / 2, yc, a, ha="center", va="center",
-                       color="#b32020", fontsize=46, max_w=0.24, zorder=2.3)
+                       color="#b32020", fontsize=fs_a, max_w=0.36, zorder=2.3)
             S.text_fit(fig, split + 0.02, yc, b, ha="left", va="center",
-                       color=INK, fontsize=38, max_w=0.58, zorder=2.3)
+                       color=INK, fontsize=fs_b, max_w=0.44, zorder=2.3)
             if highlight == i:
                 fig.add_artist(plt.Rectangle((left, y0), right - left, rh,
                                              transform=fig.transFigure, facecolor="none",
