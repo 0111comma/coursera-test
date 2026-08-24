@@ -21,8 +21,11 @@ ROOT = PRODUCTION.parent
 # **zentei は先頭に置く。**「説明していない数字を画面に出さない」は
 # 2026-08-23 にユーザーが「第一優先で絶対今後落としてほしくない」と言ったゲート。
 # 台本の直しよりも前に、企画(前提と根拠)が立っているかを見る。
-COMMON = ["zentei", "toi", "hold", "teinei", "flow", "figure", "overlap", "ikko",
-          "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
+# tempo は縦型だけ見る(check_tempo が横型を自分で除外する)。
+# 「1カット1.6〜1.8秒」は競合の実測から出した基準なのに、**書いてあるだけで
+# 機械が見ていなかった**ので守られていなかった(S032が3.65秒。2026-08-24)。
+COMMON = ["zentei", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
+          "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 
