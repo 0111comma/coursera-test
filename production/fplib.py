@@ -187,6 +187,8 @@ MAX_LINES = 3              # 字幕の最大行数。4行だと立ち絵に重�
 _TOKENIZER = None
 # 数字のあとに来る「万・億・円・歳…」を前にくっつけるための判定
 _NUM_TAIL = re.compile(r"[0-9０-９万億兆]$")
+# 単独で立たせない字(前の語にくっつける)
+_PUNCT = "。、!?…・「」『』()()!?.,:;〜ー"
 
 
 def _words(text: str) -> list[tuple[str, bool]]:
@@ -200,7 +202,7 @@ def _words(text: str) -> list[tuple[str, bool]]:
     out = []
     for seg, emph in S.parse_rich(text):
         if emph:
-            out.append((seg, True))
+            out.append((seg, True, False))
             continue
         try:
             if _TOKENIZER is None:
@@ -208,8 +210,9 @@ def _words(text: str) -> list[tuple[str, bool]]:
                 _TOKENIZER = Tokenizer()
             toks = list(_TOKENIZER.tokenize(seg))
         except Exception:
-            out.append((seg, False))       # janome が無ければ割らない
+            out.append((seg, False, False))   # janome が無ければ割らない
             continue
+        prev = ("", "", "")          # 直前の(品詞, 細分類, 表層)
         for tk in toks:
             pos = tk.part_of_speech.split(",")
             head, sub = pos[0], (pos[1] if len(pos) > 1 else "")
@@ -217,14 +220,49 @@ def _words(text: str) -> list[tuple[str, bool]]:
             glue = (
                 head in ("助詞", "助動詞")           # 「貯金」+「は」→「貯金は」
                 or head == "記号"                     # 読点・句点は前にくっつける
+                # **品詞ではなく文字で見る。**(2026-08-24)
+                # janome は ASCII の「?」を 名詞,サ変接続 と判定するので、
+                # 記号の規則をすり抜けて「開いてみませんか / ?」で行が折れていた
+                or (tk.surface and not tk.surface.strip(_PUNCT))
                 or sub in ("接尾", "非自立")          # 「3万」+「円」→「3万円」
                 or (head == "名詞" and sub == "数" and prev_num)   # 「3」+「万」
+                # --- ここから下は**実際に焼いて見つけた割れ方**(2026-08-24)
+                # サ変動詞。janome は「仮定します」を
+                #   仮定(名詞,サ変接続) + し(動詞) + ます(助動詞)
+                # に割るので、動詞を繋げないと「仮定し / ます。」で行が折れる
+                or (head == "動詞" and prev[:2] == ("名詞", "サ変接続"))
+                # 「缶」+「コーヒー」のような接頭の一字。
+                # 前が1字の名詞で、いまも名詞なら繋げる
+                or (head == "名詞" and prev[0] == "名詞" and len(prev[2]) == 1
+                    and sub != "数")
+                # 数のあとの「年」「%」など(「年」+「5」+「%」→「年5%」)
+                or (head == "名詞" and sub == "サ変接続" and prev[:2] == ("名詞", "数"))
+                or (head == "名詞" and sub == "数" and prev[0] == "名詞"
+                    and len(prev[2]) == 1)
             )
             if out and not out[-1][1] and glue:
                 out[-1] = (out[-1][0] + tk.surface, False)
             else:
-                out.append((tk.surface, False))
-    return [(s, e) for s, e in out if s]
+                # **くっつけたいのに、前が【】の強調でくっつけられなかった語**は
+                # 別の語として置くが、「行頭に立たせない」印をつける(2026-08-24)。
+                # 「263万円 / に / なります。」のように助詞が1字で行頭に立つのを防ぐ。
+                # 実際に焼いて見つけた(強調の直後の助詞は色が変わるので繋げられない)
+                out.append((tk.surface, False, glue))
+            prev = (head, sub, tk.surface)
+    # 2つ組で足した箇所を3つ組にそろえ、**1字の語は前後と離さない**
+    fixed = []
+    for w in out:
+        s, e = w[0], w[1]
+        nb = w[2] if len(w) > 2 else False
+        if not s:
+            continue
+        if len(s) <= 1:
+            nb = True                      # 1字の語を行頭に立たせない
+        fixed.append([s, e, nb])
+    for i in range(len(fixed) - 1):
+        if len(fixed[i][0]) <= 1:
+            fixed[i + 1][2] = True         # 1字の語の直後も切らない(「月 / 3162円」防止)
+    return [tuple(x) for x in fixed]
 
 
 def word_schedule(text: str, dur: float) -> list[float]:
@@ -234,11 +272,11 @@ def word_schedule(text: str, dur: float) -> list[float]:
     のは別の作業になるので、まずは字数按分にする。**尺は必ず dur に収まる。**
     """
     ws = _words(text)
-    n = sum(len(s) for s, _ in ws) or 1
+    n = sum(len(s) for s, *_ in ws) or 1
     # 最後の語が出てから 0.25 秒は全部見えている時間を残す
     span = max(0.0, dur - 0.25)
     out, acc = [], 0
-    for s, _ in ws:
+    for s, *_ in ws:
         t0 = span * acc / n
         # 「。」「、」だけの語は前の語と**同時**に出す(1文字が単独で跳ねると変)
         if out and not s.strip("。、!?…・"):
@@ -268,21 +306,28 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     # 折り返しが合わなくなるし、字幅の広い書体(Dela Gothic など)で画面から出る。
     def pack(size):
         rows, row, w = [], [], 0.0
-        for i, (s, emph) in enumerate(ws):
+        for i, (s, emph, nobreak) in enumerate(ws):
             ww = S._measure_widths(fig, r, [(s, emph)], size, FONT_WEIGHT)[0]
-            if row and w + ww > S.SUB_BLOCK_FIT:
+            # nobreak の語は、はみ出しても前の語と同じ行に置く(行頭禁則)
+            if row and w + ww > S.SUB_BLOCK_FIT and not nobreak:
                 rows.append(row); row, w = [], 0.0
             row.append((s, emph, i)); w += ww
         if row:
             rows.append(row)
         return rows
 
+    def widest(rows, size):
+        return max((sum(widths(row, size)) for row in rows), default=0.0)
+
     fs = S.SUB_FS
     rows = pack(fs)
-    for _ in range(8):                 # 3行に収まるまで少しずつ小さくする
-        if len(rows) <= MAX_LINES:
+    # 3行に収まるまで、**かつ どの行も画面幅に収まるまで**小さくする。
+    # 行頭禁則(nobreak)で1行に押し込むと、折り返せないぶん行が長くなる。
+    # 幅を見ずに行数だけ見ていたので、1行のまま画面から溢れていた(2026-08-24)。
+    for _ in range(12):
+        if len(rows) <= MAX_LINES and widest(rows, fs) <= S.SUB_BLOCK_FIT:
             break
-        fs *= 0.93
+        fs *= 0.94
         rows = pack(fs)
 
     n = len(rows)
