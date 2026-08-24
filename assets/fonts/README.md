@@ -34,3 +34,30 @@ f.save('MPLUSRounded1c-900.ttf')"
 
 `fplib.use_fp_theme()` が `_setup_font()` を呼んで登録する。
 **`shortlib.setup_fonts()` は触っていない**ので、既存30本の見た目は変わらない。
+
+---
+
+## RocknRoll One(2026-08-24 追加。字幕・図・帯の標準書体)
+
+**ユーザーの選定**(2026-08-24)。それまでの M PLUS Rounded 1c Black について
+「すごいダサい。デフォルトっぽくてダサい」との指摘を受け、6書体を実際のフレームで
+比べたうえで選んだ。
+
+| 項目 | 内容 |
+|---|---|
+| ファイル | `RocknRollOne.ttf`(family = `RocknRoll One`) |
+| ウェイト | **400 の1つだけ**。`font.weight` に 900 や bold を指定しない |
+| ライセンス | **SIL Open Font License 1.1**(`RocknRollOne-LICENSE.txt` に全文) |
+| 著作権 | Copyright 2020 The RocknRoll Project Authors |
+| 配布元 | Google Fonts (https://github.com/google/fonts) |
+| 取得方法 | `npm pack @fontsource/rocknroll-one@5.3.0` → `files/rocknroll-one-japanese-400-normal.woff2` を fontTools で ttf 化 |
+| 商用利用 | **可**(OFL 1.1。フォント単体の販売のみ禁止) |
+| 確認日 | 2026-08-24 |
+
+**このリポジトリの環境では github.com が塞がれている**ため、npm 経由で取得している。
+woff2 → ttf の変換は fontTools(brotli 必須)で行う。
+
+### 注意: `※` が入っていない
+
+RocknRoll One には REFERENCE MARK (U+203B) が無く、そのまま描くと豆腐(□)になる。
+免責バッジの「※ 運用しない場合の計算」で使っていたため、`fplib` 側で対処している。

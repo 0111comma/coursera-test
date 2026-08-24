@@ -12,6 +12,7 @@ competitor-shorts-teardown-2026-08-23.md の実測にもとづく:
 **既存30本を壊さないため、shortlib は直さずに、ここから差し替える。**
 `use_fp_theme()` を render.py の先頭で1回呼ぶ。
 """
+import re
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -25,10 +26,25 @@ ROOT = Path(__file__).resolve().parent.parent
 POSE_DIR = ROOT / "assets" / "character"
 FONT_DIR = ROOT / "assets" / "fonts"
 
-# **丸ゴシック**。競合のテロップはこれで、Noto Sans CJK の角ばった字形とは
-# 別物に見える(2026-08-23、ユーザー指摘「まずフォントどうにかして」)。
-# M PLUS Rounded 1c は SIL Open Font License 1.1。assets/fonts/README.md 参照
-FONT_FAMILY = "Rounded Mplus 1c Black"
+# **RocknRoll One**(2026-08-24、ユーザーが6書体を見比べて選定)。
+# 前は M PLUS Rounded 1c Black だったが「すごいダサい。デフォルトっぽくてダサい」
+# との指摘で差し替えた。日本語の無料フォントで最も使われている書体だったので、
+# 見飽きられていた。OFL 1.1・商用可。assets/fonts/README.md に出典と確認日。
+#
+# **ウェイトは400の1つだけ。**900やboldを指定すると findfont が警告を出す。
+FONT_FAMILY = "RocknRoll One"
+FONT_WEIGHT = 400
+FONT_GLOB = "RocknRollOne.ttf"
+
+# **記号のフォールバック**(2026-08-24)。
+# RocknRoll One は日本語の本文はそろっているが、記号が9字足りない:
+#     ※ ← → ① ② ③ ▼ ◯ ㊹
+# → は10本、▼ は9本の動画で使っていて、別の字に置き換えると意味が変わる。
+# matplotlib 3.6 以降は font.family にリストを渡すと**字ごとに**後ろへ落ちるので、
+# 日本語は RocknRoll One、足りない記号だけ IPAGothic で埋める。
+# (置換ではなく埋めるので、台本を書くときに記号を避けなくてよい)
+FONT_FALLBACK = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
+FONT_FALLBACK_FAMILY = "IPAGothic"
 
 # ---- 配色(競合の実測値に寄せた)
 CREAM = "#f3e7d3"          # 背景。明るさ 0.75 前後
@@ -48,10 +64,13 @@ BADGE = ""                 # 仮定の明示(戦略§6-2「利回りは仮定と
 _POSE_CACHE: dict[str, Image.Image] = {}
 
 
-def use_fp_theme(title: str, speaker: int = 14, badge: str = ""):
+def use_fp_theme(title: str, speaker: int = 108, badge: str = ""):
     """明るい背景・大きい字幕・上部のタイトル帯に切り替える。
 
-    speaker=14 は冥鳴ひまり(2026-08-23 決定)。
+    speaker=108 は**東北きりたん**(2026-08-24、ユーザーが10種を聴き比べて選定)。
+    前は冥鳴ひまり(14)だったが「ボソボソ喋っていて、この女性に合ってない」
+    との指摘で変更した。商用可・クレジット「VOICEVOX:東北きりたん」が必要
+    (zunko.jp の音源利用規約。エンジンの speaker_info で確認・2026-08-24)。
     """
     global TITLE, BADGE
     TITLE = title
@@ -74,16 +93,21 @@ def use_fp_theme(title: str, speaker: int = 14, badge: str = ""):
 
 
 def _setup_font():
-    """丸ゴシックを登録して、この動画のあいだだけ既定にする。
+    """この動画のあいだだけ既定の書体にする。
     **shortlib.setup_fonts() は触らない**(既存30本の見た目を変えないため)。"""
     from matplotlib import font_manager
-    files = sorted(FONT_DIR.glob("MPLUSRounded1c-*.ttf"))
+    files = sorted(FONT_DIR.glob(FONT_GLOB))
     if not files:
-        raise SystemExit(f"丸ゴシックが無い: {FONT_DIR}/MPLUSRounded1c-900.ttf")
+        raise SystemExit(f"書体が無い: {FONT_DIR}/{FONT_GLOB}")
     for f in files:
         font_manager.fontManager.addfont(str(f))
-    plt.rcParams["font.family"] = FONT_FAMILY
-    plt.rcParams["font.weight"] = 900        # Black の1ウェイトしかない
+    fams = [FONT_FAMILY]
+    fb = Path(FONT_FALLBACK)
+    if fb.exists():
+        font_manager.fontManager.addfont(str(fb))
+        fams.append(FONT_FALLBACK_FAMILY)     # 足りない記号だけここへ落ちる
+    plt.rcParams["font.family"] = fams
+    plt.rcParams["font.weight"] = FONT_WEIGHT
 
 
 CHROME_GID = "fp_chrome"   # 帯・バッジ。ゲートの集計から外す印
@@ -142,6 +166,145 @@ def hide_chrome(fig):
     for art in list(fig.artists) + list(fig.texts) + list(fig.axes):
         if art.get_gid() == CHROME_GID:
             art.remove()
+
+
+# ---------------------------------------------------------------- 語ごとのポップ
+# (2026-08-24。ユーザー指示「ポップさせてみて」)
+#
+# 競合のショートは、字幕が一度に全部出ない。**語がひとつずつ着地する。**
+# 見る側は「次が出る」ので目を離しづらく、これが速度感の正体のひとつ。
+#
+# **既存32本には影響させない。**この関数は fp テーマのときだけ使われる。
+# 描画は draw_rich_text を使わず自前でやる。理由は、語ごとに
+# 透明度と拡大率を変える必要があり、既存の共通描画に手を入れると
+# 32本すべての見た目が変わりうるため。
+
+WORD_POP = True            # テーマの既定。False にすると従来どおり一度に出る
+POP_PEAK = 1.34            # 着地の瞬間の拡大率
+POP_SEC = 0.10             # 拡大が1.0に戻るまでの秒数
+MAX_LINES = 3              # 字幕の最大行数。4行だと立ち絵に重なる(実測)
+
+_TOKENIZER = None
+# 数字のあとに来る「万・億・円・歳…」を前にくっつけるための判定
+_NUM_TAIL = re.compile(r"[0-9０-９万億兆]$")
+
+
+def _words(text: str) -> list[tuple[str, bool]]:
+    """字幕を「語」に割る。返り値は(語, 強調か)の並び。
+
+    【】で囲んだ語は**割らない**(「3万3000円」を分けたら意味が壊れる)。
+    それ以外は janome で形態素に割り、助詞・助動詞・記号は前の語にくっつける
+    (「貯金」「は、」ではなく「貯金は、」で1語にする)。
+    """
+    global _TOKENIZER
+    out = []
+    for seg, emph in S.parse_rich(text):
+        if emph:
+            out.append((seg, True))
+            continue
+        try:
+            if _TOKENIZER is None:
+                from janome.tokenizer import Tokenizer
+                _TOKENIZER = Tokenizer()
+            toks = list(_TOKENIZER.tokenize(seg))
+        except Exception:
+            out.append((seg, False))       # janome が無ければ割らない
+            continue
+        for tk in toks:
+            pos = tk.part_of_speech.split(",")
+            head, sub = pos[0], (pos[1] if len(pos) > 1 else "")
+            prev_num = bool(out) and not out[-1][1] and _NUM_TAIL.search(out[-1][0])
+            glue = (
+                head in ("助詞", "助動詞")           # 「貯金」+「は」→「貯金は」
+                or head == "記号"                     # 読点・句点は前にくっつける
+                or sub in ("接尾", "非自立")          # 「3万」+「円」→「3万円」
+                or (head == "名詞" and sub == "数" and prev_num)   # 「3」+「万」
+            )
+            if out and not out[-1][1] and glue:
+                out[-1] = (out[-1][0] + tk.surface, False)
+            else:
+                out.append((tk.surface, False))
+    return [(s, e) for s, e in out if s]
+
+
+def word_schedule(text: str, dur: float) -> list[float]:
+    """各語が着地する時刻(ユニット頭からの秒)。字数で按分する。
+
+    読み上げの実測に合わせるのが理想だが、VOICEVOX の音素長を語に対応づける
+    のは別の作業になるので、まずは字数按分にする。**尺は必ず dur に収まる。**
+    """
+    ws = _words(text)
+    n = sum(len(s) for s, _ in ws) or 1
+    # 最後の語が出てから 0.25 秒は全部見えている時間を残す
+    span = max(0.0, dur - 0.25)
+    out, acc = [], 0
+    for s, _ in ws:
+        t0 = span * acc / n
+        # 「。」「、」だけの語は前の語と**同時**に出す(1文字が単独で跳ねると変)
+        if out and not s.strip("。、!?…・"):
+            t0 = out[-1]
+        out.append(t0)
+        acc += len(s)
+    return out
+
+
+def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
+    """語がひとつずつ着地する字幕。**折り返しの位置は最初から固定**で、
+    まだ出ていない語はその場所を空けたまま(レイアウトが跳ねない)。"""
+    ws = _words(text)
+    starts = word_schedule(text, dur)
+
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+
+    def widths(row, size):
+        return [S._measure_widths(fig, r, [(s, e)], size, FONT_WEIGHT)[0]
+                for s, e, _ in row]
+
+    # **語の途中では折らない。**(2026-08-24)
+    # S.wrap_plain は句読点でしか折らないので、行に入らないと語の真ん中で切れて
+    # 「つみたて / ると、」のようになっていた。
+    # そのうえで**文字数ではなく実測の幅**で詰める。字数だと書体を変えるたびに
+    # 折り返しが合わなくなるし、字幅の広い書体(Dela Gothic など)で画面から出る。
+    def pack(size):
+        rows, row, w = [], [], 0.0
+        for i, (s, emph) in enumerate(ws):
+            ww = S._measure_widths(fig, r, [(s, emph)], size, FONT_WEIGHT)[0]
+            if row and w + ww > S.SUB_BLOCK_FIT:
+                rows.append(row); row, w = [], 0.0
+            row.append((s, emph, i)); w += ww
+        if row:
+            rows.append(row)
+        return rows
+
+    fs = S.SUB_FS
+    rows = pack(fs)
+    for _ in range(8):                 # 3行に収まるまで少しずつ小さくする
+        if len(rows) <= MAX_LINES:
+            break
+        fs *= 0.93
+        rows = pack(fs)
+
+    n = len(rows)
+    step = S.SUB_LINE_H * (fs / 40)
+    y0 = S.SUBTITLE_Y + max(0, n - 2) * step
+    for i, row in enumerate(rows):
+        ws_row = widths(row, fs)
+        x = 0.5 - sum(ws_row) / 2
+        y = y0 - i * step
+        for (s, emph, idx), w in zip(row, ws_row):
+            st = starts[idx] if idx < len(starts) else 0.0
+            if t_unit < st:
+                x += w
+                continue                    # まだ着地していない語は描かない
+            age = t_unit - st
+            scale = 1.0 + (POP_PEAK - 1.0) * max(0.0, 1.0 - age / POP_SEC)
+            color = TELOP_EMPH if emph else TELOP
+            fig.text(x + w / 2, y, s, ha="center", va="center", color=color,
+                     fontsize=fs * scale, fontweight=FONT_WEIGHT,
+                     path_effects=S.stroke_fx(color, outline=S.outline_for(fs * scale)),
+                     zorder=3.0)
+            x += w
 
 
 def _subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):

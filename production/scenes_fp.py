@@ -252,7 +252,7 @@ def bars(items, highlight=None, title="", ymax=None):
             ax.bar(i, v * min(1.0, t * 1.6), width=0.52, color=col, zorder=2.1)
             ax.text(i, -top * 0.07, lab, ha="center", va="top", fontsize=30, color=INK)
             ax.text(i, v * min(1.0, t * 1.6) + top * 0.03, note, ha="center", va="bottom",
-                    fontsize=40, color=RED if highlight == i else INK, fontweight="bold")
+                    fontsize=40, color=RED if highlight == i else INK)
         ax.set_xlim(-0.7, n - 0.3)
         if title:
             S.text_fit(fig, 0.5, 0.788, title, ha="center", va="center",
