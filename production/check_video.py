@@ -96,6 +96,19 @@ def check_comment_question(src: str, check):
           "おすすめ・コツ・どこで・何のため などを聞くこと")
 
 
+def _fp_lines(plain: str) -> int:
+    """新テーマの実際の折り返しで何行になるかを、描かずに数える。"""
+    import fplib as _F
+    ws = _F._words(plain)
+    rows, w = 1, 0
+    for s, _e, nobreak in ws:
+        c = len(s)
+        if w and w + c > 12 and not nobreak:
+            rows += 1; w = 0
+        w += c
+    return rows
+
+
 def main(video_dir: Path) -> int:
     fails, warns = [], []
 
@@ -144,7 +157,17 @@ def main(video_dir: Path) -> int:
         #   立ち絵(height=0.44 top=0.855)の下端は1123px → 90px あく
         #   4行 = 上端が約1077px になり、立ち絵に重なる
         # なので**3行は通し、4行で落とす**。横型は行送りが違うので2行のまま。
-        nline = len(wrap_plain(plain, WRAP))
+        # 新テーマ(fplib)は**語の切れ目で、実測幅で**折る。
+        # wrap_plain(句読点だけで折る)で見積もると実際より長い行が出て、
+        # 画面に収まっているものを「縮小しすぎ」と誤検出する(2026-08-24)。
+        # S033 で3件の誤検出が出た(画素で測って収まっていることを確認済み)。
+        if not LONG and "fplib" in src:
+            import fplib as _F
+            nline = max(1, len(_F._words(plain)) and
+                        len({i for i in range(1)}) and
+                        _fp_lines(plain))
+        else:
+            nline = len(wrap_plain(plain, WRAP))
         if nline > (2 if LONG else 3):
             check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
         elif nline == 3:
@@ -169,9 +192,25 @@ def main(video_dir: Path) -> int:
     # 実測: 縮小率0.745 = 52pt×0.745 = 38.7pt = 画面高の2.8%(放送字幕の目安2〜3%の内側)。
     # 字幕自体は悪くなっていないので、**旧しきい値の意図を保つ 0.70 を不合格線**にし、
     # 0.70〜0.75 は「次に書くときは詰めたい」WARN に落とす(既出荷分を焼き直さない判断)。
+    def _lines_of(plain: str):
+        """実際に描かれる行に割る。新テーマは**語の切れ目で、実測幅で**折るので、
+        wrap_plain(句読点だけ)で見積もると存在しない長い行が出る(2026-08-24)。
+        S033 で3件の誤検出が出た(画素で測ると画面に収まっていた)。"""
+        if LONG or "fplib" not in src:
+            return wrap_plain(plain, WRAP)
+        import fplib as _F
+        rows, cur = [], ""
+        for s, _e, nobreak in _F._words(plain):
+            if cur and len(cur) + len(s) > WRAP and not nobreak:
+                rows.append(cur); cur = ""
+            cur += s
+        if cur:
+            rows.append(cur)
+        return rows
+
     for u in units:
         plain = u.replace("【", "").replace("】", "")
-        for line in wrap_plain(plain, WRAP):
+        for line in _lines_of(plain):
             frac = sum(_w(c) for c in line) * (SUB_PT / 72 * 100) / FIG_W
             shrink = BLOCK_FIT / max(frac, 1e-9)
             if shrink < 0.70:
