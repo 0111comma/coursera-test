@@ -18,7 +18,8 @@
 
 判定(すべて不合格):
   1. 1ユニット目が疑問形で終わる(? / か。 / のか。 / だろうか。)
-  2. 1ユニット目が20字以内(約3秒。1〜2秒で言い切れる長さ)
+  2. 1ユニット目が20字以内 — **WARNのみ**(2026-08-23に不合格から降格)。
+     字数で縛ると意味が壊れる。見るのは字数ではなく読み上げの秒数
   3. その問いに**損得の語**が入っている(いくら・何歳・損・戻る・取られる…)。
      「〜とは何か」のような制度の問いは、損得の語が無いので落ちる
   4. plan.md に「## 最初の一言(問い)」があり、1ユニット目と一致する
@@ -85,8 +86,15 @@ def check_video(vdir: Path):
         issues.append(("#1", "問いで始まっていない",
                        f"「{first}」。1ユニット目は欲求を問いの形で言うこと。"
                        f"状況の説明や制度の名前から入らない"))
+    # **不合格にしない**(2026-08-23)。ユーザー指示:
+    #   「文字制限かけて何言ってるかよくわからない文章になるなら
+    #     文字制限かけない方がいい」
+    # MAX_CHARS=20 は根拠の書かれていない裸の定数だった。
+    # 実測があるのは**「冒頭3秒」**のほう(competitor-shorts-2026-08-23.md 確度B)で、
+    # 字数ではない。読み上げの実測は render 前に check_video が別途出す。
+    # 長さより**分かることが先**なので、ここは注意書きにとどめる。
     if len(first) > MAX_CHARS:
-        issues.append(("#1", "問いが長い",
+        issues.append(("#1", "問いが長い(WARN)",
                        f"{len(first)}字。{MAX_CHARS}字以内(約1〜2秒)にすること: 「{first}」"))
     if not any(w in first for w in SONTOKU):
         issues.append(("#1", "損得の語がない",
@@ -116,8 +124,14 @@ def main():
     for vdir in targets:
         issues = check_video(vdir)
         if issues:
-            total += len(issues)
-            print(f"[NG] {vdir.name} — {len(issues)}件")
+            # WARN は数えない(2026-08-23)。ユーザー指示
+            #   「文字制限かけて何言ってるかよくわからない文章になるなら
+            #     文字制限かけない方がいい」
+            # 降格したのにここで数えていたので、結局落ちていた。
+            ng = [i for i in issues if "WARN" not in i[1]]
+            total += len(ng)
+            print(f"[{'NG' if ng else 'WARN'}] {vdir.name} — {len(issues)}件"
+                  f"{'' if len(ng) == len(issues) else f'(うち不合格{len(ng)}件)'}")
             for where, kind, detail in issues:
                 print(f"       {where:8} [{kind}] {detail}")
         else:

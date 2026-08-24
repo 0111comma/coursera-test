@@ -37,7 +37,48 @@ import shortlib as S  # noqa: E402
 
 # 禁止領域(figure座標 x0, y0, x1, y1)
 CHARA = (0.000, 0.245, 0.342, 0.465)     # 立ち絵(bl)。縦型
-SUBTITLE = (0.000, 0.000, 1.000, 0.245)  # 字幕帯。縦型
+SUBTITLE = (0.000, 0.000, 1.000, 0.245)  # 字幕帯。縦型(1〜2行の既定値)
+
+# --- 字幕帯は**行数で変わる**(2026-08-23)
+# fplib._subtitle は3行以上のとき**上へ**伸ばす(下は Shorts のUI)。
+# ところがこの禁止領域は 0.245 で固定だった。実測はこうなっている:
+#     1行 上端 y=0.2693 / 2行 y=0.2531 / 3行 y=0.3682
+# つまり**3行の字幕は禁止領域より 0.12(約236px)高いところに出ていた**。
+# そのせいで S032 の hero「300か月」に3行字幕が丸かぶりしたフレームが
+# check_overlap を素通りした(焼く前のフレーム確認で目視発見)。
+# 定数を足すのではなく、**その文をその場で描いて測る**。
+# 行数の効きは block_fit の縮小と絡むので、式では当てられない。
+_SUB_ZONE_CACHE = {}
+
+
+def subtitle_zone_for(text: str):
+    """その字幕文を実際に描いて、インクの外接箱を禁止領域として返す。"""
+    key = (text, S.W, S.H, S.SUBTITLE_Y, S.SUB_FS, S.SUB_WRAP)
+    if key in _SUB_ZONE_CACHE:
+        return _SUB_ZONE_CACHE[key]
+    import numpy as np
+    from PIL import Image
+    import io
+    fig = S.new_canvas()
+    try:
+        import fplib as F
+        F.hide_chrome(fig)          # 帯・バッジを消してから測る
+    except Exception:
+        pass
+    S.draw_subtitle(fig, text)
+    buf = io.BytesIO()
+    fig.savefig(buf, dpi=S.DPI, facecolor="#ffffff")
+    S.plt.close(fig)
+    a = np.array(Image.open(buf).convert("L"))
+    rows = np.where((a < 200).any(axis=1))[0]
+    H = a.shape[0]
+    if len(rows) == 0:
+        zone = SUBTITLE
+    else:
+        # 左右は全幅。字幕は中央寄せなので、幅で逃がすことはしない
+        zone = (0.0, 0.0, 1.0, min(1.0, 1 - rows.min() / H + 0.006))
+    _SUB_ZONE_CACHE[key] = zone
+    return zone
 
 
 _ART_CACHE = {}
@@ -127,10 +168,31 @@ def _overlap(a, b):
 
 
 def _load(render_py: Path):
-    spec = importlib.util.spec_from_file_location(f"m_{render_py.parent.name}", render_py)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = mod
-    spec.loader.exec_module(mod)
+    # 動画ごとの verify.py は**どれも "verify" という名前**なので、
+    # 全動画を続けて読むと1本目の verify が sys.modules に残り、
+    # 2本目以降が別の動画の verify を掴む。実際、全動画スイープが
+    #   AttributeError: module 'verify' has no attribute 'MONTHS_0'
+    # で S032 で止まり、**そこから後ろが1本も検査されていなかった**
+    # (2026-08-23)。読む前後で動画ディレクトリのモジュールを片づける。
+    vdir = render_py.parent
+    local = {n for n, m in list(sys.modules.items())
+             if getattr(m, "__file__", None)
+             and str(vdir) in str(getattr(m, "__file__", ""))}
+    for n in local:
+        sys.modules.pop(n, None)
+    sys.path.insert(0, str(vdir))
+    try:
+        spec = importlib.util.spec_from_file_location(f"m_{vdir.name}", render_py)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = mod
+        spec.loader.exec_module(mod)
+    finally:
+        if sys.path and sys.path[0] == str(vdir):
+            sys.path.pop(0)
+        for n, m in list(sys.modules.items()):
+            if n != f"m_{vdir.name}" and getattr(m, "__file__", None) \
+                    and str(vdir) in str(getattr(m, "__file__", "")):
+                sys.modules.pop(n, None)
     return mod
 
 
@@ -152,6 +214,13 @@ def check_video(vdir: Path):
     chara_scenes = {u.scene for u in units if getattr(u, "chara", None) != "none"}
 
     chara_zone, subtitle_zone = zones_for_format()
+    # 場面ごとに、そこで出る字幕のうち**いちばん上まで届くもの**を禁止領域にする
+    sub_zone = {}
+    if S.W != 1920:
+        for u in units:
+            z = subtitle_zone_for(u.subtitle)
+            cur = sub_zone.get(u.scene)
+            sub_zone[u.scene] = z if cur is None or z[3] > cur[3] else cur
     issues = []
     for key in sorted(used):
         painter = scenes.get(key)
@@ -229,7 +298,7 @@ def check_video(vdir: Path):
                 if art.get_alpha() is not None and art.get_alpha() < 0.15:
                     continue
                 box = box_of(art)
-                zones = [("字幕帯", subtitle_zone)]
+                zones = [("字幕帯", sub_zone.get(key, subtitle_zone))]
                 if has_chara:
                     zones += [("立ち絵", z) for z in chara_zone]
                 if badge_box is not None:

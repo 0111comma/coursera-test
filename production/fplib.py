@@ -145,8 +145,17 @@ def hide_chrome(fig):
 
 
 def _subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
-    """大きい縁取りテロップ。**帯は敷かない**(競合は背景の上に直接置いている)。"""
-    S.draw_rich_text(fig, 0.5, S.SUBTITLE_Y, text, S.SUB_FS * pop,
+    """大きい縁取りテロップ。**帯は敷かない**(競合は背景の上に直接置いている)。
+
+    3行以上になったら**上に伸ばす**。下に伸ばすと Shorts のUI(下12〜15%)に入る。
+    2行目・3行目の位置は2行のときと同じになるので、行数が変わってもブレない。
+    (2026-08-23。ユーザー指示「文字制限かけて何言ってるかよくわからない文章に
+     なるなら文字制限かけない方がいい」を受け、長い文も描けるようにした)
+    """
+    n = len(S.wrap_plain(text.replace("【", "").replace("】", ""), S.SUB_WRAP))
+    step = S.SUB_LINE_H * (S.SUB_FS * pop / 40)
+    y = S.SUBTITLE_Y + max(0, n - 2) * step
+    S.draw_rich_text(fig, 0.5, y, text, S.SUB_FS * pop,
                      base_color=TELOP, emph_color=TELOP_EMPH,
                      wrap=S.SUB_WRAP, line_h=S.SUB_LINE_H, block_fit=S.SUB_BLOCK_FIT,
                      outline=13.0)

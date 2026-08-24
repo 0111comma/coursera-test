@@ -104,6 +104,11 @@ def main(video_dir: Path) -> int:
         if not ok:
             fails.append(name)
 
+    def warn(name, detail=""):
+        """落とさないが目に入れる。**基準を緩めた場所を黙って隠さない**ため。"""
+        print(f"  [WARN] {name}" + (f" — {detail}" if detail else ""))
+        warns.append(name)
+
     print(f"チェック対象: {video_dir}")
 
     # 1. verify.py が通る
@@ -131,8 +136,20 @@ def main(video_dir: Path) -> int:
         total_chars += len(plain)
         if len(plain) > (48 if LONG else 35):
             check(f"1文35字以内: {plain[:14]}…", False, f"{len(plain)}字")
-        if len(wrap_plain(plain, WRAP)) > 2:
-            check(f"字幕2行以内: {plain[:14]}…", False)
+        # 縦型は**3行まで**(2026-08-23)。ユーザー指示
+        #   「文字制限かけて何言ってるかよくわからない文章になるなら
+        #     文字制限かけない方がいい」
+        # 「2行」は裸の定数だった。実測でこうなっている(1080x1920・新テーマ):
+        #   3行 = 字幕インクの上端1213px / 下端1620px(下余白300px)
+        #   立ち絵(height=0.44 top=0.855)の下端は1123px → 90px あく
+        #   4行 = 上端が約1077px になり、立ち絵に重なる
+        # なので**3行は通し、4行で落とす**。横型は行送りが違うので2行のまま。
+        nline = len(wrap_plain(plain, WRAP))
+        if nline > (2 if LONG else 3):
+            check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
+        elif nline == 3:
+            # 落とさないが、3行は冒頭など**必要なところだけ**にする
+            warn(f"字幕3行: {plain[:14]}…", f"{nline}行。立ち絵との余白は90px")
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
     # 字幕の安全幅(ループ⑫): 最長行が block_fit=0.70 に収まる際の縮小率が75%未満なら
     # 読みにくくなるので文を書き直す(概算幅: 全角1.0/半角0.55/約物0.6)
@@ -200,7 +217,11 @@ def main(video_dir: Path) -> int:
     # P系(ループ㊳: ユーザーレビュー第7弾)。前置き・生活翻訳・情景ユーモア・中盤の問い
     # sf.cover(新デザイン)も見る。2026-08-23に新テーマを足したとき、
     # 正規表現が sc./sl. しか見ておらず、問いがあるのに不合格になった
-    cover_m = re.search(r'"[\w]+__cover":\s*s[cfl]\.cover\(\s*"([^"]*)"', src)
+    # cover() は上段だけでなく**引数すべて**を見る(2026-08-23)。
+    # sf.cover("老後資金の1000万円", "毎月5万円ずつ使うと", "何歳で尽きる?") のように
+    # 問いが3つ目に来る形を、上段しか見ていなかったせいで落としていた。
+    # 判定したいのは「1フレーム目に問いがあるか」なので、カバー全体で見るのが正しい。
+    cover_m = re.search(r'"[\w]+__cover":\s*s[cfl]\.cover\(([^)]*)\)', src)
     lead_m = re.search(r'lead="([^"]*)"', src)
     cover_top = cover_m.group(1) if cover_m else ""
     check("D23 前置き(1フレーム目に問い)", "?" in cover_top or (lead_m and "?" in lead_m.group(1)),
