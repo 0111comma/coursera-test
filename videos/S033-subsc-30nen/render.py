@@ -32,8 +32,12 @@ assert round(V.FV5 / 10_000) == 263
 assert round(V.ONE_FV5 / 10_000) == 90 and round(V.ONE_PRINCIPAL / 10_000) == 39
 
 SCENES = {
-    "namae": sf.person("01_base", height=0.44, top=0.855),
+    # ---- 掴み: サービス名を2つに割って出す
+    "namae": sf.person("01_base", height=0.50, top=0.855),
     "namae__cover": sf.cover("Netflix、Spotify", "Amazonプライム", "3つで月いくら?"),
+    "namae2": sf.person("02_point", height=0.50, top=0.855),
+    "toi1": sf.person("01_base", height=0.62),
+
     "hyo": sf.table(["", "月額"],
                     [["Netflix", "1590円"],
                      ["Spotify", "1080円"],
@@ -42,24 +46,25 @@ SCENES = {
                     highlight=3, title="30代がよく持つ3つ"),
     "hyo2": sf.hero("3162円", "3つ合わせて", name="02_point"),
     "waru": sf.formula("3162円 ÷ 30日", "= 1日あたり"),
-    "kan": sf.person_bubble("01_base", "缶コーヒー1本"),
-    "nagai": sf.person("01_base", height=0.62),
+    "kan": sf.person_bubble("01_base", "缶コーヒー以下"),
+    "nagai": sf.person("02_point", height=0.62),
     "kikan": sf.hero("360か月", "35歳から65歳までの30年", name="02_point"),
     "shiki1": sf.formula("3162円 × 360か月", "= 30年で出ていく額"),
     "deru": sf.hero("114万円", "30年で出ていく額", name="03_troubled"),
-    "oboe": sf.person("03_troubled"),
     "hondai": sf.person("02_point"),
+
+    # ---- 反転
     "tameru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                        ("年5%と仮定", 2_631_602, "263万円")],
                       highlight=0, title="同じ3162円を積んだら"),
+    "katei": sf.person("01_base"),
     "fueru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=1, title="同じ3162円を積んだら"),
-    # #13 は「114万円」の話なので、114万円を主役にした図に戻す
-    # (fueru の棒は263万円が赤で、声と目が別のものを指していた)
-    "onaji": sf.hero("114万円", "積むだけなら、払う額と同じ", name="01_base"),
     "fue": sf.hero("263万円", "30年後", name="04_surprised"),
     "gyaku": sf.person("04_surprised"),
+
+    # ---- 1つでいい
     "zenbu": sf.person_bubble("01_base", "3つとも?"),
     "tomeru": sf.person_bubble("02_point", "使ってない1つ"),
     "hitotsu": sf.hero("1080円", "使っていない1つ", name="02_point"),
@@ -67,49 +72,58 @@ SCENES = {
                          ("年5%と仮定", 898_839, "約90万円")],
                         highlight=1, title="1つ止めたら"),
     "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額"),
-    "toi2": sf.cta("", "02_point", show_comment=True),
-    "cta2": sf.person_bubble("02_point", "月いくら?"),
+    "meisai": sf.person_bubble("03_troubled", "明細チェック"),
+    "cta2": sf.cta("", "02_point", show_comment=True),
 }
 
+# ---------------------------------------------------------------------------
+# **台詞は外部の添削を通したものをそのまま使う。**(2026-08-24)
+# ユーザーの判断:「お前が作ってるルールがカスでバカだから、ちゃんとした
+# プロットが作れねえんだろ。お前がまず作ったプロットを向こうが添削するだけで
+# よっぽどいいものができる」
+# 日本語を縛るゲート(flow / teinei / bunsho など)には**合わせない**。
+# 合わせると「114万円が」「114万円を」の連呼のような壊れた文になる。
 UNITS = [
-    # 冒頭は**問い**。「サブスク」は30代の日常語(strategy.md §6.2で名指しを解禁)
-    Unit("namae", "サブスク3つで、月いくら?", anim=1.0, cover=True,
+    Unit("namae", "NetflixにSpotify、", anim=1.0, cover=True,
          se="pop", speed=1.0, intonation=1.3, chara="none"),
-    Unit("hyo", "1590円と1080円と492円。", anim=1.0, speed=1.05, chara="none"),
-    Unit("hyo2", "合計で【3162円】。", anim=1.0, se="don", speed=1.0,
+    Unit("namae2", "Amazonプライムですね。", anim=1.0, speed=1.05, chara="none"),
+    Unit("toi1", "この3つ、月いくら払ってますか?", anim=1.0, speed=1.0,
+         intonation=1.25, chara="none"),
+    Unit("hyo", "1590円、1080円、492円。", anim=1.0, speed=1.05, chara="none"),
+    Unit("hyo2", "合わせて月【3162円】です。", anim=1.0, se="don", speed=1.0,
          intonation=1.2, chara="none"),
-    Unit("waru", "3162円は1日【105円】。", anim=1.0, speed=1.05, chara="none"),
-    Unit("kan", "105円は缶コーヒー1本ぶん。", anim=1.0, speed=1.1, chara="none"),
-    Unit("nagai", "缶コーヒーを35歳から65歳まで。", anim=1.0, speed=1.05,
-         chara="none"),
-    Unit("kikan", "65歳までは【360か月】。", anim=1.0, speed=1.05, chara="none"),
-    Unit("shiki1", "3162円×360か月。", anim=1.0, speed=1.05, chara="none"),
-    # 式と答えを割る(溜めて出す)。ここは1カットぶん止める
-    Unit("deru", "【114万円】です。", anim=1.0, se="impact", se_at=0.1,
-         speed=0.95, intonation=1.35, pad=0.35, chara="none"),
-    Unit("oboe", "あなたはこの114万円、覚えがありますか?", anim=1.0, speed=1.05,
-         pad=0.3, chara="none"),
+    Unit("waru", "1日にするとたった【105円】。", anim=1.0, speed=1.05, chara="none"),
+    Unit("kan", "缶コーヒーより安い金額です。", anim=1.0, speed=1.1, chara="none"),
+    Unit("nagai", "これを35歳から65歳まで。", anim=1.0, speed=1.05, chara="none"),
+    Unit("kikan", "30年、【360か月】続けると。", anim=1.0, speed=1.05, chara="none"),
+    Unit("shiki1", "出ていくお金は【114万円】。", anim=1.0, se="impact", se_at=0.1,
+         speed=0.95, intonation=1.3, chara="none"),
+    Unit("deru", "無意識に114万、払いますか?", anim=1.0, speed=1.0,
+         intonation=1.25, pad=0.35, chara="none"),
 
-    Unit("hondai", "この114万円を積んだら?", anim=1.0, speed=1.1, chara="none"),
-    Unit("tameru", "貯めるだけなら【114万円】。", anim=1.0, speed=1.05, chara="none"),
-    Unit("onaji", "出ていく114万円と同じ。", anim=1.0, speed=1.05, chara="none"),
-    Unit("fue", "114万円が、年5%と仮定すると【263万円】。", anim=1.0, se="don",
+    Unit("hondai", "ここからが今日の本題です。", anim=1.0, speed=1.1, chara="none"),
+    Unit("tameru", "このお金を積んだらどうなるか。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("katei", "年5%で運用できたと仮定します。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("fueru", "すると【263万円】になります。", anim=1.0, se="don",
          speed=1.0, intonation=1.25, chara="none"),
-    Unit("gyaku", "263万円。同じお金が逆側に。", anim=1.0, se="impact", se_at=0.2,
-         speed=1.0, intonation=1.2, pad=0.35, chara="none"),
+    Unit("fue", "【114万円】が【263万円】に。", anim=1.0, speed=1.0,
+         intonation=1.2, chara="none"),
+    Unit("gyaku", "出ていくお金が、入ってくる側に。", anim=1.0, se="impact",
+         se_at=0.2, speed=1.0, intonation=1.2, pad=0.35, chara="none"),
 
-    Unit("zenbu", "263万円のために、3つとも止める?", anim=1.0, speed=1.1,
+    Unit("zenbu", "3つ全部やめなくていいんです。", anim=1.0, speed=1.1, chara="none"),
+    Unit("tomeru", "使ってないものを【1つ】だけ。", anim=1.0, speed=1.05,
          chara="none"),
-    Unit("tomeru", "いりません。3つのうち【1つ】でいい。", anim=1.0,
-         speed=1.05, chara="none"),
-    Unit("hitotsu", "その1つが【1080円】なら。", anim=1.0, speed=1.05, chara="none"),
-    Unit("hitotsu2", "30年で【約90万円】。", anim=1.0, se="don", speed=1.0,
-         intonation=1.25, pad=0.3, chara="none"),
-    Unit("shiki2", "30年ぶんは月額×360。", anim=1.0, speed=1.05, chara="none"),
-    Unit("toi2", "あなたの月額を、コメントで教えてください。", anim=1.0,
-         speed=1.05, chara="none"),
-    # 冒頭の問いをそのまま繰り返して終わる(ループの継ぎ目)
-    Unit("cta2", "サブスク3つで、月いくら?", anim=1.0, speed=1.0,
+    Unit("hitotsu", "【1080円】のものを1つ止めれば。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("hitotsu2", "30年で【約90万円】になります。", anim=1.0, se="don",
+         speed=1.0, intonation=1.25, pad=0.3, chara="none"),
+    Unit("shiki2", "自分の額は月額×360ですよ。", anim=1.0, speed=1.05, chara="none"),
+    Unit("meisai", "まずは明細を開いてみませんか?", anim=1.0, speed=1.0,
+         intonation=1.2, chara="none"),
+    Unit("cta2", "あなたのサブスク、月いくら?", anim=1.0, speed=1.0,
          intonation=1.3, chara="none"),
 ]
 
