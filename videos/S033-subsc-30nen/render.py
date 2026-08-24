@@ -55,6 +55,9 @@ SCENES = {
     "fueru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=1, title="同じ3162円を積んだら"),
+    # #13 は「114万円」の話なので、114万円を主役にした図に戻す
+    # (fueru の棒は263万円が赤で、声と目が別のものを指していた)
+    "onaji": sf.hero("114万円", "積むだけなら、払う額と同じ", name="01_base"),
     "fue": sf.hero("263万円", "30年後", name="04_surprised"),
     "gyaku": sf.person("04_surprised"),
     "zenbu": sf.person_bubble("01_base", "3つとも?"),
@@ -64,8 +67,8 @@ SCENES = {
                          ("年5%と仮定", 898_839, "約90万円")],
                         highlight=1, title="1つ止めたら"),
     "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額"),
-    "toi2": sf.person_bubble("02_point", "月いくら?"),
-    "cta2": sf.cta("", "02_point", show_comment=True),
+    "toi2": sf.cta("", "02_point", show_comment=True),
+    "cta2": sf.person_bubble("02_point", "月いくら?"),
 }
 
 UNITS = [
@@ -89,7 +92,7 @@ UNITS = [
 
     Unit("hondai", "この114万円を積んだら?", anim=1.0, speed=1.1, chara="none"),
     Unit("tameru", "貯めるだけなら【114万円】。", anim=1.0, speed=1.05, chara="none"),
-    Unit("fueru", "出ていく114万円と同じ。", anim=1.0, speed=1.05, chara="none"),
+    Unit("onaji", "出ていく114万円と同じ。", anim=1.0, speed=1.05, chara="none"),
     Unit("fue", "114万円が、年5%と仮定すると【263万円】。", anim=1.0, se="don",
          speed=1.0, intonation=1.25, chara="none"),
     Unit("gyaku", "263万円。同じお金が逆側に。", anim=1.0, se="impact", se_at=0.2,
