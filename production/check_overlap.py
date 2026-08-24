@@ -65,7 +65,19 @@ def subtitle_zone_for(text: str):
         F.hide_chrome(fig)          # 帯・バッジを消してから測る
     except Exception:
         pass
-    S.draw_subtitle(fig, text)
+    # **本番と同じ描画関数で測る。**(2026-08-24)
+    # ここで S.draw_subtitle を使っていたが、実際の動画は fplib の
+    # 語ごとポップ(_subtitle_wordpop)で描いている。折り返しの規則が違うので
+    # 行数が変わり、**3行になって図に重なったフレームを見逃していた**
+    # (S033 の hero「114万円」に字幕が丸かぶりしたのを目視で発見)。
+    try:
+        import fplib as _F
+        if getattr(_F, "WORD_POP", False):
+            _F._subtitle_wordpop(fig, text, 1e9, 3.0)
+        else:
+            S.draw_subtitle(fig, text)
+    except Exception:
+        S.draw_subtitle(fig, text)
     buf = io.BytesIO()
     fig.savefig(buf, dpi=S.DPI, facecolor="#ffffff")
     S.plt.close(fig)

@@ -256,7 +256,9 @@ def bars(items, highlight=None, title="", ymax=None):
     vals = [v for _, v, _ in items]
     top = ymax or max(vals) * 1.22
     def painter(fig, t):
-        ax = fig.add_axes([0.12, 0.36, 0.76, 0.38], zorder=2.0)
+        # 下端 0.36 だと、見出しラベルが 0.33 付近まで下がり、
+        # 3行字幕(上端 0.368)に重なる。0.44 に上げた(2026-08-24)
+        ax = fig.add_axes([0.12, 0.44, 0.76, 0.32], zorder=2.0)
         ax.set_facecolor("none")
         for sp in ax.spines.values():
             sp.set_visible(False)
@@ -305,6 +307,44 @@ def hero(main: str, sub: str = "", name: str = "01_base"):
     return painter
 
 
+def arrow(left_val: str, right_val: str, left_lab: str = "", right_lab: str = "",
+          title: str = ""):
+    """左の額 → 右の額。**同じお金が別のものに変わる**ことを1枚で見せる。
+
+    立ち絵を置かない図(2026-08-24)。ユーザー指摘
+    「この女の人出しすぎだね。参考のペンギンは3、4回しか出てない」を受けて、
+    本編を図で埋めるために足した型のひとつ。
+    """
+    def painter(fig, t):
+        if title:
+            S.text_fit(fig, 0.5, 0.735, title, ha="center", va="center",
+                       color=SUB, fontsize=38, max_w=0.9, zorder=2.3)
+        cy, h = 0.545, 0.185
+        for x0, w, val, lab, col, edge in (
+                (0.055, 0.36, left_val, left_lab, "#6f7378", "#cfc4ae"),
+                (0.585, 0.36, right_val, right_lab, RED, RED)):
+            fig.add_artist(FancyBboxPatch((x0, cy - h / 2), w, h,
+                                          boxstyle="round,pad=0,rounding_size=0.024",
+                                          transform=fig.transFigure, facecolor="#fffdf7",
+                                          edgecolor=edge, linewidth=4.0, zorder=2.2))
+            S.text_fit(fig, x0 + w / 2, cy + 0.012, val, ha="center", va="center",
+                       color=col, fontsize=92, max_w=w - 0.04, zorder=2.4)
+            if lab:
+                S.text_fit(fig, x0 + w / 2, cy - h / 2 - 0.032, lab, ha="center",
+                           va="center", color=SUB, fontsize=34, max_w=w, zorder=2.4)
+        # 矢印。**進行度 t で伸びる**(止まった絵にしない)
+        x0, x1 = 0.425, 0.575
+        xe = x0 + (x1 - x0) * min(1.0, max(0.15, t))
+        fig.add_artist(plt.Rectangle((x0, cy - 0.014), xe - x0 - 0.028, 0.028,
+                                     transform=fig.transFigure, facecolor=RED,
+                                     edgecolor="none", zorder=2.5))
+        fig.add_artist(plt.Polygon([[xe, cy], [xe - 0.036, cy + 0.042],
+                                    [xe - 0.036, cy - 0.042]],
+                                   transform=fig.transFigure, facecolor=RED,
+                                   edgecolor="none", zorder=2.5))
+    return painter
+
+
 def cta(line: str, name: str = "02_point", show_button: bool = False,
         show_comment: bool = False):
     """締めの定型カット。競合は結論のあと**4カット**使っていた。"""
@@ -313,16 +353,16 @@ def cta(line: str, name: str = "02_point", show_button: bool = False,
         # 置き忘れの矩形に見えるので、角丸の黒 + 白文字にする
         F.draw_pose(fig, name, top=0.855, height=0.40 if show_comment else 0.44)
         if show_button:
-            fig.add_artist(FancyBboxPatch((0.30, 0.325), 0.40, 0.075,
+            fig.add_artist(FancyBboxPatch((0.30, 0.418), 0.40, 0.075,
                                           boxstyle="round,pad=0,rounding_size=0.037",
                                           transform=fig.transFigure, facecolor="#1f1f1f",
                                           edgecolor="none", zorder=2.5))
-            S.text_fit(fig, 0.5, 0.3625, "チャンネル登録", ha="center", va="center",
+            S.text_fit(fig, 0.5, 0.4555, "チャンネル登録", ha="center", va="center",
                        color="#ffffff", fontsize=40, max_w=0.34, zorder=2.6)
         if show_comment:
             # **声が「コメントで」なら、画面もコメントを指す**(2026-08-23のレビュー)。
             # コメント欄は画面の下にあるので、しっぽを下に向ける
-            bx, by, bw, bh = 0.30, 0.352, 0.40, 0.078
+            bx, by, bw, bh = 0.30, 0.430, 0.40, 0.078   # 0.352 だと3行字幕に重なる
             cx = bx + bw / 2
             fig.add_artist(plt.Polygon([[cx - 0.036, by + 0.006], [cx, by - 0.048],
                                         [cx + 0.036, by + 0.006]],
