@@ -78,3 +78,11 @@ if __name__ == "__main__":
 
     print(f"\n1つ({ONE:,}円)だけ止めた場合:")
     print(f"  出したお金 {ONE_PRINCIPAL:,}円 / 年5%(仮定) {ONE_FV5:,.0f}円")
+    # 台本で声に出す丸めた値。zentei が「出どころ不明」と言わないよう、
+    # **万円の単位でも必ず出力する**
+    # **切り捨てない。**898,839円を「89万円」と言うのは S032 の「82歳」と同じ誤り。
+    R_ONE_P = round(ONE_PRINCIPAL / 10_000)      # 39万円
+    R_ONE_FV = round(ONE_FV5 / 10_000)           # 90万円
+    assert R_ONE_P == 39 and R_ONE_FV == 90, (R_ONE_P, R_ONE_FV)
+    print(f"  台本で言う値: 出したお金 約{R_ONE_P}万円 / "
+          f"年5%と仮定して 約{R_ONE_FV}万円 ✓")
