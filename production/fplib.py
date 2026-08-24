@@ -88,6 +88,7 @@ def use_fp_theme(title: str, speaker: int = 108, badge: str = ""):
     S.STROKE_SHADOW = TELOP_SHADOW
     S.new_canvas = _canvas
     S.draw_subtitle = _subtitle
+    S.SUB_WORDPOP = WORD_POP    # 語ごとポップ(ユニット全体をfpsで割る)
     S.save_frame = _save_frame
     _setup_font()
 
@@ -353,6 +354,18 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
 
 
 def _subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
+    """テーマの字幕。**WORD_POP なら語ごとに着地する描画へ回す。**(2026-08-24)
+
+    ここで振り分けていなかったので、語ごとポップを実装したのに
+    **動画には一度も入っていなかった**(下見でしか動いていなかった)。
+    """
+    if WORD_POP and getattr(S, "SUB_TIME", None):
+        t_unit, dur = S.SUB_TIME
+        return _subtitle_wordpop(fig, text, t_unit, dur, tag)
+    return _subtitle_plain(fig, text, pop, tag)
+
+
+def _subtitle_plain(fig, text: str, pop: float = 1.0, tag: str | None = None):
     """大きい縁取りテロップ。**帯は敷かない**(競合は背景の上に直接置いている)。
 
     3行以上になったら**上に伸ばす**。下に伸ばすと Shorts のUI(下12〜15%)に入る。

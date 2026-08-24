@@ -251,6 +251,9 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 #   「もうちょっと早くできる? 周りのショート動画の速度感についていけてない」
 # 各Unitの speed に、さらにこの倍率を掛ける。1本ずつ直さなくても全体を調整できる
 SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
+SUB_TIME = None      # (ユニット内の時刻, ユニットの尺)。字幕の描画側が読む
+SUB_WORDPOP = False  # 語ごとポップ。**テーマが有効なときだけ True**
+WORDPOP_FPS = 12     # 語ごとポップのときに、ユニット全体を割るfps
 # これ以上の pad は「止め」とみなし、その区間はBGMも切る(05/08-tempo/audio)
 LONG_STOP_PAD = 0.5
 
@@ -994,6 +997,15 @@ def draw_rich_text(fig, x: float, y: float, text: str, fontsize: float,
                        outline=outline, ha_center_x=x)
 
 
+def _wordpop_on() -> bool:
+    """語ごとポップを使うか。使うならユニット全体をfpsで割る必要がある。
+
+    **fplib を import して判定してはいけない。**fplib は読めるだけで True になり、
+    use_fp_theme を呼んでいない既存32本まで、要らないフレームを描くことになる。
+    テーマが有効になったときだけ立つフラグで見る。"""
+    return bool(SUB_WORDPOP)
+
+
 def draw_subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
     """R6/R7/R8: ナレーション文そのものを縁取りテロップで。【】は黄色。
 
@@ -1262,6 +1274,12 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 if DUO:
                     tag = ("めたん" if (u.speaker or DEFAULT_SPEAKER) == METAN_SPEAKER
                            else "ずんだもん")
+                # **語ごとのポップに、ユニット内の時刻を渡す。**(2026-08-24)
+                # これが無いと fplib 側は「全部出た状態」しか描けない。
+                # 実際、語ごとポップを作ったのに**動画には一度も入っていなかった**
+                # (use_fp_theme が旧描画を差したままだった)。
+                global SUB_TIME
+                SUB_TIME = (t_unit, d_total)
                 draw_subtitle(fig, u.subtitle, pop=pop, tag=tag)
             save_frame(fig, f)
             frames.append(f)
@@ -1297,6 +1315,12 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                     for j in range(m):
                         emit(1.0, n + j, hold / m,
                              t_unit=head + anim + hold * (j + 0.5) / m)
+                elif _wordpop_on():
+                    # 語がひとつずつ着地するので、止め絵にできない
+                    m = max(1, int(round(hold * WORDPOP_FPS)))
+                    for j in range(m):
+                        emit(1.0, n + j, hold / m,
+                             t_unit=head + anim + hold * (j + 0.5) / m)
                 else:
                     emit(1.0, n, hold)
         else:
@@ -1307,6 +1331,10 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                     emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
             elif RICH_BG:
                 m = max(1, int(round(body * DRIFT_FPS)))
+                for j in range(m):
+                    emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
+            elif _wordpop_on():
+                m = max(1, int(round(body * WORDPOP_FPS)))
                 for j in range(m):
                     emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
             else:
