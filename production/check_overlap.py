@@ -241,6 +241,26 @@ def check_video(vdir: Path):
                 e = art.get_window_extent(renderer=renderer)
                 return (e.x0 / W, e.y0 / H, e.x1 / W, e.y1 / H)
 
+            def all_texts(f):
+                """図の中の文字も含めて全部集める(2026-08-23)。
+
+                これまで fig.texts しか見ていなかった。ところが棒グラフの
+                ラベルは ax.text() で描かれるので **axes[n].texts** に入る。
+                そのせいで
+                    fig.texts     : タイトル・バッジ・図の見出し
+                    axes[2].texts : 「予定」「5万円」「使える額」「3万3000円」← 未判定
+                となり、**図の中のラベルは字幕とも立ち絵とも一度も突き合わせて
+                いなかった**。S032 の t=31秒 で3行字幕が「予定」「使える額」を
+                完全に潰したまま、このゲートが OK を出した。
+                """
+                out = list(f.texts)
+                for ax in f.axes:
+                    out += list(ax.texts)
+                # 目盛ラベル(0.0 0.2 …)は入れない。軸を消した図でも matplotlib は
+                # ラベル実体を持ったままなので、拾うと見えない文字で136件の誤検出になる。
+                # 見たいのは**人が書いたラベル**なので ax.texts だけでよい。
+                return out
+
             badge_art = next((a for a in fig.texts if anchored_at(a, BADGE_ANCHOR)), None)
             badge_box = box_of(badge_art) if badge_art is not None else None
 
@@ -281,7 +301,7 @@ def check_video(vdir: Path):
                 elif box[1] < -OUT_MARGIN or box[3] > 1 + OUT_MARGIN:
                     issues.append((key, t, "画面外(上下)", f"<{label}>"))
 
-            for art in list(fig.texts):
+            for art in all_texts(fig):
                 txt = art.get_text()
                 if not txt.strip() or art is badge_art:
                     continue
@@ -310,7 +330,7 @@ def check_video(vdir: Path):
             # 図の中の文字どうしの重なり(ループ53)。立ち絵・バッジ・字幕との衝突しか
             # 見ていなかったので、「税金はゼロ」と「損 50万円」が重なったまま通った
             labels = []
-            for art in list(fig.texts):
+            for art in all_texts(fig):
                 txt = art.get_text()
                 if not txt.strip() or art is badge_art:
                     continue
