@@ -42,14 +42,12 @@ SCENES = {
                     highlight=3, title="30代がよく持つ3つ"),
     "hyo2": sf.hero("3162円", "3つ合わせて", name="02_point"),
     "waru": sf.formula("3162円 ÷ 30日", "= 1日あたり"),
-    "hi": sf.hero("105円", "1日あたりに直すと", name="01_base"),
     "kan": sf.person_bubble("01_base", "缶コーヒー1本"),
     "nagai": sf.person("01_base", height=0.62),
     "kikan": sf.hero("360か月", "35歳から65歳までの30年", name="02_point"),
     "shiki1": sf.formula("3162円 × 360か月", "= 30年で出ていく額"),
     "deru": sf.hero("114万円", "30年で出ていく額", name="03_troubled"),
     "oboe": sf.person("03_troubled"),
-    "oboe2": sf.person_bubble("03_troubled", "いつ払った?"),
     "hondai": sf.person("02_point"),
     "tameru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                        ("年5%と仮定", 2_631_602, "263万円")],
@@ -61,7 +59,14 @@ SCENES = {
     "gyaku": sf.person("04_surprised"),
     "zenbu": sf.person_bubble("01_base", "3つとも?"),
     "tomeru": sf.person_bubble("02_point", "使ってない1つ"),
-    "fueru2": sf.hero("114万円", "積むだけなら、払う額と同じ", name="01_base"),
+    "hitotsu": sf.hero("1080円", "使っていない1つ", name="02_point"),
+    "hitotsu2": sf.bars([("出したお金", 388_800, "約39万円"),
+                         ("年5%と仮定", 898_839, "約90万円")],
+                        highlight=1, title="1つ止めたら"),
+    "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額"),
+    "toi2": sf.person_bubble("02_point", "月いくら?"),
+    "cta2": sf.cta("", "02_point", show_comment=True),
+}
 
 UNITS = [
     # 冒頭は**問い**。「サブスク」は30代の日常語(strategy.md §6.2で名指しを解禁)
@@ -79,13 +84,13 @@ UNITS = [
     # 式と答えを割る(溜めて出す)。ここは1カットぶん止める
     Unit("deru", "【114万円】です。", anim=1.0, se="impact", se_at=0.1,
          speed=0.95, intonation=1.35, pad=0.35, chara="none"),
-    Unit("oboe", "114万円、覚えがありますか?", anim=1.0, speed=1.05,
+    Unit("oboe", "あなたはこの114万円、覚えがありますか?", anim=1.0, speed=1.05,
          pad=0.3, chara="none"),
 
     Unit("hondai", "この114万円を積んだら?", anim=1.0, speed=1.1, chara="none"),
     Unit("tameru", "貯めるだけなら【114万円】。", anim=1.0, speed=1.05, chara="none"),
     Unit("fueru", "出ていく114万円と同じ。", anim=1.0, speed=1.05, chara="none"),
-    Unit("fue", "114万円が年5%なら【263万円】。", anim=1.0, se="don",
+    Unit("fue", "114万円が、年5%と仮定すると【263万円】。", anim=1.0, se="don",
          speed=1.0, intonation=1.25, chara="none"),
     Unit("gyaku", "263万円。同じお金が逆側に。", anim=1.0, se="impact", se_at=0.2,
          speed=1.0, intonation=1.2, pad=0.35, chara="none"),
@@ -98,9 +103,11 @@ UNITS = [
     Unit("hitotsu2", "30年で【約90万円】。", anim=1.0, se="don", speed=1.0,
          intonation=1.25, pad=0.3, chara="none"),
     Unit("shiki2", "30年ぶんは月額×360。", anim=1.0, speed=1.05, chara="none"),
-    Unit("toi2", "あなたの月額はいくら?", anim=1.0, speed=1.0,
+    Unit("toi2", "あなたの月額を、コメントで教えてください。", anim=1.0,
+         speed=1.05, chara="none"),
+    # 冒頭の問いをそのまま繰り返して終わる(ループの継ぎ目)
+    Unit("cta2", "サブスク3つで、月いくら?", anim=1.0, speed=1.0,
          intonation=1.3, chara="none"),
-    Unit("cta2", "コメントで教えてください。", anim=1.0, speed=1.05, chara="none"),
 ]
 
 if __name__ == "__main__":
