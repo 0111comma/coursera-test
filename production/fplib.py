@@ -12,9 +12,11 @@ competitor-shorts-teardown-2026-08-23.md の実測にもとづく:
 **既存30本を壊さないため、shortlib は直さずに、ここから差し替える。**
 `use_fp_theme()` を render.py の先頭で1回呼ぶ。
 """
+import math
 import re
 from pathlib import Path
 
+import matplotlib.patheffects as path_effects
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 import numpy as np
@@ -46,18 +48,31 @@ FONT_GLOB = "RocknRollOne.ttf"
 FONT_FALLBACK = "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"
 FONT_FALLBACK_FAMILY = "IPAGothic"
 
+# **ヒーロー数字・強調語の第2書体**(2026-08-29 批評ループ)。
+# RocknRoll One はウェイトが400の1つだけで、大きい数字に「重さ」が出ない。
+# 金額・強調語だけ Noto Sans CJK JP Black(OFL/システム同梱)で極太に打ち、
+# 本文は RocknRoll One のままにしてウェイト差で階層を作る。
+NUM_FONT_PATH = "/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc"
+NUM_FAMILY = "RocknRoll One"       # _setup_font が実在を確認して差し替える
+NUM_WEIGHT = 900
+
 # ---- 配色(競合の実測値に寄せた)
 CREAM = "#f3e7d3"          # 背景。明るさ 0.75 前後
-DOT = "#faf1e2"            # 背景のドット
+DOT = "#f6ecdb"            # 背景のドット。**地紋に格下げ**(2026-08-29 批評ループ。
+                           # #faf1e2 は粒が大きく差も強く、図の裏で常時ちらついていた)
 BAND = "#f9cb45"           # 上部のタイトル帯(下側)
 BAND_LO = "#eda520"        # 帯の上側。**縦のグラデーション**にする
 BAND_INK = "#3b2c10"       # 帯の文字
 TELOP = "#ffffff"          # テロップの本文
-TELOP_EMPH = "#ffd93d"     # テロップの強調(数字)
-TELOP_EDGE = "#7b2d00"     # テロップの縁。**stroke_fx が黒を焼いていて、この色は
-                           # 使われていなかった**(2026-08-23に接続)
-TELOP_SHADOW = (3.0, -4.0, "#4a2a05", 0.42)   # 下に落ちる影。背景から浮かせる
+TELOP_EMPH = "#ffb020"     # テロップの強調(数字)。#ffd93d は帯(#f9cb45)と同色相で
+                           # クリーム地に沈んでいた → 一段濃いアンバー(2026-08-29)
+TELOP_EDGE = "#7b2d00"     # テロップの縁
+TELOP_EDGE_EMPH = "#5a3d0e"  # 強調語の縁。地から切り離すため本文より濃く太く
+TELOP_SHADOW = (4.5, -6.0, "#4a2a05", 0.60)   # 下に落ちる影。背景から浮かせる
+                           # (3,-4,0.42 では実質1層に見えた → 強化。2026-08-29)
 INK_DARK = "#2b2b28"
+CARD = "#fffdf7"           # カード面の白。**白はこの1色に統一**(純白は文字専用)
+DISCLAIM = "#4a4234"       # 免責行。#8a7f6c はコントラスト不足で読めなかった
 
 TITLE = ""                 # 上部の帯に出す文字(use_fp_theme で設定)
 BADGE = ""                 # 仮定の明示(戦略§6-2「利回りは仮定と明示」)
@@ -90,6 +105,11 @@ def use_fp_theme(title: str, speaker: int = 108, badge: str = ""):
     S.draw_subtitle = _subtitle
     S.SUB_WORDPOP = WORD_POP    # 語ごとポップ(ユニット全体をfpsで割る)
     S.save_frame = _save_frame
+    # **setup_fonts も差し替える。**(2026-08-29 批評ループで発覚)
+    # render_video / preview_fp は途中で S.setup_fonts() を呼ぶ。テーマの後に
+    # 呼ばれると rcParams が Noto に戻り、**RocknRoll One が一度も使われないまま**
+    # 全フレームが焼かれていた。テーマ有効時は setup_fonts もテーマの書体を張る。
+    S.setup_fonts = _setup_font
     _setup_font()
 
 
@@ -107,26 +127,97 @@ def _setup_font():
     if fb.exists():
         font_manager.fontManager.addfont(str(fb))
         fams.append(FONT_FALLBACK_FAMILY)     # 足りない記号だけここへ落ちる
+    # 第2書体(数字の極太)。Black の .ttc だけを登録するので、
+    # この家族名+weight指定はかならず Black 面に解決される
+    global NUM_FAMILY
+    nf = Path(NUM_FONT_PATH)
+    if nf.exists():
+        try:
+            font_manager.fontManager.addfont(str(nf))
+            NUM_FAMILY = font_manager.FontProperties(fname=str(nf)).get_name()
+        except Exception:
+            NUM_FAMILY = FONT_FAMILY
     plt.rcParams["font.family"] = fams
     plt.rcParams["font.weight"] = FONT_WEIGHT
 
 
+# ---------------------------------------------------------------- 表示用の整形
+# **画面に出る数字は桁区切りを打つ**(2026-08-29 批評ループ)。
+# 台本・verify.py・ナレーションは生の数字のまま(読み上げと検証を変えない)。
+# 描画の直前でだけ「3162円 → 3,162円」に整形する。
+_KETA_RE = re.compile(r"\d{4,}")
+_ZEN = str.maketrans({"?": "?", "!": "!"})   # 和文の並びでは全角のほうが字間が締まる
+
+
+def fmt_disp(s: str) -> str:
+    """画面表示用の整形。4桁以上の数字に桁区切り、?!を全角へ。"""
+    return _KETA_RE.sub(lambda m: f"{int(m.group()):,}", s).translate(_ZEN)
+
+
+# ---------------------------------------------------------------- 縁取り(4層)
+def fx(color: str, fs: float, emph: bool = False):
+    """テロップ・数字の縁取り。影 → 白外縁 → 濃縁 → 同色 の4層で紙面から浮かせる。
+    (旧: 影+縁の実質1層で、拡大すると平板だった。2026-08-29 批評ループ)"""
+    o = fs * (0.14 if emph else 0.12)
+    dx, dy, sc, sa = TELOP_SHADOW
+    edge = TELOP_EDGE_EMPH if emph else TELOP_EDGE
+    return [
+        path_effects.Stroke(offset=(dx, dy), linewidth=o * 1.30, foreground=sc, alpha=sa),
+        path_effects.Stroke(linewidth=o * 1.55, foreground="#fffaf0"),
+        path_effects.Stroke(linewidth=o, foreground=edge),
+        path_effects.Stroke(linewidth=2.0, foreground=color),
+        path_effects.Normal(),
+    ]
+
+
+# ---------------------------------------------------------------- 実測幅(書体つき)
+# shortlib._measure_widths は書体をキーに持たない。第2書体を混ぜると幅がずれるので、
+# テーマ側は (文字列, サイズ, 書体, 太さ) で測る。
+_MEASURE_CACHE: dict = {}
+
+
+def measure_w(fig, renderer, s: str, fs: float, family, weight) -> float:
+    key = (s, round(fs, 2), str(family), weight, S.W)
+    w = _MEASURE_CACHE.get(key)
+    if w is None:
+        tmp = fig.text(0, -1, s, fontsize=fs, fontfamily=family, fontweight=weight)
+        w = tmp.get_window_extent(renderer=renderer).width / S.W
+        tmp.remove()
+        _MEASURE_CACHE[key] = w
+    return w
+
+
+# ---------------------------------------------------------------- イージング
+# 部品は min(1.0, t*1.6) の純線形を使っていた(等速で動いて等速で止まる=安物の動き)。
+# 以後の部品はこの2つを経由すること。実体は shortlib のもの。
+def ease_out(t: float) -> float:
+    return S.ease_out(min(1.0, max(0.0, t)))
+
+
+def ease_back(t: float) -> float:
+    return S.ease_out_back(min(1.0, max(0.0, t)))
+
+
 CHROME_GID = "fp_chrome"   # 帯・バッジ。ゲートの集計から外す印
+BADGE_GID = "fp_chrome_badge"
+LAST_T = 0.0               # 直近フレームの動画内時刻。立ち絵のボブ等が読む
 
 
 def _canvas(t_global: float = 0.0):
+    global LAST_T
+    LAST_T = t_global
     fig = plt.figure(figsize=S.FIGSIZE, dpi=S.DPI)
     fig.patch.set_facecolor(CREAM)
     ax = fig.add_axes([0, 0, 1, 1], zorder=-10)
     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
-    # ドット(競合と同じ質感)
-    # **大きく・まばらに**(競合の実測: 間隔が幅の約5.3%、半径が約1.0%)。
-    # 0.024/0.0065 は目が細かすぎて、網目の生地のように見えていた
-    step = 0.053
-    r = 0.0100
+    # ドット(競合と同じ質感)。2026-08-29: 径70%・ピッチ80%に詰めて地紋に格下げ。
+    # さらに超低速の上方ドリフト(2秒で0.5ドット弱)。全要素静止の「止まってる感」を消す
+    step = 0.042
+    r = 0.0068
+    ystep = step * (S.W / S.H)
     j = 0
-    y = 0.0
-    while y < 1.0:
+    y = -ystep + (t_global * 0.006) % ystep
+    while y < 1.0 + ystep:
         x = (j % 2) * step / 2
         while x < 1.0:
             # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
@@ -134,7 +225,7 @@ def _canvas(t_global: float = 0.0):
             ax.add_patch(Ellipse((x, y), 2 * r, 2 * r * S.W / S.H,
                                  color=DOT, zorder=-9))
             x += step
-        y += step * (S.W / S.H)
+        y += ystep
         j += 1
     # 上部のタイトル帯。**単色の板ではなく縦のグラデーション**にする。
     # 帯とバッジは全フレーム共通の装飾なので gid で印を付けて、
@@ -149,15 +240,26 @@ def _canvas(t_global: float = 0.0):
     bax.set_gid(CHROME_GID)
     if TITLE:
         # 白抜き + 濃い縁 + 影(競合と同じ)。濃い字を黄色に乗せるより遠くで読める
-        S.text_fit(fig, 0.5, 1 - h / 2, TITLE, ha="center", va="center",
+        S.text_fit(fig, 0.5, 1 - h / 2, fmt_disp(TITLE), ha="center", va="center",
                    color="#ffffff", fontsize=44, max_w=0.92, zorder=3.1,
                    path_effects=S.stroke_fx("#ffffff", outline=7.0)).set_gid(CHROME_GID)
     if BADGE:
         # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)
         S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
-                   color="#8a7f6c", fontsize=26,
-                   max_w=0.92, zorder=3.1).set_gid(CHROME_GID)
+                   color=DISCLAIM, fontsize=26,
+                   max_w=0.92, zorder=3.1).set_gid(BADGE_GID)
     return fig
+
+
+def badge_head(fig):
+    """免責行を先頭の一文だけにする(表示だけ。文言は BADGE の部分列)。
+
+    2026-08-29 批評ループ: 「運用は年5%と仮定」を0秒目から出すと、後半で明かす
+    ひねりを自分でネタバレする。運用の話が始まるユニットまでは料金の時点だけ出す。
+    打消し表示の要件は保つ: 年5%の数字が画面に出る場面では必ず全文が出ている。"""
+    for art in list(fig.texts):
+        if art.get_gid() == BADGE_GID and "。" in art.get_text():
+            art.set_text(art.get_text().split("。")[0] + "。")
 
 
 def hide_chrome(fig):
@@ -165,7 +267,7 @@ def hide_chrome(fig):
     帯は zorder 3.0 でカバーの黄色(1.5)より上にいるため、消さないと
     カバーの1行目に文字が重なる(check_overlap がループ72で検出)。"""
     for art in list(fig.artists) + list(fig.texts) + list(fig.axes):
-        if art.get_gid() == CHROME_GID:
+        if str(art.get_gid() or "").startswith(CHROME_GID):
             art.remove()
 
 
@@ -259,7 +361,8 @@ def _words(text: str) -> list[tuple[str, bool]]:
             continue
         if len(s) <= 1:
             nb = True                      # 1字の語を行頭に立たせない
-        fixed.append([s, e, nb])
+        # 表示だけの整形(桁区切り・全角?!)。読み上げ・台本は変えない
+        fixed.append([fmt_disp(s), e, nb])
     for i in range(len(fixed) - 1):
         if len(fixed[i][0]) <= 1:
             fixed[i + 1][2] = True         # 1字の語の直後も切らない(「月 / 3162円」防止)
@@ -274,8 +377,10 @@ def word_schedule(text: str, dur: float) -> list[float]:
     """
     ws = _words(text)
     n = sum(len(s) for s, *_ in ws) or 1
-    # 最後の語が出てから 0.25 秒は全部見えている時間を残す
-    span = max(0.0, dur - 0.25)
+    # **全語をユニット前半で着地させる**(2026-08-29 批評ループ)。
+    # dur-0.25 いっぱいに按分すると、行が左に垂れて中央揃えに見えない時間が
+    # ユニットの大半を占めていた。前半55%で出し切り、残りは完成形を見せる
+    span = max(0.0, min(dur - 0.25, dur * 0.55))
     out, acc = [], 0
     for s, *_ in ws:
         t0 = span * acc / n
@@ -296,9 +401,13 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
 
+    def fam_of(emph):
+        # 強調語(数字)は第2書体の極太で打つ(ウェイト差で階層を作る)
+        return ([NUM_FAMILY], NUM_WEIGHT) if emph else \
+            ([FONT_FAMILY, FONT_FALLBACK_FAMILY], FONT_WEIGHT)
+
     def widths(row, size):
-        return [S._measure_widths(fig, r, [(s, e)], size, FONT_WEIGHT)[0]
-                for s, e, _ in row]
+        return [measure_w(fig, r, s, size, *fam_of(e)) for s, e, *_ in row]
 
     # **語の途中では折らない。**(2026-08-24)
     # S.wrap_plain は句読点でしか折らないので、行に入らないと語の真ん中で切れて
@@ -308,7 +417,7 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     def pack(size):
         rows, row, w = [], [], 0.0
         for i, (s, emph, nobreak) in enumerate(ws):
-            ww = S._measure_widths(fig, r, [(s, emph)], size, FONT_WEIGHT)[0]
+            ww = measure_w(fig, r, s, size, *fam_of(emph))
             # nobreak の語は、はみ出しても前の語と同じ行に置く(行頭禁則)
             if row and w + ww > S.SUB_BLOCK_FIT and not nobreak:
                 rows.append(row); row, w = [], 0.0
@@ -320,6 +429,11 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     def widest(rows, size):
         return max((sum(widths(row, size)) for row in rows), default=0.0)
 
+    def orphan(rows):
+        # 最終行が2字以下の1語(「1つ」等)だと間延びして見える(2026-08-29)
+        return (len(rows) > 1 and len(rows[-1]) == 1
+                and len(rows[-1][0][0].strip(_PUNCT)) <= 2)
+
     fs = S.SUB_FS
     rows = pack(fs)
     # 3行に収まるまで、**かつ どの行も画面幅に収まるまで**小さくする。
@@ -327,6 +441,11 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     # 幅を見ずに行数だけ見ていたので、1行のまま画面から溢れていた(2026-08-24)。
     for _ in range(12):
         if len(rows) <= MAX_LINES and widest(rows, fs) <= S.SUB_BLOCK_FIT:
+            break
+        fs *= 0.94
+        rows = pack(fs)
+    for _ in range(3):
+        if not orphan(rows):
             break
         fs *= 0.94
         rows = pack(fs)
@@ -346,9 +465,10 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
             age = t_unit - st
             scale = 1.0 + (POP_PEAK - 1.0) * max(0.0, 1.0 - age / POP_SEC)
             color = TELOP_EMPH if emph else TELOP
+            fam, wt = fam_of(emph)
             fig.text(x + w / 2, y, s, ha="center", va="center", color=color,
-                     fontsize=fs * scale, fontweight=FONT_WEIGHT,
-                     path_effects=S.stroke_fx(color, outline=S.outline_for(fs * scale)),
+                     fontsize=fs * scale, fontfamily=fam, fontweight=wt,
+                     path_effects=fx(color, fs * scale, emph=emph),
                      zorder=3.0)
             x += w
 
@@ -389,8 +509,9 @@ def _save_frame(fig, path: Path, facecolor: str = None):
 
 # ---------------------------------------------------------------- キャラ
 
-def pose(name: str) -> Image.Image:
-    if name not in _POSE_CACHE:
+def pose(name: str, fade: bool = True) -> Image.Image:
+    key = (name, fade)
+    if key not in _POSE_CACHE:
         p = POSE_DIR / f"{name}.png"
         if not p.exists():
             raise SystemExit(f"立ち絵がない: {p}")
@@ -401,8 +522,8 @@ def pose(name: str) -> Image.Image:
         box = im.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox()
         if box:
             im = im.crop(box)
-        _POSE_CACHE[name] = _fade_bottom(im)
-    return _POSE_CACHE[name]
+        _POSE_CACHE[key] = _fade_bottom(im) if fade else im
+    return _POSE_CACHE[key]
 
 
 def _fade_bottom(im: Image.Image, frac: float = 0.07) -> Image.Image:
@@ -422,15 +543,21 @@ def _fade_bottom(im: Image.Image, frac: float = 0.07) -> Image.Image:
 
 
 def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float = 0.46,
-              scale: float = 1.0):
+              scale: float = 1.0, fade: bool = True, bob: bool = True):
     """キャラを図の上に置く。**画面中央に大きく**(競合の型)。
 
     top は絵の上端(figure座標)、height は絵の高さ(figure座標)。
+    bob: 動画内時刻(LAST_T)でごく小さく上下にゆらす(2026-08-29 批評ループ。
+    完全静止の立ち絵は画面の6割を「死んだ時間」にする)。振幅は0.004以下。
     """
-    im = pose(name)
+    im = pose(name, fade=fade)
     h = height * scale
     w = h * (im.width / im.height) * (S.H / S.W)
-    ax = fig.add_axes([cx - w / 2, top - h, w, h], zorder=2.0)
+    dy = dx = 0.0
+    if bob:
+        dy = 0.0035 * math.sin(2 * math.pi * 1.2 * LAST_T)
+        dx = 0.0015 * math.sin(2 * math.pi * 0.7 * LAST_T + 1.1)
+    ax = fig.add_axes([cx - w / 2 + dx, top - h + dy, w, h], zorder=2.0)
     ax.imshow(np.asarray(im))
     ax.axis("off")
     return ax
