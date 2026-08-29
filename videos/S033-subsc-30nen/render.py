@@ -44,53 +44,51 @@ _HYO_HEAD = ["サービス", "月額"]
 
 SCENES = {
     # ---- カバー(キャラ 1/4)
-    # 2026-08-29 批評2周目: 最大文字が商品名でAmazonの広告に見えていた。
-    # **最大要素はペイオフの金額(263万円)**、商品名は最小の行に落とす。
-    # 263万円は年5%仮定の導出値なので、カバーにも打消し表示を出す(戦略§6-2)。
-    # 0秒目の立ち絵もカバーと同じ困り顔にし、3サービスのカードが積み上がる
+    # 0秒目の立ち絵はカバーと同じ困り顔にし、3サービスのカードが積み上がる
     "namae": sf.person_cards("03_troubled",
                              ["Netflix", "Spotify", "Amazonプライム"]),
-    # 2026-08-29 批評4周目(hook/high):
-    # - 「30年でこの差 263万円」は本編の2本棒(114万vs263万=差149万)と矛盾し、
-    #   KGIルール(1つの嘘で信用が切れる)に反していた。263万円は**到達額**の
-    #   主張(「やめて積んだら」)に変える
-    # - 1行目は読点で宙吊りだったので完結形に(サムネは1行ごとに独立して読まれる)
-    # - count_from: カウントは114万→263万(0からだと途中の「169万円」など
-    #   動画のどこにも無い数字が最初の1秒に立つ)。窓は cover 側で t=0.30 着地
-    # - 免責はバッジ外・画面最下部へ(cover 側)。削除はしない: カバーは
-    #   hide_chrome で注記帯が無く、年5%仮定の導出値には打消し表示が要る(戦略§6-2)
-    "namae__cover": sf.cover("サブスク3つ、やめられない人へ",
-                             "やめて積んだら?", "263万円",
+    # 2026-08-29 批評5周目(copy/thumbnail/kousei 統合。B案を採用):
+    # - 「やめられない人へ/やめて積んだら?」は宛先と提案が矛盾し、読んだ瞬間に
+    #   『自分には無理』と閉じられていた。**固有名詞3つ+損失枠**に差し替え
+    #   (plan §5「カバーにサービス名」にも初めて適合する)
+    # - 263万円のカバー開示をやめる → 動画内の裏切り(263万・90万)が復活し、
+    #   赤バッジ+不安顔と感情設計が一致する(損=赤の色文法どおり)
+    # - 114万円は 0%(3162円×360か月)の導出値なので年5%の免責が不要になり、
+    #   count_from も不要。打消しは料金の時点表記だけをクリームのプレートで出す
+    "namae__cover": sf.cover("Netflix・Spotify・プライム",
+                             "やめずに30年払ったら?", "114万円",
                              name="03_troubled",
-                             disclaimer="※ 年5%と仮定した場合の計算です",
-                             count_from="114万円"),
+                             disclaimer="※ 料金は2026年8月時点。3162円×360か月の計算"),
 
     # ---- 表を出しっぱなしにして、**赤枠を1行ずつ下に動かす**(参考の主武器)
-    # build=最初のカットだけ行を順に着地させる。from_row=赤枠がすべってくる出発点。
+    # build=最初のカットだけ行を順に着地させる。
     # total_mode="dim": 「月いくら?」と問うている間、合計はまだ明かさない
-    # (hyo_g の開示で初めて赤にする。2026-08-29 批評2周目)
-    "hyo_n": sf.table(_HYO_HEAD, _HYO, highlight=0, from_row=3,
+    # 2026-08-29 批評5周目: 並びを hyo_a(build)→ hyo_aru(赤枠が行を巡る=
+    # 「ありますよね?」)→ hyo_n(単価がwaveで順に点灯)→ hyo_g(開示)に変更。
+    # focus= で行へのパンチインを入れ、冒頭4カットの同一構図を崩す
+    "hyo_a": sf.table(_HYO_HEAD, _HYO, highlight=2, build=True, focus=2,
                       title="30代がよく持つ3つ", total_mode="dim"),
-    "hyo_s": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=0,
-                      title="30代がよく持つ3つ", total_mode="dim"),
-    # 2026-08-29 批評4周目: sweep をやめ、赤枠を前カット(hyo_a=Amazon行)から
-    # **合計行(?,???円)へ滑らせる**。問いの対象は合計なのに、強調が無関係な
-    # 1行に残留して見えていた。合計は total_mode="dim" のままなのでマスクは保たれる
-    "hyo_q": sf.table(_HYO_HEAD, _HYO, highlight=3, from_row=2,
-                      title="3つで月いくら?", total_mode="dim"),
-    "hyo_a": sf.table(_HYO_HEAD, _HYO, highlight=2, build=True,
-                      title="30代がよく持つ3つ", total_mode="dim"),
-    "hyo_g": sf.table(_HYO_HEAD, _HYO, highlight=3, from_row=0,
+    "hyo_aru": sf.table(_HYO_HEAD, _HYO, highlight="sweep",
+                        title="30代がよく持つ3つ", total_mode="dim"),
+    "hyo_n": sf.table(_HYO_HEAD, _HYO, highlight="wave",
+                      title="3つの月額", total_mode="dim"),
+    "hyo_g": sf.table(_HYO_HEAD, _HYO, highlight=3, focus=3,
                       title="30代がよく持つ3つ"),
 
     # 数式カード: 答え(=の右)をカード内に着地させる。注記は文脈見出しへ
     "waru": sf.formula("3162円 ÷ 30日", name=None, answer="105円",
                        title="1日あたりにすると"),
-    "hi": sf.hero("105円", "1日あたり", name=None),
-    # accent="arrow": 期間の終端(65歳)に結論色の赤を使わない。強調は矢印だけ
-    # (赤=お金の結論、の意味体系を薄めない。2026-08-29 批評3周目)
-    "obi": sf.arrow("35歳", "65歳", "いま", "積むのをやめる",
-                    title="30年、つづけると", accent="arrow"),
+    # count=False: 105円は waru で開示済み。数え直さない(2026-08-29 批評5周目)
+    "hi": sf.hero("105円", "1日あたり", name=None, count=False),
+    # 缶コーヒーとの並置比較(「より安い」の比較対象を絵に出す。
+    # 缶コーヒーに価格は書かない=出典の無い数字を画面に出さない)
+    "hikaku": sf.compare("105円", "缶コーヒー", "1日あたり", "",
+                         title="くらべると"),
+    # 2026-08-29 批評5周目: 2箱+矢印の同型3連発を解消するため、期間は
+    # timeline(帯の伸長)で見せる。旧ラベル「積むのをやめる」は後半のひねりの
+    # ネタバレ+『積む』未導入の矛盾だったので「ここまで払う」に(nihongo/high)
+    "obi": sf.timeline(35, 65, 65, "ここまで払う", "", show_gap=False,
+                       title="30年、つづけると", fill_color=sf.RED_FADE),
     # role="neutral": 360か月は中立な期間。赤(損・警告)を便利色にしない
     "kikan": sf.hero("360か月", "35歳から65歳までの30年", name=None,
                      role="neutral"),
@@ -100,109 +98,131 @@ SCENES = {
     # ---- 本編で唯一の立ち絵(キャラ 2/4)。いちばん刺す一行に置く
     "toi_oboe": sf.person_bubble("03_troubled", "114万円…?"),
 
-    "hondai": sf.hero("114万円", "これを、積んだら?", name=None),
     # tease=1: 「積んだらどうなるか」と問うカットでは答えの263万円棒を
-    # 破線の輪郭+「?」で予告に留める(開示は fueru で初めて。2026-08-29 批評3周目)
+    # 破線の輪郭+「?」で予告に留める(開示は fueru で初めて)
     "tsumu": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=0, tease=1, title="同じ3162円を積んだら"),
     # caption: 打消しの一文はカード内・数字の直下へ(注記帯を全ユニット1行に保つ)
-    # role="gain": 年5%は増える側の仮定。前後の緑(tsumu の予告→fueru の緑棒)の
-    # 真ん中に警告色の巨大な赤が割り込んで、色の文法を折っていた
-    "katei": sf.hero("年5%", name=None, stamp=True, role="gain",
+    # sub="運用の前提": 上部の視線アンカー(head_title)を隣接カットと揃える
+    # (2026-08-29 批評5周目: 12・14に見出しがあり13だけ消えて帯が点滅していた)
+    "katei": sf.hero("年5%", "運用の前提", name=None, stamp=True, role="gain",
                      caption="あくまで仮定。元本保証ではありません"),
     # prev_highlight=0: 強調が「貯める側」から「運用側」へクロスフェードで移る
-    # gain=1: 増える側は緑(赤=損・警告と色で区別する。2026-08-29 批評3周目)
+    # gain=1: 増える側は緑(赤=損・警告と色で区別する)
     "fueru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=1, prev_highlight=0, gain=1,
                      title="同じ3162円を積んだら"),
     # scale_right: 増える側の箱を1.15倍(級数は部品側で左の1.3倍になる)
-    # arrow_color=INK: 方向記号を無彩色に(赤い矢印が緑の「入ってくる」箱へ
-    # 刺さり、損へ向かうようにも読めた。赤=損の文法を濁らせない)
+    # 矢印の既定色は INK(部品側で統一。2026-08-29 批評5周目)
     "yaji": sf.arrow("114万円", "263万円", "出ていく", "積んだら",
-                     title="同じ3162円が", scale_right=1.15, role="gain",
-                     arrow_color=sf.INK),
-    "gyaku": sf.arrow("出ていく", "入ってくる", "いままで", "これから",
-                      title="お金の向きが変わる", role="gain",
-                      arrow_color=sf.INK),
+                     title="同じ3162円が", scale_right=1.15, role="gain"),
 
     # ---- 1つでいい
-    # wave_role="keep": 「全部やめなくていい」の3行は緑(残してよい)の点灯。
-    # 警告ピンクだと画面の色が「全行が危険」と言い、文言と正反対だった
+    # wave_role="keep": 緑の点灯=「やめて積んだ」側に立った3行(band+frame の
+    # 文法は赤側と同じ。色だけ緑。2026-08-29 批評5周目)
     "hyo_x": sf.table(_HYO_HEAD, _HYO, highlight="wave", wave_role="keep",
-                      title="全部やめなくていい"),
-    "hyo_1": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=3,
-                      title="使っていない1つだけ"),
-    "hitotsu": sf.hero("1080円", "使っていない1つ", name=None),
-    # ymax を fueru と同じ目盛(263万×1.22)に固定(2026-08-29 批評4周目:
-    # 39万→90万の棒が 114万→263万とピクセル単位で同一の構図になり、
-    # 「さっきと同じ図の使い回し」に見えて金額の量感が伝わらなかった。
-    # 目盛を揃えれば 1/3 に減ったことが棒の高さで見える)
+                      title="3つ全部やめた場合"),
+    # title はナレーションの同義反復を避け、次カットの hitotsu と同じ語で
+    # アンカーを継続させる(check_figure の「冗長」対応)
+    "hyo_1": sf.table(_HYO_HEAD, _HYO, highlight=1,
+                      title="使っていない1つ"),
+    # count=False: 1080円は表で既出の参照値。カウントアップは水増しに見える
+    "hitotsu": sf.hero("1080円", "使っていない1つ", name=None, count=False),
+    # ymax を fueru と同じ目盛(263万×1.22)に固定し、ghost で前カットの
+    # 2本(114万・263万)を破線の輪郭で残す(2026-08-29 批評5周目:
+    # 参照物が無いと「小さくてスカスカの図」に見えた。空いた高さが
+    # 「さっきの263万円との比較」として意味を持つ)
     "hitotsu2": sf.bars([("出したお金", 388_800, "約39万円"),
                          ("年5%と仮定", 898_839, "約90万円")],
-                        highlight=1, gain=1, title="1つ止めたら",
-                        ymax=2_631_602 * 1.22),
+                        highlight=1, gain=1, title="止めた分を積んだら",
+                        ymax=2_631_602 * 1.22,
+                        ghost=[(1_138_320, "114万円"), (2_631_602, "263万円")]),
     # 答え行は【】で赤の強調に(他の shiki の「答え=赤・大」と同じ視線誘導。
     # 表示の強調記法のみ。ナレーション・台本の文言は変えていない)
     "shiki2": sf.formula("月額 × 360か月", "= 30年で【出ていく額】", name=None,
                          title="自分の額の求め方"),
 
     # ---- 締め(キャラ 3/4・4/4)
-    # rows: 明細アプリ風のミニカードを添える(「明細を開け」と言うのに明細の
-    # 絵が無く、下22%が無人だった。値は表と同じ、文言は足さない)
-    "meisai": sf.person_bubble("03_troubled", "明細チェック", rows=_HYO[:3]),
-    "cta2": sf.cta("", "02_point", show_comment=True),
+    # rows: 明細アプリ風のミニカードを添える。立ち絵は 02_point(前向きの
+    # 行動提案に困り顔は矛盾する。2026-08-29 批評5周目・plan §8)
+    "meisai": sf.person_bubble("02_point", "明細チェック", rows=_HYO[:3]),
+    # 吹き出しは締めの問いと呼応(「いくつある?」は計算ゼロで答えられる)
+    "cta2": sf.cta("", "02_point", show_comment=True, bubble="いくつある?"),
 }
 
 # 「運用は年5%と仮定」の免責は、運用の話が画面に出るまで先頭の一文だけにする
-# (0秒目から出すと後半のひねりを自分でネタバレする。2026-08-29 批評ループ)。
+# (0秒目から出すと後半のひねりを自分でネタバレする)。
 # tsumu(年5%の棒が出る)以降は全文のまま。
-for _k in ("namae", "hyo_n", "hyo_s", "hyo_q", "hyo_a", "hyo_g",
-           "waru", "hi", "obi", "kikan", "shiki1", "toi_oboe", "hondai"):
+for _k in ("namae", "hyo_a", "hyo_aru", "hyo_n", "hyo_g",
+           "waru", "hi", "hikaku", "obi", "kikan", "shiki1", "toi_oboe"):
     SCENES[_k] = sf.badge_head(SCENES[_k])
 
+# SE は**着地の時刻**に合わせる(2026-08-29 批評5周目: 数字の着地は
+# big_number が 0.55×anim 秒、棒とカウントは bars が 0.72×anim 秒。
+# 音だけ先に鳴って絵が素通りしていた)
 UNITS = [
-    Unit("namae", "NetflixにSpotify、", anim=1.0, cover=True,
+    # 1文目は plan §4 の問いをそのまま口に出す(check_toi。欲求の名指し)。
+    # 「?」は表示時に fmt_disp が全角へ直す
+    Unit("namae", "サブスク3つで、月いくら?", anim=1.0, cover=True,
          se="pop", speed=1.0, intonation=1.3, chara="none"),
-    Unit("hyo_a", "Amazonプライムですね。", anim=1.0, speed=1.05, chara="none"),
-    Unit("hyo_q", "この3つ、月いくら払ってますか?", anim=1.0, speed=1.0,
+    # 名指しは「プライム」に短縮(正式名 Amazonプライム は画面の表にある。
+    # check_figure の「図の Amazonプライム と字幕が同義」対応)
+    Unit("hyo_a", "NetflixにSpotify、プライム。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("hyo_aru", "この3つ、ありますよね?", anim=1.0, speed=1.0,
          intonation=1.25, chara="none"),
     Unit("hyo_n", "1590円、1080円、492円。", anim=1.0, speed=1.05, chara="none"),
-    Unit("hyo_g", "合わせて月【3162円】です。", anim=1.0, se="don", speed=1.0,
-         intonation=1.2, chara="none"),
-    Unit("waru", "1日にするとたった【105円】。", anim=1.0, speed=1.05, chara="none"),
-    Unit("hi", "缶コーヒーより安い金額です。", anim=1.0, speed=1.1, chara="none"),
-    Unit("obi", "これを35歳から65歳まで。", anim=1.2, speed=1.05, chara="none"),
-    Unit("kikan", "30年、【360か月】続けると。", anim=1.0, speed=1.05, chara="none"),
-    Unit("shiki1", "出ていくお金は【114万円】。", anim=1.0, se="impact", se_at=0.1,
-         speed=0.95, intonation=1.3, chara="none"),
-    Unit("toi_oboe", "無意識に114万、払いますか?", anim=1.0, speed=1.0,
-         intonation=1.25, pad=0.35, chara="none"),
+    # 図の合計が赤で立つカットは字幕の【】を外す(1画面で強調色を割らない)
+    Unit("hyo_g", "合わせて月3162円です。", anim=1.0, se="don", se_at=0.55,
+         speed=1.0, intonation=1.2, chara="none"),
+    Unit("waru", "月3162円を、1日に直すと。", anim=1.0, speed=1.05, chara="none"),
+    Unit("hi", "たった105円。", anim=1.0, speed=1.0, intonation=1.25,
+         chara="none"),
+    Unit("hikaku", "105円は、缶コーヒーより安い。", anim=1.0, speed=1.05,
+         chara="none"),
+    # 「30年」は画面(obi の見出し・shiki の題)に出るので声でも言う(check_figure)
+    Unit("obi", "これを35歳から65歳まで、30年。", anim=1.2, speed=1.05,
+         chara="none"),
+    Unit("kikan", "360か月、お金を払い続けると。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("shiki1", "出ていくお金は【114万円】。", anim=1.0, se="impact",
+         se_at=0.6, speed=0.95, intonation=1.3, chara="none"),
+    Unit("toi_oboe", "気づかないまま、114万円払いますか?", anim=1.0, speed=1.0,
+         intonation=1.25, pad=0.6, chara="none"),
 
-    Unit("hondai", "ここからが今日の本題です。", anim=1.0, speed=1.1, chara="none"),
-    Unit("tsumu", "このお金を積んだらどうなるか。", anim=1.2, speed=1.05, chara="none"),
-    Unit("katei", "年5%で運用できたと仮定します。", anim=1.0, speed=1.05, chara="none"),
-    Unit("fueru", "すると【263万円】になります。", anim=1.2, se="don",
+    Unit("tsumu", "その114万円、積んだらどうなるか。", anim=1.2, speed=1.05,
+         chara="none"),
+    Unit("katei", "積んだ場合、年5%と仮定します。", anim=1.0, speed=1.05,
+         chara="none"),
+    Unit("fueru", "答えは、263万円。", anim=1.2, se="don", se_at=0.85,
          speed=1.0, intonation=1.25, chara="none"),
-    Unit("yaji", "【114万円】が【263万円】に。", anim=1.2, speed=1.0,
-         intonation=1.2, chara="none"),
-    Unit("gyaku", "出ていくお金が、入ってくる側に。", anim=1.2, se="impact",
-         se_at=0.2, speed=1.0, intonation=1.2, pad=0.35, chara="none"),
+    Unit("yaji", "これで、あなたのお金が入ってくる側に。", anim=1.2, se="impact",
+         se_at=0.35, speed=1.0, intonation=1.2, pad=0.35, chara="none"),
 
-    Unit("hyo_x", "3つ全部やめなくていいんです。", anim=1.0, speed=1.1, chara="none"),
-    Unit("hyo_1", "使ってないものを【1つ】だけ。", anim=1.0, speed=1.05, chara="none"),
+    Unit("hyo_x", "いまのは、3つ全部やめた場合。", anim=1.0, speed=1.1,
+         chara="none"),
+    Unit("hyo_1", "でも、現実は使ってない1つだけでいい。", anim=1.0, speed=1.05,
+         chara="none"),
     Unit("hitotsu", "【1080円】のものを1つ止めれば。", anim=1.0, speed=1.05,
          chara="none"),
-    Unit("hitotsu2", "30年で【約90万円】になります。", anim=1.2, se="don",
-         speed=1.0, intonation=1.25, pad=0.3, chara="none"),
-    Unit("shiki2", "自分の額は月額×360ですよ。", anim=1.0, speed=1.05, chara="none"),
+    # 「止めるだけで90万円もらえる」と聞こえた断絶の修正(nihongo/high)。
+    # 図の左棒(約39万円)も声で言う(check_figure「数字が無言」対応)
+    Unit("hitotsu2", "止めた約39万円を積めば、約90万円。", anim=1.2, se="don",
+         se_at=0.85, speed=1.0, intonation=1.25, pad=0.3, chara="none"),
+    Unit("shiki2", "あなたの額は、月額×360か月。", anim=1.0, speed=1.05,
+         chara="none"),
     # CTAも本編と同じ強調文法(行動語だけ【】)。読み上げの文字は変えていない
     Unit("meisai", "まずは【明細】を開いてみませんか?", anim=1.0, speed=1.0,
          intonation=1.2, chara="none"),
-    Unit("cta2", "あなたのサブスク、【月いくら】?", anim=1.0, speed=1.0,
+    Unit("cta2", "あなたのサブスク、いくつある?", anim=1.0, speed=1.0,
          intonation=1.3, chara="none"),
 ]
+
+# 字幕の級数は**動画内で1つに固定**する(2026-08-29 批評5周目:
+# ユニットごとの自動縮小で、同じ役割の字幕がカットまたぎで約4割揺れていた)
+F.lock_sub_fs([u.subtitle for u in UNITS])
 
 if __name__ == "__main__":
     require_voicevox()

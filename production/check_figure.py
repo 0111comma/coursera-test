@@ -162,8 +162,12 @@ def check_video(vdir: Path):
 
         texts = []
         for art in fig.texts:
-            if art.get_gid() == CHROME_GID:
-                continue          # テーマの帯・バッジ。図の中身ではない
+            # テーマの帯・バッジ。図の中身ではない。
+            # **前方一致で見る**(2026-08-29): バッジの gid は
+            # "fp_chrome_badge" で、完全一致だとバッジ文字列が図の文字として
+            # 数えられ、カード内に注記のあるカットが「文章2個」で誤検出されていた
+            if str(art.get_gid() or "").startswith(CHROME_GID):
+                continue
             x, y = art.get_position()
             if abs(x - BADGE_ANCHOR[0]) < 1e-6 and abs(y - BADGE_ANCHOR[1]) < 1e-6:
                 continue

@@ -75,7 +75,9 @@ def main():
             painters.append((cov, "_cover"))
         for painter, suffix in painters:
             for t in ts:
-                t_unit = 0.07 + min(u.anim, d_est) * t if not suffix else 0.0
+                # カバーも動画内時刻を渡す(LAST_T=0固定だと呼吸・鼓動が
+                # 全部止まり、検収で「完全静止」と誤診される。2026-08-29)
+                t_unit = (0.07 if not suffix else 0.0) + min(u.anim, d_est) * t
                 fig = S.new_canvas(t_unit)
                 # カバーも実際の t で描く(着地演出の途中経過を検収できるように。
                 # 本番 render_video は従来どおり t=1.0 の完成形を採用する)

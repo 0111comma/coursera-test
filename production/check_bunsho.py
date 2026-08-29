@@ -75,6 +75,11 @@ MUDA = ("ということ", "という形", "を行う", "を行い", "するこ�
         "における", "に関しまして", "につきまして", "のような形", "かと思いま",
         "していただく", "せていただく")
 
+# D8: 【】強調の用量(2026-08-29 批評5周目)。
+# 文の半分以上が橙になると「数字トークンだけ橙」の文法が崩れ、
+# ユニット間で強調密度が0〜100%に振れていた。文字数比で50%までにする。
+EMPH_RATIO_MAX = 0.50
+
 # W1/W2 の閾値
 TOUTEN_WARN = 0.70
 UKEMI_WARN = 0.20
@@ -204,6 +209,17 @@ def check_video(vdir: Path):
         for w in MUDA:
             if w in s:
                 bad.append((f"#{i}", "余分な語", f"「{w}」— {s}"))
+
+    # D8: 【】強調の用量(文字数比 50% まで)
+    for i, u in enumerate(units, 1):
+        t = u.subtitle
+        emph_chars = sum(len(m) for m in re.findall(r"【([^】]*)】", t))
+        plain_chars = len(re.sub(r"【|】", "", t).strip("。、!?!? "))
+        if emph_chars and plain_chars and emph_chars / plain_chars > EMPH_RATIO_MAX:
+            bad.append((f"#{i}", "強調が過量",
+                        f"【】が文の{emph_chars / plain_chars:.0%}"
+                        f"({EMPH_RATIO_MAX:.0%}まで)。数字トークンだけに絞ること: "
+                        f"「{t}」"))
 
     # W1: 読点の位置
     with_comma = [s for _, s in sents if "、" in s]
