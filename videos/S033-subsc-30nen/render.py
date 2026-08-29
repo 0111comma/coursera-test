@@ -35,53 +35,50 @@ assert round(V.ONE_FV5 / 10_000) == 90 and round(V.ONE_PRINCIPAL / 10_000) == 39
 # ユーザー指摘:「この女の人出しすぎだね。参考のペンギンは3、4回しか出てない」
 # 参考(BANK ACADEMY)の実測: 本編19フレーム中、キャラは1フレームだけ。
 # 直前の版は 24カット中17カット(71%)がキャラだった。本編は図で埋める。
+# 表は5カットで共通(値・行とも変えない)
+_HYO = [["Netflix", "1590円"],
+        ["Spotify", "1080円"],
+        ["Amazonプライム", "492円"],
+        ["合計", "3162円"]]
+_HYO_HEAD = ["サービス", "月額"]
+
 SCENES = {
     # ---- カバー(キャラ 1/4)
-    # 読点「、」は欧文の列挙では中黒「・」(字間が締まる)。表情は問いに合わせ
-    # 「考え込む」ポーズ(2026-08-29 批評ループ。微笑みは問いと矛盾していた)
-    "namae": sf.person("01_base", height=0.62, top=0.855),
-    "namae__cover": sf.cover("Netflix・Spotify", "Amazonプライム", "3つで月いくら?",
-                             name="03_troubled"),
+    # 2026-08-29 批評2周目: 最大文字が商品名でAmazonの広告に見えていた。
+    # **最大要素はペイオフの金額(263万円)**、商品名は最小の行に落とす。
+    # 263万円は年5%仮定の導出値なので、カバーにも打消し表示を出す(戦略§6-2)。
+    # 0秒目の立ち絵もカバーと同じ困り顔にし、3サービスのカードが積み上がる
+    "namae": sf.person_cards("03_troubled",
+                             ["Netflix", "Spotify", "Amazonプライム"]),
+    "namae__cover": sf.cover("Netflix・Spotify・プライム、やめずに",
+                             "30年でこの差", "263万円",
+                             name="03_troubled",
+                             disclaimer="※ 年5%と仮定した場合の計算です"),
 
     # ---- 表を出しっぱなしにして、**赤枠を1行ずつ下に動かす**(参考の主武器)
-    # build=最初のカットだけ行を順に着地させる。from_row=赤枠がすべってくる出発点
-    "hyo_n": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=0, from_row=2, title="30代がよく持つ3つ"),
-    "hyo_s": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=1, from_row=0, title="30代がよく持つ3つ"),
-    "hyo_q": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=None, title="3つで月いくら?"),
-    "hyo_a": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=2, build=True, title="30代がよく持つ3つ"),
-    "hyo_g": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=3, from_row=0, title="30代がよく持つ3つ"),
+    # build=最初のカットだけ行を順に着地させる。from_row=赤枠がすべってくる出発点。
+    # total_mode="dim": 「月いくら?」と問うている間、合計はまだ明かさない
+    # (hyo_g の開示で初めて赤にする。2026-08-29 批評2周目)
+    "hyo_n": sf.table(_HYO_HEAD, _HYO, highlight=0, from_row=2,
+                      title="30代がよく持つ3つ", total_mode="dim"),
+    "hyo_s": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=0,
+                      title="30代がよく持つ3つ", total_mode="dim"),
+    "hyo_q": sf.table(_HYO_HEAD, _HYO, highlight="sweep",
+                      title="3つで月いくら?", total_mode="dim"),
+    "hyo_a": sf.table(_HYO_HEAD, _HYO, highlight=2, build=True,
+                      title="30代がよく持つ3つ", total_mode="dim"),
+    "hyo_g": sf.table(_HYO_HEAD, _HYO, highlight=3, from_row=0,
+                      title="30代がよく持つ3つ"),
 
-    "waru": sf.formula("3162円 ÷ 30日", "= 1日あたり", name=None),
-    "hi": sf.hero("105円", "1日あたり。缶コーヒー1本より安い", name=None),
+    # 数式カード: 答え(=の右)をカード内に着地させる。注記は文脈見出しへ
+    "waru": sf.formula("3162円 ÷ 30日", name=None, answer="105円",
+                       title="1日あたりにすると"),
+    "hi": sf.hero("105円", "1日あたり", name=None),
     "obi": sf.arrow("35歳", "65歳", "いま", "積むのをやめる",
                     title="30年、つづけると"),
     "kikan": sf.hero("360か月", "35歳から65歳までの30年", name=None),
-    "shiki1": sf.formula("3162円 × 360か月", "= 30年で出ていく額", name=None),
+    "shiki1": sf.formula("3162円 × 360か月", name=None, answer="114万円",
+                         title="30年で出ていく額"),
 
     # ---- 本編で唯一の立ち絵(キャラ 2/4)。いちばん刺す一行に置く
     "toi_oboe": sf.person_bubble("03_troubled", "114万円…?"),
@@ -90,35 +87,30 @@ SCENES = {
     "tsumu": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=0, title="同じ3162円を積んだら"),
-    "katei": sf.hero("年5%", "あくまで仮定。元本保証ではありません", name=None),
+    "katei": sf.hero("年5%", "あくまで仮定。元本保証ではありません", name=None,
+                     stamp=True),
     # prev_highlight=0: 赤が「貯める側」から「運用側」へクロスフェードで移る
     # (静止画切り替えだと「色を塗り間違えた」ように見える。2026-08-29)
     "fueru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=1, prev_highlight=0, title="同じ3162円を積んだら"),
+    # scale_right: 増える側の箱と級数を1.15倍(大きさの手がかり)
     "yaji": sf.arrow("114万円", "263万円", "出ていく", "積んだら",
-                     title="同じ3162円が"),
+                     title="同じ3162円が", scale_right=1.15),
     "gyaku": sf.arrow("出ていく", "入ってくる", "いままで", "これから",
                       title="お金の向きが変わる"),
 
     # ---- 1つでいい
-    "hyo_x": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=None, title="全部やめなくていい"),
-    "hyo_1": sf.table(["", "月額"],
-                    [["Netflix", "1590円"],
-                     ["Spotify", "1080円"],
-                     ["Amazonプライム", "492円"],
-                     ["合計", "3162円"]],
-                    highlight=1, from_row=3, title="使っていない1つだけ"),
+    "hyo_x": sf.table(_HYO_HEAD, _HYO, highlight="wave",
+                      title="全部やめなくていい"),
+    "hyo_1": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=3,
+                      title="使っていない1つだけ"),
     "hitotsu": sf.hero("1080円", "使っていない1つ", name=None),
     "hitotsu2": sf.bars([("出したお金", 388_800, "約39万円"),
                          ("年5%と仮定", 898_839, "約90万円")],
                         highlight=1, title="1つ止めたら"),
-    "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額", name=None),
+    "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額", name=None,
+                         title="自分の額の求め方"),
 
     # ---- 締め(キャラ 3/4・4/4)
     "meisai": sf.person_bubble("03_troubled", "明細チェック"),
@@ -167,9 +159,10 @@ UNITS = [
     Unit("hitotsu2", "30年で【約90万円】になります。", anim=1.2, se="don",
          speed=1.0, intonation=1.25, pad=0.3, chara="none"),
     Unit("shiki2", "自分の額は月額×360ですよ。", anim=1.0, speed=1.05, chara="none"),
-    Unit("meisai", "まずは明細を開いてみませんか?", anim=1.0, speed=1.0,
+    # CTAも本編と同じ強調文法(行動語だけ【】)。読み上げの文字は変えていない
+    Unit("meisai", "まずは【明細】を開いてみませんか?", anim=1.0, speed=1.0,
          intonation=1.2, chara="none"),
-    Unit("cta2", "あなたのサブスク、月いくら?", anim=1.0, speed=1.0,
+    Unit("cta2", "あなたのサブスク、【月いくら】?", anim=1.0, speed=1.0,
          intonation=1.3, chara="none"),
 ]
 

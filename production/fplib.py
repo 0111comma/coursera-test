@@ -290,6 +290,11 @@ MAX_LINES = 3              # 字幕の最大行数。4行だと立ち絵に重�
 _TOKENIZER = None
 # 数字のあとに来る「万・億・円・歳…」を前にくっつけるための判定
 _NUM_TAIL = re.compile(r"[0-9０-９万億兆]$")
+# 語が数字を含むか(2026-08-29 批評ループ2周目)。
+# 強調(【】)の数字だけ極太にしていたが、テロップ内の裸の数字
+# (「たった105円」の105円)が本文ウェイト400のままだった。
+# **数字を含む語は強調でなくても第2書体の極太で打つ。**
+_HAS_DIGIT = re.compile(r"\d")
 # 単独で立たせない字(前の語にくっつける)
 _PUNCT = "。、!?…・「」『』()()!?.,:;〜ー"
 
@@ -389,6 +394,16 @@ def word_schedule(text: str, dur: float) -> list[float]:
             t0 = out[-1]
         out.append(t0)
         acc += len(s)
+    # **答えの数字(強調語)は図の着地より先に出さない**(2026-08-29 批評2周目)。
+    # 14_fueru で棒がまだカウント中なのに字幕に263万円が先に出て、
+    # 「図→答え」の視線順が逆転していた。強調語は尺の38%以降に遅らせる
+    # (図のアニメは anim(≈1〜1.2s)×0.55 で完了する。dur≈2s なので 0.38×dur が上回る)。
+    hold = dur * 0.38
+    for i, (s, emph, *_x) in enumerate(ws):
+        if emph and out[i] < hold:
+            out[i] = hold
+    for i in range(1, len(out)):
+        out[i] = max(out[i], out[i - 1])   # 出る順序は入れ替えない
     return out
 
 
@@ -401,13 +416,16 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
 
-    def fam_of(emph):
-        # 強調語(数字)は第2書体の極太で打つ(ウェイト差で階層を作る)
-        return ([NUM_FAMILY], NUM_WEIGHT) if emph else \
-            ([FONT_FAMILY, FONT_FALLBACK_FAMILY], FONT_WEIGHT)
+    def fam_of(word, emph):
+        # 強調語と**数字を含む語**は第2書体の極太で打つ(ウェイト差で階層を作る)。
+        # 強調(【】)だけ太らせていた前版は、テロップのペイオフ数字
+        # (「たった105円」)が本文400のままだった(2026-08-29 批評2周目)
+        if emph or _HAS_DIGIT.search(word):
+            return ([NUM_FAMILY], NUM_WEIGHT)
+        return ([FONT_FAMILY, FONT_FALLBACK_FAMILY], FONT_WEIGHT)
 
     def widths(row, size):
-        return [measure_w(fig, r, s, size, *fam_of(e)) for s, e, *_ in row]
+        return [measure_w(fig, r, s, size, *fam_of(s, e)) for s, e, *_ in row]
 
     # **語の途中では折らない。**(2026-08-24)
     # S.wrap_plain は句読点でしか折らないので、行に入らないと語の真ん中で切れて
@@ -417,7 +435,7 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
     def pack(size):
         rows, row, w = [], [], 0.0
         for i, (s, emph, nobreak) in enumerate(ws):
-            ww = measure_w(fig, r, s, size, *fam_of(emph))
+            ww = measure_w(fig, r, s, size, *fam_of(s, emph))
             # nobreak の語は、はみ出しても前の語と同じ行に置く(行頭禁則)
             if row and w + ww > S.SUB_BLOCK_FIT and not nobreak:
                 rows.append(row); row, w = [], 0.0
@@ -452,7 +470,10 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
 
     n = len(rows)
     step = S.SUB_LINE_H * (fs / 40)
-    y0 = S.SUBTITLE_Y + max(0, n - 2) * step
+    # **ブロックの中心を固定する**(2026-08-29 批評2周目)。
+    # 最下行固定だと1行のユニットで下部が間延びし、行数が変わるたびに
+    # 視覚重心が跳ねていた。何行でも中心は SUBTITLE_Y に置く
+    y0 = S.SUBTITLE_Y + (n - 1) * step / 2
     for i, row in enumerate(rows):
         ws_row = widths(row, fs)
         x = 0.5 - sum(ws_row) / 2
@@ -465,7 +486,7 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
             age = t_unit - st
             scale = 1.0 + (POP_PEAK - 1.0) * max(0.0, 1.0 - age / POP_SEC)
             color = TELOP_EMPH if emph else TELOP
-            fam, wt = fam_of(emph)
+            fam, wt = fam_of(s, emph)
             fig.text(x + w / 2, y, s, ha="center", va="center", color=color,
                      fontsize=fs * scale, fontfamily=fam, fontweight=wt,
                      path_effects=fx(color, fs * scale, emph=emph),
@@ -478,7 +499,12 @@ def _subtitle(fig, text: str, pop: float = 1.0, tag: str | None = None):
 
     ここで振り分けていなかったので、語ごとポップを実装したのに
     **動画には一度も入っていなかった**(下見でしか動いていなかった)。
+
+    **行末の句点は落とす**(2026-08-29 批評2周目)。84pxの級数では「。」が
+    1文字分の空白として目立つ。トップチャンネルのテロップの通例に合わせる。
+    表示だけの整形で、ナレーション・台本・読点・文中の句点は変えない。
     """
+    text = re.sub(r"。\s*$", "", text.rstrip())
     if WORD_POP and getattr(S, "SUB_TIME", None):
         t_unit, dur = S.SUB_TIME
         return _subtitle_wordpop(fig, text, t_unit, dur, tag)

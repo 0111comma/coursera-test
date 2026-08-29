@@ -77,7 +77,9 @@ def main():
             for t in ts:
                 t_unit = 0.07 + min(u.anim, d_est) * t if not suffix else 0.0
                 fig = S.new_canvas(t_unit)
-                painter(fig, t if not suffix else 1.0)
+                # カバーも実際の t で描く(着地演出の途中経過を検収できるように。
+                # 本番 render_video は従来どおり t=1.0 の完成形を採用する)
+                painter(fig, t)
                 if not suffix:
                     S.SUB_TIME = (t_unit, d_est)
                     S.draw_subtitle(fig, u.subtitle,
