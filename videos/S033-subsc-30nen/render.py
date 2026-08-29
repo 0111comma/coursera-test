@@ -50,20 +50,33 @@ SCENES = {
     # 0秒目の立ち絵もカバーと同じ困り顔にし、3サービスのカードが積み上がる
     "namae": sf.person_cards("03_troubled",
                              ["Netflix", "Spotify", "Amazonプライム"]),
-    "namae__cover": sf.cover("Netflix・Spotify・プライム、やめずに",
-                             "30年でこの差", "263万円",
+    # 2026-08-29 批評4周目(hook/high):
+    # - 「30年でこの差 263万円」は本編の2本棒(114万vs263万=差149万)と矛盾し、
+    #   KGIルール(1つの嘘で信用が切れる)に反していた。263万円は**到達額**の
+    #   主張(「やめて積んだら」)に変える
+    # - 1行目は読点で宙吊りだったので完結形に(サムネは1行ごとに独立して読まれる)
+    # - count_from: カウントは114万→263万(0からだと途中の「169万円」など
+    #   動画のどこにも無い数字が最初の1秒に立つ)。窓は cover 側で t=0.30 着地
+    # - 免責はバッジ外・画面最下部へ(cover 側)。削除はしない: カバーは
+    #   hide_chrome で注記帯が無く、年5%仮定の導出値には打消し表示が要る(戦略§6-2)
+    "namae__cover": sf.cover("サブスク3つ、やめられない人へ",
+                             "やめて積んだら", "263万円",
                              name="03_troubled",
-                             disclaimer="※ 年5%と仮定した場合の計算です"),
+                             disclaimer="※ 年5%と仮定した場合の計算です",
+                             count_from="114万円"),
 
     # ---- 表を出しっぱなしにして、**赤枠を1行ずつ下に動かす**(参考の主武器)
     # build=最初のカットだけ行を順に着地させる。from_row=赤枠がすべってくる出発点。
     # total_mode="dim": 「月いくら?」と問うている間、合計はまだ明かさない
     # (hyo_g の開示で初めて赤にする。2026-08-29 批評2周目)
-    "hyo_n": sf.table(_HYO_HEAD, _HYO, highlight=0, from_row=2,
+    "hyo_n": sf.table(_HYO_HEAD, _HYO, highlight=0, from_row=3,
                       title="30代がよく持つ3つ", total_mode="dim"),
     "hyo_s": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=0,
                       title="30代がよく持つ3つ", total_mode="dim"),
-    "hyo_q": sf.table(_HYO_HEAD, _HYO, highlight="sweep",
+    # 2026-08-29 批評4周目: sweep をやめ、赤枠を前カット(hyo_a=Amazon行)から
+    # **合計行(?,???円)へ滑らせる**。問いの対象は合計なのに、強調が無関係な
+    # 1行に残留して見えていた。合計は total_mode="dim" のままなのでマスクは保たれる
+    "hyo_q": sf.table(_HYO_HEAD, _HYO, highlight=3, from_row=2,
                       title="3つで月いくら?", total_mode="dim"),
     "hyo_a": sf.table(_HYO_HEAD, _HYO, highlight=2, build=True,
                       title="30代がよく持つ3つ", total_mode="dim"),
@@ -74,9 +87,13 @@ SCENES = {
     "waru": sf.formula("3162円 ÷ 30日", name=None, answer="105円",
                        title="1日あたりにすると"),
     "hi": sf.hero("105円", "1日あたり", name=None),
+    # accent="arrow": 期間の終端(65歳)に結論色の赤を使わない。強調は矢印だけ
+    # (赤=お金の結論、の意味体系を薄めない。2026-08-29 批評3周目)
     "obi": sf.arrow("35歳", "65歳", "いま", "積むのをやめる",
-                    title="30年、つづけると"),
-    "kikan": sf.hero("360か月", "35歳から65歳までの30年", name=None),
+                    title="30年、つづけると", accent="arrow"),
+    # role="neutral": 360か月は中立な期間。赤(損・警告)を便利色にしない
+    "kikan": sf.hero("360か月", "35歳から65歳までの30年", name=None,
+                     role="neutral"),
     "shiki1": sf.formula("3162円 × 360か月", name=None, answer="114万円",
                          title="30年で出ていく額"),
 
@@ -84,36 +101,57 @@ SCENES = {
     "toi_oboe": sf.person_bubble("03_troubled", "114万円…?"),
 
     "hondai": sf.hero("114万円", "これを、積んだら?", name=None),
+    # tease=1: 「積んだらどうなるか」と問うカットでは答えの263万円棒を
+    # 破線の輪郭+「?」で予告に留める(開示は fueru で初めて。2026-08-29 批評3周目)
     "tsumu": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
-                     highlight=0, title="同じ3162円を積んだら"),
-    "katei": sf.hero("年5%", "あくまで仮定。元本保証ではありません", name=None,
-                     stamp=True),
-    # prev_highlight=0: 赤が「貯める側」から「運用側」へクロスフェードで移る
-    # (静止画切り替えだと「色を塗り間違えた」ように見える。2026-08-29)
+                     highlight=0, tease=1, title="同じ3162円を積んだら"),
+    # caption: 打消しの一文はカード内・数字の直下へ(注記帯を全ユニット1行に保つ)
+    # role="gain": 年5%は増える側の仮定。前後の緑(tsumu の予告→fueru の緑棒)の
+    # 真ん中に警告色の巨大な赤が割り込んで、色の文法を折っていた
+    "katei": sf.hero("年5%", name=None, stamp=True, role="gain",
+                     caption="あくまで仮定。元本保証ではありません"),
+    # prev_highlight=0: 強調が「貯める側」から「運用側」へクロスフェードで移る
+    # gain=1: 増える側は緑(赤=損・警告と色で区別する。2026-08-29 批評3周目)
     "fueru": sf.bars([("ただ貯める", 1_138_320, "114万円"),
                       ("年5%と仮定", 2_631_602, "263万円")],
-                     highlight=1, prev_highlight=0, title="同じ3162円を積んだら"),
-    # scale_right: 増える側の箱と級数を1.15倍(大きさの手がかり)
+                     highlight=1, prev_highlight=0, gain=1,
+                     title="同じ3162円を積んだら"),
+    # scale_right: 増える側の箱を1.15倍(級数は部品側で左の1.3倍になる)
+    # arrow_color=INK: 方向記号を無彩色に(赤い矢印が緑の「入ってくる」箱へ
+    # 刺さり、損へ向かうようにも読めた。赤=損の文法を濁らせない)
     "yaji": sf.arrow("114万円", "263万円", "出ていく", "積んだら",
-                     title="同じ3162円が", scale_right=1.15),
+                     title="同じ3162円が", scale_right=1.15, role="gain",
+                     arrow_color=sf.INK),
     "gyaku": sf.arrow("出ていく", "入ってくる", "いままで", "これから",
-                      title="お金の向きが変わる"),
+                      title="お金の向きが変わる", role="gain",
+                      arrow_color=sf.INK),
 
     # ---- 1つでいい
-    "hyo_x": sf.table(_HYO_HEAD, _HYO, highlight="wave",
+    # wave_role="keep": 「全部やめなくていい」の3行は緑(残してよい)の点灯。
+    # 警告ピンクだと画面の色が「全行が危険」と言い、文言と正反対だった
+    "hyo_x": sf.table(_HYO_HEAD, _HYO, highlight="wave", wave_role="keep",
                       title="全部やめなくていい"),
     "hyo_1": sf.table(_HYO_HEAD, _HYO, highlight=1, from_row=3,
                       title="使っていない1つだけ"),
     "hitotsu": sf.hero("1080円", "使っていない1つ", name=None),
+    # ymax を fueru と同じ目盛(263万×1.22)に固定(2026-08-29 批評4周目:
+    # 39万→90万の棒が 114万→263万とピクセル単位で同一の構図になり、
+    # 「さっきと同じ図の使い回し」に見えて金額の量感が伝わらなかった。
+    # 目盛を揃えれば 1/3 に減ったことが棒の高さで見える)
     "hitotsu2": sf.bars([("出したお金", 388_800, "約39万円"),
                          ("年5%と仮定", 898_839, "約90万円")],
-                        highlight=1, title="1つ止めたら"),
-    "shiki2": sf.formula("月額 × 360か月", "= 30年で出ていく額", name=None,
+                        highlight=1, gain=1, title="1つ止めたら",
+                        ymax=2_631_602 * 1.22),
+    # 答え行は【】で赤の強調に(他の shiki の「答え=赤・大」と同じ視線誘導。
+    # 表示の強調記法のみ。ナレーション・台本の文言は変えていない)
+    "shiki2": sf.formula("月額 × 360か月", "= 30年で【出ていく額】", name=None,
                          title="自分の額の求め方"),
 
     # ---- 締め(キャラ 3/4・4/4)
-    "meisai": sf.person_bubble("03_troubled", "明細チェック"),
+    # rows: 明細アプリ風のミニカードを添える(「明細を開け」と言うのに明細の
+    # 絵が無く、下22%が無人だった。値は表と同じ、文言は足さない)
+    "meisai": sf.person_bubble("03_troubled", "明細チェック", rows=_HYO[:3]),
     "cta2": sf.cta("", "02_point", show_comment=True),
 }
 

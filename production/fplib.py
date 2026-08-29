@@ -211,14 +211,16 @@ def _canvas(t_global: float = 0.0):
     ax = fig.add_axes([0, 0, 1, 1], zorder=-10)
     ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off")
     # ドット(競合と同じ質感)。2026-08-29: 径70%・ピッチ80%に詰めて地紋に格下げ。
-    # さらに超低速の上方ドリフト(2秒で0.5ドット弱)。全要素静止の「止まってる感」を消す
+    # さらに超低速の**対角**ドリフト(上0.006/秒+横0.004/秒)。どのユニットでも
+    # 背景が微速で流れ、着地後の完全静止フレームを作らない(批評3周目)
     step = 0.042
     r = 0.0068
     ystep = step * (S.W / S.H)
+    xoff = (t_global * 0.004) % step
     j = 0
     y = -ystep + (t_global * 0.006) % ystep
     while y < 1.0 + ystep:
-        x = (j % 2) * step / 2
+        x = (j % 2) * step / 2 - step + xoff
         while x < 1.0:
             # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
             # 楕円で縦横比を打ち消して、競合と同じ真円にする
@@ -244,10 +246,12 @@ def _canvas(t_global: float = 0.0):
                    color="#ffffff", fontsize=44, max_w=0.92, zorder=3.1,
                    path_effects=S.stroke_fx("#ffffff", outline=7.0)).set_gid(CHROME_GID)
     if BADGE:
-        # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)
+        # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)。
+        # max_w はカード幅(0.06〜0.94)に合わせる(2026-08-29 批評4周目:
+        # 注記だけ左右マージン約0.03でカードより外に走り、揃え辺が1本ずれていた)
         S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
                    color=DISCLAIM, fontsize=26,
-                   max_w=0.92, zorder=3.1).set_gid(BADGE_GID)
+                   max_w=0.88, zorder=3.1).set_gid(BADGE_GID)
     return fig
 
 
@@ -468,12 +472,23 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
         fs *= 0.94
         rows = pack(fs)
 
+    # 1行テロップは級数を1.15倍(2026-08-29 批評4周目: 1行の回は行の下に
+    # 約330pxの死帯が残り、クライマックスの一文が帯の上に浮いていた。
+    # Yは動かさない=カット間の重心ジャンプを再発させない。縁取りは fx() が
+    # 級数比例なので、拡大に合わせて1段太くなる)
+    if len(rows) == 1 and widest(rows, fs * 1.15) <= S.SUB_BLOCK_FIT:
+        fs *= 1.15
+
     n = len(rows)
     step = S.SUB_LINE_H * (fs / 40)
     # **ブロックの中心を固定する**(2026-08-29 批評2周目)。
     # 最下行固定だと1行のユニットで下部が間延びし、行数が変わるたびに
-    # 視覚重心が跳ねていた。何行でも中心は SUBTITLE_Y に置く
+    # 視覚重心が跳ねていた。何行でも中心は SUBTITLE_Y に置く。
+    # ただし**最下行は y=0.10 より下げない**(2026-08-29 批評3周目。
+    # 3〜4行のユニットで下端が 0.10 を割り、Shorts の下セーフエリアへ迫っていた)
     y0 = S.SUBTITLE_Y + (n - 1) * step / 2
+    if y0 - (n - 1) * step < 0.10:
+        y0 = 0.10 + (n - 1) * step
     for i, row in enumerate(rows):
         ws_row = widths(row, fs)
         x = 0.5 - sum(ws_row) / 2
