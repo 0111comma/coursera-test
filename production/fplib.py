@@ -68,6 +68,21 @@ BAND = "#f2e3c4"           # 上部のタイトル帯(下側)。2026-08-29 批�
 BAND_LO = "#efd9a8"        # 帯の上側。**縦のグラデーション**にする(ベージュ系)
 BAND_INK = "#3b2c10"       # 帯の文字
 TELOP = "#ffffff"          # テロップの本文
+
+# ---- 役割色トークン(2026-08-30 厳格審査 craft/medium・consistency/high・
+# artdirection/high)。実測で1本の動画に赤が6値・緑が5値・墨が4値出ていた。
+# **役割ごとに1つの hex を決め、褪せは alpha でしか作らない。**
+# 色相を動かす褪せ(_hsv / _mix)は「同じものの別トーン」ではなく
+# 「別の色の別のもの」に見える。以後 scenes_fp / render.py は
+# ここか scenes_fp の別名(RED/GREEN…)を参照し、hex を直書きしない。
+COST = "#b32020"           # 出ていく側の文字・線・枠
+COST_FILL = "#c0392b"      # 出ていく側の面(棒・帯)
+GROW = "#4d7a33"           # 増える側の文字・線・枠
+GROW_FILL = "#5e8c3f"      # 増える側の面
+CONNECT = "#8a7f6a"        # 比較記号・矢印・区切り罫(カード白に対し約4.3:1)。
+                           # 地紋の #b9ae99 は 2.1:1 しか無く、論旨を運ぶ記号を
+                           # 置いてよい濃さではなかった
+DOT_INK = "#b9ae99"        # **背景の水玉・破線ドット専用**。他用途に流用しない
 # **強調は役割色から取る**(2026-08-30 厳格審査 artdirection/high)。
 # 旧 #ffb020 はクリーム地に対しコントラスト比1.50で、可読性を茶縁だけが
 # 担保する「塗りが情報を運ばない色」だった。しかも動画全体で1ユニットにしか
@@ -83,12 +98,20 @@ TELOP = "#ffffff"          # テロップの本文
 # **動画で唯一の行動語が読めない**状態で出荷されかけた。
 # 役割(緑=行動・増える / 赤=損)は保ったまま、縁との明度差を取り戻す。
 # 地とのコントラストが下がるのは設計どおり(輪郭は縁が担保する。旧橙も1.50だった)。
-TELOP_EMPH = "#7ac043"     # 明るい緑(行動・増える側)。縁とのCR 4.48
-TELOP_EMPH_LOSS = "#ff6b5a"  # 明るい赤(損・出ていく側)。縁とのCR 3.56
-TELOP_EDGE = "#7b2d00"     # テロップの縁
-TELOP_EDGE_EMPH = "#5a3d0e"  # 強調語の縁。地から切り離すため本文より濃く太く
-TELOP_SHADOW = (4.5, -6.0, "#4a2a05", 0.60)   # 下に落ちる影。背景から浮かせる
-                           # (3,-4,0.42 では実質1層に見えた → 強化。2026-08-29)
+# **字幕は墨プレートの上の白文字にした**(2026-08-30 artdirection/high)。
+# 白 #ffffff とクリーム地 #f3e7d3 のコントラスト比は 1.22:1 で、字形を作って
+# いたのは実質「7pxの茶縁」だけだった。画数の多い字(開・細・積)は内白が
+# 縁に食われて塊になる。プレートを敷けば地とのCRが 12:1 になり、縁も
+# 疑似影も要らなくなる。**強調は色ではなく役割色の下線で表す**
+# (#7ac043 はパレット中で唯一の高彩度ライムで、1カットにしか出ない
+#  第4の色だった)。
+TELOP_EMPH = GROW_FILL     # 強調語の下線(増える・行動側)
+TELOP_EMPH_LOSS = COST     # 強調語の下線(損・出ていく側)
+TELOP_PLATE = "#2b2b28"    # 字幕プレートの面(INK と同値)
+TELOP_PLATE_A = 0.86       # プレートの不透明度
+TELOP_EDGE = "#7b2d00"     # テロップの縁(_subtitle_plain の互換用)
+TELOP_EDGE_EMPH = "#5a3d0e"  # 同上
+TELOP_SHADOW = (4.5, -6.0, "#4a2a05", 0.60)   # 同上(既存30本の描画が読む)
 INK_DARK = "#2b2b28"
 CARD = "#fffdf7"           # カード面の白。**白はこの1色に統一**(純白は文字専用)
 # 免責行。#8a7f6c はコントラスト不足で読めなかったので #4a4234 まで濃くしたが、
@@ -102,6 +125,8 @@ DISCLAIM = "#5a5347"
 # (2026-08-30 thumbnail/high。旧実装は y>0.92 を根拠にしていて134px甘かった)。
 UI_BOTTOM_FRAC = 0.15
 UI_TOP_FRAC = 0.085
+# 右アクションレール(いいね・コメント・共有)。ここに目・行動要素を置かない
+UI_RAIL_X_FRAC = 0.855
 
 TITLE = ""                 # 上部の帯に出す文字(use_fp_theme で設定)
 BADGE = ""                 # 仮定の明示(戦略§6-2「利回りは仮定と明示」)
@@ -185,35 +210,46 @@ def fmt_disp(s: str) -> str:
     return _KETA_RE.sub(lambda m: f"{int(m.group()):,}", s).translate(_ZEN)
 
 
-# ---------------------------------------------------------------- 縁取り(4層)
+# ---------------------------------------------------------------- 縁取り
 def fx(color: str, fs: float, emph: bool = False):
-    """テロップ・数字の縁取り。影 → 白外縁 → 濃縁 → 同色 の4層で紙面から浮かせる。
-    (旧: 影+縁の実質1層で、拡大すると平板だった。2026-08-29 批評ループ)"""
-    # 強調の縁は**本文より細く**する(2026-08-30)。
-    # 濃縁は字の内側にも linewidth/2 だけ食い込むので、画数の多い字
-    # (「開」など)はカウンター(字の中の隙間)が埋まって塊になる。
-    # 色の明度差を直しても「開」だけ潰れたままだったのはこれが理由。
-    # 強調語は塗りの色で目立つので、縁で押し出す必要がない。
-    o = fs * (0.095 if emph else 0.12)
-    dx, dy, sc, sa = TELOP_SHADOW
-    edge = TELOP_EDGE_EMPH if emph else TELOP_EDGE
-    out = []
-    # **影は3段のオフセットでぼかす**(2026-08-30 craft/medium)。
-    # 1枚のグリフ輪郭を平行移動しただけの影は、拡大するとベクターの硬い縁が
-    # そのまま立ち、同一フレームのカード(疑似ガウス→実ガウス)の柔らかい影と
-    # 「光の言語」が割れていた。合計濃度は旧実装(sa=0.60 の1枚)と同じに保つ。
-    # 3層の合成不透明度 1-Π(1-a) が旧1層の sa(=0.60)と一致する配分
-    for k, (mul, al) in enumerate(((0.60, 0.235), (1.00, 0.330), (1.50, 0.235))):
-        out.append(path_effects.Stroke(offset=(dx * mul, dy * mul),
-                                       linewidth=o * (1.30 + 0.22 * k),
-                                       foreground=sc, alpha=sa * al))
-    out += [
-        path_effects.Stroke(linewidth=o * 1.55, foreground="#fffaf0"),
-        path_effects.Stroke(linewidth=o, foreground=edge),
-        path_effects.Stroke(linewidth=2.0, foreground=color),
-        path_effects.Normal(),
-    ]
-    return out
+    """テロップの縁。**字幕は墨プレートの上に置くので、影も濃縁も要らない。**
+
+    2026-08-30 厳格審査 craft/high: 旧実装は `path_effects.Stroke` を
+    offset 0.60/1.00/1.50 倍・linewidth 1.30/1.52/1.74 倍で3枚重ねただけの
+    「ぼかしていない硬縁のオフセット複製」で、等倍にすると全グリフの周囲に
+    4段の平坦なプラトー(等高線リング)が出ていた。同じフレームのカードは
+    実ガウス(scenes_fp._shadow_rgba)なので、1画面の中に影の作り方が
+    2種類あった。**影は1つの関数からしか出ない**を不変条件にする。
+
+    プレート方式に変えたので、ここは「プレートの縁で1px沈む」のを防ぐ
+    ごく細いヘアラインだけを返す(グリフのカウンターを潰さない太さ)。
+    """
+    return [path_effects.Stroke(linewidth=max(1.0, fs * 0.020),
+                                foreground=TELOP_PLATE, alpha=0.55),
+            path_effects.Normal()]
+
+
+def _band_shadow(fig, x: float, y_top: float, w: float, h: float,
+                 color: str = "#d9c9a8", peak: float = 0.14, z: float = 2.99):
+    """帯・板の下に落とす**ぼかした**影。1行マスクの縦グラデを figimage する。
+
+    2026-08-30 craft/medium: タイトル帯の「極薄シャドウ」は alpha=0.10 の
+    plt.Rectangle をそのまま置いたもので、9px が完全に一定値、その上下が
+    硬いエッジという「細い2本目の帯」だった。**帯・カード・棒・文字の影が
+    同じ勾配の作り方から出ること**を不変条件にする。
+    """
+    from matplotlib.colors import to_rgb
+    hpx = max(2, int(round(h * S.H)))
+    wpx = max(2, int(round(w * S.W)))
+    g = np.linspace(0.0, 1.0, hpx, dtype=np.float32) ** 1.6   # 下端で0
+    rgba = np.zeros((hpx, wpx, 4), dtype=np.float32)
+    rgba[..., :3] = np.array(to_rgb(color), dtype=np.float32)
+    rgba[..., 3] = (g * peak)[:, None]
+    im = fig.figimage(rgba, xo=int(round(x * S.W)),
+                      yo=int(round((y_top - h) * S.H)), origin="lower",
+                      zorder=z)
+    im.set_gid(CHROME_GID)
+    return im
 
 
 # ---------------------------------------------------------------- 実測幅(書体つき)
@@ -251,19 +287,25 @@ def snap_x(x_fig: float, lw_pt: float) -> float:
 
 
 # ------------------------------------------------------------ 吹き出しの輪郭
-def bubble_path(x, y, w, h, r, tail):
+def bubble_path(x, y, w, h, r, tail=None, tip=None, side="bottom",
+                base: float = 0.055):
     """角丸矩形+しっぽを**1本の閉じた輪郭**にした Path を返す。
 
     2026-08-30 craft/high: 本体としっぽを別々の stroked Polygon で描き、
     接合部を面色のパッチ3枚で塗り潰して隠していた。フル解像度では本体の辺の
     枠線が「途中で断ち切られたスタブ」として残り、反対側の接合部に段差が出る。
-    しっぽを本体の下辺の途中に LINETO で差し込んで1枚の PathPatch にすれば、
+    しっぽを本体の辺の途中に LINETO で差し込んで1枚の PathPatch にすれば、
     接合部そのものが存在しなくなる。
 
     x, y, w, h: 本体の矩形(figure座標。y は下端)
     r: 角丸半径(figure座標の x 方向。y 方向は縦横比で補正する)
-    tail: [(x1,y1), (x2,y2), (x3,y3)] しっぽの3点。下辺 y に沿って
-          x1 → 先端 → x3 の順に挿入する(x1 < x3。先端は矩形の外)
+    side: しっぽを差し込む辺。"bottom" / "left" / "right"
+    tip: しっぽの先端(figure座標)。**話者の口の位置を渡すこと**
+         (2026-08-30 craft/high: 呼び出し側の定数で渡していたため、
+          21_cta2 では髪の上の何もない背景を指していた)。
+    tail: 旧APIの3点指定(side="bottom" のときだけ有効)。
+    base: しっぽの付け根の幅(figure座標)。
+    **先端は2辺を1点で閉じる**(バットキャップの開いたVを作らない)。
     """
     from matplotlib.path import Path
     ry = r * (S.W / S.H)               # 画面上で真円の角丸にする
@@ -279,26 +321,74 @@ def bubble_path(x, y, w, h, r, tail):
     def curve(c, p):
         verts.extend([c, p]); codes.extend([Path.CURVE3, Path.CURVE3])
 
-    tx1, tx3 = tail[0][0], tail[2][0]
-    move((x + r, y))
-    # 下辺: 左 → しっぽの付け根 → 先端 → 付け根 → 右
-    line((tx1, y))
-    line(tail[1])
-    line((tx3, y))
-    line((x1 - r, y))
-    curve((x1, y), (x1, y + ry))
-    line((x1, y1 - ry))
-    curve((x1, y1), (x1 - r, y1))
-    line((x + r, y1))
-    curve((x, y1), (x, y1 - ry))
-    line((x, y + ry))
-    curve((x, y), (x + r, y))
-    codes.append(Path.CLOSEPOLY); verts.append((x + r, y))
+    if side == "bottom":
+        if tail is None:
+            cx = min(max(tip[0], x + r + base), x1 - r - base)
+            tail = [(cx - base / 2, y), tip, (cx + base / 2, y)]
+        tx1, tx3 = tail[0][0], tail[2][0]
+        move((x + r, y))
+        line((tx1, y))
+        line(tail[1])
+        line((tx3, y))
+        line((x1 - r, y))
+        curve((x1, y), (x1, y + ry))
+        line((x1, y1 - ry))
+        curve((x1, y1), (x1 - r, y1))
+        line((x + r, y1))
+        curve((x, y1), (x, y1 - ry))
+        line((x, y + ry))
+        curve((x, y), (x + r, y))
+    elif side == "right":
+        by = base * (S.W / S.H)
+        cy_ = min(max(tip[1], y + ry + by), y1 - ry - by)
+        move((x + r, y))
+        line((x1 - r, y))
+        curve((x1, y), (x1, y + ry))
+        line((x1, cy_ - by / 2))
+        line(tip)
+        line((x1, cy_ + by / 2))
+        line((x1, y1 - ry))
+        curve((x1, y1), (x1 - r, y1))
+        line((x + r, y1))
+        curve((x, y1), (x, y1 - ry))
+        line((x, y + ry))
+        curve((x, y), (x + r, y))
+    else:                               # left
+        by = base * (S.W / S.H)
+        cy_ = min(max(tip[1], y + ry + by), y1 - ry - by)
+        move((x + r, y))
+        line((x1 - r, y))
+        curve((x1, y), (x1, y + ry))
+        line((x1, y1 - ry))
+        curve((x1, y1), (x1 - r, y1))
+        line((x + r, y1))
+        curve((x, y1), (x, y1 - ry))
+        line((x, cy_ + by / 2))
+        line(tip)
+        line((x, cy_ - by / 2))
+        line((x, y + ry))
+        curve((x, y), (x + r, y))
+    codes.append(Path.CLOSEPOLY); verts.append(verts[0])
     return Path(verts, codes)
 
 
+def tail_tip(anchor, target, max_len: float = 0.055):
+    """しっぽの先端。anchor から target の方向へ、最大 max_len だけ伸ばす。
+
+    口が吹き出しから遠いときに槍のようなしっぽを出さないための刈り込み。
+    向き(=誰が喋っているか)は保たれる。
+    """
+    dx = target[0] - anchor[0]
+    dy = (target[1] - anchor[1]) * (S.H / S.W)
+    d = math.hypot(dx, dy)
+    if d < 1e-6:
+        return (anchor[0], anchor[1] - max_len)
+    k = min(1.0, max_len / d)
+    return (anchor[0] + dx * k, anchor[1] + dy * k * (S.W / S.H))
+
+
 # ------------------------------------------------------------ ドットの破線矩形
-def dotted_rect(fig, x, y, w, h, pitch=0.010, r=0.0022, color="#b9ae99",
+def dotted_rect(fig, x, y, w, h, pitch=0.010, r=0.0022, color=None,
                 alpha=1.0, zorder=2.05, skip_bottom=False):
     """4隅にドットを必ず置き、各辺を整数個で等分した点線矩形。
 
@@ -307,24 +397,38 @@ def dotted_rect(fig, x, y, w, h, pitch=0.010, r=0.0022, color="#b9ae99",
     2点、が同時に出る(2026-08-30 craft/medium)。辺ごとに個数を丸めて割り付け、
     角を固定点にすれば位相の問題そのものが消える。
     """
+    # **ピッチは画面のピクセルで測る**(2026-08-30 craft/low)。
+    # 旧実装は figure 座標の長さを x 単位に換算して数だけ丸めていたので、
+    # 横辺 11.5px・縦辺 12.0px と画面上のピッチが 4% 割れていた。
+    # ピクセル長 → 個数 → ピクセル長/個数 で辺ごとに割り直すと、
+    # どの辺も「端点で必ず閉じる」うえに画面上のピッチが揃う。
+    color = color or DOT_INK
     ry = r * (S.W / S.H)
+    pitch_px = pitch * S.W
     pts = []
 
-    def edge(x0, y0, x1_, y1_, include_end=False):
-        ln = math.hypot((x1_ - x0), (y1_ - y0) * (S.H / S.W))
-        n = max(1, int(round(ln / pitch)))
-        for k in range(n + (1 if include_end else 0)):
+    def edge(x0, y0, x1_, y1_):
+        """始点を含み、終点を含まない等分点。角は必ず1点になる。"""
+        ln_px = math.hypot((x1_ - x0) * S.W, (y1_ - y0) * S.H)
+        n = max(1, int(round(ln_px / pitch_px)))
+        for k in range(n):
             u = k / n
             pts.append((x0 + (x1_ - x0) * u, y0 + (y1_ - y0) * u))
 
     edge(x, y + h, x + w, y + h)                 # 上辺(左上の角を含む)
     edge(x + w, y + h, x + w, y)                 # 右辺(右上の角を含む)
     if skip_bottom:
+        # 下辺は描かないが、**両下角のドットは必ず置く**(矩形を閉じる)
         pts.append((x + w, y))
         pts.append((x, y))
+        # 左辺は下角の1つ上から(角の重複を作らない)
+        ln_px = h * S.H
+        nl = max(1, int(round(ln_px / pitch_px)))
+        for k in range(1, nl):
+            pts.append((x, y + h * k / nl))
     else:
         edge(x + w, y, x, y)                     # 下辺(右下の角を含む)
-    edge(x, y, x, y + h)                         # 左辺(左下の角を含む)
+        edge(x, y, x, y + h)                     # 左辺(左下の角を含む)
     for cx, cy in pts:
         fig.add_artist(Ellipse((cx, cy), 2 * r, 2 * ry, transform=fig.transFigure,
                                facecolor=color, edgecolor="none", alpha=alpha,
@@ -409,7 +513,7 @@ def _canvas(t_global: float = 0.0):
     # (2026-08-29 批評6周目)。オレンジグラデ+白抜きポップ体の常設帯が
     # 全ユニットで画面内最高彩度を維持し、各カットの結論より目立っていた。
     # タイトル文字も白抜き+縁取り → 墨色プレーンに格下げする
-    h = 0.052
+    h = 0.069
     bax = fig.add_axes([0, 1 - h, 1, h], zorder=3.0)
     # **勾配の向きは上=暗・下=明**(2026-08-30 artdirection/low)。
     # 旧実装は上が明るく下が暗く、その最暗点(#efd9a8)が境界でクリーム地
@@ -417,32 +521,53 @@ def _canvas(t_global: float = 0.0):
     # 「上向きの影」に読める継ぎ目になっていた。下端を地色寄りの BAND にすると
     # 段差は15段まで下がる。そのうえで境界に細い罫と極薄シャドウを置き、
     # 「レンダリングの継ぎ目」ではなく「意図した縁」として宣言する。
-    bax.imshow(np.linspace(1, 0, 64).reshape(-1, 1), aspect="auto", extent=(0, 1, 0, 1),
-               cmap=LinearSegmentedColormap.from_list("fpband", [BAND, BAND_LO]))
+    # **単色の板にする**(2026-08-30 artdirection/low)。縦グラデの帯は
+    # 2010年代のWebツールバーの記号で、境界の段差を隠すために罫と平板な
+    # 「影」を足し、結果 3本の線が並ぶ常設UIになっていた。境界は色の差だけで作る。
+    bax.imshow(np.zeros((2, 1), dtype=np.float32), aspect="auto",
+               extent=(0, 1, 0, 1), vmin=0.0, vmax=1.0,
+               cmap=LinearSegmentedColormap.from_list("fpband", [BAND, BAND]))
     bax.axis("off")
     bax.set_gid(CHROME_GID)
-    # 帯の下端の罫(2px相当)+ カードと同じ光源(上から)の極薄シャドウ
-    sh = plt.Rectangle((0.0, 1 - h - 0.006), 1.0, 0.006, transform=fig.transFigure,
-                       facecolor="#d9c9a8", edgecolor="none", alpha=0.10, zorder=2.99)
-    sh.set_gid(CHROME_GID)
-    fig.add_artist(sh)
-    rule = plt.Line2D([0, 1], [1 - h] * 2, transform=fig.transFigure,
-                      color="#e0cda2", linewidth=2.0, zorder=3.05)
-    rule.set_gid(CHROME_GID)
-    fig.add_artist(rule)
+    # 帯の下の影は**ぼかす**(_band_shadow)。カード・棒・文字と同じ勾配の作り方
+    _band_shadow(fig, 0.0, 1 - h, 1.0, 0.010)
     if TITLE:
+        # 字は 32→38pt(常設UIらしい重さ。帯の高さも 0.052→0.069=132px)
         S.text_fit(fig, 0.5, 1 - h / 2, fmt_disp(TITLE), ha="center", va="center",
-                   color=BAND_INK, fontsize=32, max_w=0.92,
+                   color=BAND_INK, fontsize=38, max_w=0.92,
                    zorder=3.1).set_gid(CHROME_GID)
     if BADGE:
         # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)。
         # max_w はカード幅(0.06〜0.94)に合わせる(2026-08-29 批評4周目:
         # 注記だけ左右マージン約0.03でカードより外に走り、揃え辺が1本ずれていた)。
         # 注記の帯(y>0.90)はドットを描かないので、地は常に無地のクリーム
-        S.text_fit(fig, 0.5, 1 - h - 0.030, BADGE, ha="center", va="center",
-                   color=DISCLAIM, fontsize=26,
-                   max_w=0.88, zorder=3.1).set_gid(BADGE_GID)
+        _badge_text(fig, BADGE, 1 - h - 0.026)
     return fig
+
+
+def _last_punct_shift(fig, text: str, fs: float) -> float:
+    """末尾が句読点の行を**光学中央**へ寄せる補正量(figure座標)。
+
+    2026-08-30 consistency/medium: 全角「。」は字面の左下にしかインクを
+    持たないので、アドバンス幅で中央寄せするとインク重心が左へ流れる。
+    実測で unit0〜10 の注記が x=532(キャンバス中心540から8px左)、
+    unit11 以降(「です」止め)が540で、注記が動画の途中で8px横に跳んでいた。
+    """
+    if not text or text[-1] not in "。、.,":
+        return 0.0
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    w_last = measure_w(fig, r, text[-1], fs,
+                       [FONT_FAMILY, FONT_FALLBACK_FAMILY], FONT_WEIGHT)
+    return w_last * 0.28
+
+
+def _badge_text(fig, text: str, y: float, fs: float = 26):
+    art = S.text_fit(fig, 0.5 + _last_punct_shift(fig, text, fs), y, text,
+                     ha="center", va="center", color=DISCLAIM, fontsize=fs,
+                     max_w=0.88, zorder=3.1)
+    art.set_gid(BADGE_GID)
+    return art
 
 
 def badge_head(fig):
@@ -453,7 +578,10 @@ def badge_head(fig):
     打消し表示の要件は保つ: 年5%の数字が画面に出る場面では必ず全文が出ている。"""
     for art in list(fig.texts):
         if art.get_gid() == BADGE_GID and "。" in art.get_text():
-            art.set_text(art.get_text().split("。")[0] + "。")
+            short = art.get_text().split("。")[0] + "。"
+            art.set_text(short)
+            # 短くしたぶん光学中心も取り直す(末尾の句点は同じなのでずれない)
+            art.set_x(0.5 + _last_punct_shift(fig, short, art.get_fontsize()))
 
 
 def hide_chrome(fig):
@@ -493,6 +621,9 @@ MAX_LINES = 2              # 字幕の最大行数(2026-08-29 批評5周目: 3�
                            # 下端が Shorts 下部UI帯(y<0.10)に沈み、行数によって
                            # ブロックのアンカーが±100px級で漂っていた)
 SUB_BOTTOM_MIN = 0.095     # 字幕ブロックの下端はここより下げない(機械ゲート)
+SUB_PLATE_PAD_X = 0.033    # プレートの左右パディング(≒36px)
+SUB_PLATE_PAD_Y = 0.0115   # プレートの上下パディング(≒22px)
+SUB_PLATE_R = 0.017        # プレートの角丸(≒18px)
 SUB_FS_LOCK = None         # lock_sub_fs() が決める動画内共通の字幕級数
 
 _TOKENIZER = None
@@ -604,10 +735,14 @@ def word_schedule(text: str, dur: float) -> list[float]:
     """
     ws = _words(text)
     n = sum(len(s) for s, *_ in ws) or 1
-    # **全語をユニット前半で着地させる**(2026-08-29 批評ループ)。
-    # dur-0.25 いっぱいに按分すると、行が左に垂れて中央揃えに見えない時間が
-    # ユニットの大半を占めていた。前半55%で出し切り、残りは完成形を見せる
-    span = max(0.0, min(dur - 0.25, dur * 0.55))
+    # **語の着地を尺の78%まで引き延ばす**(2026-08-30 retention/high)。
+    # 旧 0.55 では実測で22ユニット中19ユニットの字幕帯が t0.5→t0.8・
+    # t0.8→t1.0 とも変化画素 0.00% で、図の凍結(平均39%地点)と重なって
+    # カット後半は画面全体が静止画になっていた。
+    # 「行が左に垂れて中央揃えに見えない」旧問題は、**未着地の語も
+    # 最終レイアウト位置ぶん幅を確保する**現行実装(_subtitle_wordpop の
+    # `x += w`)が防いでいるので、span を伸ばしても再発しない。
+    span = max(0.0, min(dur - 0.20, dur * 0.78))
     out, acc = [], 0
     for s, *_ in ws:
         t0 = span * acc / n
@@ -620,7 +755,9 @@ def word_schedule(text: str, dur: float) -> list[float]:
     # 14_fueru で棒がまだカウント中なのに字幕に263万円が先に出て、
     # 「図→答え」の視線順が逆転していた。強調語は尺の38%以降に遅らせる
     # (図のアニメは anim(≈1〜1.2s)×0.55 で完了する。dur≈2s なので 0.38×dur が上回る)。
-    hold = dur * 0.38
+    # 図の着地が anim_frac(尺の55%)に連動して遅くなるぶん、強調語の
+    # 最速時刻も合わせて下げる(2026-08-30 retention/high)
+    hold = dur * 0.55
     for i, (s, emph, *_x) in enumerate(ws):
         if emph and out[i] < hold:
             out[i] = hold
@@ -738,6 +875,30 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
         raise AssertionError(
             f"字幕が{n}行/下端{y0 - (n - 1) * step:.3f}。"
             f"2行以内・下端>={SUB_BOTTOM_MIN} に収まる文へ割り直すこと: {text!r}")
+    # **ブロックの重心を全ユニットで揃える**(2026-08-30 consistency/low)。
+    # 旧実装は先頭行のyを固定していたので、1行のカットでは字幕ブロックの
+    # 重心が2行のカットより step/2(約50px)上に跳んでいた。
+    y0 -= (MAX_LINES - n) * step / 2
+    # ---- 字幕プレート(2026-08-30 artdirection/high)。
+    # 白 #ffffff とクリーム地 #f3e7d3 のコントラスト比は 1.22:1 で、字形を
+    # 作っていたのは 7px の茶縁だけだった。画数の多い字(開・細・積)は
+    # 内白が縁に食われて塊になる。墨のプレートを敷けば地とのCRが 12:1 になり、
+    # 縁も疑似影も要らない。**行の折り返しは最初から固定**なので、
+    # プレートは t=0 から最終寸法で置ける(器が跳ねない)。
+    from matplotlib.patches import FancyBboxPatch as _FBP
+    row_w = [sum(measure_w(fig, r, s, fs, *_fam_of(s, e)) for s, e, _ in row)
+             for row in rows]
+    half = fs * (S.DPI / 72.0) * 0.62 / S.H
+    for i, row in enumerate(rows):
+        y = y0 - i * step
+        pw = row_w[i] + 2 * SUB_PLATE_PAD_X
+        ph = 2 * (half + SUB_PLATE_PAD_Y)
+        fig.add_artist(_FBP(
+            (0.5 - pw / 2, y - ph / 2), pw, ph,
+            boxstyle=f"round,pad=0,rounding_size={SUB_PLATE_R}",
+            transform=fig.transFigure, facecolor=TELOP_PLATE,
+            edgecolor="none", alpha=TELOP_PLATE_A, zorder=2.92,
+            mutation_aspect=S.W / S.H))
     for i, row in enumerate(rows):
         ws_row = [measure_w(fig, r, s, fs, *_fam_of(s, e)) for s, e, _ in row]
         x = 0.5 - sum(ws_row) / 2
@@ -747,7 +908,18 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
             if t_unit < st:
                 x += w
                 continue                    # まだ着地していない語は描かない
-            color = TELOP_EMPH if emph else TELOP
+            # **強調は色ではなく役割色の下線で表す**(2026-08-30
+            # consistency/high・artdirection/high)。塗りの色を役割色に落とすと
+            # 墨プレートとの明度差が足りず、逆に明るいライム(#7ac043)は
+            # パレット中で唯一の高彩度の冷たい緑として浮いていた。
+            # 文字は全部白で組み、下線だけが役割色を持つ。
+            color = TELOP
+            if emph:
+                fig.add_artist(plt.Line2D(
+                    [x, x + w], [y - half * 0.86] * 2,
+                    transform=fig.transFigure, color=TELOP_EMPH,
+                    linewidth=max(4.0, fs * 0.075), solid_capstyle="round",
+                    zorder=2.97))
             fam, wt = _fam_of(s, emph)
             if _ASCII_WORD.match(s):
                 chars = [s]                 # 欧文はカーニングを守って語ごと
@@ -768,7 +940,7 @@ def _subtitle_wordpop(fig, text: str, t_unit: float, dur: float, tag=None):
                          color=color, fontsize=fs * scale, fontfamily=fam,
                          fontweight=wt,
                          path_effects=fx(color, fs * scale, emph=emph),
-                         zorder=3.0)
+                         zorder=2.98)
                 cx += cwi
             x += w
 
@@ -853,7 +1025,7 @@ def pose(name: str, fade: bool = True, flip: bool = False,
     return _POSE_CACHE[key]
 
 
-def _fade_bottom(im: Image.Image, frac: float = 0.06) -> Image.Image:
+def _fade_bottom(im: Image.Image, frac: float = 0.030) -> Image.Image:
     """絵の裾を**地色(CREAM)へ沈めて**切る。透過はさせない。
 
     素材は腰のあたりで真横に切れている。矩形の直線グラデで消すと
@@ -878,7 +1050,10 @@ def _fade_bottom(im: Image.Image, frac: float = 0.06) -> Image.Image:
     start = edge[None, :] - n                 # ここからフェード開始
     m = np.clip((edge[None, :] - rows) / n, 0.0, 1.0)
     m[rows < start] = 1.0
-    m = m ** (1.0 + 0.6 * np.abs(xs)[None, :])
+    # **ガンマ補正**(2026-08-30 craft/low)。線形の勾配だと、暗い線画
+    # (上着のラペル)ほど長く残り、地に沈みきる前に灰色の筋として
+    # 水玉グリッドを横切って見える。2.2乗にすると沈む区間が実質半分になる。
+    m = m ** (2.2 + 0.6 * np.abs(xs)[None, :])
     from matplotlib.colors import to_rgb
     ground = np.array(to_rgb(CREAM), dtype=np.float32) * 255.0
     arr[:, :, :3] = arr[:, :, :3] * m[:, :, None] + ground[None, None, :] * (1 - m[:, :, None])
@@ -930,6 +1105,72 @@ def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float 
     ax.imshow(np.asarray(im), interpolation="hanning")
     ax.axis("off")
     return ax
+
+
+def eye_x_frac(name: str, flip: bool = False, crop: str | None = None) -> float:
+    """立ち絵の目の**水平位置**(画像幅に対する割合)。
+
+    2026-08-30 thumbnail/medium: カバーの assert は目の位置をポーズの
+    アスペクトから**モデル計算**していて、crop="bust" 後の実画素位置と
+    ずれていたためゲートとして機能していなかった(実測で右目周辺の暗部が
+    x902〜1049 まで来ていて、Shorts の右アクションレールに丸ごと入っていた)。
+    eye_y_frac と同じ要領で、顔の帯の暗部クラスタの重心を実画素から採る。
+    """
+    key = ("eyex", name, flip, crop)
+    if key not in _POSE_CACHE:
+        im = pose(name, fade=False, flip=flip, crop=crop)
+        arr = np.asarray(im.convert("RGBA"), dtype=np.float32)
+        lum = arr[:, :, :3].mean(axis=2)
+        dark = (lum < 90) & (arr[:, :, 3] > 128)
+        ey = eye_y_frac(name, flip, crop)
+        h = arr.shape[0]
+        r0 = int(max(0, (ey - 0.03) * h))
+        r1 = int(min(h, (ey + 0.03) * h) + 1)
+        band = dark[r0:r1]
+        cols = band.sum(axis=0).astype(np.float32)
+        if cols.sum() <= 0:
+            _POSE_CACHE[key] = 0.5
+        else:
+            xs = np.arange(len(cols), dtype=np.float32)
+            _POSE_CACHE[key] = float((cols * xs).sum() / cols.sum()) / len(cols)
+    return _POSE_CACHE[key]
+
+
+MOUTH_Y_FRAC = 0.34        # 口元の高さ(描画高に対する割合)。素材4点の実測値
+
+
+def mouth_frac(name: str, flip: bool = False, crop: str | None = None):
+    """口元のおおよその位置(画像幅・画像高に対する割合)。
+
+    2026-08-30 craft/high: 吹き出しのしっぽの終点を呼び出し側の定数で
+    渡していたため、21_cta2 では髪の上の何もない背景(x628,y478)を
+    指していた。**しっぽは必ず口を向く**を部品の側で保証する。
+
+    eye_y_frac は「上半分でいちばん暗い行」なので、この素材群では
+    まつ毛ではなく**髪の塊**を拾う(実測で 0.105 を返すが、実際の目は
+    描画高の 0.24 前後)。口の高さは素材4点の実測から 0.34 で固定し、
+    横位置だけその行のシルエット中心から採る。
+    """
+    key = ("mouth", name, flip, crop)
+    if key not in _POSE_CACHE:
+        im = pose(name, fade=False, flip=flip, crop=crop)
+        a = np.asarray(im.getchannel("A"))
+        h, w = a.shape
+        row = int(min(h - 1, max(0, MOUTH_Y_FRAC * h)))
+        band = a[max(0, row - h // 60):row + h // 60 + 1] > 128
+        cols = np.where(band.any(axis=0))[0]
+        cx = float(cols.mean()) / w if len(cols) else 0.5
+        _POSE_CACHE[key] = (cx, MOUTH_Y_FRAC)
+    return _POSE_CACHE[key]
+
+
+def mouth_xy(name: str, cx: float, top: float, height: float,
+             flip: bool = False, crop: str | None = None):
+    """draw_pose と同じ引数から、口元の figure 座標を返す。"""
+    im = pose(name, fade=False, flip=flip, crop=crop)
+    w = height * (im.width / im.height) * (S.H / S.W)
+    fx_, fy_ = mouth_frac(name, flip, crop)
+    return cx - w / 2 + w * fx_, top - height * fy_
 
 
 def eye_y_frac(name: str, flip: bool = False, crop: str | None = None) -> float:

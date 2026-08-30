@@ -190,7 +190,10 @@ def ease_out_back_soft(t: float) -> float:
     戻りが0.12秒以内に収まる強さに落とすと、縮む動きは知覚されなくなる。
     数字ラベル・ボタンなど「跳ねて欲しい」小要素は ease_out_back のままでよい。
     """
-    c1 = 0.62
+    # 2026-08-30 retention/high: c1=0.62 は実測で最終比+5.1% の頂点を作り、
+    # 窓の後半をかけて単調に縮んでいた(docstring の「約3%・戻り0.12秒以内」と
+    # 食い違っていた)。頂点が +0.5% 以下・戻りが窓の5%以内に収まる値へ落とす。
+    c1 = 0.25
     c3 = c1 + 1
     return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2
 
@@ -202,7 +205,15 @@ class Unit:
     subtitle: str            # 字幕=読み上げ文(R6)。【】で囲んだ語は黄色強調(R8)
     narration: str = ""      # 読み上げ用の上書き(省略時はsubtitleから【】を除いた文)
     pad: float = 0.15        # ナレーション後の間(秒。深掘り⑦: 詰め気味が定石)
-    anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)
+    anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)。
+                             # **下限**として働く(実際の窓は anim_frac との大きいほう)
+    anim_frac: float = 0.55  # アニメ窓を**カット尺の割合**でも決める(2026-08-30
+                             # retention/high)。anim が 1.0/1.2 の定数だったため、
+                             # カット尺(1.65〜4.25秒)と無関係に図が各カットの
+                             # 23〜73%(平均39%)地点で凍結し、合計 39.7秒/63.0秒
+                             # (63%)が止め絵になっていた。窓が尺に比例すれば
+                             # 着地も尺に比例する(fueru 1.65秒→0.91秒、
+                             # hyo_a 4.25秒→2.34秒)
     fps: int = 20            # アニメーション部分のfps
     intonation: float = 1.1  # 抑揚(深掘り②: 一律1.0は単調。文脈で1.05〜1.3)
     speed: float = 0.0       # 話速の上書き(0=既定。深掘り②: 重要文は遅く・つなぎは速く)
@@ -244,6 +255,12 @@ class Unit:
 # ここで表にしておけば、字幕に NISA と書くだけで読みは常に「ニーサ」になる。
 # つまり**書き忘れようがない**。check_yomi.py は最後の網として残す。
 READING = {
+    # **欧文のサービス名**(2026-08-30 nihongo/high)。check_yomi は漢字複合語しか
+    # 見ないので、英字綴りはそのまま VOICEVOX に渡って読みが不定になる。
+    # 字幕の綴りは変わらないので R6(ナレーション=字幕)は保たれる。
+    "Netflix": "ネットフリックス",
+    "Spotify": "スポティファイ",
+    "Amazon": "アマゾン",
     "NISA": "ニーサ",
     "iDeCo": "イデコ",
     "ATM": "エーティーエム",
@@ -303,6 +320,7 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
     return hashlib.sha256(repr([
         (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
          u.pitch, u.pause_scale, u.se, u.se_at, u.se_at_frac, u.cover, u.cover_hold,
+         u.anim_frac,
          u.puchun, u.face, u.chara, u.speaker, u.sub_delay)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
@@ -1326,14 +1344,26 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             durations.append(dur)
             return f
 
-        anim = min(u.anim, d_total)
+        # **アニメ窓はカット尺に比例させる**(2026-08-30 retention/high)。
+        # u.anim は「最短モーション時間」の下限として残す。
+        anim = min(max(u.anim, u.anim_frac * d_total), d_total)
         head = (u.cover_hold if u.cover else 0.0)
         if u.cover:
             # フィードの静止表示・サムネ用(ループ7)。専用構図 <scene>__cover があれば
             # 字幕なしのサムネ設計で描く(深掘り⑨)
             cover_painter = scene_painters.get(f"{u.scene}__cover")
-            cf = emit(1.0, 990, head, painter=cover_painter,
-                      with_subtitle=(cover_painter is None), no_chara=True)
+            # **カバーも連番で出す**(2026-08-30 retention/low)。1フレームだけ
+            # だと動画の冒頭 0.30秒(20fpsで6フレーム)が完全に同一ピクセルで、
+            # Shorts のスワイプ判断が始まる最初の 0.3秒に動きがゼロだった。
+            # cover() は t<1 で描き分けができるので、0.70→1.00 を渡す。
+            # 背景の水玉ドリフトも t_unit が進むぶん効く。
+            nc = max(2, int(round(head * u.fps)))
+            cf = None
+            for j in range(nc):
+                tc = 0.70 + 0.30 * (j + 1) / nc
+                cf = emit(tc, 990 + j, head / nc, painter=cover_painter,
+                          with_subtitle=(cover_painter is None), no_chara=True,
+                          t_unit=head * (j + 0.5) / nc)
             thumbnail = cf
         anim = min(anim, d_total - head)
         if anim > 0:

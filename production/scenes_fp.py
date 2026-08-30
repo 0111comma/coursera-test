@@ -34,67 +34,69 @@ import matplotlib.patheffects as path_effects
 import fplib as F
 import shortlib as S
 
-# ---- 配色(ブランドの1セットに集約。ここ以外で色を直書きしない)
+# ---- 配色(**役割トークンは fplib に1組だけ**。ここで hex を直書きしない)
 #
-# **赤は1色相・3段のラダー**(2026-08-30 artdirection/high)。
-# 実測で赤が5値(#b32020 / #9a3834 / #b66056 / #bc7968 / #834d46)に散り、
-# S値 .82〜.45・色相 0〜12°で揺れていた。決定的だったのは 13_fueru で、
-# 同じ「114万円/ただ貯める」の棒のラベル(#9a3834)と面(#bc7968)が
-# 明度で30段離れ、ラベルと対象物が別物の赤になっていたこと。
-# 以後、褪せは _mix(別色との混合=色相が動く)ではなく **HSV の S だけを落とす**。
-RED = "#b32020"            # ブランドの赤(文字・線・枠)。#e03131 は全廃
-RED_FILL = "#c0392b"       # 棒など「面」の赤(文字の赤より一段明るく)
-RED_SOFT = "#f9e6dc"       # ハイライト行の地。#fbeae6 は白寄りの桃色に見えた →
-                           # 赤をわずかに橙へ回した暖色ティント(2026-08-29 批評2周目)
+# 2026-08-30 厳格審査(craft/medium・consistency/high・artdirection/high)。
+# 実測で1本の動画に赤が6値(#b32020 / #c0392b / #c0726a / #9a544d /
+# #b35e56 / #cf6b60)・緑が5値・墨が4値出ていた。決定的だったのは 11→13 の
+# カット替わりで、同じ「ただ貯める=114万円」の棒が #b32020 から #c0726a へ
+# 明度30段・彩度 .78→.45 で跳び、視聴者には「別の棒」に見えたこと。
+#
+# **褪せは色を変えずに alpha だけを落とす。**色相・彩度・明度を動かす褪せは
+# 「同じもののトーン違い」ではなく「別の色の別のもの」に見える。
+# 非強調 = 同じ色 + alpha 0.55 + 枠 lw 2.0(EMPH_LW を下げる)。
+# 数字グリフの実インク高 / (fs * DPI/72)。**実測値**(2026-08-30)。
+# 「114万円」= 0.889 /「114」= 0.745。漢字混じりの最悪ケースを採る。
+# 板の高さから字の大きさを逆算するときは必ずこれを使う。
+NUM_INK_RATIO = 0.889
+RED = F.COST               # 出ていく側の文字・線・枠
+RED_FILL = F.COST_FILL     # 出ていく側の面
+RED_SOFT = "#f9e6dc"       # ハイライト行の地(面ではなく「地」なので別トークン)
 INK = F.INK_DARK
+FADE_A = 0.55              # 非強調のアルファ(色は変えない)
+FADE_LW = 2.0              # 非強調の枠線幅
+CONNECT = F.CONNECT        # 比較記号・矢印・区切り罫の専用色
 
 
 def _hsv(base: str, s_mul: float = 1.0, v_mul: float = 1.0) -> str:
-    """base の**色相を固定したまま**彩度・明度だけ動かす(赤のラダー生成用)。"""
+    """base の色相を固定したまま彩度・明度だけ動かす。
+    **役割色の褪せには使わない**(alpha 方式へ移行済み)。地の生成用に残す。"""
     import colorsys
     from matplotlib.colors import to_rgb, to_hex
     h, s, v = colorsys.rgb_to_hsv(*to_rgb(base))
     return to_hex(colorsys.hsv_to_rgb(h, min(1.0, s * s_mul), min(1.0, v * v_mul)))
 SUB = "#6b6459"            # 副テキスト(暖色グレー)
-WARM_GRAY = "#b9ae99"      # 非強調の図形の面。青みグレー(#9aa0a6等)は全廃
+WARM_GRAY = F.DOT_INK      # 役割を持たない図形の面(地紋と同族)
 CARD = F.CARD              # カードの白(#fffdf7)。純白は文字専用
 CARD_TINT = "#fdf6e8"      # カード上端のトップライト(card() の縦グラデ用)
-# カードの枠線。**影のピーク値(#e8dcc8=232,220,200)と同値**だったため、
-# 右辺・下辺で輪郭が影に溶け、左辺は 243→232→255 で立つのに右辺は
-# 255→232,232→232,233,…,243 という20pxの茶色いにじみになっていた
-# (2026-08-30 craft/medium)。影の初段から8段以上離した値にする。
-CARD_EDGE = "#dccbb0"
-# **非強調のグレーは WARM_GRAY(#b9ae99)の1族**(2026-08-29 批評3周目)。
-# 縁は面(WARM_GRAY)を約20%暗くした親子関係の値。別系統の灰を足さない
-CARD_EDGE_STRONG = "#948a76"
-GREEN = "#5e8c3f"          # 肯定・充足・**増える側の面**(暖色寄りのブランド緑)
-GREEN_DARK = "#4d7a33"     # 増える側の文字(面より一段濃く)
-GREEN_SOFT = "#e8f0dc"     # 増える側の地(RED_SOFT の緑版)
+CARD_EDGE = "#dccbb0"      # カード枠(既定では**描かない**。card() の既定は edge=None)
+CARD_EDGE_STRONG = F.CONNECT   # カード内の小箱・チップ・吹き出しの縁
+GREEN = F.GROW_FILL        # 増える側の面
+GREEN_DARK = F.GROW        # 増える側の文字・枠
+GREEN_SOFT = "#e8f0dc"     # 増える側の地
 SHADOW = "#d9c9a8"         # カードの落ち影
 
 
 def _mix(c1, c2, u):
-    """2色の線形補間(rgbaタプルを返す)。役割色の「褪せ」を親子関係で作る。"""
+    """2色の線形補間(rgbaタプルを返す)。着地ポップの白振りなどに使う。"""
     from matplotlib.colors import to_rgba
     a, b = to_rgba(c1), to_rgba(c2)
     return tuple(a[i] * (1 - u) + b[i] * u for i in range(4))
 
 
-# **損側の実体は、非強調のときも赤の気配を残す**(2026-08-29 批評4周目)。
-# 12→14→15 で同じ114万円が赤→灰→墨と3回色を変え、同一性が切れていた。
-# 完全なグレーに落とすのは「役割を持たない図形」だけ。
-# **褪せの1軸は彩度のみ**(2026-08-30 artdirection/high)。色相・明度は動かさない。
-RED_FADE = _hsv(RED_FILL, s_mul=0.58)         # 非強調の損側の棒の面(S .78→.45)
-LOSS_EDGE = _hsv(RED_FILL, s_mul=0.67, v_mul=0.93)   # 非強調の損側の箱の縁
-LOSS_INK = _hsv(RED_FILL, s_mul=0.64, v_mul=0.80)    # 非強調の損側の文字
+# **褪せの旧トークンは廃止**(2026-08-30 consistency/high)。
+# RED_FADE / LOSS_EDGE / LOSS_INK は色相ごと動く「第2の赤」を3つ増やして
+# いた。同一性は色で保ち、強弱は alpha と線幅で表す。
+RED_FADE = RED_FILL
+LOSS_EDGE = RED
+LOSS_INK = RED
 HEAD_BG = "#efe2c8"        # 表の見出し行・合計行の地。地紋(#f6ecdb)と2段階離す
                            # (旧 #f6ecd8 は地紋と1しか違わず区別が伝わらなかった)
 # 中立ハイライト専用の地(2026-08-30 artdirection/medium)。旧実装は HEAD_BG を
 # 流用していたが、それは見出し行・合計行と同色なので「ハイライト」に見えなかった。
+# **中立ハイライトは廃止**(2026-08-30 consistency/high)。定義だけ互換で残す。
 NEUTRAL_SOFT = "#eae2d2"
-NEUTRAL_RING = "#6f6653"   # 中立ハイライトのリング。地(NEUTRAL_SOFT)より1段濃い
-                           # 同系色にする。旧 #3a3a3a の墨リングは、01だけが持つ
-                           # 第4の視覚言語だった(2026-08-30 artdirection/medium)
+NEUTRAL_RING = CONNECT
 
 # **強調枠の線幅トークンは1つ**(2026-08-29 批評6周目)。表の行ハイライト3.5pt・
 # formulaカード5.0pt・arrowの箱4.0pt・waveの緑枠と、同じ「ここを見ろ」の枠が
@@ -130,11 +132,14 @@ CLEAR_MIN = 0.030          # ≒58px
 
 
 def sub_top() -> float:
-    """字幕ブロックの上端(白アウトライン込み)。図の下端はここより上に置く。"""
+    """字幕ブロックの上端(**墨プレート込み**)。図の下端はここより上に置く。
+
+    2026-08-30 artdirection/high: 字幕を墨プレートの上の白文字に変えたので、
+    上端はプレートの上辺になる。プレートの高さは fplib と同じ式で出す。
+    """
     fs = float(getattr(F, "SUB_FS_LOCK", None) or S.SUB_FS)
     half = fs * (S.DPI / 72.0) * 0.62 / S.H          # 字面の半分
-    outline = fs * 0.12 * 1.55 / 2 * (S.DPI / 72.0) / S.H   # 白外縁の半分
-    return S.SUBTITLE_Y + half + outline
+    return S.SUBTITLE_Y + half + F.SUB_PLATE_PAD_Y
 
 
 # カードの落ち影は下へ約20px伸びるので、その分も見込む
@@ -155,6 +160,8 @@ TITLE_INK = "#4a4438"      # 文脈見出し(head_title)。免責注記より濃
 # 吹き出しの寸法(person_bubble と cta が共有する)。同じ部品なのに
 # 0.40×0.11 と 0.37×0.082 で幅-8%・高さ-25%ちがっていた(consistency/medium)
 BUBBLE_W, BUBBLE_H = 0.40, 0.11
+BUBBLE_L = 0.060           # 左に置く吹き出しの左端(=x64)。定数に固定する
+BUBBLE_R = 0.940           # 右に置く吹き出しの右端
 BUBBLE_FS = 46
 # サービス名チップ(cover と person_cards が共有する)。カバーと本編1カット目で
 # 幅が154px違い、同じ3枚が0秒の継ぎ目で寸法まで変えていた(thumbnail/medium)
@@ -233,12 +240,29 @@ def head_title(fig, title: str, t: float = 1.0):
     a = _ease((t - 0.04) / 0.18)
     if a <= 0.01:
         return
-    # **常設クロームをヒエラルキーの頂点に置かない**(2026-08-30 artdirection/high)。
-    # 免責注記(26pt・CR 8.1)がカットの主題ラベル(40pt・CR 4.78)より1.7倍濃く、
-    # しかも白ハローがグリフのエッジを内側から削って40ptを弱く見せていた。
-    # ハローを外し、色を SUB(#6b6459)から #4a4438 へ上げる。
-    S.text_fit(fig, 0.5, TITLE_Y, F.fmt_disp(title), ha="center", va="center",
-               color=TITLE_INK, fontsize=40, max_w=0.9, zorder=2.3, alpha=a)
+    # **見出しは墨のチップにする**(2026-08-30 artdirection/medium)。
+    # 本編22カット中15カットで輝度80未満の画素が1.0〜3.6%しかなく、
+    # p50=232 / p95=253 が全カット共通=画面にトーンレンジが無かった。
+    # カード面 #fffdf7 と地 #f3e7d3 のコントラスト比は 1.20:1 で、
+    # カードの存在を淡い枠と影だけが支えていた(屋外では輪郭が消える)。
+    # 全カットに必ずインクの塊を1つ置けば、カバーの墨帯とも語彙が繋がる。
+    fs_t = 40.0
+    r_ = _renderer(fig)
+    fam_t = [F.FONT_FAMILY, F.FONT_FALLBACK_FAMILY]
+    txt = F.fmt_disp(title)
+    w_t = F.measure_w(fig, r_, txt, fs_t, fam_t, F.FONT_WEIGHT)
+    if w_t > 0.80:
+        fs_t *= 0.80 / w_t
+        w_t = 0.80
+    pad_x, pad_y = 0.026, 0.0125
+    cw, ch = w_t + 2 * pad_x, fs_t * (S.DPI / 72.0) * 0.62 / S.H + 2 * pad_y
+    fig.add_artist(FancyBboxPatch(
+        (0.5 - cw / 2, TITLE_Y - ch / 2), cw, ch,
+        boxstyle=f"round,pad=0,rounding_size={R_MD * 0.6}",
+        transform=fig.transFigure, facecolor=INK, edgecolor="none",
+        zorder=2.28, alpha=a * 0.94, mutation_aspect=_ma()))
+    S.text_fit(fig, 0.5, TITLE_Y, txt, ha="center", va="center",
+               color="#fff8ec", fontsize=fs_t, max_w=0.80, zorder=2.32, alpha=a)
 
 
 def _ma() -> float:
@@ -250,8 +274,13 @@ def _ma() -> float:
 
 
 _SHADOW_CACHE: dict = {}
-SHADOW_BLUR_PX = 11.0      # 実測(右18px − オフセット7px ≒ 11px)の見た目を保つ
-SHADOW_PEAK = 0.34         # ぼかす前のマスク濃度。裾の最大値が旧6層と同じになる値
+# **枠ではなく「広さ」で浮かせる**(2026-08-30 craft/medium)。
+# 旧値(11px / 0.34)+ 2px のカード枠は、枠色 #dccbb0 と影色 #d9c9a8 が
+# 同色相・ほぼ同明度なので「線で囲んだシール」に見え、しかも影の裾が
+# 238→243 を約30pxかけて1段刻みで落ちる=H.264後に等高線が出る勾配だった。
+SHADOW_BLUR_PX = 18.0
+SHADOW_PEAK = 0.22
+SHADOW_DITHER = 0.4 / 255.0   # 裾のバンディングを崩す青ノイズ(固定シード)
 
 
 def _shadow_rgba(wpx: int, hpx: int, rpx: float, blur: float):
@@ -296,7 +325,7 @@ def drop_shadow(fig, x, y, w, h, r=0.028, z=2.19, alpha=1.0, clip_y=None):
     a, pad = _shadow_rgba(wpx, hpx, r * S.W, SHADOW_BLUR_PX)
     # 影のオフセット(旧6層の重心 ≒ +4px / -6.5px)
     ox = int(round((x + wob) * S.W + 0.0040 * S.W)) - pad
-    oy = int(round((y - wob) * S.H - 0.0065 * S.H)) - pad
+    oy = int(round((y - wob) * S.H - 0.0090 * S.H)) - pad
     a = a[::-1]                            # 行0を下端に(origin="lower")
     if clip_y is not None:
         # 基線より下は**マスクの側で**消す(地面に立つ棒の影が地面を貫通しない)
@@ -306,14 +335,20 @@ def drop_shadow(fig, x, y, w, h, r=0.028, z=2.19, alpha=1.0, clip_y=None):
             a[:min(cut, a.shape[0])] = 0.0
     rgba = np.zeros(a.shape + (4,), dtype=np.float32)
     rgba[..., :3] = np.array(to_rgb(SHADOW), dtype=np.float32)
-    rgba[..., 3] = a * SHADOW_PEAK * alpha
+    # **裾にディザを足す**(2026-08-30 craft/medium)。ガウスの裾は1段刻みで
+    # 30px かけて落ちるため、H.264 のあとに等高線として出る。±0.4/255 相当の
+    # ノイズを固定シードで足すと段が崩れ、平均濃度は変わらない。
+    rng = np.random.default_rng(0)
+    dither = (rng.random(a.shape, dtype=np.float32) - 0.5) * 2.0 * SHADOW_DITHER
+    rgba[..., 3] = np.clip(a * SHADOW_PEAK * alpha
+                           + dither * (a > 0.002), 0.0, 1.0)
     # **figimage で1枚のラスタとして敷く。** add_axes を使うと
     # check_overlap が「グラフ」として拾い、影が禁止領域判定に掛かってしまう
     im = fig.figimage(rgba, xo=ox, yo=oy, origin="lower", zorder=z)
     im.set_gid("fp_shadow")
 
 
-def card(fig, x, y, w, h, face=CARD, edge=CARD_EDGE, lw=2.0, r=0.028,
+def card(fig, x, y, w, h, face=CARD, edge=None, lw=2.0, r=0.028,
          z=2.2, sc=1.0, alpha=1.0, ls="solid"):
     """白カード+落ち影。**全部品のカードはここから描く**(仕上げを揃える)。
 
@@ -346,10 +381,16 @@ def card(fig, x, y, w, h, face=CARD, edge=CARD_EDGE, lw=2.0, r=0.028,
                             "cardtop", [CARD, "#ffffff"]),
                         alpha=0.9 * alpha)
         im.set_clip_path(box.get_path(), box.get_transform())
+    # **枠は既定で描かない**(2026-08-30 craft/medium・artdirection/high)。
+    # 容器のクロームが「赤枠 / 緑枠 / ベージュ枠 / 枠なし+影 / 灰茶の輪郭」の
+    # 5系統に割れ、視聴者が容器の意味を学習できない状態だった。
+    # 枠を持ってよいのは**カードの中の小箱**(チップ・吹き出し・比較の内箱)だけ。
+    # 外形は枠の有無で1pxも変えない(枠は内側に引く)。
     border = FancyBboxPatch((x, y), w, h, boxstyle=style,
                             transform=fig.transFigure, facecolor="none",
-                            edgecolor=edge, linewidth=lw, zorder=z + 0.002,
-                            alpha=alpha, linestyle=ls, mutation_aspect=_ma())
+                            edgecolor=(edge or "none"), linewidth=lw,
+                            zorder=z + 0.002, alpha=(alpha if edge else 0.0),
+                            linestyle=ls, mutation_aspect=_ma())
     fig.add_artist(border)
     return border
 
@@ -457,9 +498,52 @@ def _ink_bottom_gap(fig, r, s: str, fs: float) -> float:
     return v
 
 
+_BEARING_CACHE: dict = {}
+
+
+def _bearings(fig, r, s: str, fs: float, fam=None, wt=None):
+    """左アンカーで描いたときの (左サイドベアリング, 右サイドベアリング)。
+
+    2026-08-30 craft/medium: 文字列をアドバンス幅(サイドベアリング込み)で
+    中央揃えしていたため、17_hitotsu の「1,080円」は左マージン46px・
+    右マージン32px、つまり 7px 右に寄っていた。末尾の「円」の右サイド
+    ベアリングが大きいのが原因。**キャッシュした実インク境界**で補正する
+    (fig.canvas.draw() を増やさないよう、呼び出し側の renderer を使う)。
+    """
+    if not s:
+        return 0.0, 0.0
+    fam = fam or [F.NUM_FAMILY]
+    wt = F.NUM_WEIGHT if wt is None else wt
+    key = (s, round(fs, 2), str(fam), wt, S.W)
+    v = _BEARING_CACHE.get(key)
+    if v is None:
+        tmp = fig.text(0.0, 0.5, s, fontsize=fs, fontfamily=fam, fontweight=wt,
+                       ha="left", va="baseline")
+        e = tmp.get_window_extent(renderer=r)
+        adv = F.measure_w(fig, r, s, fs, fam, wt)
+        v = (e.x0 / S.W, adv - e.x1 / S.W)
+        tmp.remove()
+        _BEARING_CACHE[key] = v
+    return v
+
+
+def _optical_center(fig, arts, cx: float):
+    """描いた Text 群の**インク bbox の中心**を cx に合わせて置き直す。"""
+    if not arts:
+        return
+    r = _renderer(fig)
+    x0 = min(a.get_window_extent(renderer=r).x0 for a in arts)
+    x1 = max(a.get_window_extent(renderer=r).x1 for a in arts)
+    dx = cx - ((x0 + x1) / 2.0) / S.W
+    if abs(dx) < 1e-6:
+        return
+    for a in arts:
+        a.set_x(a.get_position()[0] + dx)
+
+
 def big_number(fig, cx, cy, text, fs, color=RED, t=1.0, count=True,
                z=2.4, max_w=0.80, unit_scale=None, alpha=1.0, ha="center",
-               path_effects=None):
+               path_effects=None, align_on="block"):
     """ヒーロー数字。数字は第2書体の極太、**単位は62%に落として桁を立てる**。
 
     t<0.55 のあいだは 0→最終値のカウントアップ(ease_out)。
@@ -486,11 +570,11 @@ def big_number(fig, cx, cy, text, fs, color=RED, t=1.0, count=True,
     fs = fs * boost
     max_w = max_w * boost
     if not m:
-        S.text_fit(fig, cx, cy, F.fmt_disp(text), ha=ha, va="center",
-                   color=color, fontsize=fs * 0.72, max_w=max_w, zorder=z,
-                   fontfamily=fam, fontweight=F.NUM_WEIGHT, alpha=alpha,
-                   path_effects=path_effects)
-        return
+        art = S.text_fit(fig, cx, cy, F.fmt_disp(text), ha=ha, va="center",
+                         color=color, fontsize=fs * 0.72, max_w=max_w, zorder=z,
+                         fontfamily=fam, fontweight=F.NUM_WEIGHT, alpha=alpha,
+                         path_effects=path_effects)
+        return [art]
     pre, digits, suf = m.groups()
     if unit_scale is None:
         unit_scale = unit_scale_for((pre or "") + (suf or ""))
@@ -527,14 +611,29 @@ def big_number(fig, cx, cy, text, fs, color=RED, t=1.0, count=True,
     # カウント中に軸が動かないよう、幅は**最終値**(w_final)で取る。
     # ただし max_w を食い切っている文字列(カバーの114万円など)では、
     # 数字中心に寄せると単位が枠から出るので、ブロック全体を窓内にクランプする。
+    # **中央揃えの基準は2種**(2026-08-30 consistency/high)。
+    #   align_on="number": 数字部分の中心を cx に置く。単独のヒーロー数字で
+    #     桁の並びを画面中心に通したいとき用。
+    #   align_on="block"(既定): 接頭辞+数字+単位のブロック中心を cx に置く。
+    #     **対象物の上に載せるラベル**(棒の値ラベル・カード内の数字)はこちら。
+    #     旧実装は全部 "number" だったため、棒の値ラベルが「万円」の幅ぶん
+    #     右へ押し出され、実測で棒中心から +15〜45px ずれていた。
     if ha == "right":
         x = cx - (w_pre + w_num + w_suf)
     elif ha == "left":
         x = cx
-    else:
+    elif align_on == "number":
         x = cx - w_final / 2 - w_pre + (w_final - w_num) / 2
         lo, hi = cx - max_w / 2, cx + max_w / 2
         x = min(max(x, lo), hi - (w_pre + w_final + w_suf))
+    else:
+        # カウント中に軸が動かないよう、幅は**最終値**(w_final)で取る。
+        # そのうえで**実インクの中心**を cx に合わせる(サイドベアリング補正)。
+        lb, _ = _bearings(fig, r, (pre or F.fmt_disp(digits)), fu if pre else fs)
+        _, rb = _bearings(fig, r, (F.fmt_disp(suf) if suf else F.fmt_disp(digits)),
+                          fu if suf else fs)
+        ink_w = (w_pre + w_final + w_suf) - lb - rb
+        x = cx - ink_w / 2 - lb + (w_final - w_num) / 2
     y_base = cy - 0.36 * fs * (S.DPI / 72) / S.H     # 数字のベースライン
     kw = dict(color=color, fontfamily=fam, fontweight=F.NUM_WEIGHT,
               zorder=z, alpha=alpha)
@@ -543,16 +642,26 @@ def big_number(fig, cx, cy, text, fs, color=RED, t=1.0, count=True,
     # 単位は **ベースライン揃えではなく、数字のインク下端に揃える**
     # (2026-08-30 consistency/medium: 08_kikan の「回」がベースラインより
     #  18px下に沈み、数字と別の行に載って見えていた)
-    y_unit = y_base + _ink_bottom_gap(fig, r, digits, fs) \
-        - _ink_bottom_gap(fig, r, (pre or "") + (suf or ""), fu)
+    # **接頭辞と接尾辞は別々にインク下端を合わせる**(2026-08-30 craft/medium:
+    # 「約39万円」を4倍拡大すると 約 の底が数字の底より約12px上、万円 の底が
+    # 約4px上だった。旧実装は "約万円" という連結文字列で1つのオフセットを
+    # 取っていたため、字形の違うグリフが同じ補正を受けていた)
+    gap_num = _ink_bottom_gap(fig, r, digits, fs)
+    arts = []
     if pre:
-        fig.text(x, y_unit, pre, ha="left", va="baseline", fontsize=fu, **kw)
+        yp = y_base + gap_num - _ink_bottom_gap(fig, r, pre, fu)
+        arts.append(fig.text(x, yp, pre, ha="left", va="baseline",
+                             fontsize=fu, **kw))
         x += w_pre
-    fig.text(x, y_base, shown, ha="left", va="baseline", fontsize=fs, **kw)
+    arts.append(fig.text(x, y_base, shown, ha="left", va="baseline",
+                         fontsize=fs, **kw))
     x += w_num
     if suf:
-        fig.text(x, y_unit, F.fmt_disp(suf), ha="left", va="baseline",
-                 fontsize=fu, **kw)
+        sfx = F.fmt_disp(suf)
+        ys = y_base + gap_num - _ink_bottom_gap(fig, r, sfx, fu)
+        arts.append(fig.text(x, ys, sfx, ha="left", va="baseline",
+                             fontsize=fu, **kw))
+    return arts
 
 
 POSE_TOP_STD = 0.795       # 立ち絵の上端。head_title(TITLE_Y=0.84)の下に置く
@@ -631,7 +740,13 @@ def person_bubble(name: str, text: str, height: float = 0.45,
     立ち絵の下に画面の約22%の無人地帯があった)。
     """
     def painter(fig, t):
-        F.draw_pose(fig, name, cx=0.58, top=top, height=height)
+        # rows があるカットは**立ち絵を右へ寄せる**(2026-08-30 craft/high・
+        # artdirection/medium)。白い明細パネルの直線右辺(x≈500)が、指差して
+        # いる手の親指と人差し指を垂直に切断していた(逃げも縁も落ち影もなく、
+        # 手の輪郭線が辺の上で断ち切られていた)。指先がパネルの右端より
+        # 右に出る位置まで人物を動かす。
+        pose_cx = 0.66 if rows else 0.58
+        F.draw_pose(fig, name, cx=pose_cx, top=top, height=height)
         head_title(fig, title, t)
         p = _back((t - 0.12) / 0.28)
         if p <= 0.01:
@@ -641,26 +756,32 @@ def person_bubble(name: str, text: str, height: float = 0.45,
         if t > 0.50:
             p = p * (1.0 + 0.020 * idle(period=1.3))
         x, y = 0.26, top - 0.08
-        tipx, tipy = x + 0.20, y - 0.098          # しっぽの先端=拡大の原点
+        # **しっぽの先端は話者の口**(2026-08-30 craft/high)。呼び出し側の
+        # 定数で渡していたため、実際には口を指していなかった。
+        mouth = F.mouth_xy(name, pose_cx, top, height)
+        anchor = (x + BUBBLE_W / 2, y)            # 吹き出しの右辺の中央
+        tipx, tipy = F.tail_tip((anchor[0], anchor[1]), mouth, max_len=0.050)
         def sc(px, py):
             return tipx + (px - tipx) * p, tipy + (py - tipy) * p
         # 吹き出しの面はカード白(F.CARD)・縁は CARD_EDGE_STRONG。
         # **本体としっぽは1本の閉じた輪郭**(2026-08-30 craft/high)。
         # 面色パッチ3枚で接合部を塗り潰す旧実装は、フル解像度で見ると
         # 本体下辺の枠線が「断ち切られたスタブ」として残っていた。
-        bx, by = sc(x - BUBBLE_W / 2, y - BUBBLE_H / 2)
+        # **寸法は定数のまま渡す**(2026-08-30 consistency/medium: 同じ部品の
+        # 外形が 435×215 / 428×212 / 444×219 と3つに割れていた。中身の字形で
+        # 高さが引きずられていた)。左端も定数に固定する。
+        bx, by = sc(BUBBLE_L, y - BUBBLE_H / 2)
         bw, bh = BUBBLE_W * p, BUBBLE_H * p
-        tail = [sc(x + 0.14, y - BUBBLE_H / 2), (tipx, tipy),
-                sc(x + 0.19, y - BUBBLE_H / 2)]
         # 吹き出しにも他のカードと同じ落ち影を通す(consistency/medium:
         # 影を持つカードと平らな容器が同じ画面に同居していた)
         drop_shadow(fig, bx, by, bw, bh, r=0.030, z=2.49, alpha=a)
         fig.add_artist(PathPatch(
-            F.bubble_path(bx, by, bw, bh, 0.030 * p, tail),
+            F.bubble_path(bx, by, bw, bh, 0.030 * p, tip=(tipx, tipy),
+                          side="right"),
             transform=fig.transFigure, facecolor=CARD,
             edgecolor=CARD_EDGE_STRONG, linewidth=4.0, joinstyle="round",
             capstyle="round", zorder=2.5, alpha=a))
-        tx, ty = sc(x, y)
+        tx, ty = sc(BUBBLE_L + BUBBLE_W / 2, y)
         # 文字は「素のゴシック細字」をやめ、帯の文字色(BAND_INK)+級数1.2倍
         S.text_fit(fig, tx, ty, F.fmt_disp(text), ha="center", va="center",
                    color=F.BAND_INK, fontsize=BUBBLE_FS * max(p, 0.2), max_w=0.36,
@@ -676,13 +797,15 @@ def person_bubble(name: str, text: str, height: float = 0.45,
         if rows:
             ac = _ease(t / 0.15)
             if ac > 0.01:
-                rhh = 0.076
+                # 行送りは字高の約2.2倍(2026-08-30 artdirection/medium:
+                # 3行に485pxを使い、行送り162px・字高40pxで間延びしていた)
+                rhh = 0.046
                 # 幅は 0.46 → 0.42(2026-08-30 厳格審査 consistency/artdirection)。
                 # 右端が x=545px でキャラの指差しの手(x=547)と空きゼロで接し、
                 # **立ち絵がパネルに切断されて見えていた**。手前に置く容器は
                 # 立ち絵に触れない(規則: 同一画面の要素は24px以上離す)。
-                mw = 0.42
-                mh = rhh * len(rows) + 0.030
+                mw = 0.40
+                mh = rhh * len(rows) + 0.036
                 # **字幕から CLEAR_MIN 以上離す**(2026-08-30 consistency/high)。
                 # 旧 my=0.285 ではミニカードの下枠と字幕の白アウトラインの空きが
                 # 0〜1px(実測 x=300: 枠 1371-1377 / アウトライン 1378-1381)で、
@@ -690,15 +813,18 @@ def person_bubble(name: str, text: str, height: float = 0.45,
                 mx, my = 0.045, clamp_above_subtitle(0.285)
                 gap_px = (my - sub_top()) * S.H
                 assert gap_px >= 24, f"明細ミニカードと字幕の空きが {gap_px:.0f}px"
-                card(fig, mx, my, mw, mh, lw=2.5, r=R_MD, z=2.2, alpha=ac)
+                # **前後関係の手がかりを付ける**(2026-08-30 artdirection/medium)。
+                # 落ち影(card が敷く)+ 2px の INK 縁で「手前の板」に見せる。
+                card(fig, mx, my, mw, mh, edge=_mix(INK, CARD, 0.88), lw=2.0,
+                     r=R_MD, z=2.2, alpha=ac)
                 # 全行の実測幅から共通のラベル級数を1つ決める
                 r = _renderer(fig)
                 fam_l = [F.FONT_FAMILY, F.FONT_FALLBACK_FAMILY]
-                fs_lab = 28.0
+                fs_lab = 40.0
                 for la, _vb in rows:
                     wla = F.measure_w(fig, r, str(la), fs_lab, fam_l, F.FONT_WEIGHT)
-                    if wla > 0.215:            # カード幅 0.42 に合わせて調整
-                        fs_lab *= 0.215 / wla
+                    if wla > mw * 0.50:
+                        fs_lab *= (mw * 0.50) / wla
                 # 行のリズムは本編の表と同じ「罫なし・帯なし」に統一
                 # (2026-08-29 批評5周目: ヘアライン罫は本編の表に無い第3の
                 # リスト文法で、同じデータが別ジオメトリで再登場していた)。
@@ -713,9 +839,9 @@ def person_bubble(name: str, text: str, height: float = 0.45,
                     fig.text(mx + ins_l, yy, str(la), ha="left", va="center",
                              color=INK, fontsize=fs_lab, fontfamily=fam_l,
                              fontweight=F.FONT_WEIGHT, zorder=2.4, alpha=ai)
-                    big_number(fig, mx + mw - ins_r, yy, str(vb), 30.0,
+                    big_number(fig, mx + mw - ins_r, yy, str(vb), 42.0,
                                color=INK, t=1.0, count=False, z=2.4,
-                               max_w=mw * 0.5, alpha=ai, ha="right")
+                               max_w=mw * 0.44, alpha=ai, ha="right")
     return painter
 
 
@@ -751,77 +877,58 @@ def person_cards(name: str, labels, height: float = 0.44,
 
 def cover(line1: str, line2: str, line3: str, name: str = "01_base",
           disclaimer: str = "", count_from: str = "", badge_color: str = RED,
-          flip: bool = False, badge_sub: str = "", teaser: str = ""):
-    """カバー。**3段で役割を分け、最終行(赤バッジの中身)を最大にする**。
+          flip: bool = False, badge_sub: str = "", teaser: str = "",
+          alt_val: str = "", alt_lab: str = "", main_lab: str = ""):
+    """カバー。**タイル寸(72px)で読める要素だけを置く。**
 
-    2026-08-29 批評2周目の改修:
-    - 背景をオレンジの縦グラデから**本編と同じクリーム+ドット**に変更。
-      タップの前後で別ブランドに見える断絶を消す(角丸・影の言語も本編と共有)
-    - 1行目も**テロップと同じ4層縁取り**で描く。「素の文字」をカバーに置かない
-    - disclaimer: 仮定に基づく数字をカバーに出すときの打消し表示(戦略§6-2)
+    2026-08-30 厳格審査(thumbnail/high×4・medium×5・low×2)での全面改修:
 
-    2026-08-29 批評3周目の改修:
-    - バッジの登場を前倒し(t=0.10)。前半ほぼ半分が空の赤い板だった
-    - 数字は遅くとも t≈0.12 で着地し、以後は鼓動し続ける(完全凍結を無くす)
-    - バッジの高さ1.4倍・数字1.3倍。売り物の面積が画面高の約15%しか無かった
-
-    2026-08-29 批評5周目の改修:
-    - **y<0.08 の帯にはテキストを置かない**(Shorts実機のキャプション・
-      シークバー帯に掛かる)。打消し表示はバッジ直下のクリーム角丸プレートに
-      fontsize>=26 で載せる(素の22pt灰字はタイル寸で字高2px=実質不可視だった)
-    - 1行目の基準級数 56→76(タイル寸で判読できる字高に。9字前後に収める運用)
-    - バッジは常に中央合わせ(左右マージンが3px非対称だった分岐を除去)
-    - カウント窓を前倒し(t=0.12までに最終値着地。フィードの静止切り取りに
-      中途の値が晒される時間を尺の12%未満にする)
-    - 背景ドットは減光(縮小時のスペックルノイズ)。badge_color でAB検証可
-    - flip: 立ち絵を左右反転(視線・指先をバッジへ向ける構図用)
-
-    2026-08-29 批評6周目の全面改修:
-    - **サービス名は上帯のテキストをやめ、下帯の3チップ(白カード)に**。
-      72pxタイル寸で字高5.7pxに潰れ、Shorts再生UIの上部アイコン帯
-      (y40〜150px)にも刺さっていた。チップなら字高≈90pxで判読できる
-    - 問い(line2)を最上段 y=0.885 に置く。**y>0.92 と y<0.08 には
-      テキストを置かない**(上下のUI帯)
-    - バッジの影を本編カードと同じ drop_shadow() に統一(濃赤の
-      オフセット複製は縮小時に赤の二重輪郭に見えていた)
-    - 立ち絵は**胸上クロップ(crop="bust")で顔を拡大**し右へ寄せる。
-      下51%が無地のジャケットの塊で、顔が全高18%しか無かった。
-      視線は画面内側(チップ・バッジの側)を向く。下端は画面外に落とす
-    - 打消しプレートは不透明(旧 alpha0.92 は背後の髪がにじんだ)。
-      プレート・バッジ・頭頂の全ペアで**空き24px以上を assert**
-      (同じ衝突を3回目に持ち込まない)
+    - **下段のチップ3枚とティーザーを削除した。**実測の ink 高を72pxタイルに
+      換算すると ティーザー3.9px / 免責3.3px / Netflix 2.6px / Spotify 3.3px /
+      Amazonプライム 3.0px と、すべてトップの下限(8px)の半分以下だった。
+      この帯(画面高の32%)は「開く理由」を一切運ばず、赤バッジの下を
+      汚しているだけだった。
+    - 代わりに **alt_val(緑ブロック)** を1枚置く。既知(114万円=赤)と
+      未知(2??万円=緑)の非対称を作る。旧カバーは問いと答えが同じ画面に
+      あって好奇心の穴がゼロだった(しかも114万円は月額×360か月の
+      単純合計で、視聴者が暗算できる「驚かない数字」)。
+    - **立ち絵を画面下端までブリードさせる**(POSE_TOP - POSE_H <= 0)。
+      旧値は y0 = 0.500-0.46 = 0.040 で、draw_pose の「刈って下端まで
+      ブリードさせる」分岐が発火せず、y=1843 で水平に切られた下に
+      77px の無地クリームが残って「浮いたステッカー」に見えていた。
+    - **版面の左端を MARGIN の1本に統一**(旧: 赤バッジ22px / チップ30〜33px /
+      墨帯44px の3本)。バッジの脈動も左右対称に効く量へ落とす。
+    - **免責はバッジの外の最下部ストリップへ。**画面でいちばん高い
+      コントラストの帯の下1/4を、タイル寸で3.3pxの死荷重が占めていた。
+      判読はフルスクリーン再生時に成立していればよい(戦略§6-5)。
     """
-    # ---- 版面(すべて実測から決めた figure 座標)
-    # 縦の配分は「72pxタイルで字高8px以上」から逆算している。1080px幅で
-    # ink 120px を出すには CJK 1行あたり6字以下でなければ物理的に届かないので、
-    # フックは**2行**にし、帯の高さを2行ぶん取る(line2 は改行で渡す)。
-    HOOK_Y, HOOK_H = 0.745, 0.165        # 上端 0.910 < 1-UI_TOP_FRAC(0.915)
-    BADGE_Y, BADGE_H = 0.520, 0.190
-    TEASE_Y, TEASE_H = 0.446, 0.056
-    CHIP_X = 0.028
-    CHIP_BOT = 0.182                     # 最下段チップの下端(下から349px)
-    # 立ち絵: 目が右レール(x>=0.87)に入らず、かつチップ帯の行で
-    # 左シルエットがチップの文字(右端 0.403)より右に来る唯一の帯。
-    # 実測: 目=画像幅の 0.488/0.610、左シルエット=下段行で 0.187
-    POSE_TOP, POSE_H, POSE_CX = 0.500, 0.46, 0.74
+    # ---- 版面(左端はこの1つから引く)
+    MARGIN = 0.028
+    HOOK_Y, HOOK_H = 0.775, 0.135        # 上端 0.910 < 1-UI_TOP_FRAC(0.915)
+    BADGE_Y, BADGE_H = 0.585, 0.175      # 既知の額(赤)
+    ALT_Y, ALT_H = 0.400, 0.165          # 伏せている側(緑)
+    DISC_Y = 0.014                       # 最下部ストリップ(免責)
+    # 立ち絵は**画面下端までブリード**させる(y0 = POSE_TOP - POSE_H <= 0)。
+    # 旧値 0.500 / 0.46 は y0 = 0.040 で、draw_pose の「刈って下端まで
+    # ブリードさせる」分岐が発火せず、y=1843 で水平に切られた下に 77px の
+    # 無地クリームが残って「浮いたステッカー」に見えていた。
+    POSE_TOP, POSE_H, POSE_CX = 0.375, 0.400, 0.680
 
     def painter(fig, t):
         F.hide_chrome(fig)      # 帯・バッジは重ねない(背景のクリーム+ドットは残る)
         F.dim_dots(fig)         # 水玉はカバーだけ半減光(72px縮小でノイズになる)
-        services = [x for x in re.split(r"[・×]", line1) if x]
-        # ---- 1段目: フックは**墨の帯の上の白文字**(2026-08-30 thumbnail/high)。
-        # 白フィル+16pxの茶縁は、クリーム地に対しコントラスト比1.22:1で、
-        # 判読を縁だけが担保していた。72pxタイルに縮小すると縁が1px以下になり、
-        # 字が地に溶ける(実測 字高5.7px)。帯に載せれば 13:1 で縁が要らなくなる。
+        # ---- 1段目: フックは墨の帯の上の白文字(地とのCR 13:1)
         hook_lines = _hook_lines(fig, str(line2))
-        fs2 = min([S.fit_fontsize(fig, F.fmt_disp(ln), HOOK_FS_MAX, max_w=0.86)
+        fs2 = min([S.fit_fontsize(fig, F.fmt_disp(ln), HOOK_FS_MAX,
+                                  max_w=1 - 2 * MARGIN - 0.06)
                    for ln in hook_lines] or [HOOK_FS_MAX])
         p2 = _ease((t - 0.04) / 0.20)
         if p2 > 0.01:
             hs = 1.25 - 0.25 * p2
-            drop_shadow(fig, 0.5 - 0.46, HOOK_Y, 0.92, HOOK_H, r=R_MD, z=2.28)
+            hw_ = 1 - 2 * MARGIN
+            drop_shadow(fig, MARGIN, HOOK_Y, hw_, HOOK_H, r=R_MD, z=2.28)
             fig.add_artist(FancyBboxPatch(
-                (0.5 - 0.46, HOOK_Y), 0.92, HOOK_H,
+                (MARGIN, HOOK_Y), hw_, HOOK_H,
                 boxstyle=f"round,pad=0,rounding_size={R_MD}",
                 transform=fig.transFigure, facecolor=INK, edgecolor="none",
                 zorder=2.30, mutation_aspect=_ma()))
@@ -831,24 +938,45 @@ def cover(line1: str, line2: str, line3: str, name: str = "01_base",
                     - li * HOOK_LINE_H
                 S.text_fit(fig, 0.5, yy_h, F.fmt_disp(ln),
                            ha="center", va="center", color="#fff8ec",
-                           fontsize=fs2 * hs, max_w=0.86, zorder=2.34,
+                           fontsize=fs2 * hs, max_w=hw_ - 0.06, zorder=2.34,
                            fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        # ---- 2段目: 赤バッジ。数字・読み下し・打消しの3行を**バッジの中**に積む
-        # (2026-08-30 thumbnail/medium: 免責プレートは画面のいちばん高い帯を
-        #  コントラスト比1.16:1の死荷重で占めていた。赤地の上なら4:1以上が出る)
+        # ---- 2段目: 赤ブロック(既知の額)
         pb = _ease((t - 0.10) / 0.22)
+        bw = (1 - 2 * MARGIN)
         if pb > 0.01:
-            bs = beat(period=1.6, amp=0.014) if t > 0.55 else 1.0
-            bh = BADGE_H * bs
-            bw = 0.96 * pb * bs
-            # バッジは**常に中央合わせ**(2026-08-29 批評5周目)
-            bx, by = 0.5 - bw / 2, BADGE_Y - (bh - BADGE_H) / 2
-            drop_shadow(fig, bx, by, bw, bh, r=R_LG, z=2.34)
+            # **脈動は幅を動かさない**(2026-08-30 thumbnail/medium: beat の
+            # amp=0.014 で左端が 17〜22px のあいだを常時揺れ、44px 固定の
+            # フックとの段差が動いていた)。呼吸は数字の級数だけに乗せる。
+            bh = BADGE_H
+            bx, by = MARGIN, BADGE_Y
+            drop_shadow(fig, bx, by, bw * pb, bh, r=R_LG, z=2.34)
             fig.add_artist(FancyBboxPatch(
-                (bx, by), bw, bh, boxstyle=f"round,pad=0,rounding_size={R_LG}",
+                (bx, by), bw * pb, bh,
+                boxstyle=f"round,pad=0,rounding_size={R_LG}",
                 transform=fig.transFigure, facecolor=badge_color,
                 edgecolor="none", zorder=2.4, mutation_aspect=_ma()))
-            if pb > 0.55:
+            lab_h = 0.040 if main_lab else 0.0
+            if main_lab:
+                S.text_fit(fig, 0.5, by + bh - 0.030, F.fmt_disp(main_lab),
+                           ha="center", va="center", color="#ffffff",
+                           fontsize=34, max_w=bw - 0.10, zorder=2.5,
+                           alpha=0.88 * pb)
+            # **数字は板の現在幅に対して毎フレーム再フィットする**
+            # (2026-08-30 thumbnail/high・artdirection/high: 板の幅アニメと
+            #  文字組みが別々に計算されていて、t=0.20 では赤板 x106..973 に
+            #  対し白のグリフが x1006 まで伸び、33px ぶんが板の外の
+            #  クリーム地の上に白で乗っていた=CR 1.22:1 で消えかけていた)
+            # **数字の高さも板から逆算する**(ラベルと重ねない)。
+            # 係数は**実測**する(2026-08-30)。旧 0.62 は根拠のない仮定値で、
+            # 実際に描いて画素で測ると「114万円」は 0.889(漢字混じり)・
+            # 「114」は 0.745 だった。0.62 で割ると fs が 1.43倍過大になり、
+            # 数字がラベルに重なって出荷されかけた(カバー=第0フレーム=サムネ)。
+            # matplotlib の get_window_extent は行ボックス(比 1.000)を返すので、
+            # 重なりの判定には使えない。**描いて測るしかない。**
+            avail_h = bh - lab_h - 2 * 0.012
+            fs_cap = avail_h * S.H / (S.DPI / 72.0) / NUM_INK_RATIO
+            plate_in = bw * pb - 2 * 0.030
+            if plate_in > 0.10:
                 nb = beat(period=1.6) if t > 0.60 else 1.0
                 shown3 = line3
                 m1 = _NUM_RE.match(line3.replace(",", ""))
@@ -861,91 +989,77 @@ def cover(line1: str, line2: str, line3: str, name: str = "01_base",
                         vv = int(round(v0 + (v1 - v0)
                                        * _ease(max(0.0, (t - 0.03) / 0.09))))
                     shown3 = m1.group(1) + str(vv) + m1.group(3)
-                # 字高を約300px(画面高の15.6%)へ。旧 200pt/max_w0.84 では
-                # 222px(11.6%)しかなく、バッジ内部の充填率が51%だった
-                # 字高を約230px(バッジ内の充填率63%→上下余白が等しくなる位置)。
-                # 旧 200pt / by+bh/2-0.008 は、ディセンダを持たない数字組に
-                # 逆向きの光学補正を掛けていて、上余白125px対下余白84pxだった
-                big_number(fig, 0.5, BADGE_Y + 0.1135, shown3, 230 * nb,
-                           color="#ffffff", t=1.0, count=False,
-                           z=2.5, max_w=min(0.92, 0.88 * nb))
-            if badge_sub:
-                as_ = _ease((t - 0.30) / 0.18)
-                if as_ > 0.01:
-                    S.text_fit(fig, 0.5, BADGE_Y + 0.0175, F.fmt_disp(badge_sub),
-                               ha="center", va="center", color="#ffffff",
-                               fontsize=30, max_w=0.84, zorder=2.5,
-                               alpha=0.85 * as_)
-            elif disclaimer:
-                ad = _ease((t - 0.40) / 0.20)
-                if ad > 0.01:
-                    S.text_fit(fig, 0.5, BADGE_Y + 0.0175, disclaimer,
-                               ha="center", va="center", color="#ffffff",
-                               fontsize=26, max_w=0.84, zorder=2.5,
-                               alpha=0.78 * ad)
-        # ---- 3段目: 伏せている側を**絵で名指す**(2026-08-30 thumbnail/medium)。
-        # 旧カバーは支払う額・期間・対象がすべて開示済みで、「まだ見ていない何か」が
-        # 存在しなかった。赤=出ていく / 緑=まだ伏せている、の2枚組にする。
-        if teaser:
-            pt_ = _back((t - 0.34) / 0.22)
-            if pt_ > 0.01:
-                at_ = _ease((t - 0.34) / 0.16)
-                tw = 0.46
+                fs_n = _fit_num_fs(fig, shown3, fs_cap, plate_in) * nb
+                big_number(fig, 0.5, by + (bh - lab_h) / 2, shown3,
+                           fs_n, color="#ffffff", t=1.0, count=False,
+                           z=2.5, max_w=plate_in)
+        # ---- 3段目: 伏せている側(緑ブロック)。**既知と未知の非対称を作る**
+        if alt_val:
+            pa = _back((t - 0.30) / 0.24)
+            if pa > 0.01:
+                aa = _ease((t - 0.30) / 0.16)
                 fig.add_artist(FancyBboxPatch(
-                    (CHIP_X, TEASE_Y), tw, TEASE_H,
-                    boxstyle=f"round,pad=0,rounding_size={R_MD}",
+                    (MARGIN, ALT_Y), bw, ALT_H,
+                    boxstyle=f"round,pad=0,rounding_size={R_LG}",
                     transform=fig.transFigure, facecolor=GREEN_SOFT,
-                    edgecolor=GREEN, linewidth=3.0, zorder=2.3, alpha=at_,
+                    edgecolor=GREEN, linewidth=5.0, zorder=2.3, alpha=aa,
                     mutation_aspect=_ma()))
-                S.text_fit(fig, CHIP_X + tw / 2, TEASE_Y + TEASE_H / 2,
-                           F.fmt_disp(teaser), ha="center", va="center",
-                           color=GREEN_DARK, fontsize=44, max_w=tw - 0.05,
-                           zorder=2.35, alpha=at_,
-                           fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        # ---- キャラ。**右アクションレール(x 940〜1060)に目を置かない**
-        # (2026-08-30 thumbnail/high)。実測した目の位置(画像幅の 0.488 / 0.610)と
-        # 左シルエット(チップ帯の行で 0.19〜0.27)から、cx=0.74 / height=0.46 が
-        # 「目 787〜912px(レールの外)」かつ「チップの右端 0.428 より左に人物が来ない」
-        # を同時に満たす唯一の帯だった。両方の assert を末尾に置く。
+                lab_h2 = 0.040 if alt_lab else 0.0
+                if alt_lab:
+                    S.text_fit(fig, 0.5, ALT_Y + ALT_H - 0.030,
+                               F.fmt_disp(alt_lab), ha="center", va="center",
+                               color=GREEN_DARK, fontsize=34, max_w=bw - 0.10,
+                               zorder=2.35, alpha=aa)
+                inner = bw - 2 * 0.030
+                cap_a = ((ALT_H - lab_h2 - 2 * 0.012) * S.H
+                         / (S.DPI / 72.0) / NUM_INK_RATIO)
+                fs_a = _fit_num_fs(fig, alt_val, cap_a, inner)
+                big_number(fig, 0.5, ALT_Y + (ALT_H - lab_h2) / 2,
+                           alt_val, fs_a * (beat(period=1.6) if t > 0.6 else 1.0),
+                           color=GREEN_DARK, t=1.0, count=False, z=2.35,
+                           max_w=inner, alpha=aa)
+        # ---- 免責は最下部ストリップ(タイル寸で読める必要はない)
+        if disclaimer:
+            ad = _ease((t - 0.40) / 0.20)
+            if ad > 0.01:
+                # 立ち絵の上に素の灰字を置かない。地色の小板を1枚だけ敷く
+                # (タイル寸で読める必要はない。戦略§6-5 はフルスクリーンで満たす)
+                r_ = _renderer(fig)
+                fam_d = [F.FONT_FAMILY, F.FONT_FALLBACK_FAMILY]
+                wd = F.measure_w(fig, r_, disclaimer, 26, fam_d, F.FONT_WEIGHT)
+                pw_d, ph_d = min(0.86, wd + 0.040), 0.030
+                fig.add_artist(FancyBboxPatch(
+                    (0.5 - pw_d / 2, DISC_Y - ph_d / 2), pw_d, ph_d,
+                    boxstyle=f"round,pad=0,rounding_size={R_MD * 0.5}",
+                    transform=fig.transFigure, facecolor=F.CREAM,
+                    edgecolor="none", zorder=2.58, alpha=0.88 * ad,
+                    mutation_aspect=_ma()))
+                S.text_fit(fig, 0.5, DISC_Y, disclaimer, ha="center",
+                           va="center", color=INK, fontsize=26, max_w=0.80,
+                           zorder=2.6, alpha=0.62 * ad)
+        # ---- キャラ。目を右アクションレールの外に置く
         pc = _ease((t - 0.25) / 0.35)
         pose_top = POSE_TOP - 0.05 * (1 - pc)
         F.draw_pose(fig, name, cx=POSE_CX, top=pose_top, height=POSE_H,
                     fade=False, bob=True, flip=flip, crop="bust")
-        # ---- 4段目: サービス名チップ(本編1カット目と同じ部品・同じ並び順)
-        fs_c = chip_fs(fig, services)
-        for i, svc in enumerate(services):
-            pc_ = _back((t - 0.30 - i * 0.10) / 0.22)
-            if pc_ <= 0.01:
-                continue
-            a_c = _ease((t - 0.30 - i * 0.10) / 0.14)
-            yy = CHIP_BOT + (len(services) - 1 - i) * CHIP_STEP
-            service_chip(fig, CHIP_X, yy, svc, alpha=a_c,
-                         sc_=min(1.0, pc_), z=2.3, fs=fs_c)
-        # ---- 寸法検査。**全 t で走らせる**(pose_top はアニメ中 0.470 まで
-        # 上がるので、途中フレームのほうが上の要素に近づく)
+        # ---- 寸法検査。**全 t で走らせる**
         head_top = pose_top - _head_top_frac(name, flip) * POSE_H
-        gap_px = (BADGE_Y - head_top) * S.H
+        gap_px = ((ALT_Y if alt_val else BADGE_Y) - head_top) * S.H
         assert gap_px >= 24, (
-            f"カバー: バッジ下端と頭頂の空きが {gap_px:.0f}px。24px以上とること")
+            f"カバー: 下段ブロックの下端と頭頂の空きが {gap_px:.0f}px。24px以上とること")
         if t >= 0.99:
-            # (a) チップ帯が実機の下部スクリム(下端15%)に沈まないこと
-            assert CHIP_BOT * S.H >= 346, "カバー: 最下段チップが下部UI帯に沈む"
-            assert (CHIP_Y_TOP := CHIP_BOT + (len(services) - 1) * CHIP_STEP
-                    + CHIP_H) <= 1 - F.UI_TOP_FRAC, "カバー: チップが上部UI帯に掛かる"
-            # (b) 目が右アクションレール(x>=0.87)に入らないこと
-            eye_x = POSE_CX + (0.610 - 0.5) * POSE_H * _pose_aspect(name, flip) \
-                * (S.H / S.W)
-            assert eye_x < 0.87, f"カバー: 目が右レールに入る(x={eye_x:.3f})"
-            # (c) チップの文字が立ち絵に食われないこと
-            left = _pose_left_frac(name, flip, CHIP_BOT - pose_top,
-                                   CHIP_Y_TOP - pose_top, POSE_H)
-            pose_left = POSE_CX + (left - 0.5) * POSE_H \
-                * _pose_aspect(name, flip) * (S.H / S.W)
-            txt_right = CHIP_X + (CHIP_W + (CHIP_W - 0.05)) / 2
-            assert pose_left > txt_right, (
-                f"カバー: 立ち絵({pose_left:.3f})がチップの文字"
-                f"({txt_right:.3f})に掛かる")
-            # (d) フックが72pxタイルで判読できる字高を持つこと
+            # (a) 立ち絵が下端でブリードしていること(浮いたステッカーにしない)
+            assert POSE_TOP - POSE_H <= 0.0, (
+                "カバー: 立ち絵が下端でブリードしていない(浮いたステッカーになる)")
+            # (b) 目が右アクションレールに入らないこと。**実画素で測る**
+            # (2026-08-30 thumbnail/medium: 旧実装はアスペクトからの
+            #  モデル計算で、crop="bust" 後の実位置とずれていた)
+            aspect = _pose_aspect(name, flip)
+            pw = POSE_H * aspect * (S.H / S.W)
+            eye_x = POSE_CX - pw / 2 + pw * F.eye_x_frac(name, flip, "bust")
+            assert eye_x < F.UI_RAIL_X_FRAC, (
+                f"カバー: 目が右レールに入る(x={eye_x:.3f})")
+            # (c) フックが72pxタイルで判読できる字高を持つこと
             ink_px = fs2 * (S.DPI / 72.0) * 0.88
             assert ink_px * 72 / S.W >= 8.0, (
                 f"カバー: フックの字高が72pxタイルで {ink_px * 72 / S.W:.1f}px。"
@@ -1125,10 +1239,15 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
         def zx(v):
             return fcx + (v - fcx) * zk
 
-        dyt = float_dy()      # 表の塊ごとゆっくり流す(完全静止フレームを作らない)
-
+        # **パネルは動かさない**(2026-08-30 consistency/high)。
+        # 旧 `dyt = float_dy()` は表カードだけに掛かっていて、白パネルの上辺が
+        # 397〜408px を往復(p-p 11.5px)する一方、06/07/08/12/13/17 の非表
+        # カードは全フレームで 402px に完全固定だった。表→図・図→表のカット
+        # ごとに、同寸法・同色の白パネルが最大11px上下に跳んでいた。
+        # 「完全静止フレームを作らない」要件は、行ハイライトのリング alpha と
+        # ?,???円 の明滅(既存)で満たす。
         def zy(v):
-            return fcy + (v - fcy) * zk + dyt
+            return fcy + (v - fcy) * zk
 
         x_lab = zx(left + 0.045)      # ラベル列の共通の行頭
         x_val = zx(right - 0.06)      # 数値列の共通の右端
@@ -1143,12 +1262,17 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
         # 83-86 → 赤枠 87-91、右 赤枠 971-976 → band 977-980。角では8px)。
         # 以後、帯・罫・枠はすべて (fx0_b, fw_b) を基準にし、縦も frame() の
         # インセット(+0.005 / rh-0.010)より内側に入る (+0.004 / rh-0.008) に揃える。
-        pad_in = 0.010                 # カード内側の共通パディング(≒10.8px)
-        INS_V = 0.005                  # 帯・枠の共通の縦インセット(frame と同値。
-                                       # 帯の外縁が枠線(±2px)の内側に必ず入る)
+        # **インセットは四辺で同じ px**(2026-08-30 craft/medium)。
+        # 実測で左右10px・下5〜6px、角丸も表 r≈28px に対し合計行 r≈14px で、
+        # 表の下角に地色の三日月が残り、2本の別曲率のカーブが並んで見えていた。
+        # 縦は figure 座標が 1.78 倍伸びるので W/H を掛けて px を揃える。
+        ROW_INSET = 0.010                        # ≒10.8px(四辺共通)
+        pad_in = ROW_INSET
+        INS_V = ROW_INSET * (S.W / S.H)          # ≒10.8px(縦も同じ px)
         fx0_b = left + pad_in
         fw_b = (right - pad_in) - fx0_b
-        r_band = r_card * 0.5          # 帯の角丸はカードの角丸からの派生値
+        # **同心**にする: 内側の角丸 = 外側の角丸 − インセット
+        r_band = r_card - ROW_INSET
 
         def hband(y_b, h_b, a_b, color=HEAD_BG, z_b=2.05, x0_b=None, w_b=None):
             if x0_b is None:
@@ -1199,18 +1323,13 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
         def band(y_hl, a_hl, color=RED_SOFT, ring=None):
             # 帯は枠(fx0_b/fw_b)と**同一の矩形**(craft/high の露出はここが原因)
             hband(y_hl + INS_V, rh - 2 * INS_V, a_hl, color=color, z_b=2.06)
+            # **行頭の縦バーは廃止**(2026-08-30 consistency/high・
+            # artdirection/low)。同じ表・同じ行を指す強調が 01/02=墨リング、
+            # 03=左罫8px、04=赤リング、16=緑リングと4つの視覚言語に割れ、
+            # しかも 03 の縦バーは角が直角で行の上下で切れる「未読マーク」に
+            # 見えていた。**形は常にリング。変えるのは色だけ。**
             if ring is not None:
-                # **行頭の役割色ガター**(2026-08-30 retention/medium)。
-                # RED_SOFT(#f9e6dc)は白カード(#fffdf7)に対し輝度比1.16:1・
-                # 最大チャンネル差27で、背景ドットのドリフト振幅(20)と同水準。
-                # 表カットは動画の27%を占め、そのあいだこれが唯一の「指し棒」
-                # だった。幅9pxの縦バーを行頭に置けば最大差分が200以上になる。
-                g = plt.Rectangle((zx(fx0_b + 0.002), zy(y_hl + 0.006)),
-                                  0.008 * zk, (rh - 0.012) * zk,
-                                  transform=fig.transFigure, facecolor=ring,
-                                  edgecolor="none", zorder=2.07, alpha=a_hl)
-                g.set_clip_path(card_border.get_path(), card_border.get_transform())
-                fig.add_artist(g)
+                frame(y_hl, a_hl, EMPH_LW * zk, color=ring)
 
         def frame(y_hl, a_hl, lw, squash=1.0, color=RED):
             # 縦インセット 0.005 / hh=rh-0.010(2026-08-29 批評6周目:
@@ -1218,8 +1337,13 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
             # 赤+黒の8px帯に融合していた)
             hh = (rh - 2 * INS_V) * squash
             yy = y_hl + INS_V + (rh - 2 * INS_V - hh) / 2
+            # 行矩形の y と h をピクセルグリッドにスナップする
+            # (2026-08-30 consistency/low: 合計行に掛けたときだけ高さが1px多く
+            #  残り、01/02/16 の135px に対し 04 だけ136px になっていた)
+            y_px = round(zy(yy) * S.H)
+            h_px = round(hh * zk * S.H)
             fr = FancyBboxPatch(
-                (zx(fx0_b), zy(yy)), fw_b * zk, hh * zk,
+                (zx(fx0_b), y_px / S.H), fw_b * zk, h_px / S.H,
                 boxstyle=f"round,pad=0,rounding_size={r_band * zk:.4f}",
                 transform=fig.transFigure, facecolor="none",
                 edgecolor=color, linewidth=lw,
@@ -1230,10 +1354,12 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
         # 役割別のハイライト色(2026-08-29 批評6周目)。
         # warn=赤(損・警告) / neutral=墨リング+ベージュ地(単なる読み上げ位置)
         # keep=緑(止めて積む側に立った行)
-        ring_col = {"neutral": NEUTRAL_RING, "keep": GREEN}.get(hl_role, RED)
-        # 中立ハイライトの地は **NEUTRAL_SOFT**(HEAD_BG は見出し行・合計行と
-        # 同色で、ハイライトとして見えていなかった。2026-08-30 artdirection/medium)
-        band_col = {"neutral": NEUTRAL_SOFT, "keep": GREEN_SOFT}.get(hl_role, RED_SOFT)
+        # **色は2つだけ**(2026-08-30 consistency/high)。「読み上げ位置」も
+        # 「損の行」も同じ表の同じ行なので、色を分ける理由がない。
+        # 意味が反転する keep(止めて残す1行)だけが緑という例外。
+        # hl_role="neutral" は廃止し、赤に寄せる(呼び出し側が渡しても無視する)。
+        ring_col = GREEN if hl_role == "keep" else RED
+        band_col = GREEN_SOFT if hl_role == "keep" else RED_SOFT
         hb = max(0.0, math.sin(2 * math.pi * F.LAST_T / 1.8)) ** 3  # 鼓動位相
         # 第2の拍(2026-08-30 retention/high): ナレーション進行度72%で強調行の
         # 値が+8%ポップする。線幅・下線を足さずに、いま指している行を再宣言する
@@ -1332,8 +1458,10 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
                 # (2026-08-30 consistency/high: 黒罫5px → ベージュ4px →
                 #  赤リング6px の15px縞で、動画で最初の大リビール(3,162円)が
                 #  囲まれていた。罫とリングを二重に見せない)
+                # **区切り線をヒエラルキーの頂点に置かない**(2026-08-30
+                # artdirection/high: 6px の近黒罫が画面で最も太い線だった)
                 if hl_row != i:
-                    hrule(y0 + rh, INK, 3.5 * zk, alpha_r=ap)
+                    hrule(y0 + rh, INK, 2.5 * zk, alpha_r=0.5 * ap)
             wave_lit = False
             wave_dim, nxt = False, 0.0
             if highlight == "wave" and not is_total[i]:
@@ -1351,16 +1479,16 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
                 nxt = _ease((tn - 0.06 - (di + 1) * wave_step) / 0.25)
                 wave_dim = nxt > 0.01 and di < len(detail_idx) - 1
                 if aw > 0.01:
+                    # リングは**いま読んでいる行だけ**(sweep と同じ「1つの
+                    # 指し棒が行から行へ移る」文法にそろえる)
                     band(y0, min(1.0, aw) * (1.0 - 0.55 * nxt), color=wave_col,
-                         ring=(GREEN if wave_role == "keep" else RED))
-                    if wave_role == "keep":
-                        frame(y0, min(1.0, aw) * (1.0 - 0.55 * nxt),
-                              EMPH_LW * zk, squash=0.90, color=GREEN)
+                         ring=(None if wave_dim else
+                               (GREEN if wave_role == "keep" else RED)))
             hl = (hl_row == i)
             # dim は highlight が合計行でもマスクを保つ(問いのカットで枠を
             # 合計行へ滑らせても、開示は total_mode="red" のカットまで起きない)
             dim_total = (is_total[i] and total_mode == "dim")
-            emph_ink = {"neutral": INK, "keep": GREEN_DARK}.get(hl_role, RED)
+            emph_ink = GREEN_DARK if hl_role == "keep" else RED
             lab_color = emph_ink if hl else INK
             if dim_total:
                 # **ティーズセル(?,???円)の色は固定**(2026-08-30 consistency/medium)。
@@ -1464,31 +1592,46 @@ def timeline(start: int, empty: float, end: int, fill_label: str, gap_label: str
                                       transform=fig.transFigure, facecolor=fill_color,
                                       edgecolor="none", zorder=2.2,
                                       mutation_aspect=_ma()))
-        S.text_fit(fig, (x0 + xm) / 2, y + h / 2, fill_label, ha="center", va="center",
-                   color=fill_ink, fontsize=34, max_w=(xm - x0) * 0.92, zorder=2.4,
-                   alpha=_ease((t - 0.25) / 0.25))
+        # **ラベルは伸長中の実寸(xm_t)を基準に組む**(2026-08-30 retention/medium)。
+        # 最終幅 xm 基準で中央配置・サイズ決定していたため、伸長中は「払う」の
+        # 2字が白カードの上に白字で乗り、コントラスト比 1.02:1 で消えていた
+        # (3.31秒のカットの最初の約1.9秒)。帯からはみ出す瞬間が原理的に消える。
+        if xm_t - x0 > 0.06:
+            S.text_fit(fig, (x0 + xm_t) / 2, y + h / 2, fill_label, ha="center",
+                       va="center", color=fill_ink, fontsize=34,
+                       max_w=(xm_t - x0) * 0.92, zorder=2.4,
+                       alpha=_ease((p - 0.35) / 0.25))
         # **年齢キャレット**: 帯の先端の上に「いまどこまで来たか」を数で出す。
         # 2秒かけて 35 から 65 へ転がるので、尻まで情報が前進する
         # (2026-08-30 retention/high。カード内の49%が空白だった件も埋まる)
         age_now = int(round(start + (empty - start) * p))
+        # **キャレットと帯の先端を同じ x から引く**(2026-08-30 artdirection/high:
+        # 上端の 65歳 キャレットと下端の軸ブラケット右端が3pxずれていた)。
+        # 右端に寄ったときは右揃えにして、帯の右端と文字の右端をそろえる。
         a_car = _ease((t - 0.10) / 0.16)
-        cx_car = min(max(xm_t, x0 + 0.06), x1 - 0.06)
-        S.text_fit(fig, cx_car, y + h + 0.048, f"{age_now}歳", ha="center",
+        if xm_t > x1 - 0.10:
+            cx_car, ha_car = xm_t, "right"
+        elif xm_t < x0 + 0.10:
+            cx_car, ha_car = xm_t, "left"
+        else:
+            cx_car, ha_car = xm_t, "center"
+        S.text_fit(fig, cx_car, y + h + 0.048, f"{age_now}歳", ha=ha_car,
                    va="center", color=INK, fontsize=44 * beat(period=1.6, amp=0.06),
                    max_w=0.20, zorder=2.45, alpha=a_car,
                    fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        fig.add_artist(plt.Line2D([xm_t, xm_t], [y + h, y + h + 0.020],
+        xc_line = F.snap_x(xm_t, 3.0)
+        fig.add_artist(plt.Line2D([xc_line, xc_line], [y + h, y + h + 0.020],
                                   transform=fig.transFigure, color=INK,
                                   linewidth=3.0, zorder=2.45, alpha=a_car))
-        # 帯の先端の明るいキャップ。**着地後もここだけは呼吸する**
-        # (2026-08-30 retention/high: 塗り終わったあとの尻が完全静止だった)
-        fig.add_artist(FancyBboxPatch(
-            (xm_t - 0.016, y + 0.012), 0.014, h - 0.024,
-            boxstyle="round,pad=0,rounding_size=0.007",
-            transform=fig.transFigure,
-            facecolor=_mix(fill_color, "#ffffff", 0.45), edgecolor="none",
-            zorder=2.23, alpha=a_car * (0.45 + 0.55 * (0.5 + 0.5 * idle(period=1.1))),
-            mutation_aspect=_ma()))
+        # **帯の先端の明るいキャップは廃止**(2026-08-30 craft/high・
+        # consistency/high・artdirection/high が3人とも独立に指摘)。
+        # 実測で y=700/760/820 のいずれでも x=930〜944 が明色、その右
+        # x=945〜946 の2pxだけベース色に戻り、947で地色。つまり明色ピルは
+        # 帯の右端から2px内側で終わり、上下も約23pxずつ内側に浮いた角丸の
+        # 独立図形になっていた=等倍で見ると完全にUIのスクロールバー。
+        # 上からの光に対する縁のハイライトなら上辺に沿うはずで、右辺の内側に
+        # 縦の丸ピルが浮くのは物理的に説明がつかない。
+        # 着地後の非静止要件は、年齢キャレット(beat)と先端の三角波が満たす。
         if show_gap and t > 0.55:
             ag = _ease((t - 0.55) / 0.3)
             fig.add_artist(FancyBboxPatch((xm, y), x1 - xm, h,
@@ -1505,7 +1648,13 @@ def timeline(start: int, empty: float, end: int, fill_label: str, gap_label: str
         if x1 - xm < 0.26:
             mid_ha, mid_x = "right", xm - 0.012
         mid_lab = empty_label or f"{empty:g}歳"
-        ticks = [(f"{start}歳", x0, "left"), (mid_lab, mid_x, mid_ha)]
+        ticks = [(f"{start}歳", x0, "left")]
+        # **同じ値を1カットに2回出さない**(2026-08-30 consistency/low)。
+        # empty == end(帯が右端まで届く使い方)では、帯の先端の上に立つ
+        # 年齢キャレットが既に「65歳」を言っている。目盛の中央ラベルは
+        # その真下に同じ文字列を置いていて、読み手には別の情報に見えた。
+        if not (empty == end and not show_gap):
+            ticks.append((mid_lab, mid_x, mid_ha))
         # 端の目盛は、まだ塗っていない側があるときだけ出す。
         # empty == end(帯が右端まで届く使い方)では mid が端の目盛を兼ねる
         # (2026-08-29 批評5周目: 旧実装はラベル文字列の一致で伏せていたので、
@@ -1524,6 +1673,11 @@ def timeline(start: int, empty: float, end: int, fill_label: str, gap_label: str
                                       color=INK, linewidth=3.0, zorder=2.3))
             S.text_fit(fig, x, y - 0.058, lab, ha=ha, va="center",
                        color=AXIS_INK, fontsize=AXIS_FS, max_w=0.26, zorder=2.4)
+        if empty == end and not show_gap:
+            # ラベルを落とした右端にも刻みは残す(軸の両端を示す)
+            fig.add_artist(plt.Line2D([F.snap_x(xm, 3.0)] * 2, [y - 0.030, y],
+                                      transform=fig.transFigure,
+                                      color=INK, linewidth=3.0, zorder=2.3))
         head_title(fig, title, t)
     return painter
 
@@ -1592,8 +1746,7 @@ def formula(line: str, note: str = "", name: str = "02_point", answer: str = "",
             top, bot = 0.495, 0.320
             fs_num = 60
             sc = 0.88 + 0.12 * _back(t / 0.30)
-            card(fig, CARD_L, bot, CARD_R - CARD_L, top - bot, edge=RED,
-                 lw=EMPH_LW, r=0.028, z=2.2, sc=sc)
+            card(fig, CARD_L, bot, CARD_R - CARD_L, top - bot, r=0.028, z=2.2, sc=sc)
             cy = (top + bot) / 2 + (0.030 if note else 0.0)
             toks = [x for x in re.split(r"\s*([÷×+−=])\s*", line.strip()) if x]
             if answer:
@@ -1671,8 +1824,12 @@ def formula(line: str, note: str = "", name: str = "02_point", answer: str = "",
         cyf = (top + bot) / 2
         y1, y2 = (cyf + 0.062, cyf - 0.052) if answer else (cyf + 0.048, cyf - 0.047)
         sc = 0.88 + 0.12 * _back(t / 0.30)
-        card(fig, CARD_L, bot, CARD_R - CARD_L, top - bot, edge=emph,
-             lw=EMPH_LW, r=0.028, z=2.2, sc=sc)
+        # **カード枠は全部品共通(枠なし+影)**(2026-08-30 consistency/medium・
+        # artdirection/high)。formula を使ったカットにだけ赤/緑の5px枠が付き、
+        # 「どの関数が描いたか」が画面に出ているだけで視聴者側の意味とは
+        # 対応していなかった(08の360回も17の1,080円も枠なし)。
+        # 「結論」の合図は答えの数字の色と着地ポップが既に担っている。
+        card(fig, CARD_L, bot, CARD_R - CARD_L, top - bot, r=0.028, z=2.2, sc=sc)
         fs1 = 64.0
         fs_op = fs1 * 0.60
         toks = [x for x in re.split(r"\s*([÷×+−=])\s*", line.strip()) if x]
@@ -1713,16 +1870,20 @@ def formula(line: str, note: str = "", name: str = "02_point", answer: str = "",
         # 下段: 答え(または note)。式の1.6倍・赤。カードの下半分を埋める
         st2 = FORMULA_ANS_ST
         a2 = _ease((t - st2) / 0.16)
-        if answer and t < st2 + 0.04:
+        if answer and t < st2 + 0.034:
             # 答えの予告「= ?」。1行目の着地直後から定位置でふわっと待ち、
             # スタンプ開始で即座に退場する(次に何かが起こる予告を絶やさない。
             # 2026-08-29 批評4周目。退場を引き延ばすと答えと二重写しになる)
+            # **カウント開始と同時に0へ落とす**(2026-08-30 retention/low)。
+            # 旧実装は答えの立ち上がりと退場の窓が重なり、09_shiki1 の t0.20 で
+            # カウント中の「9万円」の背後に「?」の残像が重なって、薄いピンクの
+            # 数字と灰色のグリフが混ざった判読不能の塊になっていた。
             aq = _ease((t - 0.16) / 0.14) * 0.35
             qs = 1.0
             if t >= st2:
-                uo = (t - st2) / 0.04
-                qs = 1.0 + 0.30 * uo
-                aq *= max(0.0, 1.0 - uo)
+                uo = (t - st2) / 0.10
+                qs = 1.0 + 0.30 * min(1.0, uo)
+                aq *= max(0.0, 1.0 - 3.0 * uo)
             if aq > 0.01:
                 fig.text(0.5, y2 + 0.005 * idle(period=0.9), "= ?",
                          ha="center", va="center", color=SUB,
@@ -1808,6 +1969,48 @@ def formula(line: str, note: str = "", name: str = "02_point", answer: str = "",
     return painter
 
 
+def _top_round_path(x, y, w, h, r):
+    """**上2角だけ角丸**の矩形パスを1枚で作る。
+
+    2026-08-30 craft/high: 角丸の FancyBboxPatch に、下角を潰すための素の
+    plt.Rectangle を重ねていたため、13/18/11 のすべての棒で右辺が基線から
+    26px上(y=1019)でちょうど1pxジャンプしていた(前者は mutation_aspect で
+    スケールを往復するので、右辺の亜ピクセル位置が後者とずれる)。
+    2つの図形の継ぎ目である以上、線幅や座標では消せない。**1図形にする。**
+    """
+    from matplotlib.path import Path
+    r = max(0.0, min(r, w / 2.0))
+    ry = r * (S.W / S.H)
+    ry = min(ry, h)
+    verts = [(x, y), (x, y + h - ry)]
+    codes = [Path.MOVETO, Path.LINETO]
+    verts += [(x, y + h), (x + r, y + h)]
+    codes += [Path.CURVE3, Path.CURVE3]
+    verts += [(x + w - r, y + h)]
+    codes += [Path.LINETO]
+    verts += [(x + w, y + h), (x + w, y + h - ry)]
+    codes += [Path.CURVE3, Path.CURVE3]
+    verts += [(x + w, y), (x, y)]
+    codes += [Path.LINETO, Path.CLOSEPOLY]
+    return Path(verts, codes)
+
+
+def bars_progress(t: float) -> float:
+    """棒の伸長とカウントアップが共有する**唯一の**進行度。
+
+    2026-08-30 craft/high: 棒の高さは `_back_soft(t/0.90)`、ラベルの数値は
+    `1-(1-t/0.90)^1.7` と別の曲線で駆動していたため、13_fueru では
+    x=700 の緑棒が t=0.50 で最終高(630px)に着いているのに、同じフレームの
+    ラベルはまだ「214万円」(最終値263の81%)だった。カットの後半ずっと、
+    263万円の高さの棒に214万円と書いてある状態が画面に出ていた。
+    さらに t=0.80 の 622px は最終より8px高いオーバーシュートで、値が着地した
+    あとに理由のない揺り戻しが起きていた(「増える」を語るカットの
+    最後の可視モーションが下向き)。
+    **高さも桁も、この1つの関数からしか引かない。**
+    """
+    return _ease(min(1.0, max(0.0, t / BARS_WIN)))
+
+
 def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
          tease=None, gain=None, ghost=None):
     """棒。items = [(見出し, 値, 棒の上の語句), ...]
@@ -1850,7 +2053,10 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
         役割なしの棒   = 面 WARM_GRAY / ラベル SUB
     """
     vals = [it[1] for it in items]
-    topval = ymax or max(vals) * 1.22
+    # **既定は「表示中の最大値 × 1.10」**(2026-08-30 artdirection/medium)。
+    # 旧 1.22 では、11_tsumu(ymax を fueru に合わせて固定)で表示中の最大値が
+    # 114万しかないのに上に305pxの空洞ができ、グラフが壊れたように見えていた。
+    topval = ymax or max(vals) * 1.10
     n = len(items)
     # **着地を t=0.90 まで引き延ばす**(2026-08-30 retention/high)。
     # 旧 WIN=0.72 + 三次イーズアウトでは、実測で棒高が t0.20 で最終比90%、
@@ -1867,19 +2073,23 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
         # ずれ、基線の外側余白97px・内側148pxで棒が過大な横罫の上に浮いていた)。
         # 基線は「最外の棒の外縁 ± 棒幅の1/2」に切り詰める。
         x0i, x1i = 0.16, 0.84
-        # 棒の領域はカードの高さを使い切る(固定パネルの死んだ余白を減らす)
-        y0, y1 = 0.455, 0.720
+        # 棒の領域はカードの高さを使い切る(固定パネルの死んだ余白を減らす)。
+        # 上端は板の上端から **0.10 × 板の高さ**(2026-08-30 artdirection/medium:
+        # 棒の上に136〜305pxの空きが出ていた。これで73px前後にそろう)
+        y0, y1 = 0.455, CARD_TOP - 0.10 * (CARD_TOP - CARD_BOT)
         slot = (x1i - x0i) / n
         bw = slot * 0.60
         # **外側余白 = 内側余白 / 2** を規約にする(2026-08-30 consistency/low)。
         # 棒はスロット中心に置いてあるので、基線を x0i..x1i に取ると
         # 外側 (slot-bw)/2 ・内側 (slot-bw) でこの比が自動的に出る
-        base_l, base_r = x0i, x1i
-        # **棒の伸長は緩いバック**(2026-08-30 retention/medium)。
-        # ease_out_back(1.70158)は t≈0.40〜0.45 に最終比+8.1%の頂点を作り、
-        # そこから窓の30%かけて縮んでいた。「増える」を見せるカットの最後の
-        # 可視モーションが下方向になっていた。
-        p = _back_soft(t / WIN)
+        # 基線は**カード内幅いっぱい**まで伸ばす(2026-08-30 artdirection/medium:
+        # 旧 x=170..910 は板(74..1006)に対し左右に100pxずつ白を残し、
+        # 軸が途中で切れた未完成の図に見えていた)
+        base_l, base_r = CARD_L + 0.02, CARD_R - 0.02
+        # **伸長とカウントは同一の進行度**(2026-08-30 craft/high)。
+        # オーバーシュートは廃止する(窓の後半に下向きの動きを置かない)。
+        # 着地の勢いは、着地フレームだけの上向きインパルス(pop_i)で作る。
+        p = bars_progress(t)
         hb = max(0.0, math.sin(2 * math.pi * F.LAST_T / 1.8)) ** 3   # 鼓動位相
         fam = [F.NUM_FAMILY]
         # ゴースト棒(前カットの値)。丸ドットの輪郭+薄いラベル
@@ -1929,6 +2139,14 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
             a, b = to_rgba(c1), to_rgba(c2)
             return tuple(a[i] * (1 - u) + b[i] * u for i in range(4))
 
+        def bar_alpha(idx, hl_idx):
+            """非強調の表現は**色ではなく alpha**(2026-08-30 consistency/high)。
+            11→13 のカット替わりで、同じ「ただ貯める=114万円」の棒が
+            #b32020 から #c0726a へ跳び、視聴者には「別の棒」に見えていた。"""
+            if hl_idx == idx:
+                return 1.0
+            return FADE_A if gain is not None else 1.0
+
         def bar_color(idx, hl_idx):
             # 役割ベース(2026-08-29 批評4周目): gain の文法があるカットでは、
             # 損側の棒は非強調でも褪せた赤(RED_FADE)を返す。同じ114万円が
@@ -1939,7 +2157,7 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
             if hl_idx == idx:
                 return GREEN if gain == idx else RED
             if gain is not None and gain != idx:
-                return RED_FADE
+                return RED          # 色は同じ。弱めるのは alpha だけ
             return WARM_GRAY
 
         for i, item in enumerate(items):
@@ -1950,9 +2168,11 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
             hl_now = (highlight == i)
             teased = (tease == i)
             col = bar_color(i, highlight)
+            a_bar = bar_alpha(i, highlight)
             if prev_highlight is not None and prev_highlight != highlight:
                 u = _ease(t / 0.35)
                 col = mix(bar_color(i, prev_highlight), col, u)
+                a_bar = bar_alpha(i, prev_highlight) * (1 - u) + a_bar * u
             if teased:
                 # 予告棒はドローオンで立ち上がる(既知棒の即置きの後)
                 p_i = _ease((t - 0.15) / 0.30)
@@ -1965,6 +2185,20 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
             land_i = WIN if cnt else 0.20
             pop_i = max(0.0, 1.0 - (t - land_i) / 0.10) if t > land_i else 0.0
             h = (v / topval) * (y1 - y0) * p_i
+            if teased:
+                # **予告棒の高さは自分の値から作らない**(答えを絵で漏らさない)。
+                # 既知の棒の高さを出発点にする。
+                v_ref = max([it[1] for j, it in enumerate(items) if j != i]
+                            or [v])
+                h = (v_ref / topval) * (y1 - y0) * p_i
+                # **「どこまで伸びるか分からない」を動きで語る**(2026-08-30
+                # retention/medium)。旧実装は答えの棒と同じ高さで止めていたので、
+                # カード内の上側79%が3.15秒ずっと空白で、動いているのは
+                # 緑の「?」1文字だけだった。基準の高さと枠の85%のあいだを
+                # 三角波(速度一定)で往復させる。着地した高さは1度も見せないので、
+                # 次カットのリビールは温存できる。
+                h_hi = 0.92 * (y1 - y0)
+                h = h + (h_hi - h) * (0.5 + 0.5 * tri(period=1.4)) * p_i
             if hl_now:
                 # 着地の瞬間に20px級で跳ね、以後は1〜2pxの呼吸
                 h *= 1.0 + 0.020 * pop_i + (0.004 * hb if t >= land_i else 0.0)
@@ -1991,15 +2225,13 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
                 # drop_shadow の clip_y で基線より下を描かない
                 rs = min(0.012, h * 0.45)
                 drop_shadow(fig, cx - bw / 2, y0, bw, h, r=rs, z=2.08, clip_y=y0)
-                fig.add_artist(FancyBboxPatch(
-                    (cx - bw / 2, y0), bw, h,
-                    boxstyle=f"round,pad=0,rounding_size={rs:.4f}",
+                # **上角だけ角丸の1図形**(craft/high)。角丸パッチ+埋め矩形の
+                # 2図形をやめたので、右辺に継ぎ目のノッチが原理的に出ない。
+                # 非強調は**色を変えず alpha を落とす**(consistency/high)。
+                fig.add_artist(PathPatch(
+                    _top_round_path(cx - bw / 2, y0, bw, h, rs),
                     transform=fig.transFigure, facecolor=col,
-                    edgecolor="none", zorder=2.1, mutation_aspect=_ma()))
-                # 下角の丸みは矩形で埋めて「上角だけ丸い棒」にする
-                fig.add_artist(plt.Rectangle((cx - bw / 2, y0), bw, min(h, rs * 1.2),
-                                             transform=fig.transFigure, facecolor=col,
-                                             edgecolor="none", zorder=2.1))
+                    edgecolor="none", zorder=2.1, alpha=a_bar))
             # 値ラベル: 棒の頭に密着してカウントアップ(棒の頂点到達と同フレーム)
             m = _NUM_RE.match(note or "")
             if teased:
@@ -2008,8 +2240,8 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
                 pre, digits, suf = m.groups()
                 # **big_number と同じ緩い指数**(t=0.8 で9割・t=1.0 で満)。
                 # 三次イーズアウトは前倒しが強すぎて、残り時間が判別不能だった
-                u_c = min(1.0, max(0.0, t / WIN))
-                val = int(round(int(digits) * (1.0 - (1.0 - u_c) ** 1.7)))
+                # 棒の高さと**同一の関数・同一の区間**(craft/high)
+                val = int(round(int(digits) * bars_progress(t)))
                 if t >= WIN:
                     val = int(digits)
                 shown = pre + (f"{val:,}" if len(digits) >= 4 else str(val)) + suf
@@ -2036,6 +2268,28 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
                              alpha=_ease((t - 0.42) / 0.10)
                              * (0.875 + 0.125 * puls))
             elif hl_now:
+                # **第2の拍**(2026-08-30 retention/high)。18_hitotsu2 は
+                # 「あなたが積む約39万円が、約90万円になる」= 視聴者の行動の
+                # ペイオフなのに、0.2→0.5→0.8→1.0 の図の変化画素が
+                # 0.75%/0.03%/0.18% で3.94秒がほぼ静止画だった。
+                # ナレーション進行度で、尻に2つ拍を置く。
+                tn_b = _prog(t)
+                pop_b = (1.0 + 0.12 * max(0.0, 1.0 - (tn_b - 0.72) / 0.10)
+                         if tn_b >= 0.72 else 1.0)
+                if tn_b >= 0.85:
+                    usw = _ease((tn_b - 0.85) / 0.10)
+                    if 0.0 < usw < 1.0:
+                        # 棒頭を左→右へ明色の帯が1回走る
+                        bwid = bw * 0.34
+                        bx0 = cx - bw / 2 + (bw - bwid) * usw
+                        fig.add_artist(PathPatch(
+                            _top_round_path(bx0, max(y0, y0 + h - 0.030),
+                                            bwid, min(h, 0.030),
+                                            min(0.010, h * 0.45)),
+                            transform=fig.transFigure,
+                            facecolor=_mix(col, "#ffffff", 0.45),
+                            edgecolor="none", zorder=2.12,
+                            alpha=0.75 * math.sin(math.pi * usw)))
                 # **着地ポップ**(2026-08-30 retention/high)。旧実装は
                 # `fs_v *= 1.0 + 0.032*hb` だけで、hb はユニットに同期しない
                 # 1.8秒周期のグローバル時計。着地の瞬間にインパルスが立たず、
@@ -2051,15 +2305,24 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
                     v_col = _mix(v_col, "#ffffff", 0.35 * pop_i)
                 if t > land:
                     fs_v *= 1.0 + 0.012 * math.sin(2 * math.pi * F.LAST_T / 0.9)
+                fs_v *= pop_b
+                # **棒の上に載せるラベルはブロック中央揃え**(consistency/high)。
+                # 既定の「数字部分の中心」規則は単独ヒーロー数字には正しいが、
+                # 対象物の上に載せるラベルでは「万円」のサイドベアリングぶん
+                # ブロック全体が右へ押し出され、実測で棒中心から +15〜45px
+                # ずれていた(しかも量だけばらついた)。
                 big_number(fig, cx, y_v + 0.020, shown, fs_v, color=v_col,
                            t=1.0, count=False, z=2.4, max_w=slot * 1.02,
-                           path_effects=_halo(60))
+                           path_effects=_halo(60), align_on="block")
             else:
                 # 非強調の級数 36→44(最大値の棒に最小の文字、の逆転を緩和)。
                 # gain の文法があるカットの損側は褪せ赤の文字(色の同一性)
-                c_lab = LOSS_INK if (gain is not None and gain != i) else SUB
+                # 非強調のラベルも**同じ役割色**。差は級数と alpha だけ
+                c_lab = RED if (gain is not None and gain != i) else SUB
                 big_number(fig, cx, y_v + 0.015, shown, 44.0, color=c_lab,
-                           t=1.0, count=False, z=2.4, max_w=slot * 1.02)
+                           t=1.0, count=False, z=2.4, max_w=slot * 1.02,
+                           alpha=(FADE_A + 0.25) if gain is not None else 1.0,
+                           align_on="block")
             S.text_fit(fig, cx, y0 - 0.020, lab, ha="center", va="top",
                        color=AXIS_INK, fontsize=AXIS_FS, max_w=slot * 0.96,
                        zorder=2.4)
@@ -2072,8 +2335,25 @@ def bars(items, highlight=None, title="", ymax=None, prev_highlight=None,
     return painter
 
 
+# **カード内の充填目標**(2026-08-30 artdirection/high・medium)。
+# 実測で図カードの 58〜63% が空白の白、しかも縦200px・横21px という
+# 10倍の非対称パディングになっていた。級数は「幅だけのフィット」ではなく
+# **高さを主・幅を上限**として決める。
+# さらに級数は**文字列長ではなく役割**で決める: 短い文字列ほど大きくなる
+# 旧規則のせいで、二次的な参照値(360回・1,080円)が動画の結論(114万円)の
+# 2〜3倍の大きさで描かれていた。
+# 実測での ink 高: conclusion ≒ 200px / reference ≒ 150px。
+# 長い文字列は幅で頭打ちになるので、**参照値の上限を絶対値として低く置く**
+# のでなければ「短い文字列ほど大きい」の逆転は消えない
+# (08「360回」300px > 結論「114万円」130px という実測がその症状だった)。
+FILL_TARGET_H = 0.72       # 結論の数字。実際は幅(MAX_W_FRAC)で頭打ちになる
+REF_TARGET_H = 0.32        # 参照値。**必ず結論より小さくなる高さ**に固定する
+MAX_W_FRAC = 0.90          # 数字が占めてよいカード幅の割合
+
+
 def hero(main: str, sub: str = "", name: str = "01_base", stamp: bool = False,
-         caption: str = "", role: str = "loss", count: bool = True):
+         caption: str = "", role: str = "loss", count: bool = True,
+         size: str = "conclusion"):
     """大きい数字を1つ。**キャラを上、数字を白いカードで下**に置く。
 
     name=None にすると数字だけになる(figure が主役の場面用)。
@@ -2117,16 +2397,20 @@ def hero(main: str, sub: str = "", name: str = "01_base", stamp: bool = False,
             # 08_kikan が y1105 と、同じ役割のパネルの下端が5種類に割れていた。
             # 数字が小さく見えるのが問題なら**級数の上限を上げてパネルを埋める**。
             top, bot = CARD_TOP, CARD_BOT
-            fs = _fit_num_fs(fig, main, 340.0, 0.86)
-            fs = min(fs, (top - bot) * 0.62 * S.H * 72 / S.DPI)
+            # 高さを主・幅を上限にする(artdirection/high)
+            tgt = REF_TARGET_H if size == "reference" else FILL_TARGET_H
+            fs = (top - bot) * tgt * S.H * 72 / S.DPI
+            fs = _fit_num_fs(fig, main, fs, MAX_W_FRAC)
             head = 0.0
             # 文脈見出しはカードの外(上の帯を埋め、視線アンカーを揃える)。
             # count=False のヒーローは見出しを遅延ポップさせて第2拍を作る
             # (2026-08-29 批評6周目: 行動提案の核が静止カード1枚だった)
-            if count:
-                head_title(fig, sub, t)
-            else:
-                head_title(fig, sub, max(0.0, (_prog(t) - 0.50) * 3.0))
+            # **見出しの遅延ポップは count に関係なく掛ける**(2026-08-30
+            # retention/medium: hero カードの数字は進行度0.20で既に最終寸法に
+            # 達し、以降は知覚閾値以下の揺れだけだった)。
+            head_title(fig, sub, max(0.0, (_prog(t) - 0.35) * 2.2))
+        # 尻の第2の拍: 数字そのものは動かさず、下線を0.15秒でスイープさせる
+        tn_h = _prog(t)
         sc = 0.85 + 0.15 * _back(t / 0.30)
         dx = 0.0
         if stamp and 0.32 < t < 0.55:
@@ -2145,6 +2429,26 @@ def hero(main: str, sub: str = "", name: str = "01_base", stamp: bool = False,
                 S.text_fit(fig, 0.5, bot + 0.052, F.fmt_disp(caption), ha="center",
                            va="center", color=F.DISCLAIM, fontsize=26, max_w=0.78,
                            zorder=2.4, alpha=ac)
+        if not name:
+            # **数字の下に役割色のルールを1本置く**(2026-08-30
+            # artdirection/high・medium)。ヒーローカードは中身に対して大きく、
+            # 実測でカード面の 58〜63% が空白の白だった。しかも画面の
+            # トーンレンジが無く(輝度80未満の画素が1.0〜3.6%)、役割色が
+            # 「数字の色」としてしか存在しなかった。数字の幅に合わせた
+            # 6px のルールは、余白を締めつつ役割色を図として立てる。
+            # **尻の第2の拍**(retention/medium)は、このルールを
+            # 進行度0.70〜0.82で左→右へ描き足すことで作る(数字は動かさない)。
+            y_rule = cy - (top - bot) * 0.26
+            w_rule = 0.5 * min(1.0, max(0.0, (tn_h - 0.20) / 0.25)) \
+                if tn_h < 0.45 else 0.5
+            if tn_h >= 0.70:
+                w_rule = 0.5 + 0.10 * _ease((tn_h - 0.70) / 0.12)
+            if w_rule > 0.01:
+                fig.add_artist(plt.Line2D(
+                    [0.5 - w_rule / 2, 0.5 + w_rule / 2],
+                    [F.snap_y(y_rule, 6.0)] * 2,
+                    transform=fig.transFigure, color=hero_col, linewidth=6.0,
+                    solid_capstyle="round", zorder=2.35, alpha=0.85))
         # 鼓動は fs と max_w を同率で伸ばす(幅いっぱいの数字でも脈が見える)
         b = beat() if t > 0.60 else 1.0
         if stamp:
@@ -2203,7 +2507,10 @@ def arrow(left_val: str, right_val: str, left_lab: str = "", right_lab: str = ""
     # artdirection/medium)。支払いの答えを見せるカットで、最も視覚重量の
     # ある要素が #2c2c2c の中実ポリゴン(152×90px)になっていて、
     # 263万円(#4d7a33)よりコントラストが高く、最初に目が行くのが方向記号だった。
-    a_col = arrow_color or (INK if accent == "arrow" else WARM_GRAY)
+    # **連結記号の色は専用トークン**(2026-08-30 craft/high)。地紋と同じ
+    # #b9ae99 は白カードに対し 2.1:1 しか無く、論旨を運ぶ記号を置いてよい
+    # 濃さではなかった。強調は色ではなく太さで表す(既存の分岐のまま)。
+    a_col = arrow_color or CONNECT
 
     def painter(fig, t):
         head_title(fig, title, t)
@@ -2241,14 +2548,16 @@ def arrow(left_val: str, right_val: str, left_lab: str = "", right_lab: str = ""
                 fs_r = fs_l
         # 左箱。role="gain" のとき左は損側の実体なので、非強調でも赤の気配
         # (褪せた赤の縁・文字)を残す(赤=出ていく側、の文法を切らさない)
-        l_edge, l_ink = ((LOSS_EDGE, LOSS_INK) if role == "gain"
+        # 損側は**同じ赤のまま alpha で弱める**(2026-08-30 consistency/high)
+        l_edge, l_ink = ((RED, RED) if role == "gain"
                          else (CARD_EDGE_STRONG, SUB))
+        a_fade = FADE_A if role == "gain" else 1.0
         a_l = _ease(t / 0.16)
-        card(fig, xl, cy - hb / 2, wl, hb, edge=l_edge, lw=EMPH_LW,
-             r=0.022, z=2.2, alpha=a_l)
+        card(fig, xl, cy - hb / 2, wl, hb, edge=l_edge, lw=FADE_LW,
+             r=0.022, z=2.2, alpha=a_l * a_fade)
         big_number(fig, xl + wl / 2, cy + 0.008, left_val, fs_l, color=l_ink,
                    t=1.0, count=False, z=2.4, max_w=wl * 0.80 if is_word
-                   else wl - 0.05, alpha=a_l)
+                   else wl - 0.05, alpha=a_l * min(1.0, a_fade + 0.25))
         # 矢印: 左箱の着地後、左→右へドローオン(先端の比率は崩れない)。
         # **左右のクリアランスを実描画端で揃える**(2026-08-30 craft/high:
         # 実測で左14px・右24pxの非対称になっていた)
@@ -2310,6 +2619,20 @@ def arrow(left_val: str, right_val: str, left_lab: str = "", right_lab: str = ""
                 hl_, hw, sh = hl_ * 1.3, hw * 1.3, sh * 1.3
             xs = max(x0, xe - hl_)
             _arrow_patch(fig, x0, xs, xe, cy, sh, hw, a_col, z=2.5)
+            # **第2の拍**(2026-08-30 retention/medium): 進行度70%以降、
+            # 矢印の内側を明色のチップが左→右へ1回走る(0.25秒)。
+            tn_a = _prog(t)
+            if 0.70 <= tn_a < 0.90:
+                ua = _ease((tn_a - 0.70) / 0.12)
+                cw_ = (x1 - x0) * 0.22
+                cx_ = x0 + (x1 - x0 - cw_) * ua
+                fig.add_artist(FancyBboxPatch(
+                    (cx_, cy - sh), cw_, 2 * sh,
+                    boxstyle="round,pad=0,rounding_size=0.006",
+                    transform=fig.transFigure,
+                    facecolor=_mix(a_col, "#ffffff", 0.45), edgecolor="none",
+                    zorder=2.52, alpha=0.35 * math.sin(math.pi * ua),
+                    mutation_aspect=_ma()))
         # **左の値が矢印に乗って右へ飛ぶ**(2026-08-30 retention/medium)。
         # 「同じ3162円が、積む側に変わる。」という変換を語るカットで、絵は
         # 静止した2箱+静止した矢印だった(t0.50→t0.80 の変化画素0.396%、
@@ -2366,7 +2689,10 @@ def _relation_glyph(fig, cx, cy, kind: str, size: float, color, z=2.45):
 
     size は箱の高さに対する固定比で渡す(compare は 0.42*hb)。
     """
-    lw = 9.0
+    # 線幅は左右の箱の枠(EMPH_LW=4pt≒5px)と同系の 8px(=6pt)に落とし、
+    # 端点を round にして「記号」に見せる(2026-08-30 craft/high:
+    # 太さ18pxのベタ塗りで、記号ではなく面に見えていた)
+    lw = 6.0
     dy = size / 2
     dx = dy * (S.H / S.W) * 0.72
     sgn = 1.0 if kind == "lt" else -1.0
@@ -2379,8 +2705,16 @@ def _relation_glyph(fig, cx, cy, kind: str, size: float, color, z=2.45):
                               solid_capstyle="round", zorder=z))
 
 
+def _role_edge(role: str):
+    """左右の箱の縁色を**1つの関数から**取る(2026-08-30 consistency/medium)。
+    06 の右箱(中立の参照物)と 14 の右箱(積む側)で縁の言語が割れていた。"""
+    return {"loss": RED, "gain": GREEN, "neutral": CARD_EDGE_STRONG}.get(
+        role, CARD_EDGE_STRONG)
+
+
 def compare(left_val: str, right_word: str, left_lab: str = "",
-            right_lab: str = "", title: str = "", role: str = "neutral"):
+            right_lab: str = "", title: str = "", role: str = "neutral",
+            emph_side: str = "left"):
     """左=数字、右=比較対象(語)の並置比較。あいだに「<」を置く。
 
     role="loss": 左の数字を褪せ赤(LOSS_INK)にする(2026-08-29 批評6周目:
@@ -2397,33 +2731,56 @@ def compare(left_val: str, right_word: str, left_lab: str = "",
         card(fig, CARD_L, CARD_BOT, CARD_R - CARD_L, CARD_TOP - CARD_BOT,
              r=0.028, z=2.0)
         cy = (CARD_TOP + CARD_BOT) / 2 + 0.016
-        # 内箱の左右マージンを広げる(2026-08-30 artdirection/high:
-        # 箱がカード壁から23pxしか離れておらず、箱間157pxとの比が1:3.7だった)
+        # **左右の箱を1つの定数から引き、カード中心を基準に置く**
+        # (2026-08-30 craft/low: 左マージン48px・右マージン46pxで塊が2.5px
+        #  左に寄り、左箱 w=340・右箱 w=338 と幅も2px違っていた。左端から
+        #  積んでいたため丸めが片側に寄る)。
         wl, hb = 0.31, 0.16
-        xl, xr = 0.105, 0.895 - wl
+        gap_c = 0.17                       # 2箱のあいだ(記号が入る)
+        total_c = 2 * wl + gap_c
+        xl = F.snap_x(0.5 - total_c / 2, EMPH_LW)
+        xr = F.snap_x(xl + wl + gap_c, EMPH_LW)
+        cy = F.snap_y(cy, EMPH_LW)
         # 左(数字)は即置き。開示済みの数字なのでカウントしない
         a_l = _ease(t / 0.16)
         fs_l = _fit_num_fs(fig, left_val, 96.0, wl - 0.06)
-        l_ink = LOSS_INK if role == "loss" else INK
-        l_edge = LOSS_EDGE if role == "loss" else CARD_EDGE_STRONG
-        card(fig, xl, cy - hb / 2, wl, hb, edge=l_edge, lw=EMPH_LW,
-             r=0.022, z=2.2, alpha=a_l)
+        # **主題の側は非強調にしない**(2026-08-30 consistency/high)。
+        # 06 は主題が 105円 なのに、role="loss" だと左箱が褪せトーンで
+        # 描かれていた。emph_side でどちらを強調するかを明示する。
+        l_emph = emph_side == "left"
+        l_ink = (RED if role == "loss" else INK)
+        l_edge = _role_edge(role if role != "neutral" else "neutral")
+        card(fig, xl, cy - hb / 2, wl, hb, edge=l_edge,
+             lw=EMPH_LW if l_emph else FADE_LW,
+             r=0.022, z=2.2, alpha=a_l * (1.0 if l_emph else FADE_A))
         big_number(fig, xl + wl / 2, cy + 0.006, left_val, fs_l, color=l_ink,
-                   t=1.0, count=False, z=2.4, max_w=wl - 0.06, alpha=a_l)
+                   t=1.0, count=False, z=2.4, max_w=wl - 0.06,
+                   alpha=a_l * (1.0 if l_emph else FADE_A + 0.25))
         # 関係記号。**arrow() と同じ図形ヘルパーから描く**(2026-08-30
         # consistency/low: 06 は活字の「<」(高さ約60px・影なし)、14 は161px幅の
         # 黒ベタ矢印(角丸ゼロ・影なし)で、同じ「左箱→記号→右箱」の系列なのに
         # 一方が文字・一方が図形だった)
+        # **記号は地紋の色を使わない**(2026-08-30 craft/high)。
+        # 「<」と「→」はどちらも実測 #B9AE99 = fplib.dotted_rect の既定色=
+        # 背景の水玉と同一の hex で、カード白に対するコントラスト比は約2.1:1。
+        # 非文字グラフィックの下限3:1を下回り、フレーム内で最も弱い要素が
+        # 最も重要な意味を担っていた。専用トークン CONNECT(約4.3:1)にする。
+        # 記号の y は**箱の cy をそのまま使う**(別の y を持たせない)。
         a_m = _ease((t - 0.30) / 0.14)
         if a_m > 0.01:
             stamp = 1.0 + 0.4 * (1 - _ease((t - 0.30) / 0.20))
-            _relation_glyph(fig, 0.5, cy, "lt", hb * 0.42 * stamp, WARM_GRAY)
+            tn_c = _prog(t)
+            sway = 0.012 * tri(period=1.2) if tn_c >= 0.70 else 0.0
+            _relation_glyph(fig, 0.5 + sway, cy, "lt", hb * 0.42 * stamp, CONNECT)
         # 右(比較対象の語)がポップイン=このカットの主役の動き
         pr = _back((t - 0.40) / 0.22)
         if pr > 0.01:
             a_r = _ease((t - 0.40) / 0.14)
             b = beat() if t > 0.85 else 1.0
-            card(fig, xr, cy - hb / 2, wl, hb, edge=CARD_EDGE_STRONG, lw=EMPH_LW,
+            r_emph = emph_side == "right"
+            card(fig, xr, cy - hb / 2, wl, hb,
+                 edge=_role_edge("neutral" if role == "loss" else role),
+                 lw=EMPH_LW if r_emph else FADE_LW,
                  r=0.022, z=2.2, sc=min(1.0, pr))
             fs_r = _fit_num_fs(fig, right_word, 96.0, wl - 0.08)
             big_number(fig, xr + wl / 2, cy + 0.006, right_word, fs_r * b,
@@ -2433,9 +2790,14 @@ def compare(left_val: str, right_word: str, left_lab: str = "",
         for x0b, lab, al in ((xl, left_lab, a_l),
                              (xr, right_lab, _ease((t - 0.46) / 0.14))):
             if lab and al > 0.01:
-                S.text_fit(fig, x0b + wl / 2, cy - hb / 2 - 0.042, lab,
+                # ラベルはカード下辺から 0.06 の位置(上下の余白を対称にする。
+                # 2026-08-30 retention/medium: カード下部の約35%が空白だった)
+                tn_l = _prog(t)
+                pl = (1.0 + 0.10 * max(0.0, 1.0 - (tn_l - 0.70) / 0.12)
+                      if tn_l >= 0.70 else 1.0)
+                S.text_fit(fig, x0b + wl / 2, CARD_BOT + 0.060, lab,
                            ha="center", va="center", color=AXIS_INK,
-                           fontsize=AXIS_FS, max_w=wl + 0.04, zorder=2.4,
+                           fontsize=AXIS_FS * pl, max_w=wl + 0.04, zorder=2.4,
                            alpha=al)
     return painter
 
@@ -2497,24 +2859,25 @@ def cta(line: str, name: str = "02_point", show_button: bool = False,
                 # (2026-08-30 consistency/medium: 同じ吹き出し部品なのに
                 #  幅-8%・高さ-25%ちがっていた)
                 bw, bh = BUBBLE_W, BUBBLE_H
-                # 右端は 0.95 まで(実機の右レール x>0.888 にUI要素を置かない
-                # 規約は守りつつ、吹き出しは話者の隣に置く)
-                bx, by = 0.95 - bw, 0.615
+                # 右端は BUBBLE_R に固定(consistency/medium: 同じ部品の
+                # 左端が 64px / 71px でずれていた)
+                bx, by = BUBBLE_R - bw, 0.615
                 cxb = bx + bw / 2
                 cyb = by + bh / 2 + 0.002 * idle(period=1.1)
                 bw2, bh2 = bw * s, bh * s
                 x_b, y_b = cxb - bw2 / 2, cyb - bh2 / 2
                 # **しっぽ込みで1本の閉じた輪郭**(craft/high)。上辺に差し込む
                 # ので、bubble_path を上下反転した座標で作る
-                from matplotlib.transforms import Affine2D
-                # しっぽは**短く**して話者の側へ向ける(長い槍だと
-                # 「旗」に見えて吹き出しの語彙から外れる)
-                tail = [(cxb - bw2 * 0.36, y_b), (cxb - bw2 * 0.42,
-                                                  y_b - 0.026 * s),
-                        (cxb - bw2 * 0.14, y_b)]
-                path = F.bubble_path(x_b, y_b, bw2, bh2, 0.030 * s, tail)
-                path = path.transformed(
-                    Affine2D().translate(0, -cyb).scale(1, -1).translate(0, cyb))
+                # **しっぽは話者の口を向く**(2026-08-30 craft/high・
+                # artdirection/medium)。旧実装はキャラの頭の左上の空
+                # (約 x=628, y=478)を指していて、話者と発話が結び付かず、
+                # 先端も2辺の端点が別座標のバットキャップで、輪郭が閉じない
+                # まま髪に埋まって V字が開いて見えていた。
+                # 口の位置は実画素から採り(F.mouth_xy)、先端は1点で閉じる。
+                mouth = F.mouth_xy(name, 0.40, POSE_TOP_STD, 0.45)
+                tip = F.tail_tip((x_b, cyb), mouth, max_len=0.048)
+                path = F.bubble_path(x_b, y_b, bw2, bh2, 0.030 * s,
+                                     tip=tip, side="left")
                 drop_shadow(fig, x_b, y_b, bw2, bh2, r=0.030, z=2.49)
                 fig.add_artist(PathPatch(
                     path, transform=fig.transFigure, facecolor=CARD,
@@ -2546,7 +2909,7 @@ def cta(line: str, name: str = "02_point", show_button: bool = False,
                     (chx, chy), chw, chh,
                     boxstyle=f"round,pad=0,rounding_size={R_MD}",
                     transform=fig.transFigure,
-                    facecolor=_mix(F.BAND_INK, CARD, mixv),
+                    facecolor=_mix(INK, CARD, mixv),
                     edgecolor="none", zorder=2.58, mutation_aspect=_ma()))
                 S.text_fit(fig, chx + chw / 2, chy + chh / 2, "コメント",
                            ha="center", va="center", color=F.CREAM,

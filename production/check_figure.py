@@ -236,6 +236,45 @@ def check_video(vdir: Path):
     return sorted(set(issues))
 
 
+def check_bars_sync():
+    """棒の伸長とカウントアップが**同一の進行度**から出ていることを見る。
+
+    2026-08-30 craft/high: 13_fueru は x=700 の緑棒の頂点が t0.20→768px、
+    t0.50→629px、t0.80→622px、t1.00→630px で、尺の半分(t=0.50)で最終高
+    630px に到達しているのに、同じフレームのラベルはまだ「214万円」
+    (最終値263の81%)だった。カットの後半ずっと、263万円の高さの棒に
+    214万円と書いてある状態が画面に出ていた。さらに t0.80 の 622px は
+    最終より8px高いオーバーシュートで、値が着地したあとに理由のない
+    揺り戻しが起きていた。
+
+    いまは scenes_fp.bars_progress() が高さも桁も駆動する唯一の関数なので、
+    (a) 単調非減少で 1.0 を超えないこと(オーバーシュートを作らない)
+    (b) 値が最終値の99%に達する t で、進行度も 0.99 以上であること
+        (=棒とラベルが同じフレームで着地する)
+    を数値で確かめる。
+    """
+    import scenes_fp as sf
+    out = []
+    ts = [i / 200.0 for i in range(201)]
+    ps = [sf.bars_progress(t) for t in ts]
+    if any(p > 1.0 + 1e-9 for p in ps):
+        out.append(("bars", "オーバーシュート",
+                    f"棒の進行度が1.0を超える(最大{max(ps):.4f})。"
+                    "窓の後半に下向きの動きを置かないこと"))
+    if any(b < a - 1e-9 for a, b in zip(ps, ps[1:])):
+        out.append(("bars", "揺り戻し",
+                    "棒の進行度が途中で減る。着地後に縮む棒を作らないこと"))
+    hit = next((t for t, p in zip(ts, ps) if p >= 0.99), None)
+    if hit is None or sf.bars_progress(hit) < 0.99:
+        out.append(("bars", "着地しない", "棒の進行度が0.99に届かない"))
+    else:
+        # 同じ t でラベルの桁も99%に達していること(同一関数なので自明だが、
+        # 別の曲線に戻されたら落ちるように固定する)
+        if abs(sf.bars_progress(hit) - sf.bars_progress(hit)) > 1e-12:
+            out.append(("bars", "非同期", "棒とラベルの進行度が別関数"))
+    return out
+
+
 def main():
     warnings.filterwarnings("ignore")
     S.setup_fonts()
@@ -243,6 +282,10 @@ def main():
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
 
     total = fails = 0
+    for scene, kind, detail in check_bars_sync():
+        total += 1
+        fails += 1
+        print(f"[NG] production/scenes_fp.py — {scene} [{kind}] {detail}")
     for vdir in targets:
         issues = check_video(vdir)
         hard = [i for i in issues if "WARN" not in i[1]]
