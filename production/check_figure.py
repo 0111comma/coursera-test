@@ -203,6 +203,11 @@ def check_video(vdir: Path):
         for t in body:
             if _is_number_label(t):
                 continue      # 数値ラベルの重なりは規則6が要求しているもの
+            if not re.search(r"[ぁ-ん]", t):
+                # ひらがなを含まない文字列(「Amazonプライム」等の固有名詞ラベル)は
+                # Mayer の言う「図の中の文」ではない。正式名は声で一度言う原則
+                # (作文原則10)と衝突するので、冗長判定から外す(2026-08-29)
+                continue
             if len(t) >= 10 and _overlap_ratio(t, subtitle) >= REDUNDANT_RATIO:
                 issues.append((u.scene, "冗長",
                                f"字幕とほぼ同義: 図「{t[:18]}」/ 字幕「{subtitle[:18]}」"))

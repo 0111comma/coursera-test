@@ -60,6 +60,9 @@ if __name__ == "__main__":
 
     print(f"\n1日あたり: {MONTHLY:,} ÷ {DAYS_PER_MONTH} = {DAILY:.0f}円")
     print(f"{START_AGE}歳→{END_AGE}歳 = {END_AGE - START_AGE}年 = {MONTHS}か月")
+    # 台本は「月3162円を、360回。」と**回数**でも言う(2026-08-29 審査6周目。
+    # 期間(30年)と回数(360回)で役割を分けた)。360回 = 360か月 = 毎月1回の支払い
+    print(f"払う回数: 月1回 × {MONTHS}か月 = {MONTHS}回")
     print(f"出したお金: {MONTHLY:,} × {MONTHS} = {PRINCIPAL:,}円")
     assert MONTHS == 360 and PRINCIPAL == 1_138_320, (MONTHS, PRINCIPAL)
 

@@ -61,10 +61,11 @@ CREAM = "#f3e7d3"          # 背景。明るさ 0.75 前後
 DOT = "#f9f1e3"            # 背景のドット。地との差を2倍に(2026-08-29 批評5周目。
                            # #f6ecdb は差が小さすぎ、ドリフトが知覚不能で
                            # 「完全静止フレームを作らない」の設計意図を満たせなかった)
-BAND = "#f8cf5a"           # 上部のタイトル帯(下側)。2026-08-29 批評5周目:
-                           # 帯が全フレームで最高彩度・最大面積となり、各カットの
-                           # 結論(赤・緑の数字)より先に目を引いていた → 15%減彩
-BAND_LO = "#eeaf3b"        # 帯の上側。**縦のグラデーション**にする(同・15%減彩)
+BAND = "#f2e3c4"           # 上部のタイトル帯(下側)。2026-08-29 批評6周目:
+                           # 15%減彩でもまだ全24ユニットで画面内最高彩度を維持し、
+                           # 各カットの結論(赤・緑の数字)より目立っていた →
+                           # **ベージュ系に落とし、常設UIをヒエラルキーの底へ**
+BAND_LO = "#efd9a8"        # 帯の上側。**縦のグラデーション**にする(ベージュ系)
 BAND_INK = "#3b2c10"       # 帯の文字
 TELOP = "#ffffff"          # テロップの本文
 TELOP_EMPH = "#ffb020"     # テロップの強調(数字)。#ffd93d は帯(#f9cb45)と同色相で
@@ -101,7 +102,9 @@ def use_fp_theme(title: str, speaker: int = 108, badge: str = ""):
     S.SUB_WRAP = 11
     S.SUB_BLOCK_FIT = 0.86
     S.SUB_LINE_H = 0.052
-    S.SUBTITLE_Y = 0.235
+    # 0.235 → 0.266(2026-08-29 批評6周目)。カード下端(0.40)と字幕上端の
+    # あいだに約300pxの無情報帯が全ユニット固定で空いていた。60px詰める
+    S.SUBTITLE_Y = 0.266
     S.STROKE_EDGE = TELOP_EDGE
     S.STROKE_SHADOW = TELOP_SHADOW
     S.new_canvas = _canvas
@@ -222,17 +225,30 @@ def _canvas(t_global: float = 0.0):
     step = 0.042
     r = 0.0068
     ystep = step * (S.W / S.H)
-    xoff = (t_global * 0.012) % step
+    # **ドリフトは鼓動位相に同期して 0.7〜1.3 倍で揺らす**(2026-08-29 批評6周目)。
+    # 等速の一様ノイズは着地や開示の瞬間にも同じ速度で流れ、アクセントが
+    # 背景に埋まっていた。big_number の鼓動(1.8秒周期)と同じ位相で
+    # 加減速する時間ワープを掛ける(位置は連続なのでカット間で跳ばない)
+    t_drift = t_global + (0.3 * 1.8 / (2 * math.pi)) * math.sin(
+        2 * math.pi * t_global / 1.8)
+    xoff = (t_drift * 0.012) % step
+    # **帯の下の注記帯(y>0.90)にはドットを置かない**(2026-08-29 批評6周目)。
+    # (a) 注記の文字裏に明色ドットの斑が入って読みにくい
+    # (b) ドリフトするドットが帯下端に触れ、常設UIのエッジが
+    #     ユニット切替のたびに明滅して見えた
+    # 帯・注記の常設ゾーンは全カットでピクセル同一に保つ
+    dot_ceiling = 0.90
     j = 0
-    y = -ystep + (t_global * 0.020) % ystep
+    y = -ystep + (t_drift * 0.020) % ystep
     while y < 1.0 + ystep:
         x = (j % 2) * step / 2 - step + xoff
         while x < 1.0:
             # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
             # 楕円で縦横比を打ち消して、競合と同じ真円にする
-            e = Ellipse((x, y), 2 * r, 2 * r * S.W / S.H, color=DOT, zorder=-9)
-            e.set_gid(DOT_GID)
-            ax.add_patch(e)
+            if y < dot_ceiling:
+                e = Ellipse((x, y), 2 * r, 2 * r * S.W / S.H, color=DOT, zorder=-9)
+                e.set_gid(DOT_GID)
+                ax.add_patch(e)
             x += step
         y += ystep
         j += 1
@@ -241,24 +257,26 @@ def _canvas(t_global: float = 0.0):
     # 図のゲート(figure/align/overlap)の集計から外す。印が無いと
     # 「15字以上の文字列が2個」が全ユニットで鳴り、本当の指摘が埋もれる
     from matplotlib.colors import LinearSegmentedColormap
-    # 帯は 0.098→0.075 に詰め、彩度も15%落とした(BAND/BAND_LO)。
-    # 常設のチャンネル名がヒエラルキーの頂点になっていた(2026-08-29 批評5周目)
-    h = 0.075
+    # 帯は 0.075→0.052(約140px→100px)に詰め、色もベージュ系に落とした
+    # (2026-08-29 批評6周目)。オレンジグラデ+白抜きポップ体の常設帯が
+    # 全ユニットで画面内最高彩度を維持し、各カットの結論より目立っていた。
+    # タイトル文字も白抜き+縁取り → 墨色プレーンに格下げする
+    h = 0.052
     bax = fig.add_axes([0, 1 - h, 1, h], zorder=3.0)
     bax.imshow(np.linspace(1, 0, 64).reshape(-1, 1), aspect="auto", extent=(0, 1, 0, 1),
                cmap=LinearSegmentedColormap.from_list("fpband", [BAND_LO, BAND]))
     bax.axis("off")
     bax.set_gid(CHROME_GID)
     if TITLE:
-        # 白抜き + 濃い縁 + 影(競合と同じ)。濃い字を黄色に乗せるより遠くで読める
         S.text_fit(fig, 0.5, 1 - h / 2, fmt_disp(TITLE), ha="center", va="center",
-                   color="#ffffff", fontsize=38, max_w=0.92, zorder=3.1,
-                   path_effects=S.stroke_fx("#ffffff", outline=6.0)).set_gid(CHROME_GID)
+                   color=BAND_INK, fontsize=32, max_w=0.92,
+                   zorder=3.1).set_gid(CHROME_GID)
     if BADGE:
         # 仮定の明示。**画面のどこかに常に出しておく**(戦略§6-2)。
         # max_w はカード幅(0.06〜0.94)に合わせる(2026-08-29 批評4周目:
-        # 注記だけ左右マージン約0.03でカードより外に走り、揃え辺が1本ずれていた)
-        S.text_fit(fig, 0.5, 1 - h - 0.026, BADGE, ha="center", va="center",
+        # 注記だけ左右マージン約0.03でカードより外に走り、揃え辺が1本ずれていた)。
+        # 注記の帯(y>0.90)はドットを描かないので、地は常に無地のクリーム
+        S.text_fit(fig, 0.5, 1 - h - 0.030, BADGE, ha="center", va="center",
                    color=DISCLAIM, fontsize=26,
                    max_w=0.88, zorder=3.1).set_gid(BADGE_GID)
     return fig
@@ -374,6 +392,16 @@ def _words(text: str) -> list[tuple[str, bool]]:
                 or (head == "名詞" and sub == "サ変接続" and prev[:2] == ("名詞", "数"))
                 or (head == "名詞" and sub == "数" and prev[0] == "名詞"
                     and len(prev[2]) == 1)
+                # 接頭詞(「約」「同」など)の直後は必ず繋げる(2026-08-29 批評6周目)。
+                # 「約」が1字の孤立語になると nobreak の連鎖で
+                # 「出した約39万円が、約90万円に。」が1行に固まり、
+                # 字幕が縮小率70%を割っていた
+                or prev[0] == "接頭詞"
+                # 欧文ブランド+カタカナの複合名(Amazon+プライム)は1語にする。
+                # 割れると行の折り返しが「Amazon / プライム」で泣き別れる
+                or (head == "名詞" and prev[0] == "名詞"
+                    and _ASCII_WORD.match(prev[2] or "")
+                    and re.match(r"^[ァ-ヴー]+$", tk.surface))
             )
             if out and not out[-1][1] and glue:
                 out[-1] = (out[-1][0] + tk.surface, False)
@@ -623,8 +651,9 @@ def _save_frame(fig, path: Path, facecolor: str = None):
 
 # ---------------------------------------------------------------- キャラ
 
-def pose(name: str, fade: bool = True, flip: bool = False) -> Image.Image:
-    key = (name, fade, flip)
+def pose(name: str, fade: bool = True, flip: bool = False,
+         crop: str | None = None) -> Image.Image:
+    key = (name, fade, flip, crop)
     if key not in _POSE_CACHE:
         p = POSE_DIR / f"{name}.png"
         if not p.exists():
@@ -640,37 +669,59 @@ def pose(name: str, fade: bool = True, flip: bool = False) -> Image.Image:
         box = im.getchannel("A").point(lambda v: 255 if v > 8 else 0).getbbox()
         if box:
             im = im.crop(box)
+        if crop == "bust":
+            # 胸上でクロップ(カバーの顔拡大用。2026-08-29 批評6周目)
+            im = im.crop((0, 0, im.width, int(im.height * 0.62)))
+        # **1024px原本の暫定シャープ化**(2026-08-29 批評6周目)。
+        # 描画高さ880〜1100pxへの拡大で線画エッジが3〜4pxぼけていた。
+        # 恒久対応は 2048px 以上での再生成(assets/character/ の差し替え)。
+        # それまでは LANCZOS 2倍 + 弱いアンシャープで補間ボケだけ抑える
+        if im.width < 2048:
+            from PIL import ImageFilter
+            im = im.resize((im.width * 2, im.height * 2), Image.LANCZOS)
+            im = im.filter(ImageFilter.UnsharpMask(radius=2.2, percent=90,
+                                                   threshold=2))
         _POSE_CACHE[key] = _fade_bottom(im) if fade else im
     return _POSE_CACHE[key]
 
 
-def _fade_bottom(im: Image.Image, frac: float = 0.07) -> Image.Image:
-    """絵の下端を透明へ落とす。
+def _fade_bottom(im: Image.Image, frac: float = 0.10) -> Image.Image:
+    """絵の裾を**楕円のソフトマスク**で切る。
 
-    素材は腰のあたりで真横に切れているので、そのまま置くと
-    ドットの背景の上に**硬い水平の切り口**が出る(2026-08-23の見比べ)。
+    素材は腰のあたりで真横に切れている。矩形の直線グラデで消すと
+    「消え際の帯」が水平線として視認できた(2026-08-29 批評6周目)。
+    裾の境界を下に膨らむ楕円弧にし、フェード幅も列ごとに変えることで、
+    切り口が直線として読めないようにする。
     """
     a = np.asarray(im.getchannel("A"), dtype=np.float32)
-    h = a.shape[0]
-    n = max(1, int(h * frac))
-    ramp = np.linspace(1.0, 0.0, n, dtype=np.float32)[:, None]
-    a[h - n:] *= ramp
+    h, w = a.shape
+    n = max(2, int(h * frac))
+    xs = np.linspace(-1.0, 1.0, w, dtype=np.float32)
+    # 楕円弧: 中央がいちばん下まで残り、端は早めに消える(弧の深さ=n*0.9)
+    edge = (h - 1) - n * 0.9 * (xs ** 2)      # 列ごとの「完全に消える」行
+    rows = np.arange(h, dtype=np.float32)[:, None]
+    start = edge[None, :] - n                 # ここからフェード開始
+    m = np.clip((edge[None, :] - rows) / n, 0.0, 1.0)
+    m[rows < start] = 1.0
+    # 端に行くほどフェードを柔らかく(直線の等高線を作らない)
+    a *= m ** (1.0 + 0.6 * np.abs(xs)[None, :])
     out = im.copy()
-    out.putalpha(Image.fromarray(a.astype("uint8"), mode="L"))
+    out.putalpha(Image.fromarray(np.clip(a, 0, 255).astype("uint8"), mode="L"))
     return out
 
 
 def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float = 0.46,
               scale: float = 1.0, fade: bool = True, bob: bool = True,
-              flip: bool = False):
+              flip: bool = False, crop: str | None = None):
     """キャラを図の上に置く。**画面中央に大きく**(競合の型)。
 
     top は絵の上端(figure座標)、height は絵の高さ(figure座標)。
     bob: 動画内時刻(LAST_T)でごく小さく上下にゆらす(2026-08-29 批評ループ。
     完全静止の立ち絵は画面の6割を「死んだ時間」にする)。振幅は0.004以下。
     flip: 左右反転(視線・指先の向きを構図に合わせる)。
+    crop: "bust" で胸上クロップ(カバーの顔拡大用)。
     """
-    im = pose(name, fade=fade, flip=flip)
+    im = pose(name, fade=fade, flip=flip, crop=crop)
     h = height * scale
     w = h * (im.width / im.height) * (S.H / S.W)
     dy = dx = 0.0
@@ -686,7 +737,17 @@ def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float 
         im = im.crop((0, 0, im.width, max(1, int(im.height * keep))))
         h = h * keep
         y0 = 0.0
-    ax = fig.add_axes([cx - w / 2 + dx, y0, w, h], zorder=2.0)
+    # 左右も同じ(2026-08-29 批評6周目: カバーの胸上クロップは横に広く、
+    # 軸が画面外へはみ出して check_overlap の「画面外(左右)」に掛かる)
+    x0 = cx - w / 2 + dx
+    lf = max(0.0, -x0 / w)
+    rf = max(0.0, (x0 + w - 1.0) / w)
+    if lf > 0.0005 or rf > 0.0005:
+        im = im.crop((int(im.width * lf), 0,
+                      im.width - int(im.width * rf), im.height))
+        x0 = x0 + w * lf
+        w = w * (1.0 - lf - rf)
+    ax = fig.add_axes([x0, y0, w, h], zorder=2.0)
     ax.imshow(np.asarray(im))
     ax.axis("off")
     return ax

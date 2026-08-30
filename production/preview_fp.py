@@ -75,15 +75,22 @@ def main():
             painters.append((cov, "_cover"))
         for painter, suffix in painters:
             for t in ts:
-                # カバーも動画内時刻を渡す(LAST_T=0固定だと呼吸・鼓動が
-                # 全部止まり、検収で「完全静止」と誤診される。2026-08-29)
-                t_unit = (0.07 if not suffix else 0.0) + min(u.anim, d_est) * t
+                # **--t はユニットの実時間(推定尺)に対する進行度**(2026-08-29
+                # 批評6周目)。旧実装は anim 窓(約1秒)しか見ておらず、
+                # 「ナレーション後半の静止」が下見で検収できなかった。
+                # painter へ渡す t は本番と同じく anim 窓の進行度(1.0で飽和)
+                anim = max(0.05, min(u.anim, d_est) or d_est)
+                head = 0.07 if not suffix else 0.0
+                t_unit = head + (d_est - head) * t
+                t_anim = min(1.0, max(0.0, (t_unit - head) / anim))
+                if suffix:
+                    t_anim = t          # カバーは従来どおり素の t で検収
                 fig = S.new_canvas(t_unit)
-                # カバーも実際の t で描く(着地演出の途中経過を検収できるように。
-                # 本番 render_video は従来どおり t=1.0 の完成形を採用する)
-                painter(fig, t)
+                S.SUB_TIME = (t_unit, d_est)   # painter が第2の拍を読む
+                painter(fig, t_anim)
                 if not suffix:
-                    S.SUB_TIME = (t_unit, d_est)
+                    delay = getattr(u, "sub_delay", 0.0)
+                    S.SUB_TIME = (t_unit - delay, max(0.3, d_est - delay))
                     S.draw_subtitle(fig, u.subtitle,
                                     pop=(1.06 if t <= ts[0] else 1.0))
                 f = outdir / f"{i:02d}_{u.scene}{suffix}_t{t:.2f}.png"

@@ -330,7 +330,11 @@ def check_video(vdir: Path):
                 if art.get_alpha() is not None and art.get_alpha() < 0.15:
                     continue
                 box = box_of(art)
-                zones = [("字幕帯", sub_zone.get(key, subtitle_zone))]
+                # カバー(*__cover)は字幕を描かない(render_video は専用painterが
+                # あるとき with_subtitle=False)ので、字幕帯の禁止は適用しない。
+                # 画面外・バッジ・文字どうしの判定は残る(2026-08-29)
+                zones = ([] if key in cover_keys else
+                         [("字幕帯", sub_zone.get(key, subtitle_zone))])
                 if has_chara:
                     zones += [("立ち絵", z) for z in chara_zone]
                 if badge_box is not None:

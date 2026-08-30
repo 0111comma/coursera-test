@@ -336,7 +336,37 @@ def main(video_dir: Path) -> int:
               "即切り0.15s(⑦/⑭)")
     else:
         check("output/*.mp4 存在", False)
-    check("thumbnail.png 存在", (video_dir / "output" / "thumbnail.png").exists(), "カバーフレーム書き出し")
+    thumb = video_dir / "output" / "thumbnail.png"
+    check("thumbnail.png 存在", thumb.exists(), "カバーフレーム書き出し")
+    # 2026-08-29 批評6周目: カバーを直したのに旧 thumbnail.png のまま出荷しかけた。
+    # サムネは render.py より新しくなければならない(`render.py --thumb` で即時更新可)
+    if thumb.exists():
+        check("thumbnail.png が render.py より新しい",
+              thumb.stat().st_mtime >= (video_dir / "render.py").stat().st_mtime,
+              "古いサムネ。python3 render.py --thumb か再レンダリングで更新")
+    # 常設UI(上部の帯)のピクセル一致(fpテーマの縦型のみ)。
+    # 帯のエッジがユニット切替で明滅していた(2026-08-29 批評6周目)。
+    # work/ のフレームが残っていればカバー以外の全フレームで上端領域を照合する
+    frames = sorted((video_dir / "output" / "work").glob("frame_*.png"))
+    if frames and "use_fp_theme" in src and not LONG:
+        try:
+            import numpy as _np
+            from PIL import Image as _Im
+            strip = None
+            same = True
+            for f in frames[:: max(1, len(frames) // 40)]:   # 等間隔サンプル
+                if f.name.endswith("_990.png"):
+                    continue        # カバーは全面構図なので対象外
+                a = _np.asarray(_Im.open(f).convert("RGB"))[:130]
+                if strip is None:
+                    strip = a
+                elif not _np.array_equal(strip, a):
+                    same = False
+                    break
+            check("常設帯の領域(y<130)が全ユニットで一致", same,
+                  "帯・注記ゾーンにドットや影が触れている")
+        except Exception as e:      # noqa: BLE001
+            warn("常設帯の照合をスキップ", str(e))
 
     print(f"\n結果: {'ALL PASS' if not fails else f'{len(fails)}件 FAIL'}")
     return 1 if fails else 0

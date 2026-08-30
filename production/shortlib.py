@@ -201,6 +201,9 @@ class Unit:
     face: str = "normal"     # 立ち絵の表情 normal/surprised/troubled/happy/smug(deep-loops ㉙: 1本で2〜4種)
     chara: str = "bl"        # 立ち絵の位置 "bl"(左下)/"br"(右下)/"none"(そのユニットで非表示)
     speaker: int = 0         # 話者の上書き(0=render_videoの既定)。二人会話は 3=ずんだもん/2=めたん
+    sub_delay: float = 0.0   # 字幕の表示開始をユニット頭から遅らせる秒数(2026-08-29)。
+                             # リビール(図のカウンタ着地)より字幕が先に答えを出す
+                             # カットで使う。音声・尺は変えない
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -273,7 +276,7 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
     return hashlib.sha256(repr([
         (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
          u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara,
-         u.speaker)
+         u.speaker, u.sub_delay)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
          bgm, chara, out_name, SPEED_SCALE, W, H, EMPH, DUO, RICH_BG,
@@ -1241,6 +1244,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 durations.append(dur)
                 return f
             fig = new_canvas(elapsed + t_unit)
+            # **painter より先に SUB_TIME を置く**(2026-08-29 批評6周目)。
+            # painter の t は anim 窓で1.0に飽和するので、scenes_fp の部品は
+            # ここからナレーション実時間の進行度を読んで「第2の拍」を刻む
+            global SUB_TIME
+            SUB_TIME = (t_unit, d_total)
             (painter or scene_painters[u.scene])(fig, t)
             if chara_on and not no_chara:
                 tg = elapsed + t_unit
@@ -1278,9 +1286,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 # これが無いと fplib 側は「全部出た状態」しか描けない。
                 # 実際、語ごとポップを作ったのに**動画には一度も入っていなかった**
                 # (use_fp_theme が旧描画を差したままだった)。
-                global SUB_TIME
-                SUB_TIME = (t_unit, d_total)
+                # sub_delay: 字幕クロックだけ遅らせる(リビールの先出し防止)
+                SUB_TIME = (t_unit - u.sub_delay,
+                            max(0.3, d_total - u.sub_delay))
                 draw_subtitle(fig, u.subtitle, pop=pop, tag=tag)
+                SUB_TIME = (t_unit, d_total)
             save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
