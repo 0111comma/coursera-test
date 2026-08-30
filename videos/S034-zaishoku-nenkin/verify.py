@@ -49,6 +49,13 @@ def suspended(basic: int, salary: int, limit: int) -> int:
     return min(basic, over // 2)
 
 
+# 台本が声に出す途中の値も、ここで計算して印字する(check_zentei)。
+# 「4万円」「70万円」は導出値だが、印字していないと出どころ不明で落ちる
+OVER_OLD = TOTAL - LIMIT_OLD            # いまの線を超えている分
+SALARY_HIGH = 600_000                   # もう一人の例の給料(仮定)
+TOTAL_HIGH = BASIC + SALARY_HIGH        # その人の合計
+OVER_HIGH = TOTAL_HIGH - LIMIT_NEW      # 4月からの線を超えている分
+
 STOP_OLD = suspended(BASIC, SALARY, LIMIT_OLD)
 STOP_NEW = suspended(BASIC, SALARY, LIMIT_NEW)
 DIFF_MONTH = STOP_OLD - STOP_NEW
@@ -68,7 +75,16 @@ if __name__ == "__main__":
     print(f"  2026年4月: {TOTAL:,} は {LIMIT_NEW:,} 以下 → **止まらない**")
     assert STOP_OLD == 20_000, STOP_OLD
     assert STOP_NEW == 0, STOP_NEW
+    print(f"  超えている分: {TOTAL:,} − {LIMIT_OLD:,} = **{OVER_OLD:,}円**")
+    assert OVER_OLD == 40_000, OVER_OLD
     print(f"\n差: 月 {DIFF_MONTH:,}円 / 年 {DIFF_YEAR:,}円")
+
+    print(f"\nもう一人の例(仮定): 年金 {BASIC:,}円 / 給料 {SALARY_HIGH:,}円")
+    print(f"  合計 **{TOTAL_HIGH:,}円**。4月からの線を {OVER_HIGH:,}円 超える")
+    print(f"  止まる額: {OVER_HIGH:,} ÷ 2 = "
+          f"**{suspended(BASIC, SALARY_HIGH, LIMIT_NEW):,}円/月**")
+    assert TOTAL_HIGH == 700_000 and OVER_HIGH == 50_000
+    assert suspended(BASIC, SALARY_HIGH, LIMIT_NEW) == 25_000
     assert DIFF_YEAR == 240_000, DIFF_YEAR
 
     print(f"\n「1円でも止まる」境目の給与(年金月額 {BASIC:,}円のとき):")
