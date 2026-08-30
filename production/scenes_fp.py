@@ -839,9 +839,13 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
                 dy = -(1 - ap) * 0.022
             if is_total[i]:
                 hband(y0, rh, ap)
-                # 黒罫は強調枠の下辺から2px以上離す(+0.003。2026-08-29 批評6周目)
+                # 黒罫は**行境界ちょうど**に置く(2026-08-29 厳格審査2周目)。
+                # +0.003(figure座標で上)は強調枠の下辺(行内へ0.005インセット)
+                # に近づく向きで、01で枠5px+罫4pxが再び9pxの帯に融合していた。
+                # 境界なら枠下辺との中心距離 0.005(9.6px)で、線の太り分を
+                # 引いても2px以上の地が残る
                 fig.add_artist(plt.Line2D([zx(bx0_b), zx(bx0_b + bw_bd)],
-                                          [zy(y0 + rh + 0.003)] * 2,
+                                          [zy(y0 + rh)] * 2,
                                           transform=fig.transFigure, color=INK,
                                           linewidth=3.5 * zk, zorder=2.4, alpha=ap))
             wave_lit = False
