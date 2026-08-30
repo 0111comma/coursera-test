@@ -677,7 +677,11 @@ def person_bubble(name: str, text: str, height: float = 0.45,
             ac = _ease(t / 0.15)
             if ac > 0.01:
                 rhh = 0.076
-                mw = 0.46
+                # 幅は 0.46 → 0.42(2026-08-30 厳格審査 consistency/artdirection)。
+                # 右端が x=545px でキャラの指差しの手(x=547)と空きゼロで接し、
+                # **立ち絵がパネルに切断されて見えていた**。手前に置く容器は
+                # 立ち絵に触れない(規則: 同一画面の要素は24px以上離す)。
+                mw = 0.42
                 mh = rhh * len(rows) + 0.030
                 # **字幕から CLEAR_MIN 以上離す**(2026-08-30 consistency/high)。
                 # 旧 my=0.285 ではミニカードの下枠と字幕の白アウトラインの空きが
@@ -693,8 +697,8 @@ def person_bubble(name: str, text: str, height: float = 0.45,
                 fs_lab = 28.0
                 for la, _vb in rows:
                     wla = F.measure_w(fig, r, str(la), fs_lab, fam_l, F.FONT_WEIGHT)
-                    if wla > 0.24:
-                        fs_lab *= 0.24 / wla
+                    if wla > 0.215:            # カード幅 0.42 に合わせて調整
+                        fs_lab *= 0.215 / wla
                 # 行のリズムは本編の表と同じ「罫なし・帯なし」に統一
                 # (2026-08-29 批評5周目: ヘアライン罫は本編の表に無い第3の
                 # リスト文法で、同じデータが別ジオメトリで再登場していた)。
