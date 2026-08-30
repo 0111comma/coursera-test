@@ -30,9 +30,13 @@ ROOT = PRODUCTION.parent
 # パネル(サブエージェント8人×複数ラウンド)を毎本回すのは費用が見合わないので、
 # **パネルが見つけた欠陥のうち機械で見られるものは機械に見させる**。
 # 既存の公開済み動画は gate_exempt.txt で丸ごと外してある(触らない方針)。
+# shukka は**最後**に置く(2026-08-30)。出荷物(mp4・thumbnail.png)が
+# 描画コードより古くないか、強調枠の外に地の帯が露出していないか、
+# 図の下端と字幕が衝突していないかを、実際に焼いた画素で見る。
+# 「出荷物が旧デザインのまま」は2ラウンド連続で通っていた。
 COMMON = ["zentei", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
           "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu",
-          "kotoba", "design", "video"]
+          "kotoba", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 

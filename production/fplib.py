@@ -68,15 +68,30 @@ BAND = "#f2e3c4"           # 上部のタイトル帯(下側)。2026-08-29 批�
 BAND_LO = "#efd9a8"        # 帯の上側。**縦のグラデーション**にする(ベージュ系)
 BAND_INK = "#3b2c10"       # 帯の文字
 TELOP = "#ffffff"          # テロップの本文
-TELOP_EMPH = "#ffb020"     # テロップの強調(数字)。#ffd93d は帯(#f9cb45)と同色相で
-                           # クリーム地に沈んでいた → 一段濃いアンバー(2026-08-29)
+# **強調は役割色から取る**(2026-08-30 厳格審査 artdirection/high)。
+# 旧 #ffb020 はクリーム地に対しコントラスト比1.50で、可読性を茶縁だけが
+# 担保する「塗りが情報を運ばない色」だった。しかも動画全体で1ユニットにしか
+# 出ず、赤=出ていく/緑=増える/墨=中立 のどのトークンにも属さない第4の色だった。
+# 行動を促す語は緑側(GREEN_DARK と同値)、損の語は赤側(RED と同値)を使う。
+TELOP_EMPH = "#4d7a33"     # = scenes_fp.GREEN_DARK(行動・増える側)
+TELOP_EMPH_LOSS = "#b32020"  # = scenes_fp.RED(損・出ていく側)
 TELOP_EDGE = "#7b2d00"     # テロップの縁
 TELOP_EDGE_EMPH = "#5a3d0e"  # 強調語の縁。地から切り離すため本文より濃く太く
 TELOP_SHADOW = (4.5, -6.0, "#4a2a05", 0.60)   # 下に落ちる影。背景から浮かせる
                            # (3,-4,0.42 では実質1層に見えた → 強化。2026-08-29)
 INK_DARK = "#2b2b28"
 CARD = "#fffdf7"           # カード面の白。**白はこの1色に統一**(純白は文字専用)
-DISCLAIM = "#4a4234"       # 免責行。#8a7f6c はコントラスト不足で読めなかった
+# 免責行。#8a7f6c はコントラスト不足で読めなかったので #4a4234 まで濃くしたが、
+# 今度は**捨ててよい注記が各カットの主題ラベル(head_title)より濃い**という
+# ヒエラルキーの逆転を起こしていた(2026-08-30 artdirection/high)。
+# 地(#f3e7d3)に対し CR ≈ 6.3 を保ったまま1段落とし、主題ラベルを上げて差を作る。
+DISCLAIM = "#5a5347"
+
+# ---- Shorts 実機のUI安全帯(figure座標の割合)。cover() と検査が共有する。
+# 実機のグリッドタイルは下端15%に再生回数のスクリム、上端8.5%にアイコン帯が乗る
+# (2026-08-30 thumbnail/high。旧実装は y>0.92 を根拠にしていて134px甘かった)。
+UI_BOTTOM_FRAC = 0.15
+UI_TOP_FRAC = 0.085
 
 TITLE = ""                 # 上部の帯に出す文字(use_fp_theme で設定)
 BADGE = ""                 # 仮定の明示(戦略§6-2「利回りは仮定と明示」)
@@ -167,13 +182,23 @@ def fx(color: str, fs: float, emph: bool = False):
     o = fs * (0.14 if emph else 0.12)
     dx, dy, sc, sa = TELOP_SHADOW
     edge = TELOP_EDGE_EMPH if emph else TELOP_EDGE
-    return [
-        path_effects.Stroke(offset=(dx, dy), linewidth=o * 1.30, foreground=sc, alpha=sa),
+    out = []
+    # **影は3段のオフセットでぼかす**(2026-08-30 craft/medium)。
+    # 1枚のグリフ輪郭を平行移動しただけの影は、拡大するとベクターの硬い縁が
+    # そのまま立ち、同一フレームのカード(疑似ガウス→実ガウス)の柔らかい影と
+    # 「光の言語」が割れていた。合計濃度は旧実装(sa=0.60 の1枚)と同じに保つ。
+    # 3層の合成不透明度 1-Π(1-a) が旧1層の sa(=0.60)と一致する配分
+    for k, (mul, al) in enumerate(((0.60, 0.235), (1.00, 0.330), (1.50, 0.235))):
+        out.append(path_effects.Stroke(offset=(dx * mul, dy * mul),
+                                       linewidth=o * (1.30 + 0.22 * k),
+                                       foreground=sc, alpha=sa * al))
+    out += [
         path_effects.Stroke(linewidth=o * 1.55, foreground="#fffaf0"),
         path_effects.Stroke(linewidth=o, foreground=edge),
         path_effects.Stroke(linewidth=2.0, foreground=color),
         path_effects.Normal(),
     ]
+    return out
 
 
 # ---------------------------------------------------------------- 実測幅(書体つき)
@@ -191,6 +216,104 @@ def measure_w(fig, renderer, s: str, fs: float, family, weight) -> float:
         tmp.remove()
         _MEASURE_CACHE[key] = w
     return w
+
+
+# ------------------------------------------------- ピクセルグリッドへのスナップ
+# 同じ公称線幅でも、置いた座標次第でカバレッジが 0.93/1.0/0.89 のように割れ、
+# 実効の太さが 2.82px と 4.87px のように見えていた(2026-08-30 craft/low)。
+# 線の**中心**を「半線幅ぶんずらした整数境界」に載せると、両端のカバレッジが
+# 揃って、隣り合うヘアラインの太さが目で同じになる。
+def snap_y(y_fig: float, lw_pt: float) -> float:
+    px = y_fig * S.H
+    half = lw_pt * S.DPI / 72.0 / 2.0
+    return (round(px - half) + half) / S.H
+
+
+def snap_x(x_fig: float, lw_pt: float) -> float:
+    px = x_fig * S.W
+    half = lw_pt * S.DPI / 72.0 / 2.0
+    return (round(px - half) + half) / S.W
+
+
+# ------------------------------------------------------------ 吹き出しの輪郭
+def bubble_path(x, y, w, h, r, tail):
+    """角丸矩形+しっぽを**1本の閉じた輪郭**にした Path を返す。
+
+    2026-08-30 craft/high: 本体としっぽを別々の stroked Polygon で描き、
+    接合部を面色のパッチ3枚で塗り潰して隠していた。フル解像度では本体の辺の
+    枠線が「途中で断ち切られたスタブ」として残り、反対側の接合部に段差が出る。
+    しっぽを本体の下辺の途中に LINETO で差し込んで1枚の PathPatch にすれば、
+    接合部そのものが存在しなくなる。
+
+    x, y, w, h: 本体の矩形(figure座標。y は下端)
+    r: 角丸半径(figure座標の x 方向。y 方向は縦横比で補正する)
+    tail: [(x1,y1), (x2,y2), (x3,y3)] しっぽの3点。下辺 y に沿って
+          x1 → 先端 → x3 の順に挿入する(x1 < x3。先端は矩形の外)
+    """
+    from matplotlib.path import Path
+    ry = r * (S.W / S.H)               # 画面上で真円の角丸にする
+    x1, y1 = x + w, y + h              # 右上
+    verts, codes = [], []
+
+    def move(p):
+        verts.append(p); codes.append(Path.MOVETO)
+
+    def line(p):
+        verts.append(p); codes.append(Path.LINETO)
+
+    def curve(c, p):
+        verts.extend([c, p]); codes.extend([Path.CURVE3, Path.CURVE3])
+
+    tx1, tx3 = tail[0][0], tail[2][0]
+    move((x + r, y))
+    # 下辺: 左 → しっぽの付け根 → 先端 → 付け根 → 右
+    line((tx1, y))
+    line(tail[1])
+    line((tx3, y))
+    line((x1 - r, y))
+    curve((x1, y), (x1, y + ry))
+    line((x1, y1 - ry))
+    curve((x1, y1), (x1 - r, y1))
+    line((x + r, y1))
+    curve((x, y1), (x, y1 - ry))
+    line((x, y + ry))
+    curve((x, y), (x + r, y))
+    codes.append(Path.CLOSEPOLY); verts.append((x + r, y))
+    return Path(verts, codes)
+
+
+# ------------------------------------------------------------ ドットの破線矩形
+def dotted_rect(fig, x, y, w, h, pitch=0.010, r=0.0022, color="#b9ae99",
+                alpha=1.0, zorder=2.05, skip_bottom=False):
+    """4隅にドットを必ず置き、各辺を整数個で等分した点線矩形。
+
+    matplotlib の linestyle で破線矩形を描くと、周長がピッチの整数倍でない限り
+    角で位相が合わず、片方の角に80pxのL字の欠け、反対の角にほぼ接触した
+    2点、が同時に出る(2026-08-30 craft/medium)。辺ごとに個数を丸めて割り付け、
+    角を固定点にすれば位相の問題そのものが消える。
+    """
+    ry = r * (S.W / S.H)
+    pts = []
+
+    def edge(x0, y0, x1_, y1_, include_end=False):
+        ln = math.hypot((x1_ - x0), (y1_ - y0) * (S.H / S.W))
+        n = max(1, int(round(ln / pitch)))
+        for k in range(n + (1 if include_end else 0)):
+            u = k / n
+            pts.append((x0 + (x1_ - x0) * u, y0 + (y1_ - y0) * u))
+
+    edge(x, y + h, x + w, y + h)                 # 上辺(左上の角を含む)
+    edge(x + w, y + h, x + w, y)                 # 右辺(右上の角を含む)
+    if skip_bottom:
+        pts.append((x + w, y))
+        pts.append((x, y))
+    else:
+        edge(x + w, y, x, y)                     # 下辺(右下の角を含む)
+    edge(x, y, x, y + h)                         # 左辺(左下の角を含む)
+    for cx, cy in pts:
+        fig.add_artist(Ellipse((cx, cy), 2 * r, 2 * ry, transform=fig.transFigure,
+                               facecolor=color, edgecolor="none", alpha=alpha,
+                               zorder=zorder))
 
 
 # ---------------------------------------------------------------- イージング
@@ -237,19 +360,29 @@ def _canvas(t_global: float = 0.0):
     # (b) ドリフトするドットが帯下端に触れ、常設UIのエッジが
     #     ユニット切替のたびに明滅して見えた
     # 帯・注記の常設ゾーンは全カットでピクセル同一に保つ
-    dot_ceiling = 0.90
+    # **上端は二値のカリングではなくアルファのフェードで消す**(2026-08-30
+    # craft/high・consistency/high)。`if y < dot_ceiling` の真偽判定だと、
+    # 上向きドリフト(0.020/秒)と行ピッチ(ystep≈0.0236)から
+    # **約1.18秒ごとに横1列24個が1フレームで丸ごと消えていた**(実測で最上段の
+    # 上端が 188→192→227 と行単位で跳ぶ)。フェード帯が注記の文字裏に掛からない
+    # よう、天井も注記帯の下端に合わせて 0.895 へ下げる。
+    dot_ceiling = 0.895
+    fade_h = 0.9 * ystep
     j = 0
     y = -ystep + (t_drift * 0.020) % ystep
     while y < 1.0 + ystep:
         x = (j % 2) * step / 2 - step + xoff
-        while x < 1.0:
-            # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
-            # 楕円で縦横比を打ち消して、競合と同じ真円にする
-            if y < dot_ceiling:
-                e = Ellipse((x, y), 2 * r, 2 * r * S.W / S.H, color=DOT, zorder=-9)
+        fade = min(1.0, max(0.0, (dot_ceiling - y) / fade_h))
+        if fade > 0.004:
+            while x < 1.0:
+                # **円で描くと縦に伸びる**(軸は0〜1だが画面は1080×1920)。
+                # 楕円で縦横比を打ち消して、競合と同じ真円にする。
+                # alpha は生成時に渡す(dim_dots が積で減光するのを壊さない)
+                e = Ellipse((x, y), 2 * r, 2 * r * S.W / S.H, color=DOT,
+                            zorder=-9, alpha=fade)
                 e.set_gid(DOT_GID)
                 ax.add_patch(e)
-            x += step
+                x += step
         y += ystep
         j += 1
     # 上部のタイトル帯。**単色の板ではなく縦のグラデーション**にする。
@@ -263,10 +396,25 @@ def _canvas(t_global: float = 0.0):
     # タイトル文字も白抜き+縁取り → 墨色プレーンに格下げする
     h = 0.052
     bax = fig.add_axes([0, 1 - h, 1, h], zorder=3.0)
+    # **勾配の向きは上=暗・下=明**(2026-08-30 artdirection/low)。
+    # 旧実装は上が明るく下が暗く、その最暗点(#efd9a8)が境界でクリーム地
+    # (#f3e7d3)に飛んでいた:青チャンネルが1pxで43段跳び、罫も影もAAも無いので
+    # 「上向きの影」に読める継ぎ目になっていた。下端を地色寄りの BAND にすると
+    # 段差は15段まで下がる。そのうえで境界に細い罫と極薄シャドウを置き、
+    # 「レンダリングの継ぎ目」ではなく「意図した縁」として宣言する。
     bax.imshow(np.linspace(1, 0, 64).reshape(-1, 1), aspect="auto", extent=(0, 1, 0, 1),
-               cmap=LinearSegmentedColormap.from_list("fpband", [BAND_LO, BAND]))
+               cmap=LinearSegmentedColormap.from_list("fpband", [BAND, BAND_LO]))
     bax.axis("off")
     bax.set_gid(CHROME_GID)
+    # 帯の下端の罫(2px相当)+ カードと同じ光源(上から)の極薄シャドウ
+    sh = plt.Rectangle((0.0, 1 - h - 0.006), 1.0, 0.006, transform=fig.transFigure,
+                       facecolor="#d9c9a8", edgecolor="none", alpha=0.10, zorder=2.99)
+    sh.set_gid(CHROME_GID)
+    fig.add_artist(sh)
+    rule = plt.Line2D([0, 1], [1 - h] * 2, transform=fig.transFigure,
+                      color="#e0cda2", linewidth=2.0, zorder=3.05)
+    rule.set_gid(CHROME_GID)
+    fig.add_artist(rule)
     if TITLE:
         S.text_fit(fig, 0.5, 1 - h / 2, fmt_disp(TITLE), ha="center", va="center",
                    color=BAND_INK, fontsize=32, max_w=0.92,
@@ -676,38 +824,52 @@ def pose(name: str, fade: bool = True, flip: bool = False,
         # 描画高さ880〜1100pxへの拡大で線画エッジが3〜4pxぼけていた。
         # 恒久対応は 2048px 以上での再生成(assets/character/ の差し替え)。
         # それまでは LANCZOS 2倍 + 弱いアンシャープで補間ボケだけ抑える
+        # 2026-08-30 craft/medium: percent=90 / radius=2.2 は、まつ毛・眉・髪の
+        # 線に**灰色のハロー**を作り、エッジ遷移を3〜4pxに広げていた(同一画面の
+        # ベクター枠は1px AA)。ハローの発生源は強すぎるアンシャープなので、
+        # 補間ボケを抑える最低限まで弱める(radius 2.2→1.2 / percent 90→38)。
+        # **恒久対応は 2048px 以上での素材再生成**(原本は1024px・JPEG由来)。
         if im.width < 2048:
             from PIL import ImageFilter
             im = im.resize((im.width * 2, im.height * 2), Image.LANCZOS)
-            im = im.filter(ImageFilter.UnsharpMask(radius=2.2, percent=90,
-                                                   threshold=2))
+            im = im.filter(ImageFilter.UnsharpMask(radius=1.2, percent=38,
+                                                   threshold=3))
         _POSE_CACHE[key] = _fade_bottom(im) if fade else im
     return _POSE_CACHE[key]
 
 
-def _fade_bottom(im: Image.Image, frac: float = 0.10) -> Image.Image:
-    """絵の裾を**楕円のソフトマスク**で切る。
+def _fade_bottom(im: Image.Image, frac: float = 0.06) -> Image.Image:
+    """絵の裾を**地色(CREAM)へ沈めて**切る。透過はさせない。
 
     素材は腰のあたりで真横に切れている。矩形の直線グラデで消すと
-    「消え際の帯」が水平線として視認できた(2026-08-29 批評6周目)。
-    裾の境界を下に膨らむ楕円弧にし、フェード幅も列ごとに変えることで、
-    切り口が直線として読めないようにする。
+    「消え際の帯」が水平線として視認できた(2026-08-29 批評6周目)ので
+    楕円弧のソフトマスクにしたが、**アルファを落とす方式である限り、
+    上着の上に背景のドット柄が透ける**という本質は変わっていなかった
+    (2026-08-30 artdirection/medium。10_toi_oboe の y1180-1300 で実測)。
+
+    そこで、フェード区間は α を落とすのではなく **RGB を CREAM へ寄せる**。
+    人物のシルエットは最後まで不透明のままで、色だけが地に一致していくので、
+    「霞んで背景が透ける」ではなく「地に沈む」になる。最下端では色が地色と
+    完全一致するため、切り口は見えない。
     """
-    a = np.asarray(im.getchannel("A"), dtype=np.float32)
+    arr = np.asarray(im.convert("RGBA"), dtype=np.float32)
+    a = arr[:, :, 3]
     h, w = a.shape
     n = max(2, int(h * frac))
     xs = np.linspace(-1.0, 1.0, w, dtype=np.float32)
     # 楕円弧: 中央がいちばん下まで残り、端は早めに消える(弧の深さ=n*0.9)
-    edge = (h - 1) - n * 0.9 * (xs ** 2)      # 列ごとの「完全に消える」行
+    edge = (h - 1) - n * 0.9 * (xs ** 2)      # 列ごとの「完全に地色になる」行
     rows = np.arange(h, dtype=np.float32)[:, None]
     start = edge[None, :] - n                 # ここからフェード開始
     m = np.clip((edge[None, :] - rows) / n, 0.0, 1.0)
     m[rows < start] = 1.0
-    # 端に行くほどフェードを柔らかく(直線の等高線を作らない)
-    a *= m ** (1.0 + 0.6 * np.abs(xs)[None, :])
-    out = im.copy()
-    out.putalpha(Image.fromarray(np.clip(a, 0, 255).astype("uint8"), mode="L"))
-    return out
+    m = m ** (1.0 + 0.6 * np.abs(xs)[None, :])
+    from matplotlib.colors import to_rgb
+    ground = np.array(to_rgb(CREAM), dtype=np.float32) * 255.0
+    arr[:, :, :3] = arr[:, :, :3] * m[:, :, None] + ground[None, None, :] * (1 - m[:, :, None])
+    # 弧より下(m==0 の行)はアルファも落として、地色のベタ矩形を残さない
+    arr[:, :, 3] = np.where(m <= 0.0, 0.0, a)
+    return Image.fromarray(np.clip(arr, 0, 255).astype("uint8"), mode="RGBA")
 
 
 def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float = 0.46,
@@ -748,6 +910,25 @@ def draw_pose(fig, name: str, cx: float = 0.5, top: float = 0.78, height: float 
         x0 = x0 + w * lf
         w = w * (1.0 - lf - rf)
     ax = fig.add_axes([x0, y0, w, h], zorder=2.0)
-    ax.imshow(np.asarray(im))
+    # 縮小フィルタを明示して固定する(既定の 'antialiased' は倍率で切り替わり、
+    # 同じ素材がユニットごとに違うにじみ方をしていた。2026-08-30 craft/medium)
+    ax.imshow(np.asarray(im), interpolation="hanning")
     ax.axis("off")
     return ax
+
+
+def eye_y_frac(name: str, flip: bool = False, crop: str | None = None) -> float:
+    """立ち絵の目の高さ(画像高に対する割合)。cover() の寸法検査が使う。
+
+    まつ毛は素材の中でいちばん暗い水平の塊なので、
+    「上半分のうち最も暗い画素が集まる行」を目の高さとみなす。
+    """
+    key = ("eyey", name, flip, crop)
+    if key not in _POSE_CACHE:
+        im = pose(name, fade=False, flip=flip, crop=crop)
+        arr = np.asarray(im.convert("RGBA"), dtype=np.float32)
+        lum = arr[:, :, :3].mean(axis=2)
+        dark = ((lum < 90) & (arr[:, :, 3] > 128)).sum(axis=1).astype(np.float32)
+        dark[int(len(dark) * 0.60):] = 0.0        # 下半分(服)は見ない
+        _POSE_CACHE[key] = float(np.argmax(dark)) / arr.shape[0]
+    return _POSE_CACHE[key]
