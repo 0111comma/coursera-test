@@ -154,7 +154,13 @@ def use_fp_theme(title: str, speaker: int = 108, badge: str = ""):
     S.SUB_LINE_H = 0.052
     # 0.235 → 0.266(2026-08-29 批評6周目)。カード下端(0.40)と字幕上端の
     # あいだに約300pxの無情報帯が全ユニット固定で空いていた。60px詰める
-    S.SUBTITLE_Y = 0.266
+    # 0.266 → 0.257(2026-08-30)。字幕を墨プレートの上に置いたので、
+    # ブロックの上端がプレートのパディングぶん上がる。**帯の占有域を
+    # 旧デザインと同じ高さに保つ**ため、基準線をその分だけ下げる
+    # (既存の fp テーマの動画=S032 の図と字幕が衝突しないこと。
+    #  check_overlap は字幕を実際に描いて占有域を測るので、ここがずれると
+    #  他の動画のゲートを壊す)。
+    S.SUBTITLE_Y = 0.257
     S.STROKE_EDGE = TELOP_EDGE
     S.STROKE_SHADOW = TELOP_SHADOW
     S.new_canvas = _canvas
@@ -622,7 +628,7 @@ MAX_LINES = 2              # 字幕の最大行数(2026-08-29 批評5周目: 3�
                            # ブロックのアンカーが±100px級で漂っていた)
 SUB_BOTTOM_MIN = 0.095     # 字幕ブロックの下端はここより下げない(機械ゲート)
 SUB_PLATE_PAD_X = 0.033    # プレートの左右パディング(≒36px)
-SUB_PLATE_PAD_Y = 0.0115   # プレートの上下パディング(≒22px)
+SUB_PLATE_PAD_Y = 0.009    # プレートの上下パディング(≒17px)
 SUB_PLATE_R = 0.017        # プレートの角丸(≒18px)
 SUB_FS_LOCK = None         # lock_sub_fs() が決める動画内共通の字幕級数
 

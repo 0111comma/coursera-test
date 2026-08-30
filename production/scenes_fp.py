@@ -166,6 +166,7 @@ BUBBLE_FS = 46
 # サービス名チップ(cover と person_cards が共有する)。カバーと本編1カット目で
 # 幅が154px違い、同じ3枚が0秒の継ぎ目で寸法まで変えていた(thumbnail/medium)
 CHIP_W, CHIP_H, CHIP_STEP = 0.40, 0.070, 0.088
+CHIP_L = 0.048             # チップ列の左端(=x52)。cover と person_cards が共有する
 # 角丸は2段だけ(2026-08-30 thumbnail/low: 1枚のカバーに25px/14px/6pxの3系統)
 R_LG, R_MD = 0.035, 0.024
 
@@ -857,7 +858,9 @@ def person_cards(name: str, labels, height: float = 0.44,
     - カード列の下端は字幕から CLEAR_MIN 以上離す
     """
     def painter(fig, t):
-        F.draw_pose(fig, name, cx=0.66, top=top, height=height)
+        # チップの右端(CHIP_L + CHIP_W)と人物の左シルエットが接していたので
+        # 人物を右へ寄せる(同一画面の要素は24px以上離す)
+        F.draw_pose(fig, name, cx=0.70, top=top, height=height)
         n = len(labels)
         step = CHIP_STEP
         y_bot = clamp_above_subtitle(0.455)
@@ -867,7 +870,7 @@ def person_cards(name: str, labels, height: float = 0.44,
             if p <= 0.01:
                 continue
             a = _ease((t - 0.08 - i * 0.16) / 0.16)
-            bx = -0.30 + (0.05 + 0.30) * p       # 左から滑り込む
+            bx = -0.30 + (CHIP_L + 0.30) * p     # 左から滑り込む
             # labels[0] を最上段に(cover のチップと同じ並び順・同じ積み方向)
             yy = y_bot + (n - 1 - i) * step
             service_chip(fig, bx, yy, lab, alpha=a, shadow=False, fs=fs_c)
@@ -1296,7 +1299,11 @@ def table(headers, rows, highlight=None, title="", build=False, from_row=None,
         # 見出し行
         hy = zy(top - rh / 2)
         hband(top - rh + INS_V, rh - 2 * INS_V, 1.0, z_b=2.1)
-        hrule(top - rh, "#cfc4ae", 2.5 * zk)
+        # 罫は2種だけ(2026-08-30 craft/medium)。
+        # ヘアライン = CARD_EDGE / 2.5px、区切り = INK / 2.5px alpha 0.5。
+        # 旧実装は #cfc4ae 2.5px(ヘッダー下)と INK 3.5px(合計上)で、
+        # 1つの表の中に2系統の罫が混ざっていた。
+        hrule(top - rh, CARD_EDGE, 2.5 * zk)
         if headers[0]:
             S.text_fit(fig, x_lab, hy, headers[0], ha="left",
                        va="center", color=INK, fontsize=38 * zk, max_w=0.36 * zk,
@@ -2429,6 +2436,8 @@ def hero(main: str, sub: str = "", name: str = "01_base", stamp: bool = False,
                 S.text_fit(fig, 0.5, bot + 0.052, F.fmt_disp(caption), ha="center",
                            va="center", color=F.DISCLAIM, fontsize=26, max_w=0.78,
                            zorder=2.4, alpha=ac)
+        # 鼓動は fs と max_w を同率で伸ばす(幅いっぱいの数字でも脈が見える)
+        b = beat() if t > 0.60 else 1.0
         if not name:
             # **数字の下に役割色のルールを1本置く**(2026-08-30
             # artdirection/high・medium)。ヒーローカードは中身に対して大きく、
@@ -2438,19 +2447,30 @@ def hero(main: str, sub: str = "", name: str = "01_base", stamp: bool = False,
             # 6px のルールは、余白を締めつつ役割色を図として立てる。
             # **尻の第2の拍**(retention/medium)は、このルールを
             # 進行度0.70〜0.82で左→右へ描き足すことで作る(数字は動かさない)。
-            y_rule = cy - (top - bot) * 0.26
-            w_rule = 0.5 * min(1.0, max(0.0, (tn_h - 0.20) / 0.25)) \
-                if tn_h < 0.45 else 0.5
-            if tn_h >= 0.70:
-                w_rule = 0.5 + 0.10 * _ease((tn_h - 0.70) / 0.12)
-            if w_rule > 0.01:
-                fig.add_artist(plt.Line2D(
-                    [0.5 - w_rule / 2, 0.5 + w_rule / 2],
-                    [F.snap_y(y_rule, 6.0)] * 2,
-                    transform=fig.transFigure, color=hero_col, linewidth=6.0,
-                    solid_capstyle="round", zorder=2.35, alpha=0.85))
-        # 鼓動は fs と max_w を同率で伸ばす(幅いっぱいの数字でも脈が見える)
-        b = beat() if t > 0.60 else 1.0
+            #
+            # 置く高さは**実際に描く級数から逆算する**。固定値にすると、
+            # 「年5%」のような短い文字列(=高さいっぱいまで拡大される)で
+            # ルールが字を横切る(2026-08-30 検収で実際に出た)。
+            # **位置は全ヒーローで固定**(同じ部品がカットごとに違う高さに
+            # 出ると、それ自体が「揃っていない」欠陥になる)。
+            # いちばん背の高くなりうる数字(FILL_TARGET_H まで拡大されたもの)の
+            # インク下端より下に置けば、どの級数でも字を横切らない。
+            max_ink_half = ((CARD_TOP - CARD_BOT) * FILL_TARGET_H
+                            * S.H * 72 / S.DPI) * (S.DPI / 72.0) * 0.62 / 2.0 / S.H
+            # caption の有無で cy がずれるカット(katei)でも位置を変えない
+            y_rule = (top + bot) / 2 - max_ink_half - 0.018
+            lo_rule = (bot + 0.052 + 0.026) if (caption and not name) else bot + 0.020
+            if y_rule > lo_rule:
+                w_rule = 0.5 * min(1.0, max(0.0, (tn_h - 0.20) / 0.25)) \
+                    if tn_h < 0.45 else 0.5
+                if tn_h >= 0.70:
+                    w_rule = 0.5 + 0.10 * _ease((tn_h - 0.70) / 0.12)
+                if w_rule > 0.01:
+                    fig.add_artist(plt.Line2D(
+                        [0.5 - w_rule / 2, 0.5 + w_rule / 2],
+                        [F.snap_y(y_rule, 6.0)] * 2,
+                        transform=fig.transFigure, color=hero_col, linewidth=6.0,
+                        solid_capstyle="round", zorder=2.35, alpha=0.85))
         if stamp:
             p = _back((t - 0.10) / 0.28)
             if p <= 0.01:

@@ -156,8 +156,15 @@ def check_video(vdir: Path):
                 continue          # new_canvas の全面背景
             n_shapes += len(ax.lines) + len(ax.patches) + len(ax.collections)
         # fig.add_artist で足した線・矢印は fig.lines ではなく fig.artists に入る
+        # **PathPatch も図形として数える**(2026-08-30)。棒グラフは
+        # 「角丸パッチ + 下角を埋める矩形」の2図形をやめて、上2角だけ角丸の
+        # パスを1枚の PathPatch で描くようにした(継ぎ目の1pxノッチを消すため)。
+        # 数え漏らすと、棒のカットが「図形ゼロ」に見えてしまう。
+        # カード・チップは FancyBboxPatch なので、ここには入らない(=容器は
+        # 図として数えない、という元の方針は保たれる)。
         n_shapes += len([a for a in fig.artists
-                         if type(a).__name__ in ("Line2D", "Polygon", "Rectangle")
+                         if type(a).__name__ in ("Line2D", "Polygon", "Rectangle",
+                                                 "PathPatch")
                          or type(a).__name__.startswith("FancyArrow")])
 
         texts = []

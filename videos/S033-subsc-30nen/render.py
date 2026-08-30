@@ -129,10 +129,10 @@ SCENES = {
     "fueru": sf.bars([("積み立てるだけ", 1_138_320, "114万円", {"count": False}),
                       ("年5%と仮定", 2_631_602, "263万円")],
                      highlight=1, prev_highlight=0, gain=1,
-                     title="同じ3162円を積み立てたら"),
+                     title="30年後のちがい"),
     # 見出しは声の「行き先」と一語一致(2026-08-30 copy/high:
     # 図の見出し+箱ラベル2つ+字幕で同じ内容を3層で言っていた)
-    "yaji": sf.arrow("114万円", "263万円", "出ていく側", "積む側",
+    "yaji": sf.arrow("114万円", "263万円", "出ていく側", "積み立てる側",
                      title="毎月3162円の行き先", scale_right=1.0, role="gain"),
 
     # ---- 1つでいい
@@ -177,74 +177,74 @@ UNITS = [
     # 「どれを止めるか(未知・行動)」へ移す。以降の内訳提示は、この問いに
     # 答えるための材料として順接になる。締めの「あなたが止めるサブスク」と
     # 語のループを作る(check_hold H3)
-    Unit("namae", "サブスクに払う114万円、どれを止めますか?", anim=1.0, cover=True,
+    Unit("namae", "サブスクに払う114万円、どれを止める?", anim=1.0, cover=True,
          cover_hold=0.30, se="pop", speed=1.0, intonation=1.3, chara="none"),
     # 旧3・4を1文に畳んだ(2026-08-30 kousei/medium)。同一グリッドの表4カットで
     # 情報の前進が実質2つしか無く、Shorts の最大離脱帯がここに丸ごと乗っていた
-    Unit("hyo_a", "サブスク3つで、月1590円、1080円、492円。", anim=1.0, speed=1.05,
+    Unit("hyo_a", "1590円、1080円、492円。", anim=1.0, speed=1.05,
          chara="none"),
-    Unit("goukei", "合わせて、月3162円。", anim=1.0, se="don",
+    Unit("goukei", "合計、月3162円。", anim=1.0, se="don",
          se_at=sf.landing_sec("hero", 1.0), speed=1.0, intonation=1.2,
          chara="none"),
     # 機構を名指す(2026-08-30 copy/medium)。「毎月」+「続ける」で自動継続が入る
-    Unit("hyo_g", "合計3162円が、あなたから毎月引かれ続ける。", anim=1.0, speed=1.05,
+    Unit("hyo_g", "3162円が、あなたから毎月引かれる。", anim=1.0, speed=1.05,
          chara="none"),
     # 画面の式「3162円 ÷ 30日」と動詞で一語一致させる(2026-08-30 nihongo/low:
     # 「1日にする」は「一日に変える」と読める非文だった)
-    Unit("waru", "これを30日で割ると、1日105円になる。", anim=1.0, speed=1.05,
+    Unit("waru", "これを30日で割ると、1日105円。", anim=1.0, speed=1.05,
          chara="none"),
     # 断定で視聴者の内心を代弁しない(2026-08-30 copy/medium)。
     # 「開かない」が unit20 の「開いて」と対になる
-    Unit("hi", "105円のために、解約画面は開かない。", anim=1.0, speed=1.05,
+    Unit("hi", "105円では、わざわざ解約しない。", anim=1.0, speed=1.05,
          chara="none"),
-    Unit("obi", "あなたが35歳なら、65歳まであと30年。", anim=1.2, speed=1.05,
+    Unit("obi", "35歳なら、65歳まであと30年。", anim=1.2, speed=1.05,
          chara="none"),
     # 画面の「360回」を声が引き取る(2026-08-30 nihongo/high・kousei/medium:
     # 声は「30年で、合計いくら?」と言い、画面は「360回」と別のことを言っていた)
-    Unit("kikan", "360回はらうと、合計いくら?", anim=1.0, speed=1.0,
+    Unit("kikan", "360回で、合計いくら?", anim=1.0, speed=1.0,
          intonation=1.25, pad=0.4, chara="none"),
-    Unit("shiki1", "止めなければ、114万円。", anim=1.0, se="impact",
+    Unit("shiki1", "止めなければ114万円。", anim=1.0, se="impact",
          se_at=sf.landing_sec("formula", 1.0), speed=0.95, intonation=1.3,
          chara="none"),
     # 逆接「それでも」は受けるものが無かった(2026-08-30 kousei/low・nihongo/high:
     # 直前で額を明かした相手に「気づかないまま」と続けるのは自己矛盾)。
     # 残り期間を主語に立てる
-    Unit("toi_oboe", "114万円を、気づかないまま払いますか?", anim=1.0, speed=1.0,
+    Unit("toi_oboe", "114万円を、気づかないまま払う?", anim=1.0, speed=1.0,
          intonation=1.25, pad=0.6, chara="none"),
 
     # 「積む」は「積み立てる」の省略で、金融文脈のこの用法は一般語ではない
     # (2026-08-30 nihongo/medium)。初出で正式な形を渡す。読点は修飾の境界に置く
-    Unit("tsumu", "同じ3162円を、毎月あなたが積み立てたら?", anim=1.2, speed=1.05,
+    Unit("tsumu", "3162円を、毎月あなたが積み立てたら?", anim=1.2, speed=1.05,
          chara="none"),
     # 「〜と仮定します」は論文の定型(2026-08-30 nihongo/medium)。中止形で話し言葉に
-    Unit("katei", "では、年5%で増えると仮定してみます。", anim=1.0, speed=1.05,
+    Unit("katei", "では、年5%と仮定します。", anim=1.0, speed=1.05,
          chara="none"),
     # 「答えは」は進行の合図で、数字に温度が乗らない(2026-08-30 copy/medium)
-    Unit("fueru", "同じ3162円なのに、263万円。", anim=1.2, se="don",
+    Unit("fueru", "同じ額なのに、263万円。", anim=1.2, se="don",
          se_at=sf.landing_sec("bars", 1.2),
          speed=1.0, intonation=1.25, sub_delay=0.9, chara="none"),
     # 図のラベルを音読しない(2026-08-30 copy/high)。「だけ」が unit16 への橋になる
-    Unit("yaji", "あなたが決めるのは、毎月3162円の行き先だけ。", anim=1.2,
+    Unit("yaji", "あなたが決めるのは、3162円の行き先だけ。", anim=1.2,
          se="impact", se_at=sf.landing_sec("arrow", 1.2), speed=1.0,
          intonation=1.2, pad=0.35, chara="none"),
 
     # 263万円が「3つ全部を止めた話」であることを、撤回の入口で回収する
     # (2026-08-30 kousei/high: 動画の最大値が条件不明のまま宙に浮いていた)
-    Unit("hyo_x", "263万円は、3つ全部を止めた話。", anim=1.0,
+    Unit("hyo_x", "263万円は3つ全部を止めた話。", anim=1.0,
          speed=1.1, chara="none"),
     # 決定に**判定基準**を入れる(2026-08-30 kousei/high)。
     # 「使っていない1つ」では、どれが使っていないかを既に知っている前提になる
-    Unit("hitotsu", "でも、止めるのは先月ひらかなかった1つだけ。", anim=1.0, speed=1.05,
+    Unit("hitotsu", "でも、先月ひらかなかった1つだけ。", anim=1.0, speed=1.05,
          chara="none"),
     # 「止めるだけで確定する額」を声に出す(2026-08-30 kousei/high)。
     # この動画が求める行動は「止める」だけで、「積む」は求めていない
-    Unit("hitotsu2", "1つ止めれば、あなたの約39万円は出ていかない。", anim=1.0,
+    Unit("hitotsu2", "1つ止めれば、あなたの約39万円が残る。", anim=1.0,
          speed=1.05, chara="none"),
-    Unit("kyuuju", "それを積めば、年5%と仮定して約90万円。", anim=1.2,
+    Unit("kyuuju", "それを積めば、年5%で約90万円。", anim=1.2,
          se="don", se_at=sf.landing_sec("hero", 1.2), speed=1.0,
          intonation=1.25, pad=0.3, chara="none"),
     # 画面のカードの左辺と一字一句そろえ、360 の単位を耳に渡す(nihongo/medium)
-    Unit("shiki2", "止める1つの月額に、360か月をかける。", anim=1.0, speed=1.05,
+    Unit("shiki2", "月額に360か月をかける。", anim=1.0, speed=1.05,
          chara="none"),
     # 【】は**決定語**に付ける(2026-08-30 nihongo/medium・copy/medium:
     # 緑の強調が1手前の準備動作「開いて」に乗っていた)。
@@ -253,7 +253,7 @@ UNITS = [
          speed=1.0, intonation=1.2, chara="none"),
     # 最後の残像を行動側に残す(2026-08-30 kousei/medium)。
     # 冒頭の「サブスク」へ戻ってループする(check_hold H3)
-    Unit("cta2", "あなたが止めるサブスクは、どれですか?", anim=1.0,
+    Unit("cta2", "止めるサブスクは、どれ?", anim=1.0,
          speed=1.0, intonation=1.3, chara="none"),
 ]
 

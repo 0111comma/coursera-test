@@ -10,6 +10,8 @@
   C1  色リテラル   — render.py の中に生の #rrggbb が散らばっている(部品側で持つこと)
   M2  線形補間     — 描画部品に min(1.0, t*N) 系の等速アニメが残っている
   M1  尻の静止     — 各ユニットの最後の2フレームが同一(ナレーション後半が止め絵)
+  C2  部品側の色    — scenes_fp.py の中に、役割トークンの定義行以外で生の色が出る
+  P1  パネルの跳ね  — 白パネルの上辺のpx値が、着地後(t>=0.5)の全ユニットで1値
 
 M1 は output/work/ にフレームが残っているときだけ走る(焼いた直後なら残っている)。
 無いときは黙って飛ばす。**フレームが無いことを合格の根拠にしない。**
@@ -44,6 +46,16 @@ CONST_DEF_RE = re.compile(r"^\s*[A-Z_][A-Z0-9_]*\s*=")
 
 # M2: 等速の線形補間。イージングが無いと「機械が動かした」感じになる
 LINEAR_RE = re.compile(r"min\(\s*1(?:\.0)?\s*,\s*t\s*[*/]")
+
+# C2: 部品側(scenes_fp.py)で使ってよい生の色。**白系だけ**。
+# 役割色(赤・緑・墨・連結・地紋)は fplib のトークンから引くこと。
+# 2026-08-30 厳格審査 craft/medium・consistency/high: 1本の動画に赤が6値・
+# 緑が5値・墨が4値出ていた。褪せを _mix / _hsv で作ると色相が動き、
+# 「同じもののトーン違い」ではなく「別の色の別のもの」に見える。
+WHITE_OK = {"#ffffff", "#fffdf7", "#fff8ec", "#fffaf0"}
+
+# P1: 白パネルの上辺。着地後は全ユニットで同じ px でなければならない
+PANEL_PROBE_TS = (0.5, 1.0)
 
 # 免除に使う番号(ユニット番号を持たない全体判定は 0)
 GLOBAL = 0
@@ -87,6 +99,84 @@ def check_common_parts():
                 issues.append(f"M2 {name}:{i} 等速の線形補間 `{ln.strip()[:60]}`。"
                               f"イージング(ease_out 系)を通すこと")
     return issues
+
+
+def check_parts_colors():
+    """C2: scenes_fp.py に役割トークン外の生の色が残っていないか。"""
+    issues = []
+    f = PRODUCTION / "scenes_fp.py"
+    if not f.exists():
+        return issues
+    in_doc = False
+    for i, ln in enumerate(f.read_text().splitlines(), 1):
+        # docstring の中は説明文なので見ない(色の由来を書き残す場所)
+        q = ln.count(chr(34) * 3) + ln.count(chr(39) * 3)
+        was_doc = in_doc
+        if q % 2 == 1:
+            in_doc = not in_doc
+        if was_doc or in_doc:
+            continue
+        s = ln.lstrip()
+        if s.startswith("#") or CONST_DEF_RE.match(ln):
+            continue
+        for m in HEX_RE.finditer(ln):
+            if m.group().lower() in WHITE_OK:
+                continue
+            issues.append(f"C2 scenes_fp.py:{i} に生の色 {m.group()}。"
+                          f"役割トークン(fplib.COST/GROW/CONNECT/INK…)から引くこと")
+    return issues
+
+
+def panel_tops(vdir: Path, units, mod):
+    """P1: 白パネル(カード面)の上辺のpx値を、着地後の全ユニットで採る。
+
+    2026-08-30 consistency/high: 表カードだけが float_dy() を持っていて、
+    白パネルの上辺が 397〜408px を往復(p-p 11.5px)していた。一方
+    非表カードは全フレームで 402px に完全固定。表→図・図→表のカットごとに、
+    同寸法・同色の白パネルが最大11px上下に跳んでいた。
+    **入場の overshoot は対象外**(t<0.5)。着地後の値だけを見る。
+    """
+    try:
+        import numpy as np
+        from PIL import Image
+        import io as _io
+        import matplotlib.pyplot as plt
+        import shortlib as S
+        import fplib as F
+    except Exception:           # noqa: BLE001
+        return {}
+    scenes = getattr(mod, "SCENES", {})
+    out = {}
+    for i, u in enumerate(units):
+        painter = scenes.get(u.scene)
+        if painter is None:
+            continue
+        for t in PANEL_PROBE_TS:
+            fig = S.new_canvas(1.3)
+            try:
+                painter(fig, t)
+                buf = _io.BytesIO()
+                fig.savefig(buf, dpi=S.DPI, facecolor=F.CREAM)
+            finally:
+                plt.close(fig)
+            buf.seek(0)
+            a = np.asarray(Image.open(buf).convert("RGB"))
+            col = a[:, a.shape[1] // 2]
+            top = None
+            x0, x1 = int(a.shape[1] * 0.10), int(a.shape[1] * 0.90)
+            for y in range(int(a.shape[0] * 0.19), int(a.shape[0] * 0.47)):
+                r, g, b = col[y]
+                if not (r > 250 and g > 248 and b > 240):
+                    continue
+                # **全幅のパネルだけを見る。**吹き出し・チップのような
+                # 「カードの中の小箱」は対象外(白の帯が狭い)
+                row = a[y, x0:x1]
+                if (row.min(axis=1) > 235).mean() > 0.92:
+                    top = y
+                    break
+            if top is not None:
+                out.setdefault(top, []).append((i + 1, t))
+    return out
 
 
 def frame_units(vdir: Path):
@@ -184,6 +274,15 @@ def check_video(vdir: Path):
                                    f"{HEX_RE.search(ln).group()}。"
                                    f"色は部品側のトークンで持つこと"))
 
+    # ---- P1 パネルの跳ね(着地後の白パネル上辺が1値か)
+    tops = panel_tops(vdir, units, mod)
+    if len(tops) > 1:
+        detail = " / ".join(
+            f"{y}px({','.join(f'#{n}' for n, _t in v[:3])})"
+            for y, v in sorted(tops.items()))
+        issues.append((GLOBAL, f"P1 白パネルの上辺が着地後に {len(tops)} 値: {detail}。"
+                               f"パネル矩形は全部品共通の1組に固定すること"))
+
     # ---- M1 尻の静止(焼いたフレームが残っているときだけ)
     groups = frame_units(vdir)
     for unit, frames in sorted(groups.items()):
@@ -205,7 +304,7 @@ def main():
     targets = [Path(a) for a in sys.argv[1:]] or sorted(
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
     total = 0
-    common = check_common_parts()
+    common = check_common_parts() + check_parts_colors()
     if common:
         total += len(common)
         print(f"[NG] production/(共通部品) — {len(common)}件")
