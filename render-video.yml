@@ -1,0 +1,140 @@
+name: Render video
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: "Git branch or commit to render"
+        required: true
+        default: "claude/youtube-video-1m-subscribers-qryg54"
+        type: string
+      video_dir:
+        description: "Video directory (for example: videos/S034-zaishoku-nenkin)"
+        required: true
+        default: "videos/S034-zaishoku-nenkin"
+        type: string
+      run_checks:
+        description: "Run all quality gates after rendering"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-${{ github.ref }}-${{ inputs.video_dir }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    env:
+      VIDEO_DIR: ${{ inputs.video_dir }}
+      MPLBACKEND: Agg
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Validate input
+        shell: bash
+        run: |
+          if [[ ! "$VIDEO_DIR" =~ ^videos/[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
+            echo "video_dir must be one direct child of videos/" >&2
+            exit 1
+          fi
+
+      - name: Check out only required files
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          lfs: false
+          ref: ${{ inputs.git_ref }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            production/
+            ${{ inputs.video_dir }}/
+
+      - name: Verify render target
+        shell: bash
+        run: |
+          test -f "$VIDEO_DIR/render.py" || {
+            echo "render.py was not found in $VIDEO_DIR" >&2
+            exit 1
+          }
+
+      - name: Install system dependencies
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ffmpeg \
+            fonts-noto-cjk \
+            fonts-ipafont-gothic \
+            p7zip-full
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install \
+            janome \
+            matplotlib \
+            numpy \
+            opencv-python-headless \
+            pillow \
+            scipy
+
+      - name: Prepare VOICEVOX directory
+        shell: bash
+        run: |
+          sudo mkdir -p /opt/voicevox
+          sudo chown -R "$USER":"$USER" /opt/voicevox
+
+      - name: Restore VOICEVOX Engine cache
+        id: voicevox-cache
+        uses: actions/cache@v4
+        with:
+          path: /opt/voicevox
+          key: voicevox-engine-linux-cpu-x64-0.25.2
+
+      - name: Start VOICEVOX Engine
+        shell: bash
+        run: bash production/setup_voicevox.sh
+
+      - name: Render video
+        shell: bash
+        run: python "$VIDEO_DIR/render.py"
+
+      - name: Run quality gates
+        if: ${{ inputs.run_checks }}
+        shell: bash
+        run: python production/check_all.py "$VIDEO_DIR"
+
+      - name: Upload video and thumbnail
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ format('render-{0}-{1}', github.run_number, github.run_attempt) }}
+          path: |
+            ${{ inputs.video_dir }}/output/*.mp4
+            ${{ inputs.video_dir }}/output/thumbnail.png
+          if-no-files-found: warn
+          compression-level: 0
+          retention-days: 14
+
+      - name: Upload diagnostic files on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ format('render-debug-{0}-{1}', github.run_number, github.run_attempt) }}
+          path: |
+            /tmp/voicevox.log
+            ${{ inputs.video_dir }}/output/work/
+          if-no-files-found: ignore
+          retention-days: 7
