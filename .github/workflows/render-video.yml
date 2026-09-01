@@ -53,6 +53,7 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             production/
+            assets/
             ${{ inputs.video_dir }}/
 
       - name: Verify render target
