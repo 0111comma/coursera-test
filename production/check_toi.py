@@ -47,6 +47,16 @@ SONTOKU = [
     "自腹", "上限", "元が取れ", "足り", "間に合", "越え", "超え",
 ]
 
+# チャンネル「ヤケに心理学に詳しいずんだもん」(ID が Z で始まる)の損得は**円ではない**。
+# docs/channel-zunda/strategy.md §3:「損得を動作の数量で出す」——取られているのは
+# 時間・回数・機嫌・評価であって、財布ではない。上の一覧はお金のチャンネル用に
+# 作られていて、そのまま当てると「1文目に円の語を入れろ」という要求になる。
+# **お金のチャンネル(S・L)の判定は1文字も変えない。**
+SONTOKU_Z = SONTOKU + [
+    "考え", "気にな", "消えない", "残る", "時間", "分", "回", "機嫌", "評価",
+    "気分", "頭から離れ", "ずっと", "まだ",
+]
+
 
 def _load(render_py: Path):
     spec = importlib.util.spec_from_file_location(f"t_{render_py.parent.name}", render_py)
@@ -96,7 +106,8 @@ def check_video(vdir: Path):
     if len(first) > MAX_CHARS:
         issues.append(("#1", "問いが長い(WARN)",
                        f"{len(first)}字。{MAX_CHARS}字以内(約1〜2秒)にすること: 「{first}」"))
-    if not any(w in first for w in SONTOKU):
+    sontoku = SONTOKU_Z if vdir.name.startswith("Z") else SONTOKU
+    if not any(w in first for w in sontoku):
         issues.append(("#1", "損得の語がない",
                        f"「{first}」に、いくら・何歳・損・戻る などの語がない。"
                        f"制度の問いではなく、視聴者の財布の問いにすること"))
