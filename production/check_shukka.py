@@ -285,12 +285,26 @@ def main():
         exempt = {ln.split("#")[0].strip() for ln in EXEMPT.read_text().splitlines()
                   if ln.split("#")[0].strip()}
     total = 0
+    # 項目ごとの免除も読む(2026-09-03)。形式: <ID>:shukka:<項目名>  # 理由
+    # 項目名は issues の kind(例「素地が多い」)。**動画まるごと外さずに、
+    # 落ちている1項目だけを理由つきで外す**ため。全体を外すと鮮度・サムネ一致の
+    # ような、外してはいけない判定まで一緒に消える
+    per_item = {}
+    if EXEMPT.exists():
+        for ln in EXEMPT.read_text().splitlines():
+            body, _, reason = ln.partition("#")
+            parts = [x.strip() for x in body.strip().split(":")]
+            if len(parts) == 3 and parts[1] == "shukka" and reason.strip():
+                per_item.setdefault(parts[0], set()).add(parts[2])
     for vdir in targets:
         if vdir.name in exempt:
             print(f"[--] {vdir.name} (gate_exempt)")
             continue
         issues = (check_freshness(vdir) + check_thumb_matches(vdir)
                   + check_thumb_density(vdir) + check_pixels(vdir))
+        skip = per_item.get(vdir.name.split("-")[0], set())
+        if skip:
+            issues = [it for it in issues if it[1] not in skip]
         if issues:
             total += len(issues)
             print(f"[NG] {vdir.name} — {len(issues)}件")

@@ -1358,13 +1358,21 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
             # cover() は t<1 で描き分けができるので、0.70→1.00 を渡す。
             # 背景の水玉ドリフトも t_unit が進むぶん効く。
             nc = max(2, int(round(head * u.fps)))
-            cf = None
+            cf0 = None
             for j in range(nc):
                 tc = 0.70 + 0.30 * (j + 1) / nc
                 cf = emit(tc, 990 + j, head / nc, painter=cover_painter,
                           with_subtitle=(cover_painter is None), no_chara=True,
                           t_unit=head * (j + 0.5) / nc)
-            thumbnail = cf
+                if j == 0:
+                    cf0 = cf
+            # サムネは**動画の第0フレームそのもの**にする(2026-09-03)。
+            # 以前は最後のカバーフレームを使っていたが、カバーには微小な
+            # 上下ゆらぎ(draw_pose の bob)があるため第0フレームと一致せず、
+            # check_shukka の「サムネ不一致」が毎回鳴っていた
+            # (実測 平均絶対差 3.1/255)。**視聴者がサムネで見た絵と、
+            # 再生開始で見る絵を同じにする**のがこのゲートの意図。
+            thumbnail = cf0
         anim = min(anim, d_total - head)
         if anim > 0:
             n = max(2, int(anim * u.fps))

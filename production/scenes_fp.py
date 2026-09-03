@@ -881,7 +881,8 @@ def person_cards(name: str, labels, height: float = 0.44,
 def cover(line1: str, line2: str, line3: str, name: str = "01_base",
           disclaimer: str = "", count_from: str = "", badge_color: str = RED,
           flip: bool = False, badge_sub: str = "", teaser: str = "",
-          alt_val: str = "", alt_lab: str = "", main_lab: str = ""):
+          alt_val: str = "", alt_lab: str = "", main_lab: str = "",
+          pose_h: float = 0.400, pose_cx: float = 0.680):
     """カバー。**タイル寸(72px)で読める要素だけを置く。**
 
     2026-08-30 厳格審査(thumbnail/high×4・medium×5・low×2)での全面改修:
@@ -915,7 +916,12 @@ def cover(line1: str, line2: str, line3: str, name: str = "01_base",
     # 旧値 0.500 / 0.46 は y0 = 0.040 で、draw_pose の「刈って下端まで
     # ブリードさせる」分岐が発火せず、y=1843 で水平に切られた下に 77px の
     # 無地クリームが残って「浮いたステッカー」に見えていた。
-    POSE_TOP, POSE_H, POSE_CX = 0.375, 0.400, 0.680
+    # pose_h / pose_cx は**立ち絵の大きさと左右位置**(2026-09-03 に引数化)。
+    # 既定は 0.400 / 0.680 で従来どおり。check_shukka の「素地率」(サムネの安全帯に
+    # 地色が何%あるか)が 35% を超える構図では、立ち絵を大きくして埋める。
+    # 上端は下端ブリードを保つため POSE_TOP <= pose_h に固定する
+    POSE_H, POSE_CX = pose_h, pose_cx
+    POSE_TOP = min(0.375 + max(0.0, pose_h - 0.400), pose_h)
 
     def painter(fig, t):
         F.hide_chrome(fig)      # 帯・バッジは重ねない(背景のクリーム+ドットは残る)
