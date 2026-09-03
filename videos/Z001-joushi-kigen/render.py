@@ -54,7 +54,8 @@ SCENES = {
     # ---- 幕2 判定(5秒以内)
     "hantei": sf.compare("考える", "考えない", "いまのあなた", "こっち?",
                          title="帰り道でやること", role="neutral"),
-    "batsu": sf.hero("考える", "ばつが付くのはこっち", name=None, role="loss",
+    # **図だけが持つ情報**: ×が付いても「気にするな」ではないこと
+    "batsu": sf.hero("考える", "やめろ、ではないのだ", name=None, role="loss",
                      count=False),
 
     # ---- 幕3 根拠の見出し(数字も人名も書名もまだ出さない)
@@ -63,7 +64,7 @@ SCENES = {
 
     # ---- 幕4 仕組み。世の中を2つに分ける
     "wakeru": sf.formula("自分次第のもの + そうでないもの", name=None,
-                         answer="世の中はこの2つ", title="まず2つに分ける"),
+                         answer="世の中", title="まず2つに分ける"),
     "jibun1": sf.hero("自分次第のもの", "1つ目", name=None,
                       role="gain", count=False, size="reference"),
     "jibun2": sf.formula("自分の言い方 + 出す物", name=None,
@@ -100,7 +101,8 @@ SCENES = {
                         role="gain", count=False),
 
     # ---- 幕8 動作
-    "memo": sf.formula("明日の一文 → メモに1行", name=None,
+    # **図だけが持つ情報**: いつまでにやるか(乗り換えまで)
+    "memo": sf.formula("明日の一文 → メモ", name=None,
                        answer="乗り換えまでに", title="今日やること"),
     "ichigyo": sf.hero("1行", "書くのはこれだけ", name=None,
                        role="gain", count=False, size="reference"),
@@ -130,13 +132,13 @@ UNITS = [
          speed=1.08, intonation=1.3, pad=0.10, chara="none"),
 
     # --- 幕3 根拠の見出し(数字はまだ出さない)
-    Unit("mukashi", "その答え、昔の本にもある。", anim=1.0,
+    Unit("mukashi", "答えは、昔の本に書いてあるのだ。", anim=1.0,
          speed=1.10, intonation=1.15, pad=0.06, chara="none"),
 
     # --- 幕4 仕組み
-    Unit("wakeru", "その本は、世の中を2つに分ける。", anim=1.0, speed=1.10,
+    Unit("wakeru", "まず、世の中を2つに分けるのだ。", anim=1.0, speed=1.10,
          intonation=1.1, pad=0.06, chara="none"),
-    Unit("jibun1", "まず1つ目は、自分次第のもの。", anim=1.0, speed=1.10,
+    Unit("jibun1", "では1つ目、自分次第のもの。", anim=1.0, speed=1.10,
          pad=0.06, chara="none"),
     Unit("jibun2", "それは、言い方と、出す物。", anim=1.0, speed=1.10,
          pad=0.06, chara="none"),
@@ -146,7 +148,7 @@ UNITS = [
          pad=0.06, chara="none"),
     Unit("kigen", "上司の機嫌も、こっちなのだ。", anim=1.0, se="don",
          speed=1.08, intonation=1.2, pad=0.10, chara="none"),
-    Unit("ugokanai", "その機嫌は、動かせないのだ。", anim=1.0, speed=1.05,
+    Unit("ugokanai", "上司の機嫌は、動かせないのだ。", anim=1.0, speed=1.05,
          intonation=1.15, pad=0.10, chara="none"),
 
     # --- 幕5 正直の幕
@@ -154,35 +156,35 @@ UNITS = [
          intonation=1.25, pad=0.06, chara="none"),
     Unit("hyouka_a", "評価を決めるのは上司。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
-    Unit("komaru", "だから困るのだ。", anim=1.0, speed=1.05,
+    Unit("komaru", "だから困りごとが残るのだ。", anim=1.0, speed=1.05,
          intonation=1.15, pad=0.12, chara="none"),
 
     # --- 幕6 根拠の実年。**数字はここで初めて出す**
-    Unit("hon", "その困りごとも、本にあるのだ。", anim=1.0, speed=1.10,
+    Unit("hon", "答えは、やっぱり本にあるのだ。", anim=1.0, speed=1.10,
          intonation=1.15, pad=0.06, chara="none"),
     Unit("seiki", "その本が書かれたのは、2世紀前半。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
-    Unit("nen", "そこから【1900年前】なのだ。", anim=1.2, se="don",
+    Unit("nen", "2世紀前半は、いまから【1900年前】。", anim=1.2, se="don",
          speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕7 残るもの
-    Unit("kawaranai", "1900年前から、変わらないのだ。", anim=1.0,
+    Unit("kawaranai", "分け方は、1900年前から変わらない。", anim=1.0,
          speed=1.08, intonation=1.15, pad=0.06, chara="none"),
-    Unit("nokoru", "そのうち動かせるのは、1つだけ。", anim=1.0, speed=1.08,
+    Unit("nokoru", "その分け方で動かせるのは、1つだけ。", anim=1.0, speed=1.08,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("hitokoto", "その1つが、明日の【一文】なのだ。", anim=1.2,
+    Unit("hitokoto", "動かせる1つが、明日の【一文】。", anim=1.2,
          se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕8 動作
-    Unit("memo", "その一文を、メモに1行なのだ。", anim=1.0, speed=1.08,
+    Unit("memo", "一文が決まったら、メモに1行。", anim=1.0, speed=1.08,
          intonation=1.15, pad=0.06, chara="none"),
     Unit("ichigyo", "書くのは1行だけなのだ。", anim=1.0, speed=1.10,
          pad=0.06, chara="none"),
-    Unit("kyou", "その1行を書けたら、今日は終わり。", anim=1.0, speed=1.08,
+    Unit("kyou", "1行書けたら、今日は終わりなのだ。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
     Unit("hikaku", "上司の一言より、明日の一文なのだ。", anim=1.0, speed=1.05,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("cta", "決まったら、コメントで教えてほしいのだ。", anim=1.0, speed=1.05,
+    Unit("cta", "上司の一言、まだ考えてるならコメントで教えてなのだ。", anim=1.0, speed=1.05,
          intonation=1.2, pad=0.06, chara="none"),
 ]
 
