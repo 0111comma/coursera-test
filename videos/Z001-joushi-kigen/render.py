@@ -133,11 +133,11 @@ UNITS = [
          speed=1.08, intonation=1.3, pad=0.10, chara="none"),
 
     # --- 幕3 根拠の見出し(数字はまだ出さない)
-    Unit("mukashi", "答えは、昔の本に書いてあるのだ。", anim=1.0,
+    Unit("mukashi", "答えは、昔の本にあるのだ。", anim=1.0,
          speed=1.10, intonation=1.15, pad=0.06, chara="none"),
 
     # --- 幕4 仕組み
-    Unit("wakeru", "まず、世の中を2つに分けるのだ。", anim=1.0, speed=1.10,
+    Unit("wakeru", "まず、世の中を2つに分ける。", anim=1.0, speed=1.10,
          intonation=1.1, pad=0.06, chara="none"),
     Unit("jibun1", "では1つ目、自分次第のもの。", anim=1.0, speed=1.10,
          pad=0.06, chara="none"),
@@ -161,7 +161,7 @@ UNITS = [
          intonation=1.15, pad=0.12, chara="none"),
 
     # --- 幕6 根拠の実年。**数字はここで初めて出す**
-    Unit("hon", "答えは、どこに書いてあると思うのだ?", anim=1.0, speed=1.10,
+    Unit("hon", "答えは、どこに書いてあると思う?", anim=1.0, speed=1.10,
          intonation=1.15, pad=0.06, chara="none"),
     Unit("seiki", "その本が書かれたのは、2世紀前半。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
@@ -169,11 +169,11 @@ UNITS = [
          speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕7 残るもの
-    Unit("kawaranai", "つまり、1900年前から同じ側にあるのだ。", anim=1.0,
+    Unit("kawaranai", "つまり、1900年前から同じ側なのだ。", anim=1.0,
          speed=1.08, intonation=1.15, pad=0.06, chara="none"),
     Unit("nokoru", "では、あなたが動かせるのはどっちなのだ?", anim=1.0, speed=1.08,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("hitokoto", "その1つが、明日の【一文】なのだ。", anim=1.2,
+    Unit("hitokoto", "その1つが、明日の【一文】。", anim=1.2,
          se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕8 動作
