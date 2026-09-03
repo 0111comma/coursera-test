@@ -141,7 +141,7 @@ UNITS = [
          speed=1.10, intonation=1.15, pad=0.06, chara="none"),
 
     # --- 幕4 仕組み
-    Unit("wakeru", "まず、世の中を2つに分ける。", anim=1.7, speed=1.10,
+    Unit("wakeru", "まず、世の中をふたつに分ける。", anim=1.7, speed=1.10,
          intonation=1.1, pad=0.06, chara="none"),
     Unit("jibun1", "では1つ目、自分次第のもの。", anim=1.7, speed=1.10,
          pad=0.06, chara="none"),
@@ -183,7 +183,7 @@ UNITS = [
     # --- 幕8 動作
     Unit("memo", "一文が決まったら、メモに1行。", anim=1.7, speed=1.08,
          intonation=1.15, pad=0.06, chara="none"),
-    Unit("ichigyo", "あなたが書くのは、1行だけなのだ。", anim=1.7, speed=1.10,
+    Unit("ichigyo", "あなたが書くのは、1行だけなのだ。", anim=2.2, speed=1.10,
          pad=0.06, chara="none"),
     Unit("kyou", "1行書けたら、今日は終わりなのだ。", anim=1.7, speed=1.08,
          pad=0.06, chara="none"),
