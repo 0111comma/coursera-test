@@ -93,8 +93,9 @@ SCENES = {
                     title="この分け方の出どころ", role="neutral"),
 
     # ---- 幕7 残るもの
-    "kawaranai": sf.hero("変わっていない", "1900年前から分け方は", name=None,
-                         role="neutral", count=False, size="reference"),
+    # **図だけが持つ情報**: 「同じ側」がどっち側なのか
+    "kawaranai": sf.hero("同じ側", "自分次第じゃないほう", name=None,
+                          role="loss", count=False, size="reference"),
     "nokoru": sf.compare("明日の一文", "上司の機嫌", "動かせる",
                          "動かせない", title="帰り道で考えるなら?", role="neutral"),
     "hitokoto": sf.hero("一文だけ", "明日いちばん最初に言う", name=None,
@@ -108,8 +109,8 @@ SCENES = {
                        role="gain", count=False, size="reference"),
     "kyou": sf.hero("もう考えない", "書けたら、今日は", name=None,
                     role="gain", count=False, size="reference"),
-    "hikaku": sf.compare("明日の一文", "上司の一言", "考えるのは",
-                         "考えないのは", title="帰り道の持ち物", role="neutral"),
+    "hikaku": sf.compare("明日の一文", "上司の一言", "きょう考えるのは",
+                         "もう考えないのは", title="帰り道の持ち物", role="neutral"),
     "cta": sf.cta("", "02_point", show_comment=True, bubble="決まったのだ?"),
 }
 
@@ -160,7 +161,7 @@ UNITS = [
          intonation=1.15, pad=0.12, chara="none"),
 
     # --- 幕6 根拠の実年。**数字はここで初めて出す**
-    Unit("hon", "答えは、やっぱり本にあるのだ。", anim=1.0, speed=1.10,
+    Unit("hon", "答えは、どこに書いてあると思うのだ?", anim=1.0, speed=1.10,
          intonation=1.15, pad=0.06, chara="none"),
     Unit("seiki", "その本が書かれたのは、2世紀前半。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
@@ -168,23 +169,23 @@ UNITS = [
          speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕7 残るもの
-    Unit("kawaranai", "分け方は、1900年前から変わらない。", anim=1.0,
+    Unit("kawaranai", "つまり、1900年前から同じ側にあるのだ。", anim=1.0,
          speed=1.08, intonation=1.15, pad=0.06, chara="none"),
-    Unit("nokoru", "その分け方で動かせるのは、1つだけ。", anim=1.0, speed=1.08,
+    Unit("nokoru", "では、あなたが動かせるのはどっちなのだ?", anim=1.0, speed=1.08,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("hitokoto", "動かせる1つが、明日の【一文】。", anim=1.2,
+    Unit("hitokoto", "その1つが、明日の【一文】なのだ。", anim=1.2,
          se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
 
     # --- 幕8 動作
     Unit("memo", "一文が決まったら、メモに1行。", anim=1.0, speed=1.08,
          intonation=1.15, pad=0.06, chara="none"),
-    Unit("ichigyo", "書くのは1行だけなのだ。", anim=1.0, speed=1.10,
+    Unit("ichigyo", "あなたが書くのは、1行だけなのだ。", anim=1.0, speed=1.10,
          pad=0.06, chara="none"),
     Unit("kyou", "1行書けたら、今日は終わりなのだ。", anim=1.0, speed=1.08,
          pad=0.06, chara="none"),
-    Unit("hikaku", "上司の一言より、明日の一文なのだ。", anim=1.0, speed=1.05,
+    Unit("hikaku", "今日はもう、上司の一言を考えなくていい。", anim=1.0, speed=1.05,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("cta", "上司の一言、まだ考えてるならコメントで教えてなのだ。", anim=1.0, speed=1.05,
+    Unit("cta", "決まった一言、コメントで教えてほしいのだ。", anim=1.0, speed=1.05,
          intonation=1.2, pad=0.06, chara="none"),
 ]
 
