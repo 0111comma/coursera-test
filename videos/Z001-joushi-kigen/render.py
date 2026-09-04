@@ -15,6 +15,9 @@
 - 幕4 出どころ: 実はこれ、1900年前の奴隷の考え方(11〜15)。**仕掛けではなく由来として最後に置く**
 - 幕5 動作: 今夜、明日の一言をメモに1行(16〜19)
 
+**画面は scenes_zunda の場面の絵**(2026-09-04 ユーザー「もっとイラストつかって。よくわからん画面に出てる図」)。
+赤い鍵=自分で変えられない、緑のチェック=自分で変えられる。ずんだもんは全カットで左に立つ。
+
 **計算が無い回なので verify.py の役目は年の引き算だけ**(strategy §5.3)。
 声に出す数は「1900年前」(11)と「1行」(17)で、plan.md の前提表に根拠と出典がある。
 「2世紀前半」は図(arrow)と常設バッジが持つ(前情報ゼロの読者に年として通らなかった)。
@@ -41,6 +44,7 @@ F.use_fp_theme(TITLE, speaker=3, badge=BADGE)      # 3 = ずんだもん
 
 from shortlib import Unit, render_video, require_voicevox  # noqa: E402
 import scenes_fp as sf  # noqa: E402
+import scenes_zunda as sz  # noqa: E402
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 
@@ -52,51 +56,33 @@ SCENES = {
                            name="03_troubled", main_lab="いまのあなた",
                            alt_val="明日の一言", alt_lab="あなたはどっち?",
                            disclaimer="※ 出典はエピクテトス『提要』1(2世紀前半)"),
-    "kangae": sf.person_bubble("03_troubled", "あの時…"),
+    # 2026-09-04 ユーザー「もっとイラストつかって。よくわからん画面に出てる図」
+    # → 数の図(compare / formula / arrow / hero)をやめ、場面の絵(scenes_zunda)にした
+    "kangae": sz.train_think("03_troubled", "あの時…"),
 
-    # ---- 幕2 判定。その考えは明日の役に立たない
-    "yaku": sf.hero("明日の役に立つ?", "その考え", name=None,
-                    role="neutral", count=False, size="reference"),
-    "tatanai": sf.hero("立たない", "明日の役には", name=None, role="loss",
-                       count=False, size="reference"),
-    "batsu": sf.hero("変えられない", "もう言ったことは", name=None, role="loss",
-                     count=False),
-    # **図だけが持つ情報**: 帰り道の30分がそこに消えていること
-    "ugokanai": sf.compare("考える", "動かない", "変えられないことを", "30分たっても",
-                           title="帰り道", role="loss"),
-    # **図だけが持つ情報**: 3つとも「他人が決める」側であること
-    "sanko": sf.formula("上司の機嫌 + 評判 + 評価", name=None,
-                        answer="他人が決める", title="変えられないもの"),
-
-    "hyouka2": sf.hero("評価も", "上司がつける", name=None, role="loss",
-                       count=False, size="reference"),
+    # ---- 幕2 判定
+    "yaku": sz.calendar_pair("03_troubled", ("今日", "×"), ("明日", "?")),
+    "tatanai": sz.calendar_one("03_troubled", "明日", "×", bubble="変わらない"),
+    "batsu": sz.bubble_locked("03_troubled", "……"),
+    "ugokanai": sz.thinking_loop("03_troubled"),
+    "sanko": sz.boss_crowd("03_troubled"),
+    "hyouka2": sz.boss_sheet("03_troubled", "評価"),
 
     # ---- 幕3 残るもの
-    "q": sf.hero("じゃあ何が?", "残ってるのは", name=None,
-                 role="neutral", count=False, size="reference"),
-    "hitokoto": sf.hero("明日の一言", "それだけ", name=None, role="gain", count=False),
+    "q": sz.ask_what("01_base"),
+    "hitokoto": sz.tomorrow_line("02_point"),
 
     # ---- 幕4 出どころ(奴隷)。**答えを出したあと**に置く
-    "dare": sf.person_bubble("02_point", "誰?"),
-    "dorei": sf.hero("奴隷", "言い出したのは", name=None, role="neutral",
-                     count=False, size="reference"),
-    # **図だけが持つ情報**: 『提要』が「自分のものではない」に挙げた3項目
-    "mochimono": sf.formula("体 + 持ち物 + 役職", name=None,
-                            answer="全部主人のもの", title="奴隷"),
-    "kazoeru": sf.hero("変えられること", "だけ見て生きた", name=None,
-                       role="gain", count=False, size="reference"),
-    # **図だけが持つ情報**: 2世紀前半 → いまから1900年前 という引き算
-    "hon": sf.arrow("2世紀前半", "いま", "奴隷の考え方", "本に残ってる",
-                    title="1900年前から", role="neutral"),
+    "dare": sz.who_silhouette("02_point"),
+    "dorei": sz.ancient_person("04_surprised", "1900年前", "奴隷"),
+    "mochimono": sz.owned("04_surprised"),
+    "kazoeru": sz.slave_sees("05_happy"),
+    "hon": sz.book_now("05_happy", "1900年前"),
 
     # ---- 幕5 動作 → 締め
-    "konya": sf.hero("決めるだけ", "今夜やるのは", name=None,
-                     role="gain", count=False),
-    # **図だけが持つ情報**: いつまでにやるか(降りる前に)
-    "memo": sf.formula("今夜 → 1行", name=None,
-                       answer="降りる前に", title="メモ"),
-    "tana": sf.compare("明日の一言", "上司の機嫌", "持ち帰る", "置いていく",
-                       title="改札の前で", role="neutral"),
+    "konya": sz.tonight("02_point"),
+    "memo": sz.memo_write("05_happy"),
+    "tana": sz.go_home("05_happy"),
     "cta": sf.cta("", "02_point", show_comment=True, bubble="なに書いた?"),
 }
 
