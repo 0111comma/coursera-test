@@ -50,7 +50,7 @@ SCENES = {
     "toi__cover": sf.cover("上司の一言、帰りの電車でまだ引きずってる?",
                            "あの一言", "言えばよかった",
                            name="03_troubled", main_lab="いまのあなた",
-                           alt_val="明日の一言", alt_lab="どっち?",
+                           alt_val="明日の一言", alt_lab="あなたはどっち?",
                            disclaimer="※ 出典はエピクテトス『提要』1(2世紀前半)"),
     "kangae": sf.person_bubble("03_troubled", "あの時…"),
 
@@ -119,7 +119,7 @@ UNITS = [
          intonation=1.2, pad=0.08, chara="none"),
     Unit("batsu", "だって、もう言っちゃったことは変えられない。", anim=1.7,
          se="don", speed=1.13, intonation=1.3, pad=0.10, chara="none"),
-    Unit("ugokanai", "で、変えられないことって、考えてもしょうがなくない?", anim=1.7,
+    Unit("ugokanai", "で、変えられないなら、考えてもしょうがなくない?", anim=1.7,
          speed=1.15, intonation=1.1, pad=0.06, chara="none"),
     Unit("sanko", "たとえば上司の機嫌とか、周りの評判とかもね。", anim=1.7,
          speed=1.15, intonation=1.15, pad=0.06, chara="none"),
