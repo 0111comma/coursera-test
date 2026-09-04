@@ -36,7 +36,7 @@ ROOT = PRODUCTION.parent
 # 「出荷物が旧デザインのまま」は2ラウンド連続で通っていた。
 COMMON = ["zentei", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
           "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu",
-          "kotoba", "design", "video", "shukka"]
+          "kotoba", "honyaku", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 
