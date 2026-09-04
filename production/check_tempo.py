@@ -41,6 +41,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 MAX_CUT_SEC = 2.4     # 平均。競合1.6〜1.8に対し、余裕を見てここを上限にする
+# チャンネル「ヤケに心理学に詳しいずんだもん」(ID が Z)は 3.0 秒まで(2026-09-04)。
+# ユーザー指摘「まだ全然日本語がAI感強い」。1カット2.4秒に収めるために字幕が
+# 見出し語の羅列(「直すか、決めるか。今日はどっち?」)になり、それがAI感の一因だった。
+# 話し言葉は1文がもう少し長い。2.4 はお金のチャンネルの競合実測から置いた値で、
+# 話し言葉を優先するこのチャンネルにはそのまま当てない
+MAX_CUT_SEC_Z = 3.0
 LONG_CUT_SEC = 4.5    # 1カットの上限。これ以上そのままの絵は出さない
 # 字数→秒。**7.4 は S032 1本だけを見た値で、2割ほど短く見積もっていた**(2026-08-24)。
 # 公開済み29本の実測(字数 ÷ mp4の尺)の中央値は 6.05 字/秒(範囲 4.71〜7.21)。
@@ -155,11 +161,12 @@ def check_video(vdir: Path):
 
     issues = []
     avg = total / len(cuts)
-    if avg > MAX_CUT_SEC:
-        need = int(total / MAX_CUT_SEC + 0.999)
+    limit = MAX_CUT_SEC_Z if vdir.name.startswith("Z") else MAX_CUT_SEC
+    if avg > limit:
+        need = int(total / limit + 0.999)
         issues.append(("(全体)", "カットが遅い",
                        f"{total:.1f}秒 / {len(cuts)}カット = "
-                       f"**1カット{avg:.2f}秒**。上限{MAX_CUT_SEC}秒。"
+                       f"**1カット{avg:.2f}秒**。上限{limit}秒。"
                        f"競合は1.6〜1.8秒。**あと{need - len(cuts)}カット要る**"
                        f"{'(尺は字数からの推定)' if estimated else ''}"))
 
