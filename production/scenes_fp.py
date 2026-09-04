@@ -570,6 +570,11 @@ def big_number(fig, cx, cy, text, fs, color=RED, t=1.0, count=True,
     boost = 1.0
     if t >= COUNT_WIN:
         boost *= 1.0 + 0.012 * math.sin(2 * math.pi * F.LAST_T / 0.9)
+        # 2026-09-04 Z001: 正弦の呼吸だけでは山と谷で速度が0になり、200px級でも
+        # 1フレームの変化が1px未満で、ユニット末尾が check_design M1(尻の止め絵)に
+        # 落ちていた(焼くたびに違うユニットで)。**速度一定の三角波で上下に流す**
+        # (float_dy と同じ考え方。±8px・1.6秒なので目には「ゆっくり浮いている」に見える)
+        cy += 0.0042 * tri(period=1.6)
     if count and t >= COUNT_WIN:
         # 着地ポップ: 着地の瞬間に+22%膨らんで0.12秒で戻る。同時に色を
         # 一瞬白へ振る(音のdonだけ鳴って絵が素通りしていた)
