@@ -205,8 +205,17 @@ def tri(period: float = 1.2) -> float:
 
 def beat(period: float = 1.8, amp: float = 0.030) -> float:
     """周期の鼓動(1.0を下回らない)。常時ゆらゆらより上品に、周期に1回だけ膨らむ。
-    2026-08-29 批評3周目: idle 0.010 は200px級の数字で約2pxの揺れ=静止に見えた。"""
-    return 1.0 + amp * max(0.0, math.sin(2 * math.pi * F.LAST_T / period)) ** 3
+    2026-08-29 批評3周目: idle 0.010 は200px級の数字で約2pxの揺れ=静止に見えた。
+
+    2026-09-04 Z001: `max(0, sin)**3` は**周期の半分のあいだ厳密に 1.0**で、
+    hero / formula / arrow / compare の尻の動きは beat() だけだったため、
+    ユニットの最後の2フレームがその半周期に落ちると完全静止になり、
+    check_design の M1 が焼くたびに違うユニットで落ちていた(#8/#9 → #15/#17 → #10/#13)。
+    免除を番号で足しても次の焼きでずれる。**鼓動に速度一定の三角波を重ねて、
+    どの瞬間にも級数が変わる**ようにした(float_dy と同じ考え方)。
+    """
+    pulse = amp * max(0.0, math.sin(2 * math.pi * F.LAST_T / period)) ** 3
+    return 1.0 + pulse + 0.35 * amp * tri(period)
 
 
 def float_dy(amp: float = 0.003, period: float = 1.6) -> float:
