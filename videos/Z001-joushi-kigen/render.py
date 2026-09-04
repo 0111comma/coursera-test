@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Z001「上司の機嫌は、あなたの仕事じゃない」
+"""Z001「元奴隷が書いた表に、上司の席は無い」
 
 チャンネル「ヤケに心理学に詳しいずんだもん」の1本目。企画書は plan.md。
 型は docs/channel-zunda/strategy.md:
@@ -7,10 +7,30 @@
 - 1コマ目 = **場面1行 + 二択**(×はまだ付けない)
 - **5秒以内に判定**(二択の片方に×)
 - 判定の直後に**根拠の見出し**を1行(人名・書名はその後)
-- 締めは**手が動く動作**(明日の一文をメモに1行)
+- 締めは**手が動く動作**(1900年前の表の左に1行足す)
 
-**計算が無い回なので verify.py は無い**(strategy §5.3)。
-声に出す数は「1900年前」の1つだけで、plan.md の前提表に根拠と出典がある。
+**審査団4人(kousei / hook / igaisei / warai)の2ラウンド目の指摘で、
+幕1〜幕8を全部書き直した**(2026-09-03)。中身は plan.md §13。骨だけ:
+
+- **二択を「今日の言い方を直す / 明日の一言を決める」に替えた。**
+  旧二択「今日を思い返す / 明日を決める」は語感が非対称で(思い返す=反芻=悪、
+  決める=前向き=善)、×の落ちる先が読めていた。両方を「真面目な人がやる行動」に
+  揃えると、**努力している側(直す)に×が落ちる**ので本当に読めない
+- **カット2を「二択の読み上げ」から「構造の暴露」に替えた。**
+  1コマ目に文字で出ている二択を声でなぞるだけの3.5秒を、
+  「両方とも考える側」という**画面に無い一文**に替えている
+- **幕3の一撃を、事実の羅列から矛盾に替えた。** 驚きは「奴隷が書いた」ではなく
+  **体も持ち物も自分のものでない人が、「自分のもの」の欄を埋められた**こと
+- **表から「主人の機嫌」「評判」「評価」を外した。** 旧版は表の右列に答えが
+  貼ってあるのに「どっち?」と出題していた(4人中2人が「死んだクイズ」と指摘)。
+  表に無いからこそ、山(数えなかった)も幕6(席が無い)も**同じ1枚の絵で読める**
+- **仕分けを引っかけにした。** 1問目は視聴者がいまやっている「今日の反省」、
+  2問目は「自分の行い次第」と思われている「評判」。どちらも右に落ちる
+- **オチを表に戻した。** 「メモに1行」ではなく「あなたの表の左に1行足す」。
+  2回見せた表とオチが同じ絵で1本になる
+
+**計算が無い回なので verify.py の役目は年の引き算だけ**(strategy §5.3)。
+声に出す数は「2世紀前半」「1900年前」で、plan.md の前提表に根拠と出典がある。
 
 立ち絵は **ずんだもん**(`assets/character-zunda/`)。fplib の POSE_DIR を
 このチャンネル用に差し替えている。表情は 01_base(normal)/ 02_point(smug)/
@@ -27,7 +47,8 @@ import fplib as F     # noqa: E402
 # --- このチャンネルの立ち絵はずんだもん(fp の意匠はそのまま使う)
 F.POSE_DIR = ROOT / "assets" / "character-zunda"
 
-TITLE = "自分次第のもの"
+# 常設ラベルは**分類名ではなく、この動画が判定する問い**にする
+TITLE = "動かせるのはどっち?"
 BADGE = "※ 出典はエピクテトス『提要』1(2世紀前半)"
 F.use_fp_theme(TITLE, speaker=3, badge=BADGE)      # 3 = ずんだもん
 
@@ -36,160 +57,202 @@ import scenes_fp as sf  # noqa: E402
 
 OUTDIR = Path(__file__).resolve().parent / "output"
 
+# 「奴隷が作った表」。**幕3で建てて、幕6でもう一度返す**。
+#
+# **中身は『提要』1 が挙げた項目だけにした**(2026-09-03の書き直し)。
+#   自分のもの   = 判断・やること・望むこと(τὰ ἡμέτερα ἔργα)
+#   そうじゃない = 体・持ち物・役職(σῶμα / κτῆσις / ἀρχαί)
+#
+# **「主人の機嫌」「評判」「評価」は載せていない。**旧版は右列に
+# 「主人の機嫌」「評判」を書いたまま「どっちに入る?」と出題していたので、
+# 答えが画面に貼ってあるクイズになっていた。載せないことで:
+#   - 幕4の仕分け(今日の反省 / 評判)が**本当に当てられない問い**になる
+#   - 幕3の山「主人の機嫌は数えなかった」が、**表に無い**という絵で読める
+#   - 幕6「上司の席は1900年前から無い」が、同じ表を見せるだけで成立する
+#   - 締め「あなたの表の左に1行足す」が、空いている左列に落ちる
+HEAD = ["自分のもの", "そうじゃない"]
+ROWS = [("いまの判断", "体"),
+        ("やること", "持ち物"),
+        ("望むこと", "役職")]
+
 SCENES = {
-    # ---- 幕1 場面 + 二択。**×はまだ付けない**(片方は視聴者がいまやっている側)
+    # ---- 幕1 場面 + 二択。**×はまだ付けない**
+    # 二択は**両方とも「真面目な人がやる行動」**。どちらに×が落ちるか読めない
     "toi": sf.person("03_troubled", height=0.46),
-    # line1 = 問い(check_toi はここを見る)/ line2 = 墨帯のフック /
-    # line3 = 赤ブロック(いまやっている側)/ alt_val = 緑ブロック(もう片方)
-    #
-    # **フックは6字まで。**scenes_fp の墨帯は高さ 0.135 に対して行送りが 0.081 で、
-    # 2行になると 0.162 で帯からはみ出す(実測。2026-09-02)
-    "toi__cover": sf.cover("上司の一言、まだ考えてる?",
-                           "上司の一言", "考える",
+    "toi__cover": sf.cover("22時の電車、まだ今日の言い方直してる?",
+                           "あの一言", "今日の言い方を直す",
                            name="03_troubled",
                            main_lab="いまのあなた",
-                           alt_val="考えない", alt_lab="どっち?",
+                           alt_val="明日の一言を決める", alt_lab="どっち?",
                            disclaimer="※ 出典はエピクテトス『提要』1(2世紀前半)",
-                           # 立ち絵を大きくして素地を減らそうとしたが、
-                           # カバーの規約(緑ブロックの下端と頭頂に24px以上あける)に
-                           # ぶつかるので既定のまま。素地率は §gate_exempt に理由つきで登録した
                            ),
 
     # ---- 幕2 判定(5秒以内)
-    "hantei": sf.compare("考える", "考えない", "いまのあなた", "こっち?",
+    # **図だけが持つ情報**: 二択の中身(どちらも帰り道の30分を使う行動だ)
+    "hantei": sf.compare("直す", "決める", "今日のぶん", "明日のぶん",
                          title="帰り道でやること", role="neutral"),
-    # **図だけが持つ情報**: ×が付いても「気にするな」ではないこと
-    "batsu": sf.hero("考える", "やめろ、ではないのだ", name=None, role="loss",
-                     count=False),
+    # **図だけが持つ情報**: ×が付いたあと、その30分がどちらへ移るか
+    "batsu": sf.arrow("直す", "決める", "ばつが付く", "移す先はこっち",
+                      title="帰り道で考えるのは", role="neutral"),
+    # 視聴者の心の声にツッコむ。往復の型はここで見せる
+    "tsukkomi": sf.person_bubble("02_point", "顔に出てる"),
 
-    # ---- 幕3 根拠の見出し(数字も人名も書名もまだ出さない)
-    "mukashi": sf.hero("同じ答え", "ずっと昔の本にも", name=None,
-                       role="neutral", count=False, size="reference"),
-
-    # ---- 幕4 仕組み。世の中を2つに分ける
-    "wakeru": sf.formula("自分次第のもの + そうでないもの", name=None,
-                         answer="世の中", title="まず2つに分ける"),
-    "jibun1": sf.hero("自分次第のもの", "1つ目", name=None,
-                      role="gain", count=False, size="reference"),
-    "jibun2": sf.formula("自分の言い方 + 出す物", name=None,
-                         answer="自分次第のもの", title="1つ目の中身"),
-    "hoka1": sf.hero("そうでないもの", "2つ目", name=None,
-                     role="loss", count=False, size="reference"),
-    "hoka2": sf.formula("天気 + 他人の機嫌", name=None,
-                        answer="自分次第じゃない", title="2つ目の中身"),
-    "kigen": sf.hero("上司の機嫌", "入るのはこっち", name=None, role="loss",
-                     count=False),
-    "ugokanai": sf.hero("動かせない", "考えても", name=None,
-                        role="loss", count=False, size="reference"),
-
-    # ---- 幕5 正直の幕。困るのは本当だと認める
-    "hyouka_q": sf.person_bubble("03_troubled", "じゃあ評価は?"),
-    "hyouka_a": sf.hero("上司が決める", "評価を", name=None,
-                        role="loss", count=False, size="reference"),
-    "komaru": sf.hero("そのとおり", "だから困るのだ", name=None,
-                      role="loss", count=False, size="reference"),
-
-    # ---- 幕6 根拠の実年(**数字はここで初めて出す**)
-    "hon": sf.person_bubble("02_point", "本に書いてあるのだ"),
-    "seiki": sf.hero("2世紀前半", "本が書かれたのは", name=None,
+    # ---- 幕3 一撃(奴隷)+ 矛盾。この動画で唯一の「知らなかった」
+    # **図だけが持つ情報**: 生まれつきではなく、売られて、のちに解放された
+    "dorei": sf.hero("奴隷", "主人に売られ、のちに解放", name=None,
                      role="neutral", count=False, size="reference"),
-    "nen": sf.arrow("2世紀前半", "1900年前", "書かれた", "いまから",
-                    title="この分け方の出どころ", role="neutral"),
+    # **図だけが持つ情報**: 2世紀前半 → いまから1900年前 という引き算そのもの
+    # (声は幕3で「2世紀前半」、幕6で「1900年前」だけを言う。check_zentei)
+    "nen": sf.arrow("2世紀前半", "1900年前", "書かれたのは", "いまから",
+                    title="いつの表か", role="neutral"),
+    # **図だけが持つ情報**: 『提要』が「自分のものではない」に挙げた3項目
+    # (声は体と持ち物までしか言わない。役職はここでだけ足される)
+    "mochimono": sf.formula("体 + 持ち物 + 役職", name=None,
+                            answer="ぜんぶ主人の側",
+                            title="『提要』が挙げた側"),
+    "hyou": sf.table(HEAD, ROWS, build=True, title="奴隷が作った表"),
+    # **図だけが持つ情報**: 毎日その機嫌の下にいた人が、それでも数えなかった
+    "kazoenai": sf.hero("毎日、顔を合わせる", "主人とは", name=None,
+                        role="loss", count=False, size="reference"),
 
-    # ---- 幕7 残るもの
-    # **図だけが持つ情報**: 「同じ側」がどっち側なのか
-    "kawaranai": sf.hero("同じ側", "自分次第じゃないほう", name=None,
-                          role="loss", count=False, size="reference"),
-    "nokoru": sf.compare("明日の一文", "上司の機嫌", "動かせる",
-                         "動かせない", title="帰り道で考えるなら?", role="neutral"),
-    "hitokoto": sf.hero("一文だけ", "明日いちばん最初に言う", name=None,
-                        role="gain", count=False),
+    # ---- 幕4 仕分け。**引っかけを2問**。表に答えは載っていない
+    "q1": sf.hero("今日の反省", "どっちに入る?", name=None,
+                  role="neutral", count=False),
+    # **図だけが持つ情報**: 反省が動かせないのは「もう終わったこと」だから
+    "a1": sf.compare("今日の反省", "終わったこと", "誰がやっても", "動かない",
+                     title="1問目の答え", role="loss"),
+    "q2": sf.hero("あなたの評判", "どっちに入る?", name=None,
+                  role="neutral", count=False),
+    # **図だけが持つ情報**: 評判の置き場所(自分の外にある)
+    "a2": sf.compare("評判", "他人の頭の中", "置き場所は", "あなたの外",
+                     title="2問目の答え", role="loss"),
+    # この回の決め言葉「棚」。上司を悪者にせず、評判と同じ場所へ置く
+    "kigen": sf.compare("上司の機嫌", "評判", "置き場所は", "と同じ",
+                        title="棚はここ", role="loss"),
 
-    # ---- 幕8 動作
-    # **図だけが持つ情報**: いつまでにやるか(乗り換えまで)
-    "memo": sf.formula("明日の一文 → メモ", name=None,
+    # ---- 幕5 正直の幕。困るのは本当だと認めて、その場で数えて返す
+    "hyouka_q": sf.person_bubble("03_troubled", "そこは困る"),
+    # **図だけが持つ情報**: 負けは1つだけで、残りは全部こちら側にある
+    "hyouka_a": sf.formula("負けるもの 1つ", name=None,
+                           answer="残りは全部あなた", title="数えてみる"),
+
+    # ---- 幕6 表に戻る。**赤枠が明細を往復し、どこにも停まらない**
+    # = 上司の行がそもそも無い、を絵だけで見せる
+    "hyou2": sf.table(HEAD, ROWS, highlight="sweep", title="上司を探す"),
+    # **図だけが持つ情報**: 1900年前の悩みと今夜の悩みが同じ棚にある
+    "saihousou": sf.arrow("2世紀前半", "今夜のあなた", "同じ悩み", "同じ棚",
+                          title="1900年ずっと", role="neutral"),
+
+    # ---- 幕7 残るもの → 裏切り
+    "nokoru": sf.compare("明日の一言", "上司の機嫌", "動かせる", "動かせない",
+                         title="今夜の持ちぶん", role="neutral"),
+    # **図だけが持つ情報**: 動かせるのは語だけではない(間・声の大きさもある)
+    "hitokoto": sf.formula("口 + 間 + 声の大きさ", name=None,
+                           answer="全部あなたの側", title="動かせるもの"),
+    # **図だけが持つ情報**: 今夜やる範囲はどこまでか(言うのは明日でいい)
+    "urakiri": sf.arrow("決める", "言う", "今夜ここまで", "また明日",
+                        title="今夜の範囲", role="neutral"),
+
+    # ---- 幕8 動作 → 締め
+    # **図だけが持つ情報**: いつまでにやるか(乗り換えまでに)
+    "memo": sf.formula("表の左に 1行", name=None,
                        answer="乗り換えまでに", title="今日やること"),
-    "ichigyo": sf.hero("1行", "書くのはこれだけ", name=None,
-                       role="gain", count=False, size="reference"),
-    "kyou": sf.hero("もう考えない", "書けたら、今日は", name=None,
-                    role="gain", count=False, size="reference"),
-    "hikaku": sf.compare("明日の一文", "上司の一言", "きょう考えるのは",
-                         "もう考えないのは", title="帰り道の持ち物", role="neutral"),
-    "cta": sf.cta("", "02_point", show_comment=True, bubble="決まったのだ?"),
+    "kaketa": sf.person_bubble("05_happy", "そこで終わり"),
+    # **図だけが持つ情報**: 改札の前で持ち帰るもの・置いていくものの仕分け
+    "tana": sf.compare("明日の一言", "上司の機嫌", "持ち帰る", "置いていく",
+                       title="改札の前で", role="neutral"),
+    "cta": sf.cta("", "02_point", show_comment=True, bubble="決まった?"),
 }
 
 # 免責は先頭の数カットだけ(根拠が画面に出るまで)
 for _k in ("toi", "hantei", "batsu"):
     SCENES[_k] = sf.badge_head(SCENES[_k])
 
-# ナレーション = 字幕。24ユニット。
+# ナレーション = 字幕。25ユニット・374字(推定55.6秒)。
 # **1カット2.4秒以下**(check_tempo)。1カットに2つのことを言わせない。
+# **「〜のだ」は3カットに1回まで**(ai-nihongo-rules §3)→ 5・16・25 の3回。
+# **指示語は3回**(7・19・24。check_bunsho の上限は4回)。
 # 図が主役なので立ち絵は none(person / person_bubble のカットは図の中に居る)。
 UNITS = [
-    # --- 幕1 場面 + 二択(0〜3秒)
-    Unit("toi", "上司の一言、まだ考えてる?", anim=1.7, cover=True,
-         se="pop", speed=1.05, intonation=1.25, pad=0.06, chara="none"),
+    # --- 幕1 場面 + 二択(0〜3秒)。**時刻と目に見える物を入れる**(strategy §2)
+    # 二択の両方が「真面目な人がやる行動」なので、×の落ちる先が読めない
+    Unit("toi", "22時の電車、まだ今日の言い方直してる?", anim=1.7, cover=True,
+         se="pop", speed=1.08, intonation=1.25, pad=0.06, chara="none"),
 
     # --- 幕2 判定(5秒以内に片方へ×)
-    Unit("hantei", "その一言、考える?考えない?", anim=1.7, speed=1.10,
-         intonation=1.25, pad=0.06, chara="none"),
-    Unit("batsu", "実は、ばつが付くのは【考える】。", anim=1.7, se="don",
-         speed=1.08, intonation=1.3, pad=0.10, chara="none"),
+    # **画面に無い一文をここで言う**。二択の読み上げではなく、二択の構造を暴く。
+    # 「両方とも考える側だ」と分かった瞬間に、×の行き先が本当に読めなくなる
+    Unit("hantei", "今日も明日も、考える側。ばつは?", anim=1.7, speed=1.12,
+         intonation=1.3, pad=0.06, chara="none"),
+    # **×は「直す」に落ちる**。努力している側が否定される
+    Unit("batsu", "答えは【直す】。考えるのはやめない。", anim=1.7, se="don",
+         speed=1.10, intonation=1.3, pad=0.10, chara="none"),
+    # 視聴者が実際に思う言い方まで具体化する(「無理でしょ」は誰の声でもない)
+    Unit("tsukkomi", "でも、できたら苦労しない、って顔?", anim=1.7, speed=1.12,
+         intonation=1.3, pad=0.06, chara="none"),
 
-    # --- 幕3 根拠の見出し(数字はまだ出さない)
-    Unit("mukashi", "答えは、昔の本にあるのだ。", anim=1.7,
-         speed=1.10, intonation=1.15, pad=0.06, chara="none"),
-
-    # --- 幕4 仕組み
-    Unit("wakeru", "まず、世の中をふたつに分ける。", anim=1.7, speed=1.10,
-         intonation=1.1, pad=0.06, chara="none"),
-    Unit("jibun1", "では1つ目、自分次第のもの。", anim=1.7, speed=1.10,
-         pad=0.06, chara="none"),
-    Unit("jibun2", "それは、言い方と、出す物。", anim=1.7, speed=1.10,
-         pad=0.06, chara="none"),
-    Unit("hoka1", "一方、自分次第じゃないもの。", anim=1.7, speed=1.10,
-         pad=0.06, chara="none"),
-    Unit("hoka2", "たとえば、天気や他人の機嫌。", anim=1.7, speed=1.10,
-         pad=0.06, chara="none"),
-    Unit("kigen", "上司の機嫌も、こっちなのだ。", anim=1.7, se="don",
-         speed=1.08, intonation=1.2, pad=0.10, chara="none"),
-    Unit("ugokanai", "上司の機嫌は、動かせないのだ。", anim=1.7, speed=1.05,
-         intonation=1.15, pad=0.10, chara="none"),
-
-    # --- 幕5 正直の幕
-    Unit("hyouka_q", "じゃあ、評価はどうなるのだ?", anim=1.7, speed=1.10,
-         intonation=1.25, pad=0.06, chara="none"),
-    Unit("hyouka_a", "評価を決めるのは上司。", anim=1.7, speed=1.08,
-         pad=0.06, chara="none"),
-    Unit("komaru", "だから困りごとが残るのだ。", anim=1.7, speed=1.05,
-         intonation=1.15, pad=0.12, chara="none"),
-
-    # --- 幕6 根拠の実年。**数字はここで初めて出す**
-    Unit("hon", "答えは、どこに書いてあると思う?", anim=1.7, speed=1.10,
-         intonation=1.15, pad=0.06, chara="none"),
-    Unit("seiki", "その本が書かれたのは、2世紀前半。", anim=1.7, speed=1.08,
-         pad=0.06, chara="none"),
-    Unit("nen", "2世紀前半は、いまから【1900年前】。", anim=1.9, se="don",
-         speed=1.05, intonation=1.3, pad=0.12, chara="none"),
-
-    # --- 幕7 残るもの
-    Unit("kawaranai", "つまり、1900年前から同じ側なのだ。", anim=1.7,
+    # --- 幕3 一撃 → 矛盾 → 表 → 山。**予告カットを置かず、5カット目で撃つ**
+    Unit("dorei", "そこで渡すのは、奴隷の表なのだ。", anim=1.7,
+         speed=1.08, intonation=1.25, pad=0.10, chara="none"),
+    Unit("nen", "2世紀前半、ローマの奴隷。", anim=1.7,
          speed=1.08, intonation=1.15, pad=0.06, chara="none"),
-    Unit("nokoru", "では、あなたが動かせるのはどっちなのだ?", anim=1.7, speed=1.08,
-         intonation=1.2, pad=0.06, chara="none"),
-    Unit("hitokoto", "その1つが、明日の【一文】。", anim=1.9,
-         se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
+    # **驚きの正体はここ**。持ち物も体も自分のものではない人が、
+    # 次のカットで「自分のもの」の欄を持っている
+    Unit("mochimono", "奴隷は体も持ち物も、主人のもの。", anim=1.7,
+         speed=1.08, pad=0.06, chara="none"),
+    Unit("hyou", "主人だらけの表に、自分の欄?", anim=1.7,
+         speed=1.10, intonation=1.25, pad=0.06, chara="none"),
+    # **この動画でいちばん大きい音はここ**。逆接で入る(並列だと反転に聞こえない)
+    Unit("kazoenai", "なのに、主人の機嫌だけ数えなかった。", anim=1.9, se="don",
+         speed=1.05, intonation=1.3, pad=0.14, chara="none"),
 
-    # --- 幕8 動作
-    Unit("memo", "一文が決まったら、メモに1行。", anim=1.7, speed=1.08,
-         intonation=1.15, pad=0.06, chara="none"),
-    Unit("ichigyo", "あなたが書くのは、1行だけなのだ。", anim=2.2, speed=1.10,
-         pad=0.06, chara="none"),
-    Unit("kyou", "1行書けたら、今日は終わりなのだ。", anim=1.7, speed=1.08,
-         pad=0.06, chara="none"),
-    Unit("hikaku", "今日はもう、上司の一言を考えなくていい。", anim=1.7, speed=1.05,
+    # --- 幕4 仕分け。**2問とも引っかけ**(表に答えは載っていない)
+    # 1問目は視聴者が毎晩やっている行動。ここで自分が右列を握っていたと気づく
+    Unit("q1", "では、今日の反省はどっち?", anim=1.7, speed=1.12,
+         intonation=1.3, pad=0.06, chara="none"),
+    Unit("a1", "今日は右。毎晩やってるやつ。", anim=1.7, speed=1.10,
          intonation=1.2, pad=0.06, chara="none"),
-    Unit("cta", "決まった一言、コメントで教えてほしいのだ。", anim=1.7, speed=1.05,
+    # 2問目は「自分の行い次第」と思われている評判。ここで多くの人が外す
+    Unit("q2", "じゃあ本題。評判はどっち?", anim=1.7, speed=1.12,
+         intonation=1.3, pad=0.06, chara="none"),
+    # **「外れ」と先に言い切る**。予想を外したことをその場で確定させる
+    Unit("a2", "外れ。評判は他人が決める。", anim=1.7, se="pop",
+         speed=1.08, intonation=1.25, pad=0.10, chara="none"),
+    # 上司の機嫌は当てさせず、評判の答えに相乗りさせて1カットで棚に置く
+    Unit("kigen", "上司の機嫌も、他人の棚。", anim=1.7, speed=1.10,
+         intonation=1.15, pad=0.06, chara="none"),
+
+    # --- 幕5 正直の幕。**即答で降参する**(振りに返しが無いのがいちばん退屈)
+    Unit("hyouka_q", "じゃあ、評価は?", anim=1.7, speed=1.12,
+         intonation=1.3, pad=0.06, chara="none"),
+    Unit("hyouka_a", "評価は上司のもの。負けは、この1つ。", anim=1.7,
+         speed=1.10, intonation=1.2, pad=0.06, chara="none"),
+
+    # --- 幕6 表に戻る。**1900年は「ずっと空いている長さ」として1回だけ出す**
+    Unit("hyou2", "表をぜんぶ見ても、上司の行が無い。", anim=1.9,
+         se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
+    Unit("saihousou", "だから、あなたの悩みはまさかの再放送。", anim=1.7,
+         speed=1.08, intonation=1.25, pad=0.10, chara="none"),
+
+    # --- 幕7 残るもの → 小さな裏切り
+    Unit("nokoru", "その悩み、動かせるのは明日の一言。", anim=1.7, speed=1.10,
+         intonation=1.15, pad=0.06, chara="none"),
+    Unit("hitokoto", "一言は、語も間も声も自分で選べる。", anim=1.9,
+         se="don", speed=1.05, intonation=1.3, pad=0.12, chara="none"),
+    # **先回りして外す**。「明日ちゃんと言えるか」の心配をここで潰す
+    Unit("urakiri", "実は、言わなくていい。決めれば済む。", anim=1.7,
+         speed=1.10, intonation=1.2, pad=0.10, chara="none"),
+
+    # --- 幕8 動作 → 締め。**動作を表に戻す**(1900年前の表に自分の行を足す)
+    Unit("memo", "だから、あなたの表に1行足す。", anim=1.7, speed=1.10,
+         intonation=1.15, pad=0.06, chara="none"),
+    Unit("kaketa", "1行書けた?", anim=1.7, speed=1.10,
+         intonation=1.3, pad=0.06, chara="none"),
+    # 決め言葉「棚」を締めで返す(12カット目の1回きりで捨てない)
+    Unit("tana", "その機嫌は、棚に置いて帰る。", anim=1.9, se="don",
+         speed=1.02, intonation=1.3, pad=0.14, chara="none"),
+    # 冒頭の場面(22時の電車)に戻して輪を閉じる。締め切りも兼ねる
+    Unit("cta", "電車のうちに、コメントへ置くのだ。", anim=1.7, speed=1.08,
          intonation=1.2, pad=0.06, chara="none"),
 ]
 
