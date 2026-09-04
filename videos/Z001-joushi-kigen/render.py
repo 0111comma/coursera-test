@@ -131,7 +131,7 @@ UNITS = [
          speed=1.13, intonation=1.3, pad=0.12, chara="none"),
     Unit("dare", "で、この考え方、言い出したの誰だと思う?", anim=1.7,
          speed=1.15, intonation=1.25, pad=0.08, chara="none"),
-    Unit("dorei", "実は、1900年も前の奴隷の人なんだって。", anim=1.7,
+    Unit("dorei", "実は、1900年くらい前の奴隷の人なんだって。", anim=1.7,
          speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("mochimono", "奴隷は、体も持ち物も、ぜんぶ主人のもの。", anim=1.7, speed=1.15,
          pad=0.06, chara="none"),

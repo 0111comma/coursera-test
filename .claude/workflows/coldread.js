@@ -30,7 +30,7 @@ const READ_SCHEMA = {
 const GRADE_SCHEMA = {
   type: 'object', required: ['pass', 'score', 'brokenCuts', 'neverSay', 'summary'],
   properties: {
-    pass: { type: 'boolean', description: '全員が場面と結論を復元し、lostAt が全員0で、2人以上が「言わない」とした文が0のときだけ true' },
+    pass: { type: 'boolean', description: '全員が場面と結論を復元し、lostAt が全員0で、3人以上(4人中の過半数)が「言わない」とした文が0のときだけ true' },
     score: { type: 'number' }, summary: { type: 'string' },
     brokenCuts: { type: 'array', items: { type: 'object', required: ['cut', 'why', 'rewrite'], properties: { cut: { type: 'number' }, why: { type: 'string' }, rewrite: { type: 'string' } } } },
     neverSay: { type: 'array', items: { type: 'object', required: ['cut', 'line', 'votes', 'rewrite'], properties: {
@@ -75,7 +75,7 @@ ${ok.map((x, i) => `--- 読者${i + 1}(${x.who})\n理解度 ${x.r.understood} / 
 
 やること:
 1. 場面の復元: 1コマ目で「誰に何をされてどこで」が全員に復元できているか。各カットは前のカットだけで分かるか(brokenCuts)
-2. **「言わない」の集計**: カットごとに「言わない」とした人数(votes)を数え、**2人以上**の文を neverSay に全部並べる。
+2. **「言わない」の集計**: カットごとに「言わない」とした人数(votes)を数え、**3人以上**(4人中の過半数)の文を neverSay に全部並べる。2人は好みの差なので載せない。
    rewrite は読者の natural の中から、いちばん自然で前後とつながるものを選ぶ(必要なら少し整える。30字以内)
 3. pass は、全員 lostAt=0・retell が §9 と一致・neverSay が 0 件のときだけ true`,
     { label: `採点R${round}`, phase: '採点', schema: GRADE_SCHEMA }).catch(() => null)
