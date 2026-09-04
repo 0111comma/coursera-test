@@ -239,7 +239,12 @@ def main(video_dir: Path) -> int:
         else:
             check("推定尺", True, f"約{est / 60:.1f}分")
     else:
-        check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
+        # Z 番台(心理学チャンネル)は 60秒未満だけを見る(2026-09-04)。
+        # 55秒は作り手が置いた内部目標で、ユーザーは「長さはあなたが勝手に決めたルール。
+        # 60秒未満なら何でもいい」(2026-08-31)。分かりやすさのために語を足すと
+        # 55秒を超えるので、この内部目標が説明の省略を招いていた
+        limit = 59.5 if video_dir.name.startswith("Z") else 55.5
+        check(f"推定尺 {int(limit)}秒以内", est <= limit, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
