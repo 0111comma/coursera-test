@@ -2,3 +2,4 @@
 videos/*/output/work/
 __pycache__/
 videos/_rejected/*/output/work/
+videos/*/output/*.log
