@@ -61,14 +61,18 @@ def _img(name: str):
     return im
 
 
-def pict_image(fig, name, cx, cy, h, a=1.0, z=2.4, flip=False) -> bool:
-    """いらすとやの PNG を中心 (cx, cy)・高さ h(figure 座標)で置く。無ければ False。"""
+def pict_image(fig, name, cx, cy, h, a=1.0, z=2.4, flip=False, max_w=None) -> bool:
+    """いらすとやの PNG を中心 (cx, cy)・高さ h(figure 座標)で置く。無ければ False。
+    max_w を渡すと、横長の絵はその幅に収まるまで縮める(画面外にはみ出さない)。"""
     im = _img(name)
     if im is None or a <= 0.01 or h <= 0.002:
         return False
     if flip:
         im = im.transpose(Image.FLIP_LEFT_RIGHT)
     w = h * (im.width / im.height) * (S.H / S.W)
+    if max_w and w > max_w:
+        h = h * max_w / w
+        w = max_w
     ax = fig.add_axes([cx - w / 2, cy - h / 2, w, h], zorder=z)
     ax.imshow(np.asarray(im), interpolation="hanning", alpha=a)
     ax.axis("off")
@@ -264,7 +268,22 @@ def pict_calendar(fig, cx, cy, h, label, a=1.0, z=2.4, mark=None, sub=""):
         return
     w = h * 0.82 * AR
     x, y = cx - w / 2, cy - h / 2
-    if not pict_image(fig, "calendar", cx, cy, h, a, z):
+    if pict_image(fig, "calendar", cx, cy, h, a, z):
+        # いらすとやの日めくりには数字が入っているので、「今日/明日」は絵の下の札に出す
+        tw = h * 0.62 * AR
+        _rect(fig, cx - tw / 2, y - h * 0.16, tw, h * 0.15, fc=RED, ec=INK, lw=2.5, z=z + 0.3,
+              r=0.008, a=a)
+        _txt(fig, cx, y - h * 0.085, label, h * 200, color=CARD, z=z + 0.4, a=a, max_w=tw * 0.9,
+             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        if mark == "×":
+            pict_cross(fig, cx, cy, h * 0.62, a=a, z=z + 0.3)
+        elif mark == "?":
+            _txt(fig, cx + w * 0.42, y + h * 0.92, "?", h * 420, color=RED, z=z + 0.3, a=a,
+                 fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        elif mark == "check":
+            pict_check(fig, cx + w * 0.42, y + h * 0.92, h * 0.34, a=a, z=z + 0.3)
+        return
+    else:
         _rect(fig, x, y, w, h, fc=CARD, ec=INK, lw=3.0, z=z, r=0.014, a=a)
         _rect(fig, x, y + h * 0.78, w, h * 0.22, fc=RED, ec=INK, lw=3.0, z=z + 0.05, r=0.014, a=a)
         _rect(fig, x, y + h * 0.70, w, h * 0.10, fc=RED, ec=RED, lw=0, z=z + 0.06, r=0.0, a=a)
@@ -379,7 +398,7 @@ def pict_train(fig, x, y, w, h, a=1.0, z=1.95):
     """電車の中(夜)。窓・つり革・座席。板の中に敷く背景。"""
     if a <= 0.01:
         return
-    if pict_image(fig, "train_inside", x + w / 2, y + h / 2, h, a, z):
+    if pict_image(fig, "train_inside", x + w / 2, y + h * 0.55, h, a, z, max_w=w):
         return
     # 窓(夜の街)
     wy, wh = y + h * 0.52, h * 0.36
@@ -561,7 +580,7 @@ def thinking_loop(name="03_troubled", title=""):
         r = 0.10 * p
         pict_bubble(fig, PICT_CX, PICT_CY + dy, 0.40 * p, 0.30 * p, "", a=a)
         pict_swirl(fig, PICT_CX, PICT_CY + 0.02 + dy, r, a=a)
-        pict_lock(fig, PICT_CX, PICT_CY + 0.02 + dy, 0.075, a=_fade(t, 0.40), pulse=False)
+        pict_lock(fig, PICT_CX + 0.11, PICT_CY - 0.09 + dy, 0.07, a=_fade(t, 0.40), pulse=False)
     return with_pict(name, draw, title)
 
 
@@ -633,7 +652,7 @@ def ancient_person(name="04_surprised", tag="1900年前", label="奴隷", title=
     """1900年前の人(貫頭衣)と札。"""
     def draw(fig, t, a, dy):
         p = min(1.0, _pop(t, 0.08))
-        pict_person(fig, PICT_CX, CARD_BOT + 0.05 + dy, 0.24 * p, a=a, tunic=True)
+        pict_person(fig, 0.68, CARD_BOT + 0.05 + dy, (0.21 if _img("slave") else 0.24) * p, a=a, tunic=True)
         a2 = _fade(t, 0.40)
         _rect(fig, PICT_CX - 0.12, CARD_TOP - 0.075 + dy, 0.24, 0.058, fc=RED, ec=INK, lw=2.5,
               z=2.6, r=0.010, a=a2)
@@ -674,8 +693,8 @@ def slave_sees(name="05_happy", title=""):
     """奴隷は、自分で変えられることだけを見た(緑のチェックの吹き出し)。"""
     def draw(fig, t, a, dy):
         p = min(1.0, _pop(t, 0.08))
-        pict_person(fig, 0.58, CARD_BOT + 0.06 + dy, 0.30 * p, a=a, tunic=True)
-        _txt(fig, 0.58, CARD_BOT + 0.035 + dy, "奴隷", 40, color=CONNECT, z=2.6, a=a)
+        pict_person(fig, 0.60, CARD_BOT + 0.06 + dy, (0.21 if _img("slave") else 0.30) * p, a=a, tunic=True)
+        _txt(fig, 0.60, CARD_BOT + 0.035 + dy, "奴隷", 40, color=CONNECT, z=2.6, a=a)
         a2 = _fade(t, 0.35)
         pict_bubble(fig, 0.80, PICT_CY + 0.06 + dy, 0.24, 0.16, "", a=a2)
         pict_check(fig, 0.80, PICT_CY + 0.06 + dy, 0.11, a=a2)
@@ -699,9 +718,9 @@ def tonight(name="02_point", title=""):
     def draw(fig, t, a, dy):
         pict_moon(fig, 0.86, CARD_TOP - 0.07 + dy, 0.04, a=a)
         p = min(1.0, _pop(t, 0.08))
-        pict_calendar(fig, 0.62, PICT_CY - 0.01 + dy, 0.24 * p, "明日", a=a,
+        pict_calendar(fig, 0.64, PICT_CY - 0.025 + dy, 0.21 * p, "明日", a=a,
                       mark="check" if t > 0.55 else None)
-        pict_bubble(fig, 0.62, CARD_BOT + 0.065 + dy, 0.30, 0.065, "決めるだけ",
+        pict_bubble(fig, 0.58, CARD_TOP - 0.04 + dy, 0.26, 0.065, "決めるだけ",
                     a=_fade(t, 0.40), fs=36)
     return with_pict(name, draw, title)
 
