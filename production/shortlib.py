@@ -1221,7 +1221,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         _here = Path(__file__).resolve().parent
         _src = [Path(__file__).resolve()] + [
             _here / n for n in ("scenes_long.py", "scenes_common.py",
-                                "scenes_fp.py", "fplib.py")]
+                                "scenes_fp.py", "scenes_zunda.py", "fplib.py")]
+        # いらすとや等の差し替え画像も「描くもの」なので、増減・更新があれば描き直す
+        # (2026-09-05: assets/irasuto/ に PNG を置いても署名が変わらず、古い
+        #  ベクター図のフレームが再利用されて画像の無い mp4 が出た)
+        _src += list((_here.parent / "assets" / "irasuto").glob("*.png"))
         newest = max((f.stat().st_mtime for f in _src if f.exists()), default=0)
         if newest > sig_file.stat().st_mtime:
             print("[resume] 描画モジュールが署名より新しい。"
