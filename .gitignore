@@ -4,3 +4,6 @@ __pycache__/
 videos/_rejected/*/output/work/
 videos/*/output/*.log
 videos/*/output/*.pid
+
+# いらすとやの素材(再配布禁止。各自ローカルに置く)
+assets/irasuto/*.png

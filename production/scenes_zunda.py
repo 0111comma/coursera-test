@@ -15,11 +15,14 @@ scenes_fp の図(箱2つと「<」の比較・「体 + 持ち物 → 全部主�
 - 色は fplib の役割トークンだけ(赤=変えられない/鍵、緑=自分で変えられる、墨=輪郭)
 - **尻の止め絵を作らない**(check_design M1): ピクトの塊は float_dy で流し、鍵は beat で脈打つ
 
-ライセンス: すべてこのファイルで描く図形。外部のイラスト素材は使っていない。
+ライセンス: 既定はすべてこのファイルで描く図形。assets/irasuto/ に PNG があればいらすとやの絵に差し替わる
+(一覧は assets/irasuto/README.md。PNG はコミットしない)。
 """
 import math
+from pathlib import Path
 
 import numpy as np
+from PIL import Image
 from matplotlib.lines import Line2D
 from matplotlib.patches import Arc, Ellipse, FancyBboxPatch, PathPatch, Polygon
 
@@ -41,6 +44,35 @@ TUNIC = "#efe6d2"              # 1900年前の人の服
 PURPLE = "#6b4a8a"             # 主人の帯
 
 _ease, _back = sf._ease, sf._back
+
+# ---- いらすとやの素材(2026-09-05 ユーザー「いらすとやで必要な画像を指示して」)。
+# assets/irasuto/<name>.png があればそれを描き、無ければ下のベクター図で描く。
+# 一覧と探し方は assets/irasuto/README.md。PNG はコミットしない(再配布禁止)。
+IRASUTO_DIR = Path(__file__).resolve().parent.parent / "assets" / "irasuto"
+_IMG_CACHE: dict = {}
+
+
+def _img(name: str):
+    if name in _IMG_CACHE:
+        return _IMG_CACHE[name]
+    f = IRASUTO_DIR / f"{name}.png"
+    im = Image.open(f).convert("RGBA") if f.exists() else None
+    _IMG_CACHE[name] = im
+    return im
+
+
+def pict_image(fig, name, cx, cy, h, a=1.0, z=2.4, flip=False) -> bool:
+    """いらすとやの PNG を中心 (cx, cy)・高さ h(figure 座標)で置く。無ければ False。"""
+    im = _img(name)
+    if im is None or a <= 0.01 or h <= 0.002:
+        return False
+    if flip:
+        im = im.transpose(Image.FLIP_LEFT_RIGHT)
+    w = h * (im.width / im.height) * (S.H / S.W)
+    ax = fig.add_axes([cx - w / 2, cy - h / 2, w, h], zorder=z)
+    ax.imshow(np.asarray(im), interpolation="hanning", alpha=a)
+    ax.axis("off")
+    return True
 
 # 板の中の定位置。**立ち絵は左、絵は右**に固定して、カットが替わっても構図が跳ねないようにする
 POSE_CX, POSE_H = 0.27, 0.34
@@ -104,6 +136,8 @@ def pict_lock(fig, cx, cy, h, a=1.0, z=2.6, color=RED, pulse=True):
         return
     s = beat(period=1.8, amp=0.06) if pulse else 1.0
     h = h * s
+    if pict_image(fig, "lock", cx, cy, h, a, z):
+        return
     bw, bh = h * 0.80 * AR, h * 0.58
     by = cy - h * 0.48
     _rect(fig, cx - bw / 2, by, bw, bh, fc=color, ec=INK, lw=3.0, z=z, r=0.010, a=a)
@@ -123,6 +157,8 @@ def pict_check(fig, cx, cy, h, a=1.0, z=2.6, color=GREEN):
         return
     s = beat(period=1.8, amp=0.06)
     h = h * s
+    if pict_image(fig, "check", cx, cy, h, a, z):
+        return
     _circ(fig, cx, cy, h * 0.5, fc=color, ec=INK, lw=3.0, z=z, a=a)
     _line(fig, [(cx - h * 0.22 * AR, cy - h * 0.02), (cx - h * 0.05 * AR, cy - h * 0.20),
                 (cx + h * 0.24 * AR, cy + h * 0.18)], color=CARD, lw=h * 70, z=z + 0.1, a=a)
@@ -141,6 +177,8 @@ def pict_cross(fig, cx, cy, h, a=1.0, z=2.6, color=RED, lw=None):
 def pict_boss(fig, cx, yb, h, a=1.0, z=2.4, mood="angry"):
     """上司。スーツ+ネクタイ+つり上がった眉。yb は足元(=板の下辺側)。"""
     if a <= 0.01:
+        return
+    if pict_image(fig, "boss_angry" if mood == "angry" else "boss_flat", cx, yb + h / 2, h, a, z):
         return
     r = h * 0.17                            # 頭の半径
     hy = yb + h - r                         # 頭の中心
@@ -182,6 +220,12 @@ def pict_person(fig, cx, yb, h, a=1.0, z=2.4, color=CONNECT, face=None, tunic=Fa
     """人の影絵。tunic=True で1900年前の服、laurel=True で主人(月桂冠と紫の帯)。"""
     if a <= 0.01:
         return
+    key = "master" if (tunic and laurel) else ("slave" if tunic else "silhouette")
+    if pict_image(fig, key, cx, yb + h / 2, h, a, z):
+        if face and key == "silhouette":
+            _txt(fig, cx, yb + h * 0.80, face, h * 300, color=CARD, z=z + 0.4, a=a,
+                 fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        return
     r = h * 0.16
     hy = yb + h - r
     bw = h * 0.50 * AR
@@ -220,11 +264,12 @@ def pict_calendar(fig, cx, cy, h, label, a=1.0, z=2.4, mark=None, sub=""):
         return
     w = h * 0.82 * AR
     x, y = cx - w / 2, cy - h / 2
-    _rect(fig, x, y, w, h, fc=CARD, ec=INK, lw=3.0, z=z, r=0.014, a=a)
-    _rect(fig, x, y + h * 0.78, w, h * 0.22, fc=RED, ec=INK, lw=3.0, z=z + 0.05, r=0.014, a=a)
-    _rect(fig, x, y + h * 0.70, w, h * 0.10, fc=RED, ec=RED, lw=0, z=z + 0.06, r=0.0, a=a)
-    for dx in (-0.25, 0.25):
-        _circ(fig, cx + w * dx, y + h * 0.89, h * 0.035, fc=CARD, ec=INK, lw=2.0, z=z + 0.1, a=a)
+    if not pict_image(fig, "calendar", cx, cy, h, a, z):
+        _rect(fig, x, y, w, h, fc=CARD, ec=INK, lw=3.0, z=z, r=0.014, a=a)
+        _rect(fig, x, y + h * 0.78, w, h * 0.22, fc=RED, ec=INK, lw=3.0, z=z + 0.05, r=0.014, a=a)
+        _rect(fig, x, y + h * 0.70, w, h * 0.10, fc=RED, ec=RED, lw=0, z=z + 0.06, r=0.0, a=a)
+        for dx in (-0.25, 0.25):
+            _circ(fig, cx + w * dx, y + h * 0.89, h * 0.035, fc=CARD, ec=INK, lw=2.0, z=z + 0.1, a=a)
     _txt(fig, cx, y + h * 0.42, label, h * 300, z=z + 0.2, a=a, max_w=w * 0.9,
          fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
     if sub:
@@ -263,6 +308,8 @@ def pict_memo(fig, cx, cy, h, a=1.0, z=2.4, written=0.0, line_text="", pencil=Tr
         return
     w = h * 0.80 * AR
     x, y = cx - w / 2, cy - h / 2
+    if pict_image(fig, "memo", cx, cy, h, a, z):
+        return
     _rect(fig, x, y, w, h, fc=CARD, ec=INK, lw=3.0, z=z, r=0.012, a=a)
     # 上のリング
     for i in range(5):
@@ -297,6 +344,14 @@ def pict_book(fig, cx, cy, h, a=1.0, z=2.4, tag=""):
         return
     w = h * 1.35 * AR
     x, y = cx - w / 2, cy - h / 2
+    if pict_image(fig, "book", cx, cy, h, a, z):
+        if tag:
+            tw = h * 0.46 * AR
+            _rect(fig, cx - tw / 2, y + h * 0.86, tw, h * 0.20, fc=RED, ec=INK, lw=2.5, z=z + 0.3,
+                  r=0.008, a=a)
+            _txt(fig, cx, y + h * 0.96, tag, h * 130, color=CARD, z=z + 0.4, a=a, max_w=tw * 0.9,
+                 raw=True, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        return
     # 見開き2ページ
     for side in (-1, 1):
         px = cx if side > 0 else x
@@ -323,6 +378,8 @@ def pict_book(fig, cx, cy, h, a=1.0, z=2.4, tag=""):
 def pict_train(fig, x, y, w, h, a=1.0, z=1.95):
     """電車の中(夜)。窓・つり革・座席。板の中に敷く背景。"""
     if a <= 0.01:
+        return
+    if pict_image(fig, "train_inside", x + w / 2, y + h / 2, h, a, z):
         return
     # 窓(夜の街)
     wy, wh = y + h * 0.52, h * 0.36
@@ -351,6 +408,8 @@ def pict_train(fig, x, y, w, h, a=1.0, z=1.95):
 def pict_moon(fig, cx, cy, r, a=1.0, z=2.4):
     if a <= 0.01:
         return
+    if pict_image(fig, "moon", cx, cy, r * 2, a, z):
+        return
     _circ(fig, cx, cy, r, fc=LIGHT, ec=INK, lw=3.0, z=z, a=a)
     _circ(fig, cx + r * 0.55 * AR, cy + r * 0.25, r * 0.85, fc=CARD, ec=CARD, lw=0, z=z + 0.05, a=a)
 
@@ -358,6 +417,8 @@ def pict_moon(fig, cx, cy, r, a=1.0, z=2.4):
 def pict_gate(fig, cx, yb, h, a=1.0, z=2.4):
     """改札(2本の柱と緑の矢印)。"""
     if a <= 0.01:
+        return
+    if pict_image(fig, "gate", cx, yb + h / 2, h, a, z):
         return
     pw = h * 0.16 * AR
     for side in (-1, 1):
@@ -379,6 +440,8 @@ def pict_sheet(fig, cx, cy, h, text, a=1.0, z=2.4, stamp=True):
         return
     w = h * 0.74 * AR
     x, y = cx - w / 2, cy - h / 2
+    if pict_image(fig, "sheet", cx, cy, h, a, z):
+        return
     _rect(fig, x, y, w, h, fc=CARD, ec=INK, lw=3.0, z=z, r=0.008, a=a)
     _txt(fig, cx, y + h * 0.78, text, h * 200, z=z + 0.2, a=a, max_w=w * 0.9,
          fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
@@ -395,6 +458,8 @@ def pict_sheet(fig, cx, cy, h, text, a=1.0, z=2.4, stamp=True):
 def pict_swirl(fig, cx, cy, r, a=1.0, z=2.5, color=CONNECT):
     """ぐるぐる(同じ考えが回る)。動画内時刻で回転する。"""
     if a <= 0.01:
+        return
+    if pict_image(fig, "swirl", cx, cy, r * 2, a, z):
         return
     ang0 = (F.LAST_T * 200.0) % 360.0
     for k in range(3):
@@ -508,9 +573,10 @@ def boss_crowd(name="03_troubled", title=""):
         pict_lock(fig, 0.55, CARD_BOT + 0.315 + dy, 0.07, a=_fade(t, 0.40))
         a2 = _fade(t, 0.32)
         p2 = min(1.0, _pop(t, 0.32))
-        for i, cx in enumerate((0.77, 0.85, 0.93)):
-            pict_person(fig, cx, CARD_BOT + 0.05 + (0.025 if i == 1 else 0.0) + dy,
-                        0.13 * p2, a=a2)
+        if not pict_image(fig, "crowd", 0.85, CARD_BOT + 0.05 + 0.10 * p2 + dy, 0.20 * p2, a2, 2.4):
+            for i, cx in enumerate((0.77, 0.85, 0.93)):
+                pict_person(fig, cx, CARD_BOT + 0.05 + (0.025 if i == 1 else 0.0) + dy,
+                            0.13 * p2, a=a2)
         pict_lock(fig, 0.85, CARD_BOT + 0.315 + dy, 0.07, a=_fade(t, 0.55))
         _txt(fig, 0.55, CARD_TOP - 0.028 + dy, "上司の機嫌", 36, color=CONNECT, z=2.6, a=a)
         _txt(fig, 0.85, CARD_TOP - 0.028 + dy, "周りの評判", 36, color=CONNECT, z=2.6, a=a2)
@@ -589,9 +655,10 @@ def owned(name="04_surprised", title=""):
         # 持ち物(袋)は奴隷と主人のあいだの足元
         a3 = _fade(t, 0.45)
         bx, by = 0.69, CARD_BOT + 0.07 + dy
-        _poly(fig, [(bx - 0.035, by), (bx + 0.035, by), (bx + 0.028, by + 0.05), (bx - 0.028, by + 0.05)],
-              fc="#c9a46a", ec=INK, lw=2.5, z=2.5, a=a3)
-        _line(fig, [(bx - 0.028, by + 0.05), (bx + 0.028, by + 0.05)], lw=5.0, z=2.55, a=a3)
+        if not pict_image(fig, "bag", bx, by + 0.03, 0.06, a3, 2.5):
+            _poly(fig, [(bx - 0.035, by), (bx + 0.035, by), (bx + 0.028, by + 0.05), (bx - 0.028, by + 0.05)],
+                  fc="#c9a46a", ec=INK, lw=2.5, z=2.5, a=a3)
+            _line(fig, [(bx - 0.028, by + 0.05), (bx + 0.028, by + 0.05)], lw=5.0, z=2.55, a=a3)
         # 主人の手から2本の線(体と持ち物へ)
         a4 = _fade(t, 0.55)
         hx, hy = 0.78, CARD_BOT + 0.20 + dy
