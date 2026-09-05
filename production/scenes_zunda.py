@@ -569,11 +569,12 @@ def boss_crowd(name="03_troubled", title=""):
     """上司の機嫌と、周りの評判。どちらにも鍵。"""
     def draw(fig, t, a, dy):
         p1 = min(1.0, _pop(t, 0.08))
-        pict_boss(fig, 0.55, CARD_BOT + 0.05 + dy, 0.22 * p1, a=a)
+        # いらすとやの上司の絵はほぼ正方形(2人組)なので、高さを抑えて周りの人と重ねない
+        pict_boss(fig, 0.55, CARD_BOT + 0.06 + dy, (0.17 if _img("boss_angry") else 0.22) * p1, a=a)
         pict_lock(fig, 0.55, CARD_BOT + 0.315 + dy, 0.07, a=_fade(t, 0.40))
         a2 = _fade(t, 0.32)
         p2 = min(1.0, _pop(t, 0.32))
-        if not pict_image(fig, "crowd", 0.85, CARD_BOT + 0.05 + 0.10 * p2 + dy, 0.20 * p2, a2, 2.4):
+        if not pict_image(fig, "crowd", 0.84, CARD_BOT + 0.06 + 0.085 * p2 + dy, 0.17 * p2, a2, 2.4):
             for i, cx in enumerate((0.77, 0.85, 0.93)):
                 pict_person(fig, cx, CARD_BOT + 0.05 + (0.025 if i == 1 else 0.0) + dy,
                             0.13 * p2, a=a2)
