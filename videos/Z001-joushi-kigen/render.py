@@ -192,7 +192,7 @@ UNITS = [
     Unit("jinchuu", "で、皇帝はそのノートを、戦争の陣中で書いてるの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("ekibyou2", "戦争も病気も皇帝でも止められない。上司と同じでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("onaji", "で、皇帝も『自省録』に、奴隷とそっくりな文を書いてて。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("quote_k", "皇帝いわく「苦しいのは出来事じゃなく、判断のほうだ」って。", anim=1.9, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
+    Unit("quote_k", "皇帝は「苦しいのは出来事より、判断のほうだ」って。", anim=1.9, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
     Unit("quote_k2", "で、「その判断は今すぐやめられる」って。できそう?", anim=1.7, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
 
     # ---- 提要5(誰が評価した: 皇帝と同じ文)
