@@ -221,14 +221,14 @@ UNITS = [
     Unit("ima", "しかも、いまの心の治療の元の一つでもあるんだよ。知ってた?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("ellis", "治療の元にした人が、アルバート・エリスって心理学者。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("kako", "エリスも前は、子どもの頃の話を何年も掘り返す治療してたの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("kako2", "ただ、何年治療しても良くならなくて。しんどそうでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("kako2", "ただ、治療を何年やっても良くならなくて。しんどそうでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("imakangae", "だからエリスは1955年、いまの考えを直す治療に変えたの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("tehon", "エリスが自分で『提要』5番目を手本にした、って書いてる。", anim=1.9, se='don', speed=1.13, intonation=1.25, pad=0.10, chara="none"),
     Unit("cbt", "で、エリスの治療が、いまの認知行動療法の元の一つなの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("cbt2", "考え方のクセを直す治療。あなたも聞いたことない?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("abc", "治療だと「上司の一言でもうダメ」って考えを紙に書くの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("abc2", "で、それ本当? って確かめるの。", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
-    Unit("abc3", "いや、本当じゃないよね。一言でぜんぶダメになった証拠、無いでしょ?", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("abc3", "いや、本当じゃない。一言でダメって証拠、無いでしょ?", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
 
     # ---- 動作 → 締め
     Unit("memo", "だからあなたも、明日なに言うかをメモに1行書いてみ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.06, chara="none"),
