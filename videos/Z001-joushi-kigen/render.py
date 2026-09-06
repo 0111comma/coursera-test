@@ -110,7 +110,7 @@ SCENES = {
 
     # ---- 幕6 動作 → 締め
     "memo": sz.memo_write("05_happy"),
-    "rei": sz.memo_tag("05_happy", "こう直します"),
+    "rei": sz.memo_tag("05_happy", "昨日の件、直します"),
     "tana": sz.go_home("05_happy"),
     "iwanami": sz.book_now("05_happy", "人生談義 下", bubble="岩波文庫"),
     "youroku": sz.book_now("02_point", "要録", bubble="いちばん後ろ"),

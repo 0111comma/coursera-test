@@ -768,10 +768,11 @@ def memo_tag(name="02_point", tag="弟子のメモ", title=""):
         p = min(1.0, _pop(t, 0.08))
         pict_memo(fig, PICT_CX, PICT_CY - 0.01 + dy, 0.24 * p, a=a, written=1.0)
         a2 = _fade(t, 0.40)
-        _rect(fig, PICT_CX - 0.12, CARD_TOP - 0.075 + dy, 0.24, 0.058, fc=RED, ec=INK, lw=2.5,
+        tw = min(0.40, 0.035 * len(tag) + 0.06)      # 札の幅は文字数に合わせる
+        _rect(fig, PICT_CX - tw / 2, CARD_TOP - 0.075 + dy, tw, 0.058, fc=RED, ec=INK, lw=2.5,
               z=2.6, r=0.010, a=a2)
         _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, tag, 40, color=CARD, z=2.7, a=a2, raw=True,
-             max_w=0.21, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+             max_w=tw * 0.9, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
     return with_pict(name, draw, title)
 
 
