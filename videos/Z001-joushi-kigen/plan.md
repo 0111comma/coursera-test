@@ -210,7 +210,7 @@
 | 昔の本は手で写さないと消える | 印刷以前の書物は写本でしか伝わらない(『提要』も100以上の写本で現存) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
 | 「その受け取り方は今すぐやめられる」 | 皇帝の『自省録』8.47 後半「そしてその判断をいま消し去るのは君の力の内にある」 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (2026-09-05確認) |
 | 修行=欲を抑える練習・奴隷の本がちょうどよかった | キリスト教の修道生活は欲望の抑制を訓練とし、『提要』の「自分次第でないものを欲しがらない」がそのまま使えたため修道院で用いられた | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
-| 『提要』5の続き「知らない人は他人のせい、習いたては自分のせいにする。慣れた人はどっちも責めない」 | Enchiridion 5 後半: 「教育のない者は他人を責め、教育を始めた者は自分を責め、教育を終えた者は他人も自分も責めない」 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5。2026-09-05確認) |
+| 『提要』5の続き「知らない人は人のせい、習いたては自分のせい。慣れた人はどっちも責めない」 | Enchiridion 5 後半: 「教育のない者は他人を責め、教育を始めた者は自分を責め、教育を終えた者は他人も自分も責めない」 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5。2026-09-05確認) |
 | エリスは1955年、それまでの治療(過去を掘る)をやめ、いまの考えを直す治療にした | エリスは精神分析の訓練を受けたのち、その効率の悪さから離れ、1955年に論理療法(REBT)を始めた。標語にエピクテトスを置いた | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ / https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認・確度B) |
 | 治療では考えを紙に書いて本当かを調べる | ABC モデルの D(論駁: その考えの証拠はあるか)。書いた考えを検分して置き換える | https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認) |
 | そのノートは戦争に行ってる最中に書いた | 『自省録』第2巻は「クァディ族の地、グラヌア川のほとりで」、第3巻は「カルヌントゥムで」と陣中の地名が付く(マルコマンニ戦争) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_2 / https://en.wikipedia.org/wiki/Marcomannic_Wars (2026-09-05確認) |
