@@ -658,8 +658,8 @@ def ancient_person(name="04_surprised", tag="1900年前", label="奴隷", title=
         _rect(fig, PICT_CX - 0.12, CARD_TOP - 0.075 + dy, 0.24, 0.058, fc=RED, ec=INK, lw=2.5,
               z=2.6, r=0.010, a=a2)
         _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, tag, 44, color=CARD, z=2.7, a=a2, raw=True,
-             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, label, 40, color=CONNECT, z=2.6, a=a)
+             max_w=0.21, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, label, 40, color=CONNECT, z=2.6, a=a, max_w=0.34)
     return with_pict(name, draw, title)
 
 
@@ -705,12 +705,12 @@ def slave_sees(name="05_happy", title=""):
     return with_pict(name, draw, title)
 
 
-def book_now(name="05_happy", tag="1900年前", title=""):
+def book_now(name="05_happy", tag="1900年前", title="", bubble="いまも読める"):
     """本になって今も残っている。"""
     def draw(fig, t, a, dy):
         p = min(1.0, _pop(t, 0.08))
         pict_book(fig, PICT_CX, PICT_CY + 0.03 + dy, 0.19 * p, a=a, tag=tag)
-        pict_bubble(fig, PICT_CX, CARD_BOT + 0.055 + dy, 0.28, 0.06, "いまも読める",
+        pict_bubble(fig, PICT_CX, CARD_BOT + 0.055 + dy, 0.28, 0.06, bubble,
                     a=_fade(t, 0.40), fs=34)
     return with_pict(name, draw, title)
 
@@ -744,3 +744,119 @@ def go_home(name="05_happy", title=""):
         p = min(1.0, _pop(t, 0.20))
         pict_gate(fig, 0.80, CARD_BOT + 0.05 + dy, 0.26 * p, a=_fade(t, 0.20))
     return with_pict(name, draw, title, flip=True)
+
+
+# ---------------------------------------------------------------- 学びの幕(2026-09-05)
+# ユーザー「学びがほぼない。これ誰が言ったの? なぜこの本が残ってるの? 誰になぜ評価されているの?」
+# → 誰が(エピクテトス)・なぜ残った(皇帝 → 修道院 → いま)・誰が評価した(皇帝・心理学)の場面。
+def book_cross(name="01_base", title=""):
+    """本に赤い×(本人は1冊も書いていない)。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        pict_book(fig, PICT_CX, PICT_CY + 0.02 + dy, 0.19 * p, a=a)
+        pict_cross(fig, PICT_CX, PICT_CY + 0.02 + dy, 0.16, a=_fade(t, 0.45), z=2.7)
+        pict_bubble(fig, PICT_CX, CARD_BOT + 0.055 + dy, 0.30, 0.06, "本人は書いてない",
+                    a=_fade(t, 0.55), fs=32)
+    return with_pict(name, draw, title)
+
+
+def memo_tag(name="02_point", tag="弟子のメモ", title=""):
+    """メモ帳に札(弟子が授業をメモした)。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        pict_memo(fig, PICT_CX, PICT_CY - 0.01 + dy, 0.24 * p, a=a, written=1.0)
+        a2 = _fade(t, 0.40)
+        _rect(fig, PICT_CX - 0.12, CARD_TOP - 0.075 + dy, 0.24, 0.058, fc=RED, ec=INK, lw=2.5,
+              z=2.6, r=0.010, a=a2)
+        _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, tag, 40, color=CARD, z=2.7, a=a2, raw=True,
+             max_w=0.21, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+    return with_pict(name, draw, title)
+
+
+def emperor(name="04_surprised", label="ローマ皇帝", bubble="", title=""):
+    """皇帝(月桂冠)。いらすとやの master があればそれ。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        if not pict_image(fig, "master", PICT_CX, CARD_BOT + 0.19 + dy, 0.24 * p, a, 2.4, max_w=0.24):
+            pict_person(fig, PICT_CX, CARD_BOT + 0.06 + dy, 0.26 * p, a=a, tunic=True, laurel=True)
+        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, label, 40, color=CONNECT, z=2.6, a=a)
+        if bubble:
+            pict_bubble(fig, PICT_CX, CARD_TOP - 0.04 + dy, 0.30, 0.065, bubble, a=_fade(t, 0.40), fs=36)
+    return with_pict(name, draw, title)
+
+
+def copyists(name="01_base", title=""):
+    """修道院で本を写す人たち(3人の影絵+本)。いらすとやの monk があればそれ。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        if not pict_image(fig, "monk", PICT_CX, CARD_BOT + 0.17 + dy, 0.24 * p, a, 2.4, max_w=0.30):
+            for i, cx in enumerate((0.55, 0.66, 0.77)):
+                pict_person(fig, cx, CARD_BOT + 0.06 + dy, 0.18 * p, a=a * (0.55 + 0.15 * i))
+            pict_book(fig, 0.66, CARD_BOT + 0.09 + dy, 0.07, a=a)
+        a2 = _fade(t, 0.40)
+        _rect(fig, PICT_CX - 0.13, CARD_TOP - 0.075 + dy, 0.26, 0.058, fc=RED, ec=INK, lw=2.5,
+              z=2.6, r=0.010, a=a2)
+        _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, "修道院で写した", 38, color=CARD, z=2.7, a=a2,
+             raw=True, max_w=0.23, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, "1000年", 40, color=CONNECT, z=2.6, a=a2, raw=True,
+             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+    return with_pict(name, draw, title)
+
+
+def counselor(name="02_point", label="心理学", title=""):
+    """いまの心理学(カウンセラーと患者)。いらすとやの counselor があればそれ。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        if not pict_image(fig, "counselor", PICT_CX, CARD_BOT + 0.17 + dy, 0.24 * p, a, 2.4, max_w=0.30):
+            pict_person(fig, 0.58, CARD_BOT + 0.06 + dy, 0.20 * p, a=a, color=INK)
+            pict_person(fig, 0.76, CARD_BOT + 0.06 + dy, 0.20 * p, a=a)
+        a2 = _fade(t, 0.40)
+        _rect(fig, PICT_CX - 0.14, CARD_TOP - 0.075 + dy, 0.28, 0.058, fc=GREEN, ec=INK, lw=2.5,
+              z=2.6, r=0.010, a=a2)
+        _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, label, 38, color=CARD, z=2.7, a=a2, raw=True,
+             max_w=0.25, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, "いま", 40, color=CONNECT, z=2.6, a=a2, raw=True,
+             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+    return with_pict(name, draw, title)
+
+
+def quote_card(text, ref="", title=""):
+    """引用の板(この動画で唯一、文字が主役のカット)。"""
+    def painter(fig, t):
+        _panel(fig, t, title)
+        a = _fade(t, 0.05, 0.18)
+        if a <= 0.01:
+            return
+        dy = _drift()
+        _rect(fig, 0.12, CARD_BOT + 0.06 + dy, 0.76, 0.26, fc=CARD, ec=EDGE, lw=3.5, z=2.3, r=0.02, a=a)
+        _txt(fig, 0.16, CARD_TOP - 0.10 + dy, "“", 120, color=RED, z=2.5, a=a,
+             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        lines = text.split("|")
+        for i, ln in enumerate(lines):
+            _txt(fig, 0.5, CARD_CY + 0.035 - 0.05 * i + dy, ln, 46, color=INK, z=2.5, a=a, max_w=0.66)
+        if ref:
+            _txt(fig, 0.80, CARD_BOT + 0.085 + dy, ref, 34, color=CONNECT, z=2.5, a=a, raw=True)
+    return painter
+
+
+def lineage(name="05_happy", title=""):
+    """奴隷 → 皇帝 → いま(病院)の3つを矢印でつなぐ。"""
+    def draw(fig, t, a, dy):
+        xs = (0.52, 0.68, 0.84)
+        labs = ("奴隷", "皇帝", "いま")
+        keys = ("slave", "master", "counselor")
+        for i, (cx, lab, key) in enumerate(zip(xs, labs, keys)):
+            ai = _fade(t, 0.08 + 0.18 * i)
+            if not pict_image(fig, key, cx, CARD_BOT + 0.17 + dy, 0.15, ai, 2.4, max_w=0.14):
+                pict_person(fig, cx, CARD_BOT + 0.10 + dy, 0.14, a=ai,
+                            tunic=(i < 2), laurel=(i == 1))
+            _txt(fig, cx, CARD_BOT + 0.05 + dy, lab, 36, color=CONNECT, z=2.6, a=ai)
+            if i < 2:
+                a_ar = _fade(t, 0.18 + 0.18 * i)
+                _line(fig, [(cx + 0.055, CARD_BOT + 0.17 + dy), (cx + 0.10, CARD_BOT + 0.17 + dy)],
+                      color=GREEN, lw=6.0, z=2.5, a=a_ar)
+                _poly(fig, [(cx + 0.095, CARD_BOT + 0.185 + dy), (cx + 0.115, CARD_BOT + 0.17 + dy),
+                            (cx + 0.095, CARD_BOT + 0.155 + dy)], fc=GREEN, ec=GREEN, lw=0, z=2.5, a=a_ar)
+        _txt(fig, PICT_CX, CARD_TOP - 0.045 + dy, "1900年つないだ", 40, color=INK, z=2.6, a=_fade(t, 0.55),
+             raw=True, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+    return with_pict(name, draw, title)

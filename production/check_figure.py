@@ -155,6 +155,9 @@ def check_video(vdir: Path):
             if pos.width > 0.9 and pos.height > 0.9:
                 continue          # new_canvas の全面背景
             n_shapes += len(ax.lines) + len(ax.patches) + len(ax.collections)
+            # **絵(いらすとや等の PNG を imshow した軸)も図として数える**(2026-09-05)。
+            # Z 番台は場面の絵で説明するので、画像だけの軸は図形0個でも「図がある」
+            n_shapes += len(ax.images)
         # fig.add_artist で足した線・矢印は fig.lines ではなく fig.artists に入る
         # **PathPatch も図形として数える**(2026-08-30)。棒グラフは
         # 「角丸パッチ + 下角を埋める矩形」の2図形をやめて、上2角だけ角丸の
@@ -162,9 +165,10 @@ def check_video(vdir: Path):
         # 数え漏らすと、棒のカットが「図形ゼロ」に見えてしまう。
         # カード・チップは FancyBboxPatch なので、ここには入らない(=容器は
         # 図として数えない、という元の方針は保たれる)。
+        # Ellipse / Arc は scenes_zunda のピクトグラム(顔・鍵のつる)で使う(2026-09-05)
         n_shapes += len([a for a in fig.artists
                          if type(a).__name__ in ("Line2D", "Polygon", "Rectangle",
-                                                 "PathPatch")
+                                                 "PathPatch", "Ellipse", "Arc")
                          or type(a).__name__.startswith("FancyArrow")])
 
         texts = []

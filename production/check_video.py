@@ -243,7 +243,9 @@ def main(video_dir: Path) -> int:
         # 55秒は作り手が置いた内部目標で、ユーザーは「長さはあなたが勝手に決めたルール。
         # 60秒未満なら何でもいい」(2026-08-31)。分かりやすさのために語を足すと
         # 55秒を超えるので、この内部目標が説明の省略を招いていた
-        limit = 59.5 if video_dir.name.startswith("Z") else 55.5
+        # Z 番台は 3分(Shorts の上限)まで。2026-09-05 ユーザー「別に1分超えていいから」——
+        # 60秒に収めるために学び(誰が・なぜ残った・誰が評価した)を削っていた
+        limit = 179.5 if video_dir.name.startswith("Z") else 55.5
         check(f"推定尺 {int(limit)}秒以内", est <= limit, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]

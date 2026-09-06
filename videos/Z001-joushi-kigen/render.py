@@ -72,14 +72,29 @@ SCENES = {
     "q": sz.ask_what("01_base"),
     "hitokoto": sz.tomorrow_line("02_point"),
 
-    # ---- 幕4 出どころ(奴隷)。**答えを出したあと**に置く
+    # ---- 幕4 出どころ: 誰が言ったか(エピクテトス)
     "dare": sz.who_silhouette("02_point"),
-    "dorei": sz.ancient_person("04_surprised", "1900年前", "奴隷"),
+    "epi": sz.ancient_person("04_surprised", "エピクテトス", "生まれは奴隷"),
     "mochimono": sz.owned("04_surprised"),
     "kazoeru": sz.slave_sees("05_happy"),
-    "hon": sz.book_now("05_happy", "1900年前"),
+    "sensei": sz.ancient_person("05_happy", "哲学の先生", "自由になったあと"),
+    "kakanai": sz.book_cross("01_base"),
+    "deshi": sz.memo_tag("02_point", "弟子のメモ"),
+    "teiyou": sz.book_now("02_point", "提要"),
 
-    # ---- 幕5 動作 → 締め
+    # ---- 幕5 なぜ残ったか(皇帝 → 修道院 → いま)
+    "naze": sz.book_now("03_troubled", "提要", bubble="なんで残った?"),
+    "koutei": sz.emperor("04_surprised", "ローマ皇帝"),
+    "jiseiroku": sz.emperor("02_point", "ローマ皇帝", bubble="感謝を書いた"),
+    "jiseiroku2": sz.book_now("02_point", "元奴隷の本", bubble="読めてよかった"),
+    "shuudouin": sz.copyists("01_base"),
+    "ima": sz.counselor("02_point", "心理学"),
+    "cbt": sz.counselor("01_base", "考え方のクセを直す"),
+    "quote": sz.quote_card("人を不安にするのは|出来事じゃない", "『提要』の5番目"),
+    "quote2": sz.quote_card("出来事についての|自分の考えだ", "『提要』の5番目"),
+    "keifu": sz.lineage("05_happy"),
+
+    # ---- 幕6 動作 → 締め
     "konya": sz.tonight("02_point"),
     "memo": sz.memo_write("05_happy"),
     "tana": sz.go_home("05_happy"),
@@ -89,7 +104,7 @@ SCENES = {
 for _k in ("toi", "kangae", "yaku"):
     SCENES[_k] = sf.badge_head(SCENES[_k])
 
-# ナレーション = 字幕。19カット。
+# ナレーション = 字幕。30カット(2026-09-05 ユーザー「学びがほぼない」→ 誰が・なぜ残った・誰が評価した、を足した)。
 # 2026-09-04 ユーザー「ガチで何言ってんの?」(『変えられることと変えられないこと、分けてみない?』
 # 『これ、考えたの1900年前の奴隷なんだって』)。**「表」という仕掛けは、前情報ゼロの人には
 # 5周直しても通らなかった**ので捨てた。考え方を視聴者の場面の言葉で先に言い切り、
@@ -115,16 +130,48 @@ UNITS = [
          intonation=1.25, pad=0.08, chara="none"),
     Unit("hitokoto", "答えは、明日、上司になに言うか。それだけだよ。", anim=1.9, se="don",
          speed=1.13, intonation=1.3, pad=0.12, chara="none"),
+
+    # ---- 誰が言ったか
     Unit("dare", "で、この考え方、言い出したの誰だと思う?", anim=1.7,
          speed=1.15, intonation=1.25, pad=0.08, chara="none"),
-    Unit("dorei", "実は、1900年くらい前の奴隷の人なんだって。", anim=1.7,
+    Unit("epi", "答えはエピクテトス。1900年くらい前のローマの人。", anim=1.7,
          speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("mochimono", "奴隷は、体も持ち物も、ぜんぶ主人のもの。", anim=1.7, speed=1.15,
-         pad=0.06, chara="none"),
-    Unit("kazoeru", "でも奴隷は、自分で変えられることだけ見てたんだって。", anim=1.7,
+    Unit("mochimono", "エピクテトスは生まれつき奴隷。体も持ち物も主人のもの。", anim=1.7,
+         speed=1.15, pad=0.06, chara="none"),
+    Unit("kazoeru", "でも奴隷のとき、変えられることだけ見てたんだって。", anim=1.7,
          se="don", speed=1.13, intonation=1.25, pad=0.10, chara="none"),
-    Unit("hon", "それが今も本になって残ってるんだよ。", anim=1.7,
+    Unit("sensei", "奴隷が自由になって、哲学の先生になったの知ってた?", anim=1.7,
          speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("kakanai", "でも先生なのに、本は1冊も書いてない。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("deshi", "で、本にしたのは弟子のアリアノス。授業のメモなんだって。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("teiyou", "メモが『提要』っていう本になって、いまも読める。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+
+    # ---- なぜ残ったか・誰が評価したか
+    Unit("naze", "で、なんで1900年も本が残ってると思う?", anim=1.7,
+         speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("koutei", "まず、読んでたのがローマの皇帝。マルクス・アウレリウスって人。", anim=1.7,
+         se="don", speed=1.13, intonation=1.25, pad=0.10, chara="none"),
+    Unit("jiseiroku", "皇帝が自分の日記に、感謝を書いてるんだよ。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("jiseiroku2", "元奴隷の本を読めてよかった、って皇帝が。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("shuudouin", "皇帝のあと、修道院の人たちが本を写して1000年つないだ。", anim=1.7,
+         speed=1.15, intonation=1.15, pad=0.08, chara="none"),
+    Unit("ima", "で、いまは心理学でも使われてるの、知ってた?", anim=1.7,
+         speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("cbt", "心理学の認知行動療法、考え方のクセを直す治療の元なの。", anim=1.7,
+         speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("quote", "その一言が、「人を不安にするのは、出来事じゃない」。", anim=1.9,
+         se="don", speed=1.13, intonation=1.25, pad=0.10, chara="none"),
+    Unit("quote2", "「出来事についての、自分の考えだ」。", anim=1.7,
+         speed=1.13, intonation=1.25, pad=0.12, chara="none"),
+    Unit("keifu", "で、奴隷が言って皇帝が読んで、いま病院にある。すごくない?", anim=1.7,
+         speed=1.15, intonation=1.3, pad=0.10, chara="none"),
+
+    # ---- 動作 → 締め
     Unit("konya", "だから今夜、明日なに言うかを決めるだけでいい。", anim=1.7,
          speed=1.13, intonation=1.2, pad=0.08, chara="none"),
     Unit("memo", "で、なに言うか、メモに1行書いてみ?", anim=1.7, speed=1.15,
