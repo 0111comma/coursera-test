@@ -166,7 +166,7 @@ UNITS = [
     Unit("koutei2", "マルクス・アウレリウスって皇帝。聞いたことある?", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("jiseiroku", "皇帝は『自省録』ってノートに、恩人の名前を書いてて。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("jiseiroku2", "その恩人が、奴隷の本を貸してくれた家庭教師なの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("ekibyou", "で、皇帝が生きたころは、はやり病とか戦争だらけだったんだよ。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("ekibyou", "で、皇帝のころは、はやり病とか戦争だらけだったんだよ。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("ekibyou2", "皇帝でも、止められなかったでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("onaji", "で、皇帝も『自省録』に、奴隷と同じ答えを書いてるんだよ。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("quote_k", "答えは「苦しいのは出来事じゃなく、あなたの受け取り方」。", anim=1.9, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
