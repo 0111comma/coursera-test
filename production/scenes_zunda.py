@@ -666,7 +666,8 @@ def owned(name="04_surprised", title=""):
     """主人(月桂冠)が、奴隷の体も持ち物も持っている。"""
     def draw(fig, t, a, dy):
         p = min(1.0, _pop(t, 0.08))
-        pict_person(fig, 0.84, CARD_BOT + 0.07 + dy, 0.26 * p, a=a, tunic=True, laurel=True)
+        if not pict_image(fig, "master", 0.83, CARD_BOT + 0.19 + dy, 0.22 * p, a, 2.4, max_w=0.20):
+            pict_person(fig, 0.84, CARD_BOT + 0.07 + dy, 0.26 * p, a=a, tunic=True, laurel=True)
         _txt(fig, 0.84, CARD_BOT + 0.035 + dy, "主人", 40, color=CONNECT, z=2.6, a=a)
         a2 = _fade(t, 0.28)
         p2 = min(1.0, _pop(t, 0.28))
@@ -681,7 +682,7 @@ def owned(name="04_surprised", title=""):
             _line(fig, [(bx - 0.028, by + 0.05), (bx + 0.028, by + 0.05)], lw=5.0, z=2.55, a=a3)
         # 主人の手から2本の線(体と持ち物へ)
         a4 = _fade(t, 0.55)
-        hx, hy = 0.78, CARD_BOT + 0.20 + dy
+        hx, hy = (0.74, CARD_BOT + 0.12 + dy) if _img("master") else (0.78, CARD_BOT + 0.20 + dy)
         _line(fig, [(hx, hy), (0.60, CARD_BOT + 0.16 + dy)], color=PURPLE, lw=4.0, z=2.45, a=a4)
         _line(fig, [(hx, hy), (bx, by + 0.05)], color=PURPLE, lw=4.0, z=2.45, a=a4)
         pict_lock(fig, 0.55, CARD_BOT + 0.315 + dy, 0.065, a=a4, pulse=False)
