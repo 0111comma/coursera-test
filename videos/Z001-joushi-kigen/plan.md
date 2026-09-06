@@ -36,8 +36,8 @@
 
 | 問い | 答え(動画で言うこと) | 出典(確認日 2026-09-05・確度B) |
 |---|---|---|
-| 誰が言った | **エピクテトス**。1900年くらい前(50頃–135頃)のローマ帝国の人。生まれつき奴隷、のちに自由になり、ニコポリスで哲学を教えた。本人は1冊も書かず、弟子の**アリアノス**が授業を記録した(『語録』『提要』) | https://www.worldhistory.org/Epictetus/ / https://ja.wikipedia.org/wiki/エピクテトス / https://kotobank.jp/word/エピクテトス-37161 |
-| なぜ残った | (1) ローマ皇帝**マルクス・アウレリウス**が『語録』を読み、『自省録』第1巻で、それを貸してくれた師ルスティクスに感謝している (2) 5世紀にキリスト教の書き手がキリスト教向けに書き換え、6世紀にシンプリキオスが注釈を書き、中世は**修道院で写本として写され続けた**(現存する写本100以上。10〜11世紀のキリスト教版、14世紀の原型) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_1 / https://classics.mit.edu/Antoninus/meditations.1.one.html / https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus |
+| 誰が言った | **エピクテトス**。1900年くらい前(50頃–135頃)のローマ帝国の人。少年期にローマで奴隷(主人はネロの秘書エパフロディトス)、のちに自由になり、ニコポリスで哲学を教えた。本人は1冊も書かず、弟子の**アリアノス**が授業を記録した(『語録』『提要』) | https://www.worldhistory.org/Epictetus/ / https://ja.wikipedia.org/wiki/エピクテトス / https://kotobank.jp/word/エピクテトス-37161 |
+| なぜ残った | (1) ローマ皇帝**マルクス・アウレリウス**が『語録』を読み、『自省録』第1巻で、それを貸してくれた師ルスティクスに感謝している。**皇帝が必要とした理由**: 治世は疫病(アントニヌスの疫病)と戦争(マルコマンニ戦争)で、皇帝にも動かせないものがあった。『自省録』8.47 は『提要』5 と同じ考えを自分の言葉で書いている (2) 5世紀にキリスト教の書き手がキリスト教向けに書き換え、6世紀にシンプリキオスが注釈を書き、中世は**修道院で写本として写され続けた**(現存する写本100以上。10〜11世紀のキリスト教版、14世紀の原型) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_1 / https://classics.mit.edu/Antoninus/meditations.1.one.html / https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus |
 | 誰がどう評価した | (1) 皇帝が読んだ(上) (2) **アルバート・エリス**の論理療法(REBT。最初の認知的な心理療法)が、『提要』5「人を不安にするのは事柄ではなく、事柄についての考えだ」を土台に置いた。**認知行動療法**(CBT)の源流 | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ / https://www.otani.ac.jp/yomu_page/kotoba/nab3mq0000000lab.html / https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5) |
 
 **この節の事実は、どれも「経験的な主張」ではなく来歴の事実**(strategy §5.2)。
@@ -191,9 +191,18 @@
 | 世の中には、自分次第のものと、そうでないものがある | エピクテトス『提要』第1章の冒頭。「われわれの力の及ぶもの」と「及ばないもの」の二分 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 1。ギリシア語原典と Higginson 英訳。2026-09-02確認。**訳書の訳者・出版社・ページは焼く前に実物で転記する**) |
 | 他人の評価・評判は「自分次第でないもの」の側に入る | 『提要』1 が「及ばないもの」に評判(δόξα)を挙げている | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (2026-09-02確認) |
 | **『提要』のもとになった講義をした人物は、奴隷の身分から解放された人**(動画では人名を出さず「元奴隷」とだけ言う) | エピクテトスは幼少期に奴隷としてローマへ渡り、ネロの解放奴隷エパフロディトスに仕えたのち、自身も解放された。**この動画が使うのは「周囲を一切動かせない立場だった」という一点だけ**で、経験的な主張はしない | https://iep.utm.edu/epictetu/ および https://ja.wikipedia.org/wiki/エピクテトス (2026-09-03確認・確度B。**この実行環境は両ドメインの本文取得を proxy に止められており、確認できたのは検索結果の要約まで。焼く前に本文をユーザー環境で1回確認する**) |
-| 1000年(修道院で写して) | 5世紀のキリスト教版パラフレーズ(ニルス等)から、現存最古の原型写本(14世紀)・キリスト教版写本(10〜11世紀)まで、**写本で伝わった期間を百年単位に丸めて約1000年**(5世紀→15世紀) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B。検索結果の要約まで) |
+| (旧)1000年 | 上の「1000年以上」の行に置き換えた(2026-09-05 批評パネル Z001-05: 起点が皇帝なら1300年前後) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B。検索結果の要約まで) |
 | 1冊(も書いてない) | エピクテトス本人は著作を残さず、弟子アリアノスの記録だけが伝わる | https://www.worldhistory.org/Epictetus/ / https://ja.wikipedia.org/wiki/エピクテトス (2026-09-05確認・確度B) |
 | 『提要』の5番目 | 「人々を不安にするものは事柄ではなく、事柄についての思惑だ」は『提要』(エンキリディオン)第5章 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5) / https://www.otani.ac.jp/yomu_page/kotoba/nab3mq0000000lab.html (2026-09-05確認) |
+| 主人は皇帝ネロの秘書 | エピクテトスの主人エパフロディトスは、ネロの解放奴隷で嘆願書を扱う秘書(a libellis)。本人も元奴隷 | https://www.livius.org/articles/person/epaphroditus/ / https://en.wikipedia.org/wiki/Epaphroditus_(freedman_of_Nero) (2026-09-05確認・確度B) |
+| どう思うかは取れない | 考え(判断)は頭の中にあるから、主人(秘書)にも取れない。『提要』1「われわれの力の及ぶもの」の筆頭が判断(ὑπόληψις)。奴隷時代の内心の記録ではなく、**教えた内容**として言う | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 1。2026-09-05確認) |
+| 53(の短い話) | 『提要』(エンキリディオン)は53章 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 / https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認) |
+| 皇帝が自分用のノートに、本を貸してくれた先生に感謝 | 『自省録』第1巻7: ルスティクスから「エピクテトスの覚え書き」を貸してもらったことへの感謝。『自省録』は自分に宛てた覚え書き(日記ではない) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_1 / https://classics.mit.edu/Antoninus/meditations.1.one.html (2026-09-05確認) |
+| 皇帝でも病気も戦争も止められない → 奴隷と同じ答え | マルクス・アウレリウスの治世はアントニヌスの疫病とマルコマンニ戦争。『自省録』第2巻・第3巻の見出しは陣中(クァディ族の地・カルヌントゥム)。『自省録』8.47「外のものに苦しむなら、苦しめているのはそれについての君の判断だ」 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47) / https://en.wikipedia.org/wiki/Antonine_Plague / https://en.wikipedia.org/wiki/Marcomannic_Wars (2026-09-05確認・確度B) |
+| 修道院で修行の本に書き直した | 5世紀にキリスト教の書き手が『提要』をキリスト教向けに書き換え(ニルス版など)、ギリシア語圏の修道院で用いられた | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
+| 1000年以上(印刷ができるまで写し続けた) | 皇帝(2世紀末)から初の印刷(ラテン語訳1479年・ギリシア語1528年)まで手写しで伝わった期間を百年単位に丸めて「1000年以上」 | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (Printed editions。2026-09-05確認・確度B) |
+| 病院では出来事と気持ちの間の考えを紙に書かせる | エリスの ABC モデル(A 出来事・B 考え・C 気持ち)。REBT/CBT の基本の手順で、紙(ワークシート)に書く | https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf / https://positivepsychology.com/albert-ellis-abc-model-rebt-cbt/ (2026-09-05確認・確度B) |
+| 岩波文庫『人生談義』下巻 | 國方栄二訳、岩波文庫 2021年2月。下巻に『語録』3・4巻と『要録』(=『提要』)を収録 | https://www.iwanami.co.jp/book/b556126.html / https://clsoc.jp/agora/newbooks/2021/210419.html (2026-09-05確認) |
 | 1900年前 | **『提要』が書かれたのが2世紀前半だから**(エピクテトス 50頃–135頃の講義をアリアノスがまとめた)。2世紀前半(西暦100〜130年ごろ)から2026年までで、約1900年 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 の解説(2026-09-02確認)。**「2000年前」と丸めない**(§5.2 の実年表記) |
 
 | **表の3行(左=いまの判断・やること・望むこと / 右=体・持ち物・役職)** | 『提要』1 の列挙そのもの。「われわれの力の及ぶもの」= 判断(ὑπόληψις)・衝動(ὁρμή)・欲求(ὄρεξις)・忌避(ἔκκλισις)、「及ばないもの」= 体(σῶμα)・持ち物(κτῆσις)・評判(δόξα)・役職(ἀρχαί) | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (2026-09-02確認)。**評判だけは表に載せない**——幕4の出題に使うため(§6) |
