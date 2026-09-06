@@ -427,7 +427,8 @@ def pict_train(fig, x, y, w, h, a=1.0, z=1.95):
 def pict_moon(fig, cx, cy, r, a=1.0, z=2.4):
     if a <= 0.01:
         return
-    if pict_image(fig, "moon", cx, cy, r * 2, a, z):
+    # いらすとやの夜空は正方形の1枚絵なので、月の3倍ほどの大きさで右上に置く
+    if pict_image(fig, "moon", cx + 0.01, cy, r * 2.6, a, z):
         return
     _circ(fig, cx, cy, r, fc=LIGHT, ec=INK, lw=3.0, z=z, a=a)
     _circ(fig, cx + r * 0.55 * AR, cy + r * 0.25, r * 0.85, fc=CARD, ec=CARD, lw=0, z=z + 0.05, a=a)
@@ -437,7 +438,7 @@ def pict_gate(fig, cx, yb, h, a=1.0, z=2.4):
     """改札(2本の柱と緑の矢印)。"""
     if a <= 0.01:
         return
-    if pict_image(fig, "gate", cx, yb + h / 2, h, a, z):
+    if pict_image(fig, "gate", min(cx, 0.81), yb + h / 2, h, a, z, max_w=0.24):
         return
     pw = h * 0.16 * AR
     for side in (-1, 1):
