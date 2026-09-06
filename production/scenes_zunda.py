@@ -365,7 +365,8 @@ def pict_book(fig, cx, cy, h, a=1.0, z=2.4, tag=""):
     x, y = cx - w / 2, cy - h / 2
     if pict_image(fig, "book", cx, cy, h, a, z):
         if tag:
-            tw = h * 0.46 * AR
+            # 札の幅は文字数に合わせる(「貸してくれた本」が4字幅の札に潰れていた。2026-09-05)
+        tw = h * AR * min(1.35, 0.11 * len(tag) + 0.14)
             _rect(fig, cx - tw / 2, y + h * 0.86, tw, h * 0.20, fc=RED, ec=INK, lw=2.5, z=z + 0.3,
                   r=0.008, a=a)
             _txt(fig, cx, y + h * 0.96, tag, h * 130, color=CARD, z=z + 0.4, a=a, max_w=tw * 0.9,
@@ -387,7 +388,8 @@ def pict_book(fig, cx, cy, h, a=1.0, z=2.4, tag=""):
     # 背
     _line(fig, [(cx, y + h * 0.10), (cx, y + h * 0.82)], color=INK, lw=4.0, z=z + 0.2, a=a)
     if tag:
-        tw = h * 0.46 * AR
+        # 札の幅は文字数に合わせる(「貸してくれた本」が4字幅の札に潰れていた。2026-09-05)
+        tw = h * AR * min(1.35, 0.11 * len(tag) + 0.14)
         _rect(fig, cx - tw / 2, y + h * 0.80, tw, h * 0.20, fc=RED, ec=INK, lw=2.5, z=z + 0.3,
               r=0.008, a=a)
         _txt(fig, cx, y + h * 0.90, tag, h * 130, color=CARD, z=z + 0.4, a=a, max_w=tw * 0.9,
