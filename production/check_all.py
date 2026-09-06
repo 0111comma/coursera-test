@@ -24,8 +24,19 @@ ROOT = PRODUCTION.parent
 # tempo は縦型だけ見る(check_tempo が横型を自分で除外する)。
 # 「1カット1.6〜1.8秒」は競合の実測から出した基準なのに、**書いてあるだけで
 # 機械が見ていなかった**ので守られていなかった(S032が3.65秒。2026-08-24)。
+#
+# kotoba / design は、批評パネル2回分の指摘を規則にした新しいゲート
+# (2026-08-30。docs/research/kotoba-rules.md と design-rules.md)。
+# パネル(サブエージェント8人×複数ラウンド)を毎本回すのは費用が見合わないので、
+# **パネルが見つけた欠陥のうち機械で見られるものは機械に見させる**。
+# 既存の公開済み動画は gate_exempt.txt で丸ごと外してある(触らない方針)。
+# shukka は**最後**に置く(2026-08-30)。出荷物(mp4・thumbnail.png)が
+# 描画コードより古くないか、強調枠の外に地の帯が露出していないか、
+# 図の下端と字幕が衝突していないかを、実際に焼いた画素で見る。
+# 「出荷物が旧デザインのまま」は2ラウンド連続で通っていた。
 COMMON = ["zentei", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
-          "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
+          "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "manabi",
+          "kotoba", "honyaku", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 

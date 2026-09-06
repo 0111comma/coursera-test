@@ -239,7 +239,14 @@ def main(video_dir: Path) -> int:
         else:
             check("推定尺", True, f"約{est / 60:.1f}分")
     else:
-        check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
+        # Z 番台(心理学チャンネル)は 60秒未満だけを見る(2026-09-04)。
+        # 55秒は作り手が置いた内部目標で、ユーザーは「長さはあなたが勝手に決めたルール。
+        # 60秒未満なら何でもいい」(2026-08-31)。分かりやすさのために語を足すと
+        # 55秒を超えるので、この内部目標が説明の省略を招いていた
+        # Z 番台は 3分(Shorts の上限)まで。2026-09-05 ユーザー「別に1分超えていいから」——
+        # 60秒に収めるために学び(誰が・なぜ残った・誰が評価した)を削っていた
+        limit = 179.5 if video_dir.name.startswith("Z") else 55.5
+        check(f"推定尺 {int(limit)}秒以内", est <= limit, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
@@ -336,7 +343,37 @@ def main(video_dir: Path) -> int:
               "即切り0.15s(⑦/⑭)")
     else:
         check("output/*.mp4 存在", False)
-    check("thumbnail.png 存在", (video_dir / "output" / "thumbnail.png").exists(), "カバーフレーム書き出し")
+    thumb = video_dir / "output" / "thumbnail.png"
+    check("thumbnail.png 存在", thumb.exists(), "カバーフレーム書き出し")
+    # 2026-08-29 批評6周目: カバーを直したのに旧 thumbnail.png のまま出荷しかけた。
+    # サムネは render.py より新しくなければならない(`render.py --thumb` で即時更新可)
+    if thumb.exists():
+        check("thumbnail.png が render.py より新しい",
+              thumb.stat().st_mtime >= (video_dir / "render.py").stat().st_mtime,
+              "古いサムネ。python3 render.py --thumb か再レンダリングで更新")
+    # 常設UI(上部の帯)のピクセル一致(fpテーマの縦型のみ)。
+    # 帯のエッジがユニット切替で明滅していた(2026-08-29 批評6周目)。
+    # work/ のフレームが残っていればカバー以外の全フレームで上端領域を照合する
+    frames = sorted((video_dir / "output" / "work").glob("frame_*.png"))
+    if frames and "use_fp_theme" in src and not LONG:
+        try:
+            import numpy as _np
+            from PIL import Image as _Im
+            strip = None
+            same = True
+            for f in frames[:: max(1, len(frames) // 40)]:   # 等間隔サンプル
+                if f.name.endswith("_990.png"):
+                    continue        # カバーは全面構図なので対象外
+                a = _np.asarray(_Im.open(f).convert("RGB"))[:130]
+                if strip is None:
+                    strip = a
+                elif not _np.array_equal(strip, a):
+                    same = False
+                    break
+            check("常設帯の領域(y<130)が全ユニットで一致", same,
+                  "帯・注記ゾーンにドットや影が触れている")
+        except Exception as e:      # noqa: BLE001
+            warn("常設帯の照合をスキップ", str(e))
 
     print(f"\n結果: {'ALL PASS' if not fails else f'{len(fails)}件 FAIL'}")
     return 1 if fails else 0

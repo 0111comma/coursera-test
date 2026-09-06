@@ -181,6 +181,23 @@ def ease_out_back(t: float) -> float:
     return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2
 
 
+def ease_out_back_soft(t: float) -> float:
+    """**棒グラフ専用**の緩いオーバーシュート(約3%)。
+
+    2026-08-30 retention/medium: ease_out_back(1.70158)は棒高で最終比+8.1%の
+    頂点を作り、そこから窓の30%(約0.36秒)かけて連続的に縮んでいた。
+    「増える」を見せるカットの最後の可視モーションが**下方向**になる。
+    戻りが0.12秒以内に収まる強さに落とすと、縮む動きは知覚されなくなる。
+    数字ラベル・ボタンなど「跳ねて欲しい」小要素は ease_out_back のままでよい。
+    """
+    # 2026-08-30 retention/high: c1=0.62 は実測で最終比+5.1% の頂点を作り、
+    # 窓の後半をかけて単調に縮んでいた(docstring の「約3%・戻り0.12秒以内」と
+    # 食い違っていた)。頂点が +0.5% 以下・戻りが窓の5%以内に収まる値へ落とす。
+    c1 = 0.25
+    c3 = c1 + 1
+    return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2
+
+
 @dataclass
 class Unit:
     """1ユニット = 1文(R5)。scene名で背景を選び、animで冒頭に動きを入れる(R2/R4)。"""
@@ -188,7 +205,15 @@ class Unit:
     subtitle: str            # 字幕=読み上げ文(R6)。【】で囲んだ語は黄色強調(R8)
     narration: str = ""      # 読み上げ用の上書き(省略時はsubtitleから【】を除いた文)
     pad: float = 0.15        # ナレーション後の間(秒。深掘り⑦: 詰め気味が定石)
-    anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)
+    anim: float = 0.0        # ユニット冒頭のアニメーション秒数(0=静止)。
+                             # **下限**として働く(実際の窓は anim_frac との大きいほう)
+    anim_frac: float = 0.55  # アニメ窓を**カット尺の割合**でも決める(2026-08-30
+                             # retention/high)。anim が 1.0/1.2 の定数だったため、
+                             # カット尺(1.65〜4.25秒)と無関係に図が各カットの
+                             # 23〜73%(平均39%)地点で凍結し、合計 39.7秒/63.0秒
+                             # (63%)が止め絵になっていた。窓が尺に比例すれば
+                             # 着地も尺に比例する(fueru 1.65秒→0.91秒、
+                             # hyo_a 4.25秒→2.34秒)
     fps: int = 20            # アニメーション部分のfps
     intonation: float = 1.1  # 抑揚(深掘り②: 一律1.0は単調。文脈で1.05〜1.3)
     speed: float = 0.0       # 話速の上書き(0=既定。深掘り②: 重要文は遅く・つなぎは速く)
@@ -196,11 +221,22 @@ class Unit:
     pause_scale: float = 1.1 # 句読点の間(深掘り②: AIの早口感を消す。タメは1.5〜1.7)
     se: str | None = None    # 効果音 "pop"/"don"/"puchun"(強調箇所のみ。ループ6)
     se_at: float = 0.0       # ユニット頭からのSEオフセット秒(深掘り④: 着地に同期させる用)
-    cover: bool = False      # 冒頭0.07秒に完成形フレームを挟む(フィードの静止表示対策。ループ7)
+    se_at_frac: float | None = None   # SEの時刻を**ユニット尺の割合**で指定する
+                             # (2026-08-30 retention/medium)。図がナレーション進行度
+                             # (_prog)で動くカットは、着地時刻が anim 窓ではなく
+                             # 尺に比例する。秒で書くと尺が変わるたびに音だけ先に鳴る
+    cover: bool = False      # 冒頭に完成形フレームを挟む(フィードの静止表示対策。ループ7)
+    cover_hold: float = 0.07  # そのカバーの静止秒。0.07秒=20fpsで1.4フレームなので
+                             # 「移行」ではなく1フレームのフラッシュとして知覚される
+                             # (2026-08-30 retention/low)。構図が本編1カット目と
+                             # 揃っているときは 0.30 程度にして「サムネが動き出す」導入にする
     puchun: bool = False     # ユニット頭に「プチュン」を鳴らす(音だけのフリーズ演出。映像の暗転はしない)
     face: str = "normal"     # 立ち絵の表情 normal/surprised/troubled/happy/smug(deep-loops ㉙: 1本で2〜4種)
     chara: str = "bl"        # 立ち絵の位置 "bl"(左下)/"br"(右下)/"none"(そのユニットで非表示)
     speaker: int = 0         # 話者の上書き(0=render_videoの既定)。二人会話は 3=ずんだもん/2=めたん
+    sub_delay: float = 0.0   # 字幕の表示開始をユニット頭から遅らせる秒数(2026-08-29)。
+                             # リビール(図のカウンタ着地)より字幕が先に答えを出す
+                             # カットで使う。音声・尺は変えない
 
     def tts_text(self) -> str:
         t = self.narration or self.subtitle
@@ -219,6 +255,12 @@ class Unit:
 # ここで表にしておけば、字幕に NISA と書くだけで読みは常に「ニーサ」になる。
 # つまり**書き忘れようがない**。check_yomi.py は最後の網として残す。
 READING = {
+    # **欧文のサービス名**(2026-08-30 nihongo/high)。check_yomi は漢字複合語しか
+    # 見ないので、英字綴りはそのまま VOICEVOX に渡って読みが不定になる。
+    # 字幕の綴りは変わらないので R6(ナレーション=字幕)は保たれる。
+    "Netflix": "ネットフリックス",
+    "Spotify": "スポティファイ",
+    "Amazon": "アマゾン",
     "NISA": "ニーサ",
     "iDeCo": "イデコ",
     "ATM": "エーティーエム",
@@ -253,7 +295,12 @@ DEFAULT_SPEED = 1.2      # R5: 速めのテンポ
 SPEED_SCALE = float(os.environ.get("SHORTLIB_SPEED_SCALE", "1.3"))
 SUB_TIME = None      # (ユニット内の時刻, ユニットの尺)。字幕の描画側が読む
 SUB_WORDPOP = False  # 語ごとポップ。**テーマが有効なときだけ True**
-WORDPOP_FPS = 12     # 語ごとポップのときに、ユニット全体を割るfps
+# 語ごとポップのときに、ユニット全体を割るfps。**アニメ区間の u.fps と揃える**
+# (2026-08-30 retention/high)。12だと、図の動きが止まるのと同じ瞬間に
+# フレーム間隔が50ms→83msへ跳ね、流れるドット壁紙の上で段差として知覚される。
+# ホールドは平均カット長の45〜75%を占めるので、動画の半分以上が12fpsだった。
+# ホールドを12fpsに落とす節約は、KGI(視聴維持)より下の判断。
+WORDPOP_FPS = 20
 # これ以上の pad は「止め」とみなし、その区間はBGMも切る(05/08-tempo/audio)
 LONG_STOP_PAD = 0.5
 
@@ -272,8 +319,9 @@ def render_signature(units, scene_painters, speaker=None, bgm=True, chara=True,
     """
     return hashlib.sha256(repr([
         (u.scene, u.subtitle, u.narration, u.pad, u.anim, u.fps, u.intonation, u.speed,
-         u.pitch, u.pause_scale, u.se, u.se_at, u.cover, u.puchun, u.face, u.chara,
-         u.speaker)
+         u.pitch, u.pause_scale, u.se, u.se_at, u.se_at_frac, u.cover, u.cover_hold,
+         u.anim_frac,
+         u.puchun, u.face, u.chara, u.speaker, u.sub_delay)
         for u in units
     ] + [sorted(scene_painters), speaker if speaker is not None else DEFAULT_SPEAKER,
          bgm, chara, out_name, SPEED_SCALE, W, H, EMPH, DUO, RICH_BG,
@@ -1173,7 +1221,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         _here = Path(__file__).resolve().parent
         _src = [Path(__file__).resolve()] + [
             _here / n for n in ("scenes_long.py", "scenes_common.py",
-                                "scenes_fp.py", "fplib.py")]
+                                "scenes_fp.py", "scenes_zunda.py", "fplib.py")]
+        # いらすとや等の差し替え画像も「描くもの」なので、増減・更新があれば描き直す
+        # (2026-09-05: assets/irasuto/ に PNG を置いても署名が変わらず、古い
+        #  ベクター図のフレームが再利用されて画像の無い mp4 が出た)
+        _src += list((_here.parent / "assets" / "irasuto").glob("*.png"))
         newest = max((f.stat().st_mtime for f in _src if f.exists()), default=0)
         if newest > sig_file.stat().st_mtime:
             print("[resume] 描画モジュールが署名より新しい。"
@@ -1221,11 +1273,14 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
         # **その間にBGMが戻ってきて盛り上がる**。止めたつもりが逆になる。
         if u.pad >= LONG_STOP_PAD:
             bgm_mute.append((elapsed + d_total - u.pad, elapsed + d_total))
+        head_sec = (u.cover_hold if u.cover else 0.0)
         if u.se:
-            se_events.append((elapsed + (0.07 if u.cover else 0.0) + u.se_at, u.se))
+            # se_at_frac: 図がナレーション進行度で動くカットは、SEも尺の割合で置く
+            off = (u.se_at_frac * d_total if u.se_at_frac is not None else u.se_at)
+            se_events.append((elapsed + head_sec + off, u.se))
         if u.puchun:
             # ユニット頭に「プチュン」(u.seはリベール側=se_atで少し後に鳴らせる)
-            se_events.append((elapsed + (0.07 if u.cover else 0.0), "puchun"))
+            se_events.append((elapsed + head_sec, "puchun"))
 
         chara_on = chara and u.chara != "none"
         mtrack = mouth_track(pw, CHARA_FPS) if chara_on else []
@@ -1241,6 +1296,11 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 durations.append(dur)
                 return f
             fig = new_canvas(elapsed + t_unit)
+            # **painter より先に SUB_TIME を置く**(2026-08-29 批評6周目)。
+            # painter の t は anim 窓で1.0に飽和するので、scenes_fp の部品は
+            # ここからナレーション実時間の進行度を読んで「第2の拍」を刻む
+            global SUB_TIME
+            SUB_TIME = (t_unit, d_total)
             (painter or scene_painters[u.scene])(fig, t)
             if chara_on and not no_chara:
                 tg = elapsed + t_unit
@@ -1278,23 +1338,45 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 # これが無いと fplib 側は「全部出た状態」しか描けない。
                 # 実際、語ごとポップを作ったのに**動画には一度も入っていなかった**
                 # (use_fp_theme が旧描画を差したままだった)。
-                global SUB_TIME
-                SUB_TIME = (t_unit, d_total)
+                # sub_delay: 字幕クロックだけ遅らせる(リビールの先出し防止)
+                SUB_TIME = (t_unit - u.sub_delay,
+                            max(0.3, d_total - u.sub_delay))
                 draw_subtitle(fig, u.subtitle, pop=pop, tag=tag)
+                SUB_TIME = (t_unit, d_total)
             save_frame(fig, f)
             frames.append(f)
             durations.append(dur)
             return f
 
-        anim = min(u.anim, d_total)
-        head = 0.07 if u.cover else 0.0
+        # **アニメ窓はカット尺に比例させる**(2026-08-30 retention/high)。
+        # u.anim は「最短モーション時間」の下限として残す。
+        anim = min(max(u.anim, u.anim_frac * d_total), d_total)
+        head = (u.cover_hold if u.cover else 0.0)
         if u.cover:
             # フィードの静止表示・サムネ用(ループ7)。専用構図 <scene>__cover があれば
             # 字幕なしのサムネ設計で描く(深掘り⑨)
             cover_painter = scene_painters.get(f"{u.scene}__cover")
-            cf = emit(1.0, 990, 0.07, painter=cover_painter,
-                      with_subtitle=(cover_painter is None), no_chara=True)
-            thumbnail = cf
+            # **カバーも連番で出す**(2026-08-30 retention/low)。1フレームだけ
+            # だと動画の冒頭 0.30秒(20fpsで6フレーム)が完全に同一ピクセルで、
+            # Shorts のスワイプ判断が始まる最初の 0.3秒に動きがゼロだった。
+            # cover() は t<1 で描き分けができるので、0.70→1.00 を渡す。
+            # 背景の水玉ドリフトも t_unit が進むぶん効く。
+            nc = max(2, int(round(head * u.fps)))
+            cf0 = None
+            for j in range(nc):
+                tc = 0.70 + 0.30 * (j + 1) / nc
+                cf = emit(tc, 990 + j, head / nc, painter=cover_painter,
+                          with_subtitle=(cover_painter is None), no_chara=True,
+                          t_unit=head * (j + 0.5) / nc)
+                if j == 0:
+                    cf0 = cf
+            # サムネは**動画の第0フレームそのもの**にする(2026-09-03)。
+            # 以前は最後のカバーフレームを使っていたが、カバーには微小な
+            # 上下ゆらぎ(draw_pose の bob)があるため第0フレームと一致せず、
+            # check_shukka の「サムネ不一致」が毎回鳴っていた
+            # (実測 平均絶対差 3.1/255)。**視聴者がサムネで見た絵と、
+            # 再生開始で見る絵を同じにする**のがこのゲートの意図。
+            thumbnail = cf0
         anim = min(anim, d_total - head)
         if anim > 0:
             n = max(2, int(anim * u.fps))
@@ -1316,8 +1398,9 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                         emit(1.0, n + j, hold / m,
                              t_unit=head + anim + hold * (j + 0.5) / m)
                 elif _wordpop_on():
-                    # 語がひとつずつ着地するので、止め絵にできない
-                    m = max(1, int(round(hold * WORDPOP_FPS)))
+                    # 語がひとつずつ着地するので、止め絵にできない。
+                    # **ユニットごとの fps を下回らない**(刻みの段差を作らない)
+                    m = max(1, int(round(hold * max(WORDPOP_FPS, u.fps))))
                     for j in range(m):
                         emit(1.0, n + j, hold / m,
                              t_unit=head + anim + hold * (j + 0.5) / m)
@@ -1334,7 +1417,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
                 for j in range(m):
                     emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
             elif _wordpop_on():
-                m = max(1, int(round(body * WORDPOP_FPS)))
+                m = max(1, int(round(body * max(WORDPOP_FPS, u.fps))))
                 for j in range(m):
                     emit(1.0, j, body / m, t_unit=head + body * (j + 0.5) / m)
             else:

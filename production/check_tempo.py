@@ -41,6 +41,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 MAX_CUT_SEC = 2.4     # 平均。競合1.6〜1.8に対し、余裕を見てここを上限にする
+# チャンネル「ヤケに心理学に詳しいずんだもん」(ID が Z)は 3.0 秒まで(2026-09-04)。
+# ユーザー指摘「まだ全然日本語がAI感強い」。1カット2.4秒に収めるために字幕が
+# 見出し語の羅列(「直すか、決めるか。今日はどっち?」)になり、それがAI感の一因だった。
+# 話し言葉は1文がもう少し長い。2.4 はお金のチャンネルの競合実測から置いた値で、
+# 話し言葉を優先するこのチャンネルにはそのまま当てない
+MAX_CUT_SEC_Z = 3.0
 LONG_CUT_SEC = 4.5    # 1カットの上限。これ以上そのままの絵は出さない
 # 字数→秒。**7.4 は S032 1本だけを見た値で、2割ほど短く見積もっていた**(2026-08-24)。
 # 公開済み29本の実測(字数 ÷ mp4の尺)の中央値は 6.05 字/秒(範囲 4.71〜7.21)。
@@ -63,6 +69,53 @@ def load_exempt(gate: str) -> set[str]:
 
 def units_of(src: str) -> list[tuple[str, str]]:
     return re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
+
+
+def scene_parts(src: str) -> dict:
+    """SCENES の各キーが**どの部品をどのデータで**呼んでいるかを返す。
+
+    2026-08-30 retention/medium: このゲートは「SCENES の辞書キー名が変わったら
+    カット」で数えていた。だから同一の表を描く hyo_a/hyo_aru/hyo_n/hyo_g が
+    4カットに数えられ、63.0秒/22カットで [OK] を返していた。実測の絵の変化で
+    数えると 19カット=3.32秒/カット、最長カット12.8秒(基準の2.85倍)だった。
+    docstring の「絵が変わらなければカットではない」をゲート自身が
+    検出できていなかったということ。
+
+    **キー名ではなく部品の同一性で見る。**`sf.<関数名>(` の関数名と
+    第1・第2引数(table なら headers/rows のリテラル)が同じ連続ユニットは
+    1カットに畳む。引数まで含めて同一なら、絵は原理的に同じになる。
+    """
+    body = src[src.index("SCENES = {"):] if "SCENES = {" in src else ""
+    out = {}
+    for m in re.finditer(r'"([A-Za-z0-9_]+)"\s*:\s*s[a-z]\.([a-z_]+)\(', body):
+        key, fn = m.group(1), m.group(2)
+        # 呼び出しの丸括弧を数えて引数の本文を取り出す
+        i = m.end()
+        depth, start = 1, i
+        while i < len(body) and depth:
+            c = body[i]
+            if c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+            i += 1
+        args = body[start:i - 1]
+        # コメント行を落とし、最初の2引数(トップレベルのカンマ区切り)を取る
+        args = re.sub(r"#[^\n]*", "", args)
+        parts, depth, cur = [], 0, ""
+        for c in args:
+            if c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+            if c == "," and depth == 0:
+                parts.append(cur); cur = ""
+            else:
+                cur += c
+        parts.append(cur)
+        head = tuple(re.sub(r"\s+", "", x) for x in parts[:2])
+        out[key] = (fn,) + head
+    return out
 
 
 def real_duration(vdir: Path) -> float | None:
@@ -89,14 +142,16 @@ def check_video(vdir: Path):
     if not units:
         return []
 
-    # 絵が変わる回数。同じ場面が続くユニットは1カット
+    # 絵が変わる回数。**同じ部品を同じデータで描く連続ユニットは1カット**
+    parts = scene_parts(src)
     cuts, prev = [], None
     for scene, sub in units:
-        if scene != prev:
+        sig = parts.get(scene, ("?", scene))
+        if sig != prev:
             cuts.append([sub])
         else:
             cuts[-1].append(sub)
-        prev = scene
+        prev = sig
 
     total = real_duration(vdir)
     estimated = total is None
@@ -106,11 +161,12 @@ def check_video(vdir: Path):
 
     issues = []
     avg = total / len(cuts)
-    if avg > MAX_CUT_SEC:
-        need = int(total / MAX_CUT_SEC + 0.999)
+    limit = MAX_CUT_SEC_Z if vdir.name.startswith("Z") else MAX_CUT_SEC
+    if avg > limit:
+        need = int(total / limit + 0.999)
         issues.append(("(全体)", "カットが遅い",
                        f"{total:.1f}秒 / {len(cuts)}カット = "
-                       f"**1カット{avg:.2f}秒**。上限{MAX_CUT_SEC}秒。"
+                       f"**1カット{avg:.2f}秒**。上限{limit}秒。"
                        f"競合は1.6〜1.8秒。**あと{need - len(cuts)}カット要る**"
                        f"{'(尺は字数からの推定)' if estimated else ''}"))
 
