@@ -193,7 +193,7 @@
 | 『提要』の5番目 | 「人々を不安にするものは事柄ではなく、事柄についての思惑だ」は『提要』(エンキリディオン)第5章 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5) / https://www.otani.ac.jp/yomu_page/kotoba/nab3mq0000000lab.html (2026-09-05確認) |
 | 奴隷のまま哲学の授業に通わせてもらった | 主人エパフロディトスの許しで、ストア派のムソニウス・ルフスの講義を聴いた(人名は動画で言わない) | https://iep.utm.edu/epictetu/ / https://www.worldhistory.org/Epictetus/ (2026-09-05確認・確度B) |
 | 恩人は皇帝の家庭教師 | 『自省録』1.7 の恩人ユニウス・ルスティクスはマルクス・アウレリウスの師(家庭教師)。彼が「エピクテトスの覚え書き」を貸した | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_1 (2026-09-05確認) |
-| 皇帝の答え「苦しめるのは出来事じゃなく、あなたの判断だ」 | 『自省録』8.47「外のものに苦しむなら、苦しめているのはそれについての君の判断だ」の口語訳 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47。2026-09-05確認) |
+| 皇帝の答え「苦しいのは出来事じゃなく、あなたの受け取り方」 | 『自省録』8.47「外のものに苦しむなら、苦しめているのはそれについての君の判断だ」の口語訳 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47。2026-09-05確認) |
 | 変えたのは哲学者の名前だけ | キリスト教版『提要』は、ソクラテスなど哲学者の名前を聖パウロなどに置き換えた以外はほぼ原文のまま。**元のギリシア語本文も別に伝わった**(14世紀の原型写本) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
 | アルバート・エリスは心理学者 | 臨床心理学者(Ph.D.)。医師ではない。論理療法(REBT)を1955年ごろに始めた | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ (2026-09-05確認) |
 | 『要録』(下巻のいちばん後ろ) | 岩波文庫『人生談義』下巻は『語録』3・4巻のあとに『要録』(=『提要』)を収録 | https://www.iwanami.co.jp/book/b556126.html (2026-09-05確認) |

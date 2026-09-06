@@ -135,7 +135,9 @@ def check_video(vdir: Path):
     # 形式を見て切り替える」に従い、長尺はユニット数に比例して上限を伸ばす。
     # 密度そのものはショートと同じ(緩めてはいない)
     src = (vdir / "render.py").read_text()
-    scale = max(1, round(len(units) / 17)) if "use_landscape" in src else 1
+    # 2026-09-05: Z 番台(3分まで)も同じ密度で伸ばす。48カットに絶対数4回を当てると、
+    # 冷読の読者4人が書く「その皇帝」「それと同じで」が全部落ち、体言止めに逃げてAI感が出た
+    scale = max(1, round(len(units) / 17)) if ("use_landscape" in src or vdir.name.startswith("Z")) else 1
     shiji_max = SHIJI_MAX * scale
     setsuzoku_max = SETSUZOKU_MAX * scale
 
