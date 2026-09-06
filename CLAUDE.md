@@ -100,6 +100,12 @@ S032 が「利回り3%なら4万7000円」を捨てたのはこのため。
    ↓           **書く工程は docs/research/sakubun-gensoku.md に従う**(鎖→書き下ろし→
    ↓           縦読み→検収。ゲート不合格は段落ごと書き直す。1行パッチ禁止)
    ↓           計算を含む場合は verify.py で数値を検証してから台本に反映
+/critique      **焼く前に必ず**批評パネルを回す(2026-09-05 ユーザー「勝手に焼いてるけど…
+   ↓           サブエージェント展開して指摘をどんどんストックする仕組みは? やれよ」)。
+   ↓           `Workflow({scriptPath:'.claude/workflows/critique.js', args:{video, feedback, date}})`
+   ↓           5人(指摘クリア判定・学びの深さ・事実検証・維持率・視聴者)が指摘を出し、
+   ↓           `docs/research/shiteki-stock.md` に自動で貯まる。**high が 0 になるまで焼かない。**
+   ↓           対応した指摘は状態を「対応済み」に書き換え、2本以上で出た指摘はゲートへ
 /produce-video 台本から videos/<ID>-<slug>/output/<ID>.mp4 をレンダリングする
    ↓           (production/shortlib.py + VOICEVOX + ffmpeg。詳細はスキル参照)
 (投稿はユーザーのローカル環境から。このリポジトリの成果物はmp4まで)
