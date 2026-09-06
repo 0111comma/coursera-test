@@ -201,19 +201,19 @@
 | 『提要』の5番目 | 「人々を不安にするものは事柄ではなく、事柄についての思惑だ」は『提要』(エンキリディオン)第5章 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5) / https://www.otani.ac.jp/yomu_page/kotoba/nab3mq0000000lab.html (2026-09-05確認) |
 | 奴隷のまま哲学の授業に通わせてもらった | 主人エパフロディトスの許しで、ストア派のムソニウス・ルフスの講義を聴いた(人名は動画で言わない) | https://iep.utm.edu/epictetu/ / https://www.worldhistory.org/Epictetus/ (2026-09-05確認・確度B) |
 | 恩人は皇帝が若いころの先生 | 『自省録』1.7 の恩人ユニウス・ルスティクスはマルクス・アウレリウスの師(家庭教師)。彼が「エピクテトスの覚え書き」を貸した | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_1 (2026-09-05確認) |
-| 皇帝の答え「苦しいのは出来事じゃなく、判断のほうだ」 | 『自省録』8.47「外のものに苦しむなら、苦しめているのはそれについての君の判断だ」の口語訳 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47。2026-09-05確認) |
+| 皇帝の答え「つらいのは出来事じゃなくて、受け取り方だ」 | 『自省録』8.47「外のものに苦しむなら、苦しめているのはそれについての君の判断だ」の口語訳 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47。2026-09-05確認) |
 | 変えたのはソクラテスの名前を聖パウロにしたくらい(中身はほぼそのまま) | キリスト教版『提要』は、ソクラテスなど哲学者の名前を聖パウロなどに置き換えた以外はほぼ原文のまま。**元のギリシア語本文も別に伝わった**(14世紀の原型写本) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
 | アルバート・エリスは心理学者 | 臨床心理学者(Ph.D.)。医師ではない。論理療法(REBT)を1955年ごろに始めた | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ (2026-09-05確認) |
 | 『要録』(下巻の後ろのほう。『要録』の後に『断片』) | 岩波文庫『人生談義』下巻は『語録』3・4巻のあとに『要録』(=『提要』)を収録 | https://www.iwanami.co.jp/book/b556126.html (2026-09-05確認) |
 | ストア派・『ストイック』の元になった言葉 | エピクテトスはストア派。英語 stoic(ストイック)はストア派(Stoa)に由来 | https://ja.wikipedia.org/wiki/ストア派 / https://en.wikipedia.org/wiki/Stoicism (2026-09-05確認) |
 | 教えの土台(『提要』の1番目) | 『提要』第1章「われわれの力の及ぶもの/及ばないもの」。体・持ち物・評判・役職は及ばないもの | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 1。2026-09-05確認) |
 | 昔の本は手で写さないと消える | 印刷以前の書物は写本でしか伝わらない(『提要』も100以上の写本で現存) | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
-| 「その判断は今すぐやめられる」 | 『自省録』8.47 後半「そしてその判断をいま消し去るのは君の力の内にある」 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (2026-09-05確認) |
+| 「その受け取り方は今すぐやめられる」 | 皇帝の『自省録』8.47 後半「そしてその判断をいま消し去るのは君の力の内にある」 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (2026-09-05確認) |
 | 修行=欲を抑える練習・奴隷の本がちょうどよかった | キリスト教の修道生活は欲望の抑制を訓練とし、『提要』の「自分次第でないものを欲しがらない」がそのまま使えたため修道院で用いられた | https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認・確度B) |
-| 『提要』5の続き「知らない人は他人を責めて、習いたてなら自分を責める。慣れた人はどっちも責めない」 | Enchiridion 5 後半: 「教育のない者は他人を責め、教育を始めた者は自分を責め、教育を終えた者は他人も自分も責めない」 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5。2026-09-05確認) |
+| 『提要』5の続き「知らない人は他人のせい、習いたては自分のせいにする。慣れた人はどっちも責めない」 | Enchiridion 5 後半: 「教育のない者は他人を責め、教育を始めた者は自分を責め、教育を終えた者は他人も自分も責めない」 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 5。2026-09-05確認) |
 | エリスは1955年、それまでの治療(過去を掘る)をやめ、いまの考えを直す治療にした | エリスは精神分析の訓練を受けたのち、その効率の悪さから離れ、1955年に論理療法(REBT)を始めた。標語にエピクテトスを置いた | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ / https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認・確度B) |
 | 治療では考えを紙に書いて本当かを調べる | ABC モデルの D(論駁: その考えの証拠はあるか)。書いた考えを検分して置き換える | https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認) |
-| 皇帝はそのノートを戦争の陣中で書いた | 『自省録』第2巻は「クァディ族の地、グラヌア川のほとりで」、第3巻は「カルヌントゥムで」と陣中の地名が付く(マルコマンニ戦争) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_2 / https://en.wikipedia.org/wiki/Marcomannic_Wars (2026-09-05確認) |
+| そのノートは戦争に行ってる最中に書いた | 『自省録』第2巻は「クァディ族の地、グラヌア川のほとりで」、第3巻は「カルヌントゥムで」と陣中の地名が付く(マルコマンニ戦争) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_2 / https://en.wikipedia.org/wiki/Marcomannic_Wars (2026-09-05確認) |
 | ご主人(エパフロディトス)も元奴隷 | ネロの解放奴隷 | https://www.livius.org/articles/person/epaphroditus/ (2026-09-05確認) |
 | 主人は皇帝ネロの秘書 | エピクテトスの主人エパフロディトスは、ネロの解放奴隷で嘆願書を扱う秘書(a libellis)。本人も元奴隷 | https://www.livius.org/articles/person/epaphroditus/ / https://en.wikipedia.org/wiki/Epaphroditus_(freedman_of_Nero) (2026-09-05確認・確度B) |
 | どう思うかは取れない | 考え(判断)は頭の中にあるから、主人(秘書)にも取れない。『提要』1「われわれの力の及ぶもの」の筆頭が判断(ὑπόληψις)。奴隷時代の内心の記録ではなく、**教えた内容**として言う | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 1。2026-09-05確認) |
