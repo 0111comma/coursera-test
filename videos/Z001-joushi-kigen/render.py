@@ -92,8 +92,10 @@ SCENES = {
     # ---- 幕5 なぜ残った(皇帝)→ 提要5 → 修道院 → エリス
     "utsusu": sz.book_now("03_troubled", "手で写す", bubble="写さないと消える"),
     "naze": sz.book_now("03_troubled", "提要", bubble="なんで残った?"),
+    "naze2": sz.lineage("02_point"),
     "koutei": sz.emperor("04_surprised", "ずっとあとの皇帝"),
-    "koutei2": sz.emperor("02_point", "マルクス・アウレリウス", bubble="自分だけのノート"),
+    "koutei2": sz.emperor("02_point", "マルクス・アウレリウス"),
+    "koutei3": sz.emperor("02_point", "ローマ皇帝", bubble="自分だけのノート"),
     "jiseiroku": sz.emperor("02_point", "ローマ皇帝", bubble="恩人の名前"),
     "jiseiroku2": sz.book_now("02_point", "貸してくれた本", bubble="若いころの先生"),
     "jinchuu": sz.emperor("03_troubled", "ローマ皇帝", bubble="戦争の陣中で"),
@@ -108,6 +110,7 @@ SCENES = {
     "semenai": sz.train_think("03_troubled", "初心者"),
     "semenai2": sz.train_think("05_happy", "責めない側へ"),
     "shuudouin": sz.copyists("01_base"),
+    "shuudouin2": sz.book_now("01_base", "修行に使った", bubble="写し続けた"),
     "shugyou": sz.book_now("01_base", "修行の本", bubble="欲しがらない練習"),
     "shugyou2": sz.book_now("02_point", "欲しがるな", bubble="ぴったり"),
     "namae": sz.book_now("02_point", "名前を差し替え", bubble="ソクラテス"),
@@ -185,13 +188,15 @@ UNITS = [
 
     # ---- なぜ残ったか(皇帝)
     Unit("utsusu", "で、昔の本って、誰かが手で写さないと消えるでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
-    Unit("naze", "なのに、なんで1900年も残ったと思う? 読んだ人と写した人がいたから。", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("naze", "なのに、なんで1900年も残ったと思う?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("naze2", "1900年残ったのは、読んだ人と写した人がいたから。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("koutei", "で、ネロよりずっと後のローマ皇帝も読んでたんだよ。", anim=1.7, speed=1.13, intonation=1.25, pad=0.1, se='don', chara="none"),
-    Unit("koutei2", "マルクス・アウレリウスって皇帝。『自省録』って、自分だけのノートを書いてて。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("koutei2", "マルクス・アウレリウスって皇帝。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
+    Unit("koutei3", "皇帝は『自省録』って、自分だけのノートを書いてて。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("jiseiroku", "そのノートに、若い頃の先生にありがとう、って書いてるの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("jiseiroku2", "で、先生はエピクテトスの本を貸してくれた人なんだって。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("jinchuu", "しかもそのノート、戦争に行ってる最中に書いてるの。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("ekibyou2", "戦争も流行り病も皇帝でも止められない。上司の機嫌と同じでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
+    Unit("ekibyou2", "戦争も流行り病も止められない。上司の機嫌と同じでしょ?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("onaji", "で、皇帝もエピクテトスとそっくりなこと書いてて。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("quote_k", "皇帝は「つらいのは出来事より受け取り方だ」って。", anim=1.9, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
     Unit("quote_k2", "で、「その受け取り方は今すぐやめられる」って。できそう?", anim=1.7, speed=1.13, intonation=1.25, pad=0.1, chara="none"),
@@ -204,12 +209,13 @@ UNITS = [
     Unit("semenai2", "で、明日から、どっちも責めない側に行こ。", anim=1.7, speed=1.15, intonation=1.25, pad=0.10, chara="none"),
 
     # ---- 修道院
-    Unit("shuudouin", "で、写したのは修道院。皇帝のあと、この本を修行に使って写し続けたの。", anim=1.7, speed=1.15, intonation=1.15, pad=0.08, chara="none"),
+    Unit("shuudouin", "で、写したのは修道院。", anim=1.7, speed=1.15, intonation=1.15, pad=0.08, chara="none"),
+    Unit("shuudouin2", "修道院は皇帝のあと、この本を修行に使って写し続けたの。", anim=1.7, speed=1.15, intonation=1.15, pad=0.08, chara="none"),
     Unit("shugyou", "修行って、自分のじゃないものを欲しがらない練習なんだって。", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
     Unit("shugyou2", "欲しがるな、って本だから、練習にぴったりでしょ?", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("namae", "で、変えたのは中に出てくるソクラテスって人の名前くらい。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
     Unit("namae2", "名前をキリスト教の聖人パウロに替えて、中身はそのまま。", anim=1.7, speed=1.15, intonation=1.2, pad=0.08, chara="none"),
-    Unit("insatsu", "で、元の本も印刷の時代まで1000年以上、修道院が写して残ったの。", anim=1.7, speed=1.15, intonation=1.15, pad=0.08, chara="none"),
+    Unit("insatsu", "で、元の本も、印刷までの1000年以上を修道院で写したの。", anim=1.7, speed=1.15, intonation=1.15, pad=0.08, chara="none"),
 
     # ---- エリス(誰がなぜ評価した)
     Unit("ima", "しかも、いまの心の治療の元の一つでもあるんだよ。知ってた?", anim=1.7, speed=1.15, intonation=1.25, pad=0.08, chara="none"),
