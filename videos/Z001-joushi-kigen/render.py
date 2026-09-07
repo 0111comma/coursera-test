@@ -177,7 +177,7 @@ UNITS = [
     Unit("dare", "これ、1900年前のローマの元奴隷の言葉なんだよ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("epi", "エピクテトスって元奴隷の人。ストア派って聞いたことある?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("stoa", "ストア派は『ストイック』の元。中身は我慢じゃないの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("stoa2", "中身は、エピクテトスの言う「権内(けんない)」。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("stoa2", "中身は、エピクテトスの言う「権内」って考え方。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("kennai", "権内は、自分の力が届く範囲。届かないものは欲しがるな。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("epi2", "そのエピクテトス、ご主人は皇帝ネロの秘書なの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("mochimono", "奴隷だから、体も持ち物も、ぜんぶご主人のもの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
