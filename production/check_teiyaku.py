@@ -34,6 +34,11 @@ PRODUCTION = ROOT / "production"
 sys.path.insert(0, str(PRODUCTION))
 
 CONJ_MAX_RATIO = 0.22     # 同じ接続語で始まる文の上限(全体に対する割合)
+# **語別ではなく、接続語で始まるカットの総数**の上限(2026-09-07 日本語パネル5周目)。
+# 「31カット中10カット(32%)が接続語始まり」は、語別の22%をどれも超えていないので
+# T2 では止まらなかった。接続語を貼るのは check_flow を満たすいちばん安い形なので、
+# 総量でも上限を置く(CLAUDE.md「接続語や指示語を貼る前に、名詞をもう一度言えないかを先に試す」)
+CONJ_TOTAL_MAX_RATIO = 0.25
 CONTRAST_MAX = 3          # 「〜じゃなく〜」の対比の上限
 NANO_MAX_RATIO = 0.34     # 「〜なの。」「〜たの。」の上限
 CONJ_HEADS = ("で、", "だから", "でも", "しかも", "そして", "じゃあ", "なのに", "つまり", "ただ")
@@ -105,6 +110,19 @@ def check_video(vdir: Path):
                            f"「{head}」で始まる文が{c}/{n}カット"
                            f"(上限{int(n * CONJ_MAX_RATIO)})。"
                            f"接続語を貼らず、前の文の名詞をもう一度言うか、文を続けること"))
+
+    # T2b 接続語の総量(語別ではなく、接続語で始まるカットの数)
+    #     check_flow を「接続語を貼る」で満たすと、語別の上限は超えないまま
+    #     全体の3分の1が接続語で始まる台本になる(2026-09-07 5周目で 10/31)
+    ALL_HEADS = CONJ_HEADS + ("たとえば", "例えば", "実は", "さて", "ちなみに", "そしたら",
+                              "だって", "なら", "そこで", "まず", "答えは", "つまり", "こう")
+    tot = sum(1 for s in subs if s.startswith(ALL_HEADS))
+    if tot > n * CONJ_TOTAL_MAX_RATIO:
+        heads = [s[:4] for s in subs if s.startswith(ALL_HEADS)]
+        issues.append(("(全体)", "T2b 接続語で始まるカットが多い",
+                       f"{tot}/{n}カット({tot / n:.0%}、上限{CONJ_TOTAL_MAX_RATIO:.0%})が"
+                       f"接続語で始まっている: {'・'.join(heads[:12])}。"
+                       f"接続語を貼る前に、前の文の名詞をもう一度言えないかを先に試すこと"))
 
     # T3 対比の直訳(not A but B)
     contrast = [i for i, s in enumerate(subs, 1)

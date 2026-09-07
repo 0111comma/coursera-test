@@ -44,6 +44,22 @@ DONE_RE = re.compile(r"対応済み")
 ROW_RE = re.compile(r"^\|\s*([A-Z]\d{3})-[^|]*\|")
 
 
+NEAR_RATIO = 0.62      # 文字bigramの類似度。これ以上なら「疑い」として出す(落とさない)
+
+
+def _bigrams(t: str) -> set:
+    t = re.sub(r"[、。「」『』?!  ]", "", t)
+    return {t[i:i + 2] for i in range(len(t) - 1)}
+
+
+def _similar(a: str, b: str) -> float:
+    """文字bigramの Jaccard 類似度。0〜1。"""
+    x, y = _bigrams(a), _bigrams(b)
+    if not x or not y:
+        return 0.0
+    return len(x & y) / len(x | y)
+
+
 def _sentences(cell: str) -> list[str]:
     """「直す前」の欄から、台本の文だけを取り出す。
 
@@ -86,15 +102,33 @@ def main(video_dir: Path) -> int:
     # 巻き戻しと呼んでしまう(「上司の機嫌」は何度出てもよい)
     subtitles = set(re.findall(r'Unit\("[^"]+", "([^"]*)"', src))
 
-    hits, seen = [], set()
+    hits, near, seen = [], [], set()
     for tid, before, stock in rows_for(video_dir.name.split("-")[0]):
-        if before in seen or before not in subtitles:
+        if before in seen:
             continue
         seen.add(before)
-        hits.append((tid, before, stock))
+        if before in subtitles:
+            hits.append((tid, before, stock))
+            continue
+        # **言い回しを変えた巻き戻し**(2026-09-07 批評パネル)。
+        # 「自分で変えられることだけを見た」は、一度落とした
+        # 「変えられることだけ見てた」と字面が違うので上の完全一致では止まらない。
+        # 文字bigramの類似度で「疑い」を出す。**落とさない**のは、
+        # 同じ話題を扱う以上どうしても似た文が出るため(誤検出でゲートを
+        # 止めると、次から人が理由なく免除を足す入口になる)。
+        # 疑いは日本語パネル/批評パネルへの入力として使う
+        for sub in subtitles:
+            if _similar(before, sub) >= NEAR_RATIO:
+                near.append((tid, before, sub, stock))
+                break
+
+    for tid, before, sub, stock in near:
+        print(f"  [疑い] {video_dir.name} {tid} ({stock}) — 言い回しを変えた巻き戻しかもしれない")
+        print(f"         直す前: 「{before}」")
+        print(f"         いまの字幕: 「{sub}」")
 
     if not hits:
-        print(f"[OK] {video_dir.name}")
+        print(f"[OK] {video_dir.name}" + (f" — 疑い{len(near)}件(落とさない)" if near else ""))
         return 0
     print(f"[NG] {video_dir.name} — 直したはずの文が戻っている {len(hits)}件")
     for tid, before, stock in hits:

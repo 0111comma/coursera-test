@@ -39,7 +39,7 @@ F.POSE_DIR = ROOT / "assets" / "character-zunda"
 
 # 常設ラベルは**分類名ではなく、この動画が判定する問い**にする
 TITLE = "動かせるのはどっち?"
-BADGE = "※ 出典: エピクテトス『提要』第1章 / マルクス・アウレリウス『自省録』第8巻47節"
+BADGE = "※ 出典: エピクテトス『提要』第1章 / マルクス・アウレリウス『自省録』第8巻47 / A.エリス 論理療法(1955)"
 F.use_fp_theme(TITLE, speaker=3, badge=BADGE)      # 3 = ずんだもん
 
 from shortlib import Unit, render_video, require_voicevox  # noqa: E402
@@ -55,7 +55,7 @@ SCENES = {
                            "あの一言", "言えばよかった",
                            name="03_troubled", main_lab="いまのあなた",
                            alt_val="明日の一言", alt_lab="あなたはどっち?",
-                           disclaimer="※ 出典: エピクテトス『提要』第1章 / マルクス・アウレリウス『自省録』第8巻47節"),
+                           disclaimer="※ 出典: エピクテトス『提要』第1章 / マルクス・アウレリウス『自省録』第8巻47 / A.エリス 論理療法(1955)"),
     # 2026-09-04 ユーザー「もっとイラストつかって。よくわからん画面に出てる図」
     # → 数の図(compare / formula / arrow / hero)をやめ、場面の絵(scenes_zunda)にした
     "kangae": sz.train_think("03_troubled", "あの時…"),
@@ -151,24 +151,18 @@ for _k in ("toi", "kangae", "yaku"):
 # 5周直しても通らなかった**ので捨てた。考え方を視聴者の場面の言葉で先に言い切り、
 # 奴隷は**出どころ**として最後に置く(「実はこの考え方、〜が言い出したんだって」)。
 UNITS = [
-    # ---- 幕1 場面 → 判定 → 答え。**メッセージは1つ**(2026-09-07 ユーザー
-    #      「このショート動画に込められるメッセージは一つだよ?」)。
-    #      上司の機嫌は変えられない / 変えられるのは明日の一言だけ、の1本
+    # ---- 幕1 場面 → 判定 → 答え(8カット)
+    #      批評パネル: 「#3〜#6 が同じ『考えても変わらない』を4回言い直し、
+    #      答え(#10)まで23秒かかる」→ 2カットに畳んだ。#7・#8 も1つに
     Unit("toi", "上司の一言、帰りの電車でまだ引きずってる?", anim=1.7, cover=True,
          se="pop", speed=1.28, intonation=1.25, pad=0.06, chara="none"),
-    Unit("kangae", "ああ言えばよかったって、家に着くまでずっと再生してるやつ。", anim=1.7,
+    Unit("kangae", "言われた一言、家に着くまでずっと再生してるやつ。", anim=1.7,
          speed=1.30, intonation=1.2, pad=0.06, chara="none"),
-    Unit("yaku", "それ考えてて、明日、なにか変わる?", anim=1.7, speed=1.30,
+    Unit("yaku", "それ、いくら考えたら明日なにか変わる?", anim=1.7, speed=1.30,
          intonation=1.25, pad=0.05, chara="none"),
-    Unit("tatanai", "いや、変わんない。", anim=1.5, speed=1.28,
-         intonation=1.15, pad=0.08, chara="none"),
-    Unit("batsu", "だって、上司が言った一言は、あなたには変えられない。", anim=1.7,
-         se="don", speed=1.28, intonation=1.3, pad=0.10, chara="none"),
-    Unit("ugokanai", "上司の一言、いくら考えてもしょうがないよね。", anim=1.7,
-         speed=1.30, intonation=1.1, pad=0.06, chara="none"),
-    Unit("sanko", "たとえば上司の機嫌。考えても変えられない。", anim=1.5,
-         speed=1.28, intonation=1.2, pad=0.05, chara="none"),
-    Unit("hyouka2", "あなたの評価を決めるのも上司。", anim=1.7,
+    Unit("tatanai", "変わんないよね。明日になっても、言われたことは動かせない。", anim=1.7, speed=1.28,
+         intonation=1.2, pad=0.08, chara="none"),
+    Unit("hyouka2", "たとえば上司の機嫌も、あなたの評価も、変えられない。", anim=1.7,
          speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("q", "じゃあ、自分で変えられるものって何?", anim=1.7, speed=1.30,
          intonation=1.3, pad=0.12, chara="none"),
@@ -176,39 +170,50 @@ UNITS = [
          se="don", speed=1.28, intonation=1.3, pad=0.12, chara="none"),
     Unit("kangaenai", "上司の機嫌みたいに、自分で変えられないものは放っとこ。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
 
-    # ---- 幕2 その分け方に名前がある(権内)。**「線を引く」は使わない**
-    #      (2026-09-07 ユーザー「線を引くって表現使いすぎね。不自然。」)
+    # ---- 幕2 名前と意味(定訳: ストア派・権内。崩しを必ず付ける)
     Unit("dare", "これ、1900年前の元奴隷が言ったことなの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("sensei", "この元奴隷がエピクテトス。ローマ帝国の「ストア派」の先生ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("stoa2", "エピクテトスは変えられるものを「権内にある」と表現する。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("stoa", "自分の手のうちにある、って意味ね。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
-    Unit("teiyou2", "エピクテトスの『提要』って本の、一行目ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("kennai", "明日あなたが言うことは権内にある。上司の機嫌は権内にない。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("stoa", "権内って、自分の手のうちにある、って意味ね。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
+    # 批評パネル: 『提要』1 が権内に挙げるのは判断・行い・望むこと、
+    # 権内にないのは体・持ち物・評判・地位。#5 の「上司の機嫌」に正面から当たる
+    Unit("kennai", "明日あなたが言うことは、権内にある。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("hyouban", "体も持ち物も評判も、上司の機嫌も、権内にない。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
 
-    # ---- 幕3 なぜ奴隷がこの分け方にたどりついたか(4カット)
-    Unit("epi2", "エピクテトスは若いころ奴隷でね。主人は、皇帝ネロの秘書。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    # ---- 幕3 なぜ奴隷がこれを考えたか(4カット)
+    #      「ちなみに」は「聞き流していい」の合図なので、幕の芯には使わない
+    Unit("epi2", "しかもエピクテトス、子どものころから奴隷なの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("mochimono", "奴隷だから、体も持ち物も、自分のものじゃない。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("kazoeru", "でも、頭の中の考えだけは、主人も取り上げられない。", anim=1.7, speed=1.28, intonation=1.3, pad=0.10, chara="none"),
     Unit("hyouban2", "だからエピクテトスは、権内だけを見ろって教えたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
-    # ---- 幕4 その考え方がいまも使われている(**5カット**。
-    #      2026-09-07 ユーザー「21~32必要? 冗長すぎる。もっと簡潔にして。」)
-    Unit("naze", "エピクテトスの考え方が、1900年も残ってる。なんでだと思う?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("koutei", "同じ考え方を、ずっとあとのローマ皇帝も書いてるの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("ekibyou2", "皇帝マルクス・アウレリウスでも、戦争は権内にない。上司の機嫌と同じ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("koutei3", "皇帝は自分だけのノート、『自省録』に書いてる。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("quote_k", "「人を悩ませるのは出来事じゃなく、その判断だ」。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
-    Unit("ima", "1955年、この考え方を土台に「論理療法」を始めた人がいるの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("cbt", "出来事じゃなく、あなたの受け取り方を直す治療ね。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
-    Unit("cbt2", "いまの「認知行動療法」の元になったやつなんだよ。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("ellis", "始めたのが、アルバート・エリスって心理学者。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
+    # ---- 幕4 なぜ1900年残ったか。**答えは写本**(4カット)
+    #      批評パネル high: 「皇帝は借りて読んだ側で、写した側ですらない。
+    #      本当の答え(本人は1冊も書かず、弟子が書き取り、印刷まで手で写し継がれた)が
+    #      31カットのどこにも無い」
+    Unit("naze", "エピクテトスの教えが、1900年も残ってる。なんでだと思う?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("kakanai", "実はエピクテトス、自分では1冊も書いてないの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("deshi", "その授業を弟子が書き取って、本になった。『提要』ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("utsusu", "印刷なんて無い時代。『提要』は1000年以上、手で写されて残った。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
-    # ---- 幕5 束ね → 動作 → 締め
-    Unit("onaji", "奴隷が言って、皇帝が書いて、心理学者が治療にした。", anim=1.7, speed=1.30, intonation=1.2, pad=0.06, chara="none"),
-    Unit("onaji3", "同じ一行が1900年かけて、あなたまで届いたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
+    # ---- 幕5 読んだ人(皇帝)。**残した人ではなく読んだ人として置く**
+    Unit("koutei", "『提要』を読んだひとりが、ローマ皇帝、マルクス・アウレリウス。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("ekibyou2", "皇帝でも、戦争は権内にないでしょ?", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
+    Unit("jinchuu", "権内にないのは、あなたが上司の機嫌を変えられないのと同じ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
+    Unit("koutei3", "だから自分だけのノート、『自省録』に書いた。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("quote_k", "ノートの言葉。「人を悩ませるのは出来事じゃなく、その判断だ」。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
+
+    # ---- 幕6 いまの治療(定訳: 論理療法・認知行動療法。名前を先に出す)
+    Unit("ima", "判断って考え方を、1955年に治療に使った人がいるの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("ellis", "治療を作ったのが、アルバート・エリスって心理学者。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("cbt2", "エリスの治療は、出来事じゃなく自分の考えのほうを直す。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("cbt", "これが「論理療法」。いまの「認知行動療法」の元なんだよ。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
+
+    # ---- 幕7 束ね → 動作 → 締め
+    Unit("onaji", "この1行を奴隷が言って、皇帝が読んで、心理学者が治療にした。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("onaji3", "1行が伝えてるのは、動かせるのは自分の考えだけ、ってこと。", anim=1.7, speed=1.30, intonation=1.2, pad=0.06, chara="none"),
     Unit("memo", "あなたも今夜のうちに、明日なに言うかをメモに1行書いてみ?", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
-    Unit("rei", "明日こう言うって書くの。「昨日の件、話せますか」。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("comment", "その1行が書けたら、コメントで教えて。", anim=1.7, speed=1.28, intonation=1.2, pad=0.06, chara="none"),
+    Unit("rei", "明日の一言を書くの。「昨日の件、話せますか」。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("tana", "上司の一言は電車に置いてこ。明日の一言だけ持って帰ろ。", anim=1.7, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
 ]
 
