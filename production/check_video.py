@@ -323,7 +323,11 @@ def main(video_dir: Path) -> int:
             else:
                 check("尺", True, f"{dur / 60:.1f}分")
         else:
-            check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
+            # Z 番台は 3分まで(2026-09-05 ユーザー「別に1分超えていいから」。Shorts の上限)
+            if video_dir.name.startswith("Z"):
+                check("尺 3分未満", dur < 180, f"{dur:.1f}s")
+            else:
+                check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
         vd = subprocess.run(["ffmpeg", "-i", str(mp4), "-af", "volumedetect", "-f", "null", "-"],
                             capture_output=True, text=True).stderr
         m = re.search(r"mean_volume: ([-\d.]+) dB", vd)
