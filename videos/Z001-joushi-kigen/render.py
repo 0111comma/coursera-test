@@ -184,7 +184,7 @@ UNITS = [
 
     # ---- 幕4 なぜ残ったか。**書き取ったのは『語録』**(4)
     Unit("naze", "権内の教え方が、1900年たったいまも残ってる。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("naze2", "なんで残ったんだと思う?", anim=1.5, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("naze2", "権内の話が、なんで1900年も残ったんだと思う?", anim=1.5, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("kakanai", "実はエピクテトス、自分では1冊も書いてないの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("deshi", "その授業を書き取った弟子のアッリアノス。本の名は『語録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("shuudouin", "『語録』を写し続けたのは、キリスト教の修道院。意外でしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
