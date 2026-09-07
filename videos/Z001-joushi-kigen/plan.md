@@ -215,6 +215,10 @@
 | 治療では考えを紙に書いて本当かを調べる | ABC モデルの D(論駁: その考えの証拠はあるか)。書いた考えを検分して置き換える | https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認) |
 | そのノートは戦争に行ってる最中に書いた | 『自省録』第2巻は「クァディ族の地、グラヌア川のほとりで」、第3巻は「カルヌントゥムで」と陣中の地名が付く(マルコマンニ戦争) | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_2 / https://en.wikipedia.org/wiki/Marcomannic_Wars (2026-09-05確認) |
 | ご主人(エパフロディトス)も元奴隷 | ネロの解放奴隷 | https://www.livius.org/articles/person/epaphroditus/ (2026-09-05確認) |
+| 権内(けんない)にあるもの | 『提要』1 の中心概念の定訳。鹿野治助訳「もろもろの存在のうち、あるものは私たちの権内にあるけれども、あるものは私たちの権内にない。意見や意欲や欲求や忌避…は私たちの権内にあるけれども、肉体や財産や評判や公職…は私たちの権内にはない」 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 / 鹿野治助訳 岩波文庫『人生談義』下(2026-09-05確認) |
+| 判断(『自省録』8.47) | 神谷美恵子訳ほかの定訳。「君を悩ますのはそのもの自体ではなく、それに関する君の判断である。そしてこの判断を今すぐ消し去ることは君の力の内にある」 | https://en.wikisource.org/wiki/The_Meditations_of_the_Emperor_Marcus_Antoninus/Book_8 (8.47。2026-09-05確認) |
+| 論理療法 | Rational Therapy / REBT の定訳。アルバート・エリスが1955年に提唱。認知行動療法の源流の一つ | https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873090/ / https://www.direct-commu.com/shinri/logical/logical/ (2026-09-05確認) |
+| ABC理論 | 論理療法の中心。A=Activating events(出来事)・B=Belief(信念/受け取り方)・C=Consequences(結果)。D=反論(論駁)・E=効果 | https://www.direct-commu.com/shinri/logical/logical/ / https://albertellis.org/wp-content/uploads/2021/09/Emotional-Disturbance-and-Its-Treatment-in-a-Nutshell-ABCs-.pdf (2026-09-05確認) |
 | 主人は皇帝ネロの秘書 | エピクテトスの主人エパフロディトスは、ネロの解放奴隷で嘆願書を扱う秘書(a libellis)。本人も元奴隷 | https://www.livius.org/articles/person/epaphroditus/ / https://en.wikipedia.org/wiki/Epaphroditus_(freedman_of_Nero) (2026-09-05確認・確度B) |
 | どう思うかは取れない | 考え(判断)は頭の中にあるから、主人(秘書)にも取れない。『提要』1「われわれの力の及ぶもの」の筆頭が判断(ὑπόληψις)。奴隷時代の内心の記録ではなく、**教えた内容**として言う | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 (Enchiridion 1。2026-09-05確認) |
 | 53(章・短い教え) | 『提要』(エンキリディオン)は53章 | https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0236 / https://en.wikipedia.org/wiki/Enchiridion_of_Epictetus (2026-09-05確認) |
