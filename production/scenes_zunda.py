@@ -357,6 +357,59 @@ def pict_memo(fig, cx, cy, h, a=1.0, z=2.4, written=0.0, line_text="", pencil=Tr
             _line(fig, [(px, py), (px + dxp * 0.12, py + dyp * 0.12)], color=INK, lw=h * 46, z=z + 0.41, a=a)
 
 
+def pict_phone(fig, cx, cy, h, a=1.0, z=2.4, on=True, glow=0.0):
+    """スマホ。on=False で画面が暗い(=見ていない)。glow は光のにじみ(0〜1)。"""
+    if a <= 0.01:
+        return
+    w = h * 0.50 * AR
+    x, y = cx - w / 2, cy - h / 2
+    if pict_image(fig, "phone" if on else "phone_off", cx, cy, h, a, z):
+        return
+    if glow > 0.01 and on:
+        _rect(fig, x - w * 0.22, y - h * 0.10, w * 1.44, h * 1.20,
+              fc=sf._mix(LIGHT, CARD, 0.55), ec="none", lw=0, z=z - 0.1, r=0.02, a=a * glow * 0.55)
+    _rect(fig, x, y, w, h, fc=INK, ec=INK, lw=3.0, z=z, r=0.014, a=a)
+    _rect(fig, x + w * 0.08, y + h * 0.09, w * 0.84, h * 0.80,
+          fc=(LIGHT if on else sf._mix(INK, CARD, 0.30)), ec="none", lw=0, z=z + 0.1, r=0.008, a=a)
+    _line(fig, [(cx - w * 0.16, y + h * 0.045), (cx + w * 0.16, y + h * 0.045)],
+          color=CARD, lw=3.0, z=z + 0.2, a=a)
+
+
+def pict_shelf(fig, cx, cy, w, a=1.0, z=2.3):
+    """脱衣所の棚(板1枚)。上に物を置くための線。"""
+    if a <= 0.01:
+        return
+    _rect(fig, cx - w / 2, cy, w, 0.012, fc=CARD, ec=INK, lw=3.0, z=z, r=0.004, a=a)
+    for sx in (cx - w * 0.38, cx + w * 0.38):
+        _line(fig, [(sx, cy), (sx, cy - 0.045)], color=INK, lw=3.0, z=z, a=a)
+
+
+def pict_scraps(fig, cx, cy, h, a=1.0, z=2.4, n=5, tied=False):
+    """書きかけの紙片の束。tied=True で紐で綴じられる(=編まれたあと)。"""
+    if a <= 0.01:
+        return
+    w = h * 0.78 * AR
+    # _rect は回転を持たないので、**ずらして重ねる**ことでばらけて見せる
+    jig = (0.00, 0.06, -0.04, 0.08, -0.07, 0.03)
+    for i in range(n):
+        dx = (i - (n - 1) / 2) * w * (0.16 if tied else 0.30)
+        dy = ((i % 2) * h * (0.03 if tied else 0.10) - h * 0.02
+              + (0.0 if tied else h * jig[i % len(jig)]))
+        _rect(fig, cx + dx - w * 0.28, cy + dy - h * 0.30, w * 0.56, h * 0.60,
+              fc=CARD, ec=INK, lw=2.5, z=z + i * 0.02, r=0.006, a=a)
+        for k in range(2):
+            ly = cy + dy - h * 0.30 + h * (0.40 - 0.16 * k)
+            _line(fig, [(cx + dx - w * 0.20, ly), (cx + dx + w * 0.20, ly)],
+                  color=sf._mix(INK, CARD, 0.74), lw=2.0, z=z + i * 0.02 + 0.01, a=a)
+    if tied:
+        # 十字に紐をかける。**束の外まで少しはみ出させないと「紐」に見えない**
+        span_x = w * (0.28 + 0.16 * (n - 1) / 2) + w * 0.10
+        _line(fig, [(cx, cy + h * 0.40), (cx, cy - h * 0.40)], color=RED, lw=5.5, z=z + 0.4, a=a)
+        _line(fig, [(cx - span_x, cy + h * 0.02), (cx + span_x, cy + h * 0.02)],
+              color=RED, lw=5.5, z=z + 0.4, a=a)
+        _circ(fig, cx, cy + h * 0.02, h * 0.055, fc=RED, ec=INK, lw=2.0, z=z + 0.5, a=a)
+
+
 def pict_book(fig, cx, cy, h, a=1.0, z=2.4, tag=""):
     """開いた本。tag はしおりの文字。"""
     if a <= 0.01:
@@ -808,6 +861,49 @@ def copyists(name="01_base", title="", years="1000年"):
         if years:
             _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, years, 40, color=CONNECT, z=2.6, a=a2, raw=True,
                  fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+    return with_pict(name, draw, title)
+
+
+def phone_hand(name="03_troubled", label="", bubble="", on=True, title=""):
+    """スマホを手に持っている(=まだ持っていく側)。label は下の札。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        pict_phone(fig, PICT_CX, PICT_CY - 0.01 + dy, 0.20 * p, a=a, on=on,
+                   glow=_fade(t, 0.35) if on else 0.0)
+        if bubble:
+            pict_bubble(fig, PICT_CX, CARD_TOP - 0.04 + dy, 0.30, 0.065, bubble,
+                        a=_fade(t, 0.45), fs=40)
+        if label:
+            _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, label, 40, color=CONNECT, z=2.6,
+                 a=_fade(t, 0.40), raw=True, max_w=0.30)
+    return with_pict(name, draw, title)
+
+
+def phone_shelf(name="05_happy", bubble="棚に置く", title=""):
+    """スマホを脱衣所の棚に置く(=締めの動作)。"""
+    def draw(fig, t, a, dy):
+        pict_shelf(fig, PICT_CX, PICT_CY - 0.055 + dy, 0.30, a=a)
+        # 置かれる動き: 上から棚の上へ降りて、画面が消える
+        k = min(1.0, max(0.0, (t - 0.30) / 0.35))
+        y = PICT_CY + 0.085 - 0.11 * _ease(k) + dy
+        pict_phone(fig, PICT_CX, y, 0.17, a=a, on=k < 0.85, glow=0.0)
+        if bubble and t > 0.72:
+            pict_bubble(fig, PICT_CX, CARD_TOP - 0.04 + dy, 0.30, 0.065, bubble,
+                        a=_fade(t, 0.72), fs=40)
+    return with_pict(name, draw, title)
+
+
+def scraps(name="04_surprised", label="", tied=False, bubble="", title=""):
+    """書きかけの紙片の束。tied=True で紐で綴じられた(=死後に他人が編んだ)あと。"""
+    def draw(fig, t, a, dy):
+        p = min(1.0, _pop(t, 0.08))
+        pict_scraps(fig, PICT_CX, PICT_CY + dy, 0.17 * p, a=a, tied=tied)
+        if bubble:
+            pict_bubble(fig, PICT_CX, CARD_TOP - 0.04 + dy, 0.30, 0.065, bubble,
+                        a=_fade(t, 0.45), fs=40)
+        if label:
+            _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, label, 40, color=CONNECT, z=2.6,
+                 a=_fade(t, 0.40), raw=True, max_w=0.30)
     return with_pict(name, draw, title)
 
 
