@@ -37,7 +37,9 @@ ROOT = PRODUCTION.parent
 # **modoshi は zentei の次に置く。**直したはずの文が尺詰めで元に戻っていたら、
 # そのあとのゲートを全部通っても「同じ指摘をもう一度買う」ことになる
 # (2026-09-07 日本語パネル4周目: 3周目の直し7件が巻き戻っていた)。
-COMMON = ["zentei", "modoshi", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
+# **user は zentei より前。**ユーザー本人の指摘を残したまま焼くのが、
+# このリポジトリでいちばん高くつく失敗(2026-09-07「ちゃんと俺からの指摘も貯めてね」)
+COMMON = ["user", "zentei", "modoshi", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
           "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "manabi", "teiyaku",
           "kotoba", "honyaku", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
