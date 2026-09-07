@@ -25,6 +25,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from render_units import subtitles  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 STOCK = ROOT / "docs/research/user-shiteki-stock.md"
 
@@ -48,9 +51,26 @@ def rows():
     return out
 
 
+# **消した語が戻っていないか**(2026-09-07)。
+#
+# U08「ストア派を削除」で対応済みにしたのに、台本を書き直したときに
+# ストア派が2カット戻っていた。check_modoshi は nihongo-stock と shiteki-stock しか
+# 読んでいないので、**いちばん重いユーザー指摘だけ巻き戻りを誰も見ていなかった**。
+# 状態の欄にこの形で書くと、その語が字幕に出た時点で落とす:
+#     対応済み(語「ストア派」を削除)
+KESHITA_RE = re.compile(r"語「([^」]+)」を(?:削除|消した|0回に)")
+
+
 def main(video_dir: Path) -> int:
     vid = video_dir.name.split("-")[0]
     bad = []
+    subs = ""
+    rp = video_dir / "render.py"
+    if rp.exists():
+        try:
+            subs = "".join(subtitles(rp))
+        except Exception:
+            subs = ""
     for tid, target, genbun, rule, status in rows():
         if target not in (vid, "全体"):
             continue
@@ -58,6 +78,10 @@ def main(video_dir: Path) -> int:
             bad.append((tid, "未対応", genbun))
         elif not rule:
             bad.append((tid, "ルールが空", genbun))
+        else:
+            for word in KESHITA_RE.findall(status):
+                if word and word in subs:
+                    bad.append((tid, f"消したはずの語「{word}」が戻っている", genbun))
     if not bad:
         print(f"[OK] {video_dir.name}")
         return 0
