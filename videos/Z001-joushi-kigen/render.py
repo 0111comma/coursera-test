@@ -76,7 +76,7 @@ SCENES = {
     "kangaenai": sz.train_think("02_point", "考えない"),
     "dare": sz.who_silhouette("04_surprised"),
     "epi": sz.ancient_person("04_surprised", "エピクテトス", "ストア派"),
-    "stoa": sz.train_think("02_point", "力が及ぶ範囲"),
+    "stoa": sz.train_think("02_point", "手が届く範囲"),
     "stoa2": sz.train_think("02_point", "権内"),
     "epi2": sz.owned("04_surprised"),
     "mochimono": sz.owned("03_troubled"),
@@ -94,7 +94,6 @@ SCENES = {
     "utsusu": sz.book_now("03_troubled", "手で写す", bubble="写さないと消える"),
     "naze": sz.book_now("03_troubled", "『提要』", bubble="1900年たった"),
     "naze2": sz.book_now("04_surprised", "『提要』", bubble="なんで残った?"),
-    "naze2": sz.lineage("02_point"),
     "koutei": sz.emperor("04_surprised", "ずっとあとの皇帝"),
     "koutei2": sz.emperor("02_point", "マルクス・アウレリウス"),
     "koutei4": sz.emperor("02_point", "ローマ皇帝", bubble="先生へのお礼"),
@@ -170,42 +169,42 @@ UNITS = [
     Unit("kangaenai", "上司の機嫌みたいな、自分で変えられないものは放っとこ。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
 
     # ---- 幕2 その分け方に名前がある(7)。**定訳は名乗ったら必ず崩す**
-    Unit("epi", "この考え方を言い出したのが、1900年前の元奴隷、エピクテトス。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("sensei", "エピクテトスは「ストイック」の語源、ストア派の先生ね。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
-    Unit("stoa2", "ストア派では、変えられるものを「権内にある」って言うの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("stoa", "権内は、自分の力が及ぶ範囲ってことね。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
-    Unit("hyouban", "権内にないって並べたのは、体・持ち物・評判・地位。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("kennai", "上司の機嫌も、あなたの評価も、権内にない側なの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
+    Unit("epi", "これ、1900年前のエピクテトスって人が言い出したの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("sensei", "エピクテトスって、ストイックの語源のストア派の先生らしいよ。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
+    Unit("stoa", "ストア派は、変えられるものを自分の手が届く範囲って呼ぶの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("stoa2", "要は、自分の手が届く範囲ね。昔の言葉だと権内。", anim=1.5, speed=1.28, intonation=1.2, pad=0.05, chara="none"),
+    Unit("hyouban", "逆に、範囲の外なのが、体とか持ち物とか評判。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("kennai", "上司の機嫌も評価も、範囲の外なんだよね。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
 
     # ---- 幕3 なぜこの人がこの分け方にたどりついたか(3)
     Unit("mochimono", "その体も持ち物も、奴隷のころは自分のものじゃなかった。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("kazoeru", "でも、頭の中の考えだけは、主人にも取り上げられない。", anim=1.7, speed=1.28, intonation=1.3, pad=0.10, chara="none"),
-    Unit("hyouban2", "だから権内の側だけ相手にしろ、って教えたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
+    Unit("hyouban2", "だから自分でどうにかできることだけ考えろって教えたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
     # ---- 幕4 なぜ残ったか。**書き取ったのは『語録』**(4)
-    Unit("naze", "権内の教え方が、1900年たったいまも残ってる。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("naze2", "権内の話が、なんで1900年も残ったんだと思う?", anim=1.5, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("naze", "その教えが、1900年たった今も残ってるの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("naze2", "なんで1900年も残ったんだと思う?", anim=1.5, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("kakanai", "実はエピクテトス、自分では1冊も書いてないの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
-    Unit("deshi", "その授業を書き取った弟子のアッリアノス。本の名は『語録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("shuudouin", "『語録』を写し続けたのは、キリスト教の修道院。意外でしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("shuudouin2", "修道院が『語録』を1000年以上、手で写して残したの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.08, chara="none"),
+    Unit("deshi", "エピクテトスの授業をメモした弟子、アッリアノスの『語録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("shuudouin", "『語録』を薄くまとめた『提要』。写し続けたのが修道院なの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("shuudouin2", "その『提要』を1000年以上、手で書き写して残したの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.08, chara="none"),
 
     # ---- 幕5 読んだ人(5)。**戦争は皇帝が指揮した側なので使わない。疫病にする**
     Unit("koutei", "『語録』を読んだひとりが、ローマ皇帝、マルクス・アウレリウス。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("ekibyou2", "皇帝でも、国じゅうの流行り病は権内にないでしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("jinchuu", "権内にないのは、あなたが上司の機嫌を変えられないのと同じ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
+    Unit("ekibyou2", "皇帝でも、流行り病はどうにもできないでしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("jinchuu", "それ、上司の機嫌を変えられないのと同じじゃん。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
     Unit("koutei3", "だから皇帝は、自分だけのノート『自省録』に書いた。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("quote_k", "その一文。「悩ませるのは出来事じゃなく、それへの判断だ」。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
+    Unit("quote_k", "皇帝も、悩むのは出来事じゃなく自分の判断だって書いてる。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
     # ---- 幕6 『提要』5 → エリス(5)。**この一文が現代の治療の土台**
-    Unit("moto5", "判断の元は『提要』の5番目。自分でも読める本ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("moto5", "判断は、出来事をどう受け取るか。同じ考えが『提要』第5章にあるの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("quote", "その5番目。「不安にするのは出来事じゃなく、どう考えるかだ」。", anim=1.7, speed=1.28, intonation=1.25, pad=0.05, chara="none"),
-    Unit("ima", "5番目を1955年、治療に持ちこんだのがアルバート・エリス。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("ima", "それを1955年に治療に使ったのがアルバート・エリス。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("cbt2", "エリスは出来事じゃなく、あなたの考え方のクセを直したの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("cbt", "これが「論理療法」。いまの「認知行動療法」の源流の一つ。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
+    Unit("cbt", "これが論理療法。今のカウンセリングの元になったやつ。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
 
     # ---- 幕7 束ね → 動作 → 締め(5)。**答えは1つ。#7 と同じ言葉で閉じる**
-    Unit("onaji", "この一文が、エピクテトスから皇帝を通って治療になった。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("onaji", "論理療法って治療の元は、皇帝を通ってきた昔の一言。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("onaji3", "治療になっても、動かせるのは、あなたが明日なに言うかだけ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
     Unit("memo", "だから今夜のうちに、メモに1行だけ書いてみて。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
     Unit("rei", "明日の一言を書くの。「昨日の件、話せますか」。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),

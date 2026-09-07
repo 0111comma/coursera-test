@@ -154,6 +154,30 @@ def _fp_rows_measured(plain: str, video_dir=None):
     return len(rows), _S.SUBTITLE_Y - (len(rows) - 1) * step
 
 
+def _dup_dict_keys(render_py) -> list:
+    """render.py の辞書リテラルの中で、2回以上書かれている文字列キーを返す。
+
+    2026-09-07: Python の辞書リテラルは同じキーを2回書いてもエラーにならず、
+    **後ろが黙って勝つ**。Z001 は SCENES に "naze2" が2つあり、声が
+    「なんで残った?」と言うカットの絵が系譜図に差し替わったまま焼き上がっていた。
+    目で全カット見ないと気づけない欠陥なので、機械で見る。
+    """
+    import ast
+    from collections import Counter
+    try:
+        tree = ast.parse(Path(render_py).read_text())
+    except SyntaxError:
+        return []
+    out = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Dict):
+            continue
+        keys = [k.value for k in node.keys
+                if isinstance(k, ast.Constant) and isinstance(k.value, str)]
+        out += [f"{k}×{c}" for k, c in Counter(keys).items() if c > 1]
+    return out
+
+
 def main(video_dir: Path) -> int:
     fails, warns = [], []
 
@@ -188,6 +212,10 @@ def main(video_dir: Path) -> int:
     SUB_PT = 40 if LONG else 52
     units = subtitles(video_dir / "render.py", src)
     check("render.py にユニット定義", len(units) > 0, f"{len(units)}ユニット")
+    dups = _dup_dict_keys(video_dir / "render.py")
+    check("SCENES などのキーが重複していない", not dups,
+          ("重複: " + " / ".join(dups) + "。**後ろの定義が黙って勝つので、声と絵がずれる**"
+           if dups else ""))
     total_chars = 0
     for u in units:
         plain = u.replace("【", "").replace("】", "")
