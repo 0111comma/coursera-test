@@ -185,7 +185,8 @@ UNITS = [
     Unit("naze", "権内の教え方が、1900年たったいまも残ってる。なんでだと思う?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("kakanai", "実はエピクテトス、自分では1冊も書いてないの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("deshi", "その授業を書き取った弟子のアッリアノス。本の名は『語録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("shuudouin", "『語録』は、キリスト教の修道院が1000年以上写し続けたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.08, chara="none"),
+    Unit("shuudouin", "『語録』を写し続けたのは、キリスト教の修道院。意外でしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("shuudouin2", "修道院が『語録』を1000年以上、手で写して残したの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.08, chara="none"),
 
     # ---- 幕5 読んだ人(5)。**戦争は皇帝が指揮した側なので使わない。疫病にする**
     Unit("koutei", "『語録』を読んだひとりが、ローマ皇帝、マルクス・アウレリウス。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
@@ -195,14 +196,14 @@ UNITS = [
     Unit("quote_k", "その一文。「悩ませるのは出来事じゃなく、それへの判断だ」。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
     # ---- 幕6 『提要』5 → エリス(5)。**この一文が現代の治療の土台**
-    Unit("moto5", "判断って言葉の元は、『提要』の5番目。自分でも読める本ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("moto5", "判断の元は『提要』の5番目。自分でも読める本ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("quote", "その5番目。「不安にするのは出来事じゃなく、どう考えるかだ」。", anim=1.7, speed=1.28, intonation=1.25, pad=0.05, chara="none"),
     Unit("ima", "5番目を1955年、治療に持ちこんだのがアルバート・エリス。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("cbt2", "エリスは出来事じゃなく、あなたの考え方のクセを直したの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("cbt", "これが「論理療法」。いまの「認知行動療法」の源流の一つ。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.10, chara="none"),
 
     # ---- 幕7 束ね → 動作 → 締め(5)。**答えは1つ。#7 と同じ言葉で閉じる**
-    Unit("onaji", "この一文が、エピクテトスから皇帝を通っていまの治療になった。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("onaji", "この一文が、エピクテトスから皇帝を通って治療になった。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("onaji3", "治療になっても、動かせるのは、あなたが明日なに言うかだけ。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
     Unit("memo", "だから今夜のうちに、メモに1行だけ書いてみて。", anim=1.7, speed=1.30, intonation=1.25, pad=0.06, chara="none"),
     Unit("rei", "明日の一言を書くの。「昨日の件、話せますか」。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
