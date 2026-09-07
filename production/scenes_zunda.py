@@ -818,8 +818,6 @@ def counselor(name="02_point", label="心理学", title=""):
               z=2.6, r=0.010, a=a2)
         _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, label, 38, color=CARD, z=2.7, a=a2, raw=True,
              max_w=0.25, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, "いま", 40, color=CONNECT, z=2.6, a=a2, raw=True,
-             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
     return with_pict(name, draw, title)
 
 
