@@ -175,7 +175,7 @@ UNITS = [
     Unit("dare", "これ、1900年前のローマ帝国の元奴隷の言葉。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("epi", "エピクテトスは元奴隷。ストア派って聞いたことある?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("stoa", "ストア派は「ストイック」の語源。中身は我慢じゃない。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("stoa2", "ストア派のエピクテトス。変えられるものを「権内」って呼んだの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("stoa2", "変えられるものを、ストア派のエピクテトスは「権内」って呼ぶの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("kennai", "明日あなたがなに言うかは権内にある。上司の機嫌は権内にない。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("epi2", "そのエピクテトスの主人はね、皇帝ネロの秘書だったの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("mochimono", "エピクテトスは奴隷だから、体も持ち物もぜんぶ主人のもの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
@@ -188,7 +188,7 @@ UNITS = [
     Unit("teiyou2", "そのメモが『語録』。要点だけ選んだ薄い本が『提要』で53章。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
 
     # ---- なぜ残ったか(皇帝)
-    Unit("utsusu", "『提要』みたいな昔の本は、だれかが「写本」を作らないと消えるの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("utsusu", "『提要』みたいな昔の本は、「写本」を作らないと消えるの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("naze", "なのに1900年も残ったのは、なんで?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("koutei", "1900年残ったのは、皇帝マルクス・アウレリウスのおかげ。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("koutei3", "皇帝は読んで、自分だけのノートを書きためてた。名前は『自省録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
@@ -218,7 +218,7 @@ UNITS = [
     Unit("ima", "その本を、いまの心の治療の土台にした人がいるの。知ってる?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("ellis", "土台にしたのは、アルバート・エリスって心理学者。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("kako", "エリスも昔はフロイトの「精神分析」。子どもの頃を掘る治療ね。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
-    Unit("imakangae", "精神分析じゃ、患者は良くならない。1955年、「論理療法」を始めた。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
+    Unit("imakangae", "精神分析では患者は良くならない。1955年に「論理療法」を作った。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("tehon", "エリスは『提要』の5番目を、自分の論理療法の手本にしたの。", anim=1.9, se='don', speed=1.28, intonation=1.25, pad=0.10, chara="none"),
     Unit("cbt", "考え方のクセを直す「認知行動療法」。その始まりが論理療法なの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("abc", "論理療法のやり方をエリスが「ABC理論」にまとめたの。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),

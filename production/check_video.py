@@ -109,6 +109,50 @@ def _fp_lines(plain: str) -> int:
     return rows
 
 
+_SUB_FIG = None
+
+
+def _fp_rows_measured(plain: str, video_dir=None):
+    """**レンダラと同じ計算**で字幕の行数と下端を出す(2026-09-07)。
+
+    fplib._subtitle_wordpop が焼くときに使う _fit_rows をそのまま呼ぶ。
+    概算(_fp_lines)は「12字で折る」だけなので、実測幅で折る本番と
+    行数がずれる。ずれた分だけ、焼き始めてから止まる。
+
+    **測る前にテーマを張る。**級数(S.SUB_FS=84)と折り返し幅
+    (S.SUB_BLOCK_FIT=0.86)はテーマが決めるので、張らずに測ると
+    shortlib の既定値で数えることになり、3行の組を2行と数えてしまう。
+    テーマを張るのは render.py を import することなので、ここで行う
+    (VOICEVOX が動いていなくても測れるようにする。尺の推定と違って、
+    行数は音声が無くても決まる)。
+    """
+    global _SUB_FIG
+    import re as _re
+    import fplib as _F
+    import shortlib as _S
+    if _SUB_FIG is None:
+        if video_dir is not None and not getattr(_S, "_CV_THEME_LOADED", False):
+            try:
+                spec = importlib.util.spec_from_file_location(
+                    f"cvsub_{Path(video_dir).name}", Path(video_dir) / "render.py")
+                mod = importlib.util.module_from_spec(spec)
+                sys.modules[spec.name] = mod
+                spec.loader.exec_module(mod)
+            except Exception:
+                pass
+            _S._CV_THEME_LOADED = True
+        # **書体を必ず張ってから測る。**RocknRoll One が無いまま測ると
+        # 代替書体の字幅で数えることになり、本番と行数がずれる
+        _F._setup_font()
+        _SUB_FIG = _S.new_canvas()
+        _SUB_FIG.canvas.draw()
+    r = _SUB_FIG.canvas.get_renderer()
+    t = _re.sub(r"。\s*$", "", str(plain).rstrip())
+    fs, rows = _F._fit_rows(_SUB_FIG, r, _F._words(t), float(_S.SUB_FS))
+    step = _S.SUB_LINE_H * (fs / 40)
+    return len(rows), _S.SUBTITLE_Y - (len(rows) - 1) * step
+
+
 def main(video_dir: Path) -> int:
     fails, warns = [], []
 
@@ -161,16 +205,26 @@ def main(video_dir: Path) -> int:
         # wrap_plain(句読点だけで折る)で見積もると実際より長い行が出て、
         # 画面に収まっているものを「縮小しすぎ」と誤検出する(2026-08-24)。
         # S033 で3件の誤検出が出た(画素で測って収まっていることを確認済み)。
+        # **12字の概算ではなく、レンダラと同じ実測で数える**(2026-09-07)。
+        # 概算(_fp_lines)は3行までを通していたが、実際に描くのは
+        # fplib._subtitle_wordpop で、そこは **2行を超えると AssertionError で
+        # 焼くのを止める**。Z001 の3本(「変えられるものを…」「『提要』みたいな…」
+        # 「精神分析じゃ、患者は…」)がこのゲートを通ったまま、2時間焼いた
+        # あとの14カット目で落ちた。ゲートが見ていた行数と、焼く側が数える
+        # 行数が違っていたのが原因なので、**同じ関数で数える**。
         if not LONG and "fplib" in src:
             import fplib as _F
-            nline = max(1, len(_F._words(plain)) and
-                        len({i for i in range(1)}) and
-                        _fp_lines(plain))
+            nline, bottom = _fp_rows_measured(plain, video_dir)
+            if nline > _F.MAX_LINES or bottom < _F.SUB_BOTTOM_MIN:
+                check(f"字幕{_F.MAX_LINES}行以内(実測): {plain[:14]}…", False,
+                      f"{nline}行/下端{bottom:.3f}。**このまま焼くと render が止まる**")
+            continue_warn = (nline == _F.MAX_LINES)
         else:
             nline = len(wrap_plain(plain, WRAP))
-        if nline > (2 if LONG else 3):
-            check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
-        elif nline == 3:
+            if nline > (2 if LONG else 3):
+                check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
+            continue_warn = (nline == 3)
+        if continue_warn and not (not LONG and "fplib" in src):
             # 落とさないが、3行は冒頭など**必要なところだけ**にする
             warn(f"字幕3行: {plain[:14]}…", f"{nline}行。立ち絵との余白は90px")
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
