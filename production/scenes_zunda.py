@@ -788,8 +788,12 @@ def emperor(name="04_surprised", label="ローマ皇帝", bubble="", title=""):
     return with_pict(name, draw, title)
 
 
-def copyists(name="01_base", title=""):
-    """修道院で本を写す人たち(3人の影絵+本)。いらすとやの monk があればそれ。"""
+def copyists(name="01_base", title="", years="1000年"):
+    """修道院で本を写す人たち(3人の影絵+本)。いらすとやの monk があればそれ。
+
+    years は下の札。**声で言わない数を図に出すと check_figure が落ちる**ので、
+    その回で年数を言わないなら years="" を渡す(2026-09-07 Z002)。
+    """
     def draw(fig, t, a, dy):
         p = min(1.0, _pop(t, 0.08))
         if not pict_image(fig, "monk", PICT_CX, CARD_BOT + 0.17 + dy, 0.24 * p, a, 2.4, max_w=0.30):
@@ -801,8 +805,9 @@ def copyists(name="01_base", title=""):
               z=2.6, r=0.010, a=a2)
         _txt(fig, PICT_CX, CARD_TOP - 0.046 + dy, "修道院で写した", 38, color=CARD, z=2.7, a=a2,
              raw=True, max_w=0.23, fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
-        _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, "1000年", 40, color=CONNECT, z=2.6, a=a2, raw=True,
-             fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
+        if years:
+            _txt(fig, PICT_CX, CARD_BOT + 0.035 + dy, years, 40, color=CONNECT, z=2.6, a=a2, raw=True,
+                 fontfamily=[F.NUM_FAMILY], fontweight=F.NUM_WEIGHT)
     return with_pict(name, draw, title)
 
 

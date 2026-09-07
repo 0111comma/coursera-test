@@ -92,7 +92,8 @@ SCENES = {
 
     # ---- 幕5 なぜ残った(皇帝)→ 提要5 → 修道院 → エリス
     "utsusu": sz.book_now("03_troubled", "手で写す", bubble="写さないと消える"),
-    "naze": sz.book_now("03_troubled", "『提要』", bubble="なんで残った?"),
+    "naze": sz.book_now("03_troubled", "『提要』", bubble="1900年たった"),
+    "naze2": sz.book_now("04_surprised", "『提要』", bubble="なんで残った?"),
     "naze2": sz.lineage("02_point"),
     "koutei": sz.emperor("04_surprised", "ずっとあとの皇帝"),
     "koutei2": sz.emperor("02_point", "マルクス・アウレリウス"),
@@ -182,7 +183,8 @@ UNITS = [
     Unit("hyouban2", "だから権内の側だけ相手にしろ、って教えたの。", anim=1.9, speed=1.28, intonation=1.25, se='don', pad=0.12, chara="none"),
 
     # ---- 幕4 なぜ残ったか。**書き取ったのは『語録』**(4)
-    Unit("naze", "権内の教え方が、1900年たったいまも残ってる。なんでだと思う?", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("naze", "権内の教え方が、1900年たったいまも残ってる。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
+    Unit("naze2", "なんで残ったんだと思う?", anim=1.5, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("kakanai", "実はエピクテトス、自分では1冊も書いてないの。", anim=1.7, speed=1.30, intonation=1.25, pad=0.05, chara="none"),
     Unit("deshi", "その授業を書き取った弟子のアッリアノス。本の名は『語録』。", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),
     Unit("shuudouin", "『語録』を写し続けたのは、キリスト教の修道院。意外でしょ?", anim=1.7, speed=1.30, intonation=1.2, pad=0.05, chara="none"),

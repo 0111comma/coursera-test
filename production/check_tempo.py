@@ -33,6 +33,7 @@ S032 の render.py の3行目には、私自身がこう書いていた:
 
 免除: production/gate_exempt.txt に `動画ID:tempo:0  # 理由`
 """
+import importlib.util
 import re
 import subprocess
 import sys
@@ -52,6 +53,11 @@ LONG_CUT_SEC = 4.5    # 1カットの上限。これ以上そのままの絵は�
 # 公開済み29本の実測(字数 ÷ mp4の尺)の中央値は 6.05 字/秒(範囲 4.71〜7.21)。
 # 短く見積もると「カットは足りている」と誤判定するので、中央値に直した。
 CHARS_PER_SEC = 6.05
+# チャンネル「ヤケに心理学に詳しいずんだもん」(Z 番台)の実測。
+# Z001 は 972字 / 112.185秒 = **8.66字/秒**で、6.05 を当てると尺を1.4倍に見積もる。
+# 長く見積もると「カットは足りている」と言えなくなり、**足りているのに足せと言う**ゲートになる。
+# 少しだけ辛い側(8.4)に置いて、焼いたあとの実測とずれても落とす側に倒す
+CHARS_PER_SEC_Z = 8.4
 
 
 def load_exempt(gate: str) -> set[str]:
@@ -67,7 +73,26 @@ def load_exempt(gate: str) -> set[str]:
     return out
 
 
-def units_of(src: str) -> list[tuple[str, str]]:
+def units_of(src: str, render_py=None) -> list[tuple[str, str]]:
+    """(場面, 字幕)の一覧。**render.py を実際に読み込んで UNITS を取る。**
+
+    2026-09-07: ここは `Unit("scene", "字幕"` の字面を正規表現で拾っていた。
+    Z002 が `def U(scene, sub, **kw)` の助け関数で Unit を作った瞬間、
+    **1件も拾えず、ユニット0本として黙って合格した**(40カット4.3秒/カットが素通り)。
+    台本の書き方を変えるとゲートが効かなくなるのは、ゲートの作りのほうが悪い。
+    読み込めないときだけ、昔の正規表現に落ちる。
+    """
+    if render_py is not None:
+        try:
+            spec = importlib.util.spec_from_file_location(f"tp_{Path(render_py).parent.name}", render_py)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = mod
+            spec.loader.exec_module(mod)
+            us = getattr(mod, "UNITS", [])
+            if us:
+                return [(u.scene, u.subtitle.replace("【", "").replace("】", "")) for u in us]
+        except Exception:
+            pass
     return re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
 
 
@@ -138,7 +163,7 @@ def check_video(vdir: Path):
     src = rp.read_text()
     if "use_landscape" in src:
         return []            # 長尺は check_long が別の基準で見る
-    units = units_of(src)
+    units = units_of(src, rp)
     if not units:
         return []
 
@@ -156,8 +181,9 @@ def check_video(vdir: Path):
     total = real_duration(vdir)
     estimated = total is None
     if estimated:
+        cps = CHARS_PER_SEC_Z if vdir.name.startswith("Z") else CHARS_PER_SEC
         total = sum(len(s.replace("【", "").replace("】", ""))
-                    for _, s in units) / CHARS_PER_SEC
+                    for _, s in units) / cps
 
     issues = []
     avg = total / len(cuts)
