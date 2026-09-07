@@ -27,6 +27,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
@@ -93,7 +94,7 @@ def check_video(vdir: Path, easy):
     if not rp.exists():
         return []
     src = rp.read_text()
-    subs = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
+    subs = subtitles(vdir / "render.py", src)
     if not subs:
         return []
     # 視聴者が目にするのは字幕だけではない。図の中の文字も数える

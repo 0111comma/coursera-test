@@ -27,6 +27,7 @@
 import re
 import sys
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
@@ -88,6 +89,16 @@ def rows_for(video_id: str):
             cells = line.split("|")
             if len(cells) <= col + 2 or not DONE_RE.search(cells[-2]):
                 continue
+            # **その文を残したまま直した行は見ない**(2026-09-07)。
+            # 批評ストックの根拠の欄は「直す前の文」とは限らず、
+            # *その文を引き合いに出して別の欠けを指摘している*ことがある
+            # (例: Z002-35「浪費と言うだけで中身が無い」→ 直しは別カットの追加で、
+            #  引かれている文自体は正しいので残る)。そういう行は状態にこう書く:
+            #   対応済み(…。この文は残す)
+            # **免除ではない。**残す理由を状態の欄に書かせるための約束事で、
+            # 理由の無い「対応済み」はこれまでどおり全部見る
+            if "この文は残す" in cells[-2]:
+                continue
             for s in _sentences(cells[col]):
                 found.append((cells[1].strip(), s, stock.name))
     return found
@@ -100,14 +111,14 @@ def main(video_dir: Path) -> int:
     src = render.read_text(encoding="utf-8")
     # **字幕そのものと一致したときだけ落とす。**部分一致だと語の再利用を
     # 巻き戻しと呼んでしまう(「上司の機嫌」は何度出てもよい)
-    subtitles = set(re.findall(r'Unit\("[^"]+", "([^"]*)"', src))
+    subs = set(subtitles(render, src))
 
     hits, near, seen = [], [], set()
     for tid, before, stock in rows_for(video_dir.name.split("-")[0]):
         if before in seen:
             continue
         seen.add(before)
-        if before in subtitles:
+        if before in subs:
             hits.append((tid, before, stock))
             continue
         # **言い回しを変えた巻き戻し**(2026-09-07 批評パネル)。
@@ -117,7 +128,7 @@ def main(video_dir: Path) -> int:
         # 同じ話題を扱う以上どうしても似た文が出るため(誤検出でゲートを
         # 止めると、次から人が理由なく免除を足す入口になる)。
         # 疑いは日本語パネル/批評パネルへの入力として使う
-        for sub in subtitles:
+        for sub in subs:
             if _similar(before, sub) >= NEAR_RATIO:
                 near.append((tid, before, sub, stock))
                 break

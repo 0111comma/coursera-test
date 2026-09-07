@@ -82,6 +82,7 @@ def units_of(src: str, render_py=None) -> list[tuple[str, str]]:
     台本の書き方を変えるとゲートが効かなくなるのは、ゲートの作りのほうが悪い。
     読み込めないときだけ、昔の正規表現に落ちる。
     """
+    err = None
     if render_py is not None:
         try:
             spec = importlib.util.spec_from_file_location(f"tp_{Path(render_py).parent.name}", render_py)
@@ -91,9 +92,14 @@ def units_of(src: str, render_py=None) -> list[tuple[str, str]]:
             us = getattr(mod, "UNITS", [])
             if us:
                 return [(u.scene, u.subtitle.replace("【", "").replace("】", "")) for u in us]
-        except Exception:
-            pass
-    return re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
+        except Exception as e:
+            err = e
+    got = re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
+    if not got and err is not None:
+        # **黙って合格しない。**読めない render.py をユニット0本として [OK] にすると、
+        # 文法エラーのある台本がゲートを通り抜ける(2026-09-07 に実際に通した)。
+        raise RuntimeError(f"render.py を読めない: {err}")
+    return got
 
 
 def scene_parts(src: str) -> dict:
@@ -163,7 +169,10 @@ def check_video(vdir: Path):
     src = rp.read_text()
     if "use_landscape" in src:
         return []            # 長尺は check_long が別の基準で見る
-    units = units_of(src, rp)
+    try:
+        units = units_of(src, rp)
+    except RuntimeError as e:
+        return [("(全体)", "台本を読めない", str(e))]
     if not units:
         return []
 

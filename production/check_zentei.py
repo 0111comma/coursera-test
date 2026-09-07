@@ -42,6 +42,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "production"))
@@ -113,15 +114,13 @@ def load_exempt(gate: str):
 
 
 def narration(vdir: Path) -> list[str]:
-    src = (vdir / "render.py").read_text()
-    return [u.replace("【", "").replace("】", "")
-            for u in re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)]
+    return subtitles(vdir / "render.py")
 
 
 def screen_numbers(vdir: Path) -> set[str]:
     """render.py の中の**画面に出す文字列**から数値を拾う(図のラベル・表のセル)。"""
     src = (vdir / "render.py").read_text()
-    src = re.sub(r'Unit\(\s*"[^"]+",\s*"[^"]+"', "", src)   # 字幕は除く
+    src = strip_units(src)                                  # 字幕は除く(U() の助け関数も)
     out = set()
     for s in re.findall(r'"([^"]*)"', src):
         out |= numbers_in(s)

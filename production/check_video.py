@@ -13,6 +13,7 @@ import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from shortlib import SPEED_SCALE, SUB_WRAP, wrap_plain  # noqa: E402
@@ -185,7 +186,7 @@ def main(video_dir: Path) -> int:
     FIG_W = 1920 if LONG else 1080
     BLOCK_FIT = 0.86 if LONG else 0.70
     SUB_PT = 40 if LONG else 52
-    units = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
+    units = subtitles(video_dir / "render.py", src)
     check("render.py にユニット定義", len(units) > 0, f"{len(units)}ユニット")
     total_chars = 0
     for u in units:
