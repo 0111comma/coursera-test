@@ -173,7 +173,8 @@ def diagram(im, scene, time):
     elif scene in ('cover','inspect','example','inside','equal'):
         show = scene not in ('cover','example')
         for i,x in enumerate((116,378,640)):
-            offset=int(50*(1-ease((time-i*.11)/.55)))
+            # Enter from above; the bottom note must remain clear throughout motion.
+            offset=-int(40*(1-ease((time-i*.11)/.55)))
             y=536+offset
             roundbox(d,(x,y,x+228,y+300),'#F7F7F2',outline='#B9C4AE',radius=22)
             text(d,(x+114,y+47),'商品'+str(i+1),43)
