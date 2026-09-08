@@ -96,9 +96,6 @@ P-M(35歳・男性・会社員)。**「口に出す」場面**なので、1コ�
 |---|---|---|
 | 1件 | 動作の数量。今週のカレンダーから消す予定の数(strategy §3「数量は動作そのものに埋め込む」) | 仮定(動作の定義) |
 | 西暦49年 | セネカが**コルシカ**への追放から呼び戻された年。『人生の短さについて』の執筆年の通説は、この召還を下限に置いている | https://en.wikipedia.org/wiki/De_Brevitate_Vitae_(Seneca) / https://plato.stanford.edu/entries/seneca/(2026-09-07 確認) |
-| 11世紀 | 現存する『対話篇』の親**写本**アンブロシアヌス C 90 inf. の年代 | https://www.loebclassics.com/view/LCL214/1928/pb_LCL214.xv.xml(2026-09-07 確認) |
-| 1000年 | その11世紀の**写本**から現在(2026年)までのおよその長さ。約950年を「1000年」と丸めて言う | https://www.loebclassics.com/view/LCL214/1928/pb_LCL214.xv.xml(2026-09-07 確認。11世紀の写本と同じ出典) |
-| 100以上 | アンブロシアヌス**写本**から派生した現存写本の数(直接の写しではなく派生) | https://en.wikipedia.org/wiki/De_Brevitate_Vitae_(Seneca)(2026-09-07 確認) |
 | 37歳 | **モンテーニュ**がボルドー高等法院(裁判所)の職を手放した年齢。1533年生まれ、1570年に職を売却 | https://plato.stanford.edu/entries/montaigne/(2026-09-07 確認) |
 
 ## 11. コンプライアンス(strategy §6)

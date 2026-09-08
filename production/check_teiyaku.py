@@ -98,11 +98,16 @@ def check_video(vdir: Path):
     # Z002 は「ストア派」「写本」「随筆」「政治顧問」がどれも言い換えごと消えていて [OK] だった。
     # plan.md の §1.7(学び)に太字で書いてある語は、**動画で言うと自分で決めた語**なので、
     # 消えていたら落とす。企画書に無い語は、これまでどおり言い換えがあるときだけ見る
+    # **「なぜ残った」の行は見ない**(2026-09-08 U22)。伝来(写本・修道院・校訂)は
+    # 企画書には残すが動画では言わない、と決めたので、その行の太字を
+    # 「言うと決めた語」として数えると、落としたはずの幕を呼び戻すことになる。
     plan_words = set()
     pm = vdir / "plan.md"
     if pm.exists():
         import re as _re
-        for m in _re.finditer(r"\*\*([^*]{2,20})\*\*", pm.read_text()):
+        body = "\n".join(ln for ln in pm.read_text().splitlines()
+                         if not ln.lstrip().startswith("| なぜ残った"))
+        for m in _re.finditer(r"\*\*([^*]{2,20})\*\*", body):
             plan_words.add(m.group(1).strip("。、 "))
     for teiyaku, iikae, src in load_terms():
         bare = teiyaku.strip("『』")
