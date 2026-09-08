@@ -22,10 +22,13 @@ for VDIR in "${DIRS[@]}"; do
   MP4=$(ls -t "$OUT"/*.mp4 2>/dev/null | head -1)
   NEWEST=$(ls -t "$OUT"/work/frame_*.png 2>/dev/null | head -1)
   frames=$(ls "$OUT"/work/frame_*.png 2>/dev/null | wc -l)
-  PID=$(pgrep -f "$VDIR/render.py" | head -1)
+  PID=$(pgrep -f "python3 -u $VDIR/render.py" | head -1)
+  GATE=$(pgrep -f "check_all.py $VDIR" | head -1)
   age=""; [ -n "$NEWEST" ] && age=$(( now - $(date +%s -r "$NEWEST") ))
 
-  if [ -n "$PID" ]; then
+  if [ -n "$GATE" ]; then
+    state="ゲートを通している(焼く前 pid=$GATE)"
+  elif [ -n "$PID" ]; then
     if [ -z "$age" ]; then state="開始直後(まだフレームなし pid=$PID)"
     elif [ "$age" -ge 420 ]; then state="固まっている疑い(${age}秒 フレームが増えない pid=$PID)"
     else state="焼いている(${age}秒前にフレーム pid=$PID)"; fi
