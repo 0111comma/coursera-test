@@ -199,7 +199,7 @@ def folders(d,scene,t):
         else:
             for j in range(3):
                 y=568+j*104
-                shown=scene!='names' or t>j*.32
+                shown=scene!='names' or t>=j*1.05
                 if shown: company(d,(x+14,y,x+272,y+74),j,29)
             d.line((x+27,895,x+259,895),fill='#D9E1D4',width=2)
             detail=['全世界の株式へ','米国の大型株へ','Nasdaq-100へ'][i] if scene=='different' else 'ほかの保有企業も'
@@ -388,7 +388,7 @@ def preview():
     base_cache=[base(u,i) for i,u in enumerate(UNITS)]
     sheet=Image.new('RGB',(1080,1440),'white')
     for k,idx in enumerate((0,2,4,5,6,7,8,9,10,11,12,13)):
-        for t in (0,.15,.5,1.2):frame(UNITS[idx],idx,t,np.zeros(24000,dtype=np.float32),24000)
+        for t in (0,.15,.5,1.2,2.6):frame(UNITS[idx],idx,t,np.zeros(24000,dtype=np.float32),24000)
         im=frame(UNITS[idx],idx,1.2,np.zeros(24000,dtype=np.float32),24000)
         im.save(OUT/f'preview-{idx:02d}.png')
         sheet.paste(im.resize((270,480)),((k%4)*270,(k//4)*480))
