@@ -43,37 +43,22 @@ class Unit:
         return self.subtitle.replace('S&P500', 'エスアンドピーごひゃく').replace('QQQ', 'キューキューキュー')
 
 UNITS = [
-    Unit('cover', 'オルカンに、S&P500とQQQも追加。', '買い足せば分散？'),
-    Unit('cover', 'これで分散？ボクは中身を見るのだ。', '中身を開けるのだ', 'smug'),
-    Unit('ac', 'オルカンは、全世界株の投資信託。', '世界の株に投資'),
-    Unit('sp', 'S&P500連動の商品は、米国の大型株へ。', '米国の大型株に投資'),
-    Unit('qqq', 'QQQは、米ナスダック市場の大きな非金融企業へ。', '金融企業は除く'),
-    Unit('names', 'でも、エヌビディア、アップル、マイクロソフト。', 'あれ、同じ顔ぶれ？'),
+    Unit('cover', '投資信託を3本買えば、分散？', '本数だけで分散？', 'normal'),
+    Unit('cover', 'ボクは、まず中身を見るのだ。', '中身を見るのだ', 'smug'),
+    Unit('intro', '投資信託は、お金をまとめて、いろいろな投資先へ投資する商品。', 'お金をまとめて投資', 'normal'),
+    Unit('intro', '別の商品でも、投資先が重なることはある。', '名前より投資先', 'normal'),
+    Unit('products', '例えば、オルカン、S&P500連動商品、QQQ。', 'この3商品で見る', 'normal'),
+    Unit('names', 'エヌビディア、アップル、マイクロソフト。', '中身を並べると？', 'normal'),
     Unit('common', 'この3社は、どれにも入っているのだ。', 'また会ったのだ', 'smug'),
-    Unit('routes', '別の商品から、同じ会社の株を買い足している。', '別の商品から同じ企業へ', 'smug'),
-    Unit('different', 'もちろん、3つの中身が全部同じではない。', '全部同じではない'),
-    Unit('different', '違う会社も入るし、1社ごとの割合も違う。', '配分もそれぞれ違う'),
-    Unit('broaden', 'だから、投資先をもっと広げたいのか、', '広げたいのか？'),
-    Unit('tilt', 'すでに持つ米国大型株を、もっと厚く持ちたいのか。', '厚く持ちたいのか？'),
-    Unit('decide', '買う前に、投資先と割合を見て決める。', '目的と中身を照合', 'smug'),
-    Unit('close', '袋の数より、中身の配分なのだ。', '何を増やすか決める', 'happy'),
+    Unit('routes', '別の商品から買っても、同じ会社への投資は重なる。', '別の商品から同じ企業へ', 'smug'),
+    Unit('different', 'もちろん、全部同じ中身ではない。投資先も割合も違う。', '全部同じではない', 'normal'),
+    Unit('count', 'でも、商品が3本あるだけでは、どれだけ分散したかは分からない。', '本数だけでは分からない', 'normal'),
+    Unit('check', 'だから、買う前に月次レポートで、投資先と割合を見る。', 'レポートの中身を確認', 'normal'),
+    Unit('check', '商品をまたいで、同じ企業への投資が重なっていないか確かめる。', '商品をまたいで確認', 'smug'),
+    Unit('close', '袋を3つに分けても、', '袋は3つでも……', 'normal'),
+    Unit('close', '中身まで別物にはならないのだ。', '見るのは中身と割合', 'happy'),
 ]
-SUBTITLE_LINES = [
-    'オルカンに、S&P500と\nQQQも追加。',
-    'これで分散？\nボクは中身を見るのだ。',
-    'オルカンは、\n全世界株の投資信託。',
-    'S&P500連動の商品は、\n米国の大型株へ。',
-    'QQQは、米ナスダック市場の\n大きな非金融企業へ。',
-    'でも、エヌビディア、アップル、\nマイクロソフト。',
-    'この3社は、\nどれにも入っているのだ。',
-    '別の商品から、\n同じ会社の株を買い足している。',
-    'もちろん、3つの中身が\n全部同じではない。',
-    '違う会社も入るし、\n1社ごとの割合も違う。',
-    'だから、投資先を\nもっと広げたいのか、',
-    'すでに持つ米国大型株を、\nもっと厚く持ちたいのか。',
-    '買う前に、\n投資先と割合を見て決める。',
-    '袋の数より、\n中身の配分なのだ。',
-]
+SUBTITLE_LINES = ['投資信託を3本買えば、分散？', 'ボクは、まず中身を見るのだ。', '投資信託は、お金をまとめて、\nいろいろな投資先へ投資する商品。', '別の商品でも、\n投資先が重なることはある。', '例えば、オルカン、\nS&P500連動商品、QQQ。', 'エヌビディア、アップル、\nマイクロソフト。', 'この3社は、\nどれにも入っているのだ。', '別の商品から買っても、\n同じ会社への投資は重なる。', 'もちろん、全部同じ中身ではない。\n投資先も割合も違う。', 'でも、商品が3本あるだけでは、\nどれだけ分散したかは分からない。', 'だから、買う前に月次レポートで、\n投資先と割合を見る。', '商品をまたいで、同じ企業への投資が\n重なっていないか確かめる。', '袋を3つに分けても、', '中身まで別物にはならないのだ。']
 assert len(SUBTITLE_LINES)==len(UNITS)
 assert all(t.replace('\n','') == u.subtitle for t,u in zip(SUBTITLE_LINES,UNITS))
 
@@ -116,12 +101,13 @@ def ease(t):
     return 1-(1-t)**3
 
 def heading(scene):
-    if scene=='cover': return 'オルカンに追加で\n分散は増える？'
-    if scene in ('ac','sp','qqq'): return '名前が違うと\n投資先も違う？'
-    if scene in ('names','common'): return '3つに共通する\n米国の企業'
-    if scene=='routes': return '別の商品から\n同じ会社を買う'
-    if scene=='different': return '全部同じ、\nではないのだ'
-    return '広げたい？\n厚く持ちたい？'
+    if scene=='cover': return '投資信託3本で\n分散できる？'
+    if scene=='intro': return '別の商品でも\n中身は重なる'
+    if scene in ('products','names','common'): return '例えば、この3つ\n中身を見てみる'
+    if scene=='routes': return '商品は別でも\n投資先は重なる'
+    if scene=='different': return '全部同じ、\nという意味ではない'
+    if scene=='count': return '商品数だけでは\n分散は分からない'
+    return '見るべきは\n投資先と割合'
 
 def base(unit, number):
     im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
@@ -162,7 +148,7 @@ def product_cards(d,scene,t):
     elif scene=='different':
         text(d,(540,901),'投資対象も、各企業の組入比率も異なる',36,GREEN,width=976)
     else:
-        text(d,(540,901),'3つの商品。中身はどう重なる？',40,GREEN,width=976)
+        text(d,(540,901),'S&P500連動の例：MAXIS米国株式（S&P500）上場投信',27,GREEN,width=976)
     source_note(d)
 
 def tick(d,x,y,active):
@@ -171,7 +157,7 @@ def tick(d,x,y,active):
 
 def diagram(im,scene,t):
     d=ImageDraw.Draw(im)
-    if scene in ('cover','ac','sp','qqq','different'):
+    if scene in ('products','different'):
         text(d,(540,405),'実際の投資対象で比べる',34,GREEN,width=976)
         product_cards(d,scene,t)
     elif scene in ('names','common'):
@@ -199,20 +185,34 @@ def diagram(im,scene,t):
         text(d,(540,796),'エヌビディア',76,'white',width=712)
         text(d,(540,928),'同じ企業への投資を重ねることになる',34,GREEN,width=976)
         source_note(d)
-    else:
-        if scene=='close':
-            text(d,(540,462),'買う前に確かめるのは',38,GREEN,width=976)
-            lines(d,(540,638),'投資先と\nその割合',104,145,INK,width=976)
-            text(d,(540,929),'商品数を増やすこと自体が、目的ではない',33,GREEN,width=976)
+    elif scene in ('cover','intro','count'):
+        labels = ['1本目','2本目','3本目']
+        for i,x in enumerate((52,390,728)):
+            roundbox(d,(x,480,x+300,726),'#E9EFDF',outline=GREEN,radius=24)
+            text(d,(x+150,540),labels[i],46,INK,width=272)
+            text(d,(x+150,645),'中身は？',42,INK,width=272)
+        if scene=='cover':
+            text(d,(540,407),'商品を3本に増やしたら……',38,GREEN,width=976)
+            text(d,(540,858),'投資先まで増えた？',60,INK,width=976)
+        elif scene=='intro':
+            text(d,(540,407),'お金をまとめて、投資先へ',38,GREEN,width=976)
+            for x in (202,540,878):
+                d.line((x,738,540,816),fill='#92A783',width=5)
+            roundbox(d,(180,818,900,929),INK,radius=24)
+            text(d,(540,872),'同じ企業を含むことがある',44,'white',width=676)
         else:
-            for i,(x,title,detail) in enumerate([
-                (52,'投資先を\n広げたい','今の保有資産と\n違う投資先か確認'),
-                (558,'米国大型株を\n厚く持ちたい','同じ企業を増やす\n意図があるか確認')]):
-                bright=(scene=='broaden' and i==0) or (scene=='tilt' and i==1) or scene=='decide'
-                roundbox(d,(x,464,x+470,910),'#E9EFDF' if bright else '#F7F7F2',outline=GREEN if bright else '#CBD3C2',radius=24)
-                lines(d,(x+235,567),title,48,79,INK,width=426)
-                lines(d,(x+235,760),detail,35,60,INK,width=426)
-            text(d,(540,965),'重ね買いが悪いのではなく、目的と配分を合わせる',30,GREEN,width=976)
+            lines(d,(540,842),'商品が3本 ≠ 投資先が別々',47,72,INK,width=976)
+            text(d,(540,937),'数えたいのは商品の数ではなく、中身',34,GREEN,width=976)
+    else:
+        text(d,(540,425),'月次レポートで確認',40,GREEN,width=976)
+        for i,(label,detail) in enumerate([
+            ('投資先','どの企業・地域などに投資している？'),
+            ('割合','各投資先に、どれくらい配分している？')]):
+            y=545+i*210
+            roundbox(d,(64,y-63,1016,y+91),'#E9EFDF',radius=24)
+            text(d,(222,y),label,58,INK,width=260)
+            text(d,(682,y),detail,30,INK,width=636)
+        text(d,(540,943),'商品をまたいで、中身の重なりを確かめる',34,GREEN,width=976)
 
 @lru_cache(None)
 def sprite(expr,mouth,eyes):
@@ -321,7 +321,7 @@ def main():
     # Two rows at native aspect ratio; crop unused sheet space.
     sheet.crop((0,0,1080,960)).save(OUT/'contact-sheet.jpg',quality=92)
     (OUT/'segments.json').write_text(json.dumps(segments,ensure_ascii=False,indent=2))
-    report={'voicevox_version':version,'speaker_name':'ずんだもん','speaker_style':'ノーマル','speaker_id':3,'duration':cursor,'frame_count':sum(s['frames'] for s in segments),'source_sha':os.environ.get('GITHUB_SHA'),'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'probe':probe(target),'validation':{'real_holdings_examples':[c['ticker'] for c in SOURCES['companies']],'bottom_ui_reserved_px':BOTTOM_UI_PX,'right_ui_reserved_px':RIGHT_UI_RESERVE,'text_bounds':'checked for every rendered frame','full_decode':'pending'}}
+    report={'voicevox_version':version,'speaker_name':'ずんだもん','speaker_style':'ノーマル','speaker_id':3,'duration':cursor,'frame_count':sum(s['frames'] for s in segments),'source_sha':os.environ.get('GITHUB_SHA'),'sha256':hashlib.sha256(target.read_bytes()).hexdigest(),'probe':probe(target),'validation':{'main_message':'商品数だけで分散を判断せず、投資先と割合を見る','real_holdings_examples':[c['ticker'] for c in SOURCES['companies']],'bottom_ui_reserved_px':BOTTOM_UI_PX,'right_ui_reserved_px':RIGHT_UI_RESERVE,'text_bounds':'checked for every rendered frame','full_decode':'pending'}}
     subprocess.run(['ffmpeg','-hide_banner','-v','error','-i',str(target),'-f','null','-'],check=True)
     report['validation']['full_decode']='passed'
     stream=next(s for s in report['probe']['streams'] if s['codec_type']=='video')
