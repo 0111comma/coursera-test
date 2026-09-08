@@ -1,0 +1,72 @@
+name: Render one finance Zundamon pilot
+on:
+  push:
+    branches: [codex/zundamon-finance-redesign-20260908]
+    paths:
+      - 'videos/FZ002-nakami/**'
+      - '.github/workflows/render-finance-zundamon.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: finance-zundamon-one-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render-one:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+      VIDEO_DIR: videos/FZ002-nakami
+      BAKE_RETRY: '2'
+      BAKE_STALL_SEC: '180'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /production/setup_voicevox.sh
+            /production/bake.sh
+            /production/bake_status.sh
+            /production/assets/zunda/parts/
+            /assets/fonts/RocknRollOne.ttf
+            /assets/fonts/RocknRollOne-LICENSE.txt
+            /videos/FZ002-nakami/
+            !/videos/FZ002-nakami/output/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg p7zip-full
+          python -m pip install pillow numpy
+      - name: Start VOICEVOX
+        run: |
+          sudo mkdir -p /opt/voicevox
+          sudo chown "$USER":"$USER" /opt/voicevox
+          bash production/setup_voicevox.sh
+      - name: Generate one MP4 with progress supervision
+        run: |
+          mkdir -p "$VIDEO_DIR/output"
+          touch "$VIDEO_DIR/output/bake.log"
+          tail -f "$VIDEO_DIR/output/bake.log" &
+          tail_pid=$!
+          trap 'kill "$tail_pid" 2>/dev/null || true' EXIT
+          bash production/bake.sh "$VIDEO_DIR" "$VIDEO_DIR/output/bake.log"
+          bash production/bake_status.sh "$VIDEO_DIR"
+      - name: Upload the MP4 and review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finance-zundamon-FZ002
+          path: |
+            videos/FZ002-nakami/output/*.mp4
+            videos/FZ002-nakami/output/*.png
+            videos/FZ002-nakami/output/*.jpg
+            videos/FZ002-nakami/output/*.json
+            videos/FZ002-nakami/output/*.log
+            videos/FZ002-nakami/output/*.wav
+            videos/FZ002-nakami/output/work/*.json
+          retention-days: 30
+          if-no-files-found: error
