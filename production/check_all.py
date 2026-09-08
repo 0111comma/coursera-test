@@ -39,7 +39,7 @@ ROOT = PRODUCTION.parent
 # (2026-09-07 日本語パネル4周目: 3周目の直し7件が巻き戻っていた)。
 # **user は zentei より前。**ユーザー本人の指摘を残したまま焼くのが、
 # このリポジトリでいちばん高くつく失敗(2026-09-07「ちゃんと俺からの指摘も貯めてね」)
-COMMON = ["user", "zentei", "modoshi", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
+COMMON = ["user", "zentei", "modoshi", "koyuu", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
           "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "manabi", "teiyaku",
           "kotoba", "honyaku", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
