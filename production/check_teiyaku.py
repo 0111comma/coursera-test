@@ -92,9 +92,26 @@ def check_video(vdir: Path):
     issues = []
 
     # T1 定訳の欠落
+    #
+    # 2026-09-08: ここは**言い換えが字幕に出ているとき**しか発火しなかった。
+    # 定訳も言い換えも両方まるごと消した台本(概念ごと落とした版)は素通りする。
+    # Z002 は「ストア派」「写本」「随筆」「政治顧問」がどれも言い換えごと消えていて [OK] だった。
+    # plan.md の §1.7(学び)に太字で書いてある語は、**動画で言うと自分で決めた語**なので、
+    # 消えていたら落とす。企画書に無い語は、これまでどおり言い換えがあるときだけ見る
+    plan_words = set()
+    pm = vdir / "plan.md"
+    if pm.exists():
+        import re as _re
+        for m in _re.finditer(r"\*\*([^*]{2,20})\*\*", pm.read_text()):
+            plan_words.add(m.group(1).strip("。、 "))
     for teiyaku, iikae, src in load_terms():
         bare = teiyaku.strip("『』")
         if bare in joined or teiyaku in joined:
+            continue
+        if bare in plan_words or teiyaku in plan_words:
+            issues.append(("(全体)", "T1 企画書の語を言っていない",
+                           f"plan.md が**{teiyaku}**と太字で書いているのに、"
+                           f"ナレーションに1回も出てこない。**言うと決めた語を落とさない**。{src}"))
             continue
         hit = [w for w in iikae if w in joined]
         if hit:
@@ -125,16 +142,22 @@ def check_video(vdir: Path):
                        f"接続語を貼る前に、前の文の名詞をもう一度言えないかを先に試すこと"))
 
     # T3 対比の直訳(not A but B)
+    # 2026-09-08: 「じゃなく|ではなく」しか見ておらず、**2文に切った形**
+    # 「Aじゃない。B」を数えていなかった(パネルが地の文で3回・引用込み5回を検出)。
+    # 切れば直訳でなくなるわけではないので、同じ対比として数える
     contrast = [i for i, s in enumerate(subs, 1)
-                if re.search(r"じゃなく|ではなく|じゃなくて|ではなくて", s)]
+                if re.search(r"じゃなく|ではなく|じゃなくて|ではなくて"
+                             r"|じゃない[。、]|ではない[。、]|じゃないの[。、]", s)]
     if len(contrast) > CONTRAST_MAX:
         issues.append(("(全体)", "T3 「〜じゃなく〜」が多い",
                        f"{len(contrast)}回(#{'・#'.join(map(str, contrast))})。上限{CONTRAST_MAX}回。"
                        f"not A but B の直訳。日本語は「Aのせいじゃない。Bのせいなの」と2文に切る"))
 
     # T4 「〜なの。」止め
+    # 2026-09-08: (な|た|る|い)の。 だと「返すの。」「書いてるの。」「すむの。」を
+    # 数え落とし、14/37 を 11/37 と報告して黙って通していた。**かなの直前は問わない**
     nano = [i for i, s in enumerate(subs, 1)
-            if re.search(r"(な|た|る|い)の[。?？!！]?$", s.rstrip())]
+            if re.search(r"[ぁ-んァ-ヴ一-龥]の[。?？!！]?$", s.rstrip())]
     if len(nano) > n * NANO_MAX_RATIO:
         issues.append(("(全体)", "T4 「〜なの。」が多い",
                        f"{len(nano)}/{n}カット(上限{int(n * NANO_MAX_RATIO)})。"
