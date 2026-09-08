@@ -39,6 +39,19 @@ wake_voicevox() {
   curl -s -m 5 http://127.0.0.1:50021/version >/dev/null 2>&1
 }
 
+# **ゲートを通ってから焼く**(2026-09-08)。
+# Z002 は check_video が「字幕が3行。このまま焼くと render が止まる」と
+# 言っていたのに、それを見ずに焼き始めて **45分焼いてから同じ場所で落ちた**。
+# 1本1時間かかる仕事の前に、数十秒のゲートを走らせない理由がない。
+# 直しの途中でわざと焼きたいときだけ BAKE_SKIP_GATE=1。
+if [ "${BAKE_SKIP_GATE:-0}" != "1" ]; then
+  echo "[bake] $(date -Is) ゲートを通す" >> "$LOG"
+  if ! python3 production/check_all.py "$VDIR" --pre >> "$LOG" 2>&1; then
+    echo "[bake] ゲートが不合格。焼かない(直してから)。詳細は $LOG" | tee -a "$LOG"
+    exit 2
+  fi
+fi
+
 for attempt in $(seq 1 "$RETRY"); do
   wake_voicevox || { echo "[bake] VOICEVOX を起こせない" >> "$LOG"; exit 3; }
   echo "[bake] $(date -Is) 開始 (試行 $attempt/$RETRY) $VDIR" >> "$LOG"

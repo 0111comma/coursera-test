@@ -178,6 +178,9 @@ def _dup_dict_keys(render_py) -> list:
     return out
 
 
+PRE = "--pre" in sys.argv     # 焼く前の検証(出荷物 mp4 を見ない)
+
+
 def main(video_dir: Path) -> int:
     fails, warns = [], []
 
@@ -394,6 +397,11 @@ def main(video_dir: Path) -> int:
         r"(助言|アドバイス)(では|でも)ありません|推奨(するもの|または否定するもの)?(では|でも)ありません", smd)))
 
     # 4. 出力mp4の機械検証
+    # --pre(焼く前)では飛ばす。まだ焼いていないものを見ても落ちるだけで、
+    # 焼く前に効くのは上の「字幕が2行に収まるか」の実測のほう。
+    if PRE:
+        print(f"\n結果: {len(fails)}件 FAIL(焼く前の検証。mp4 の検証は飛ばした)")
+        return 1 if fails else 0
     mp4 = video_dir / "output" / next((p.name for p in (video_dir / "output").glob("*.mp4")), "none.mp4")
     if mp4.exists():
         dur = float(subprocess.run(

@@ -50,14 +50,25 @@ def is_long(vdir: Path) -> bool:
 
 
 def main():
-    targets = [Path(a) for a in sys.argv[1:]] or sorted(
+    # --pre: **焼く前**に走らせる版(2026-09-08)。
+    # 出荷物(mp4・thumbnail.png)を見るゲートは、まだ焼いていないので当然落ちる。
+    # 焼く前に意味があるのは「このまま焼くと render が止まる」側だけなので、
+    # shukka を外し、check_video に --pre を渡して mp4 の検証を飛ばす。
+    pre = "--pre" in sys.argv
+    argv = [a for a in sys.argv[1:] if a != "--pre"]
+    targets = [Path(a) for a in argv] or sorted(
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
     bad = 0
     for vdir in targets:
         gates = COMMON + (LONG_ONLY if is_long(vdir) else [])
+        if pre:
+            gates = [g for g in gates if g != "shukka"]
         print(f"=== {vdir.name}")
         for g in gates:
-            r = subprocess.run([sys.executable, str(PRODUCTION / f"check_{g}.py"), str(vdir)],
+            cmd = [sys.executable, str(PRODUCTION / f"check_{g}.py"), str(vdir)]
+            if pre and g == "video":
+                cmd.append("--pre")
+            r = subprocess.run(cmd,
                                capture_output=True, text=True)
             last = [ln for ln in (r.stdout + r.stderr).splitlines() if ln.strip()]
             tail = last[-1] if last else ""
