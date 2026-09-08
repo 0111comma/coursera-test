@@ -42,7 +42,7 @@ wake_voicevox() {
 for attempt in $(seq 1 "$RETRY"); do
   wake_voicevox || { echo "[bake] VOICEVOX を起こせない" >> "$LOG"; exit 3; }
   echo "[bake] $(date -Is) 開始 (試行 $attempt/$RETRY) $VDIR" >> "$LOG"
-  python3 -u "$VDIR/render.py" >> "$LOG" 2>&1 &
+  BAKE_SUPERVISED=1 python3 -u "$VDIR/render.py" >> "$LOG" 2>&1 &
   PID=$!
   last_count=-1; last_move=$(date +%s)
   while kill -0 "$PID" 2>/dev/null; do

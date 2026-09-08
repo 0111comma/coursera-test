@@ -1127,6 +1127,30 @@ def draw_footer_brand(fig, text: str):
              color=MUTED, fontsize=BRAND_FS)
 
 
+def require_supervision():
+    """**見張りなしで焼き始めることを、そもそもできなくする**(2026-09-08 U19)。
+
+    「bake.sh で焼く」を手順書に書いても、次に急いだときの私は
+    `nohup python3 render.py &` に戻る。実際それで2回、静かに止まった焼きを
+    ユーザーに指摘されるまで放置した。**規律ではなく、機械で塞ぐ。**
+
+    bake.sh は BAKE_SUPERVISED=1 を立てて呼ぶ。立っていなければここで止まる。
+    見張りを承知で前景で回したいときだけ BAKE_UNSUPERVISED=1 を明示する
+    (テスト・1カットの試し焼きなど、放置しないと分かっている場合)。
+    """
+    if os.environ.get("BAKE_SUPERVISED") == "1":
+        return
+    if os.environ.get("BAKE_UNSUPERVISED") == "1":
+        print("[warn] 見張りなしで焼いています(BAKE_UNSUPERVISED=1)", flush=True)
+        return
+    raise SystemExit(
+        "見張りなしで焼こうとしています。\n"
+        "  bash production/bake.sh videos/<ID>-<slug> <ログ>\n"
+        "で焼き、Bash(run_in_background) か Monitor で終了を待ってください。\n"
+        "(承知のうえで前景で回すときだけ BAKE_UNSUPERVISED=1 を付ける)"
+    )
+
+
 def require_voicevox():
     """レンダリング前のプリフライト。VOICEVOX未起動のままフォールバックTTSで
     合成すると「声がずんだもんでないのにクレジットあり」の事故になるため、
@@ -1203,6 +1227,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     chara=True でずんだもん立ち絵(口パク・目パチ・呼吸・表情)を合成(deep-loops ㉙)。
     bgm_variant: BGMのローテーション(未指定は動画名から決定。量産型対策㉚)。
     """
+    require_supervision()
     from zunda import mouth_track, BlinkSchedule, breath_offset, CHARA_FPS
     setup_fonts()
     workdir = outdir / "work"
