@@ -392,6 +392,10 @@ def synthesize(units: list[Unit], workdir: Path, speaker: int = DEFAULT_SPEAKER)
     engine = "voicevox" if use_vv else "open_jtalk"
     wavs = []
     for i, u in enumerate(units):
+        # 進捗を1行ずつ出す(2026-09-08 ユーザー「なぜ止まっても感知できずに」)。
+        # 何も出さないと、ログが0バイトのとき「生きている」と「死んだ」が
+        # 区別できない。見張り(production/bake.sh)はこの行が増えるかで判定する。
+        print(f"[tts] {i+1}/{len(units)}", flush=True)
         w = workdir / f"seg_{i:02d}.wav"
         if w.exists() and w.stat().st_size > 0:
             wavs.append(w)          # 再開: すでに合成済み(署名が一致した回のみ残っている)
@@ -1261,6 +1265,7 @@ def render_video(units: list[Unit], scene_painters: dict, outdir: Path, out_name
     elapsed = 0.0
     thumbnail = None
     for i, (u, w) in enumerate(zip(units, wavs)):
+        print(f"[draw] {i+1}/{len(units)}", flush=True)
         # 章チップ(左上)の表示内容をこのユニットの章に合わせる
         global CURRENT_BAND
         CURRENT_BAND = None
