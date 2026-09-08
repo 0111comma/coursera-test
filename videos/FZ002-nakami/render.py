@@ -150,7 +150,7 @@ def product_cards(d,scene,t):
         selected=scene==ids[i]
         fill='#E9EFDF' if selected else '#F7F7F2'
         roundbox(d,(x,y,x+300,y+354),fill,outline=GREEN if selected else '#B9C4AE',radius=22)
-        text(d,(x+150,y+59),labels[i],44,INK,width=272)
+        text(d,(x+150,y+59),labels[i],42,INK,width=272)
         d.line((x+24,y+108,x+276,y+108),fill='#CBD3C2',width=3)
         lines(d,(x+150,y+188),scopes[i],37,63,INK,width=272)
     if scene=='ac':
