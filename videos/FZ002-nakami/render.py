@@ -201,7 +201,7 @@ def diagram(im,scene,t):
             roundbox(d,(180,818,900,929),INK,radius=24)
             text(d,(540,872),'同じ企業を含むことがある',44,'white',width=676)
         else:
-            lines(d,(540,842),'商品が3本 ≠ 投資先が別々',47,72,INK,width=976)
+            lines(d,(540,842),'3本でも、投資先は重なる',47,72,INK,width=976)
             text(d,(540,937),'数えたいのは商品の数ではなく、中身',34,GREEN,width=976)
     else:
         text(d,(540,425),'月次レポートで確認',40,GREEN,width=976)
