@@ -147,6 +147,16 @@ _JP_FONT_CANDIDATES = [
 ]
 
 
+# Linux 以外(macOS / Windows)で名前で探す日本語フォント。
+# コンテナのパス決め打ちだと、ユーザーのPCに移した瞬間に
+# 「日本語フォントが見つからない」で落ちる(2026-09-08)。
+_JP_FONT_NAMES = [
+    "Noto Sans CJK JP", "Source Han Sans JP", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", "YuGothic",
+    "Meiryo", "MS Gothic", "IPAPGothic", "TakaoPGothic",
+]
+
+
 def setup_fonts():
     name = None
     for p in _JP_FONT_CANDIDATES:
@@ -158,7 +168,16 @@ def setup_fonts():
             except Exception:
                 continue
     if name is None:
-        raise RuntimeError("日本語フォントが見つからない")
+        # パスで見つからなければ、入っているフォントを**名前で**探す
+        have = {f.name for f in font_manager.fontManager.ttflist}
+        name = next((n for n in _JP_FONT_NAMES if n in have), None)
+    if name is None:
+        raise RuntimeError(
+            "日本語フォントが見つからない。Noto Sans CJK JP を入れてください"
+            "(macOS: brew install --cask font-noto-sans-cjk-jp / "
+            "Windows: Noto Sans JP を配布元から / "
+            "Debian: apt install fonts-noto-cjk)"
+        )
     plt.rcParams["font.family"] = name
     plt.rcParams["font.weight"] = "bold"
     return name
