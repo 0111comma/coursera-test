@@ -1,0 +1,73 @@
+name: Render NISA shorts with Zundamon
+on:
+  push:
+    branches: [codex/nisa-shorts-20260908]
+    paths:
+      - 'videos/_wip/NISA*/**'
+      - '.github/workflows/render-nisa-shorts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: nisa-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        video: [NISA01-seicho-tsumitate, NISA02-baikyaku-sairiyo, NISA03-sonshitsu]
+    env:
+      VIDEO_DIR: videos/_wip/${{ matrix.video }}
+      MPLBACKEND: Agg
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /production/
+            /assets/fonts/
+            /assets/character/
+            /docs/
+            /CLAUDE.md
+            /videos/_wip/${{ matrix.video }}/
+            !/videos/_wip/${{ matrix.video }}/output/
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk fonts-ipafont-gothic p7zip-full
+          python -m pip install matplotlib numpy pillow scipy janome opencv-python-headless
+      - name: Set up VOICEVOX
+        run: |
+          sudo mkdir -p /opt/voicevox
+          sudo chown "$USER":"$USER" /opt/voicevox
+          bash production/setup_voicevox.sh
+      - name: Verify arithmetic
+        run: python "$VIDEO_DIR/verify.py"
+      - name: Render with VOICEVOX Zundamon speaker 3
+        run: python "$VIDEO_DIR/render.py"
+      - name: Run existing quality gates
+        run: |
+          set -o pipefail
+          python production/check_all.py "$VIDEO_DIR" 2>&1 | tee "$VIDEO_DIR/output/quality-gates.txt"
+      - name: Upload review output even if a quality gate fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.video }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.VIDEO_DIR }}/output/*.mp4
+            ${{ env.VIDEO_DIR }}/output/*.png
+            ${{ env.VIDEO_DIR }}/output/*.txt
+            ${{ env.VIDEO_DIR }}/output/work/seg_*.wav
+            ${{ env.VIDEO_DIR }}/output/work/*json
+            /tmp/voicevox.log
+          if-no-files-found: warn
+          retention-days: 14
