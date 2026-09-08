@@ -1,0 +1,62 @@
+{
+  "checked_on": "2026-09-08",
+  "scope": "保有銘柄の有無の例。異なる資料日付の組入比率を混ぜた数値比較は行わない。",
+  "funds": [
+    {
+      "key": "ac",
+      "label": "オルカン",
+      "name": "eMAXIS Slim 全世界株式（オール・カントリー）",
+      "as_of": "2026年7月31日",
+      "source": "https://www.am.mufg.jp/pdf/geppou/253425/253425_202607.pdf",
+      "examples": [
+        "NVDA",
+        "AAPL",
+        "MSFT"
+      ]
+    },
+    {
+      "key": "sp",
+      "label": "S&P500連動",
+      "name": "MAXIS米国株式（S&P500）上場投信",
+      "as_of": "2026年8月月報",
+      "source": "https://www.am.mufg.jp/pdf/geppou/182558/182558_202608.pdf",
+      "examples": [
+        "NVDA",
+        "AAPL",
+        "MSFT"
+      ]
+    },
+    {
+      "key": "qqq",
+      "label": "QQQ",
+      "name": "Invesco QQQ Trust, Series 1",
+      "as_of": "2026年9月4日",
+      "source": "https://www.invesco.com/qqq-etf/en/about.html",
+      "examples": [
+        "NVDA",
+        "AAPL",
+        "MSFT"
+      ]
+    }
+  ],
+  "companies": [
+    {
+      "ticker": "NVDA",
+      "name": "エヌビディア"
+    },
+    {
+      "ticker": "AAPL",
+      "name": "アップル"
+    },
+    {
+      "ticker": "MSFT",
+      "name": "マイクロソフト"
+    }
+  ],
+  "limits": [
+    "全保有銘柄の一致を主張しない",
+    "重複率・集中度の数値を算出していない",
+    "QQQをS&P500の完全な部分集合として描かない",
+    "重ね買いが常に悪いとは言わない"
+  ]
+}
