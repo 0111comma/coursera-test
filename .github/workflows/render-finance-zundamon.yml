@@ -17,6 +17,7 @@ jobs:
     timeout-minutes: 30
     env:
       PYTHONUNBUFFERED: '1'
+      PREVIEW_ONLY: 'true'
       VIDEO_DIR: videos/FZ002-nakami
       BAKE_RETRY: '2'
       BAKE_STALL_SEC: '180'
@@ -41,12 +42,17 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends ffmpeg p7zip-full
           python -m pip install pillow numpy
+      - name: Render storyboard for visual review
+        if: env.PREVIEW_ONLY == 'true'
+        run: python "$VIDEO_DIR/render.py" --preview
       - name: Start VOICEVOX
+        if: env.PREVIEW_ONLY != 'true'
         run: |
           sudo mkdir -p /opt/voicevox
           sudo chown "$USER":"$USER" /opt/voicevox
           bash production/setup_voicevox.sh
       - name: Generate one MP4 with progress supervision
+        if: env.PREVIEW_ONLY != 'true'
         run: |
           mkdir -p "$VIDEO_DIR/output"
           touch "$VIDEO_DIR/output/bake.log"

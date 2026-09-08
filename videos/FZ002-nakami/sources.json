@@ -58,5 +58,13 @@
     "重複率・集中度の数値を算出していない",
     "QQQをS&P500の完全な部分集合として描かない",
     "重ね買いが常に悪いとは言わない"
-  ]
+  ],
+  "report_excerpt": {
+    "fund": "オルカン",
+    "as_of": "2026-07-31",
+    "ticker": "NVDA",
+    "weight_pct": 4.4,
+    "source": "https://www.am.mufg.jp/pdf/geppou/253425/253425_202607.pdf",
+    "verification": "公式月報の検索インデックスでNVIDIA CORP. 4.4%を再確認。1商品のレポート確認箇所として表示。"
+  }
 }

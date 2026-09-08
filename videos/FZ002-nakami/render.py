@@ -100,136 +100,181 @@ def ease(t):
     t = min(1, max(0, t))
     return 1-(1-t)**3
 
+FUND_LABELS = ['オルカン','S&P500連動','QQQ']
+COMPANIES = [('エヌビディア','#28694F'),('アップル','#AD642D'),('マイクロソフト','#66558C')]
+
 def heading(scene):
-    if scene=='cover': return '投資信託3本で\n分散できる？'
-    if scene=='intro': return '別の商品でも\n中身は重なる'
-    if scene in ('products','names','common'): return '例えば、この3つ\n中身を見てみる'
-    if scene=='routes': return '商品は別でも\n投資先は重なる'
-    if scene=='different': return '全部同じ、\nという意味ではない'
-    if scene=='count': return '商品数だけでは\n分散は分からない'
-    return '見るべきは\n投資先と割合'
+    if scene=='cover': return '3本買えば、\n分散できる？'
+    if scene=='intro': return '商品の向こうに、\n投資先がある。'
+    if scene=='products': return 'この3つを、\n開いてみるのだ。'
+    if scene in ('names','common'): return 'あれ？\n同じ企業がいる。'
+    if scene in ('routes','count'): return '商品は3つ。\nでも、同じ企業へ。'
+    if scene=='different': return '共通する部分も、\n違う部分もある。'
+    if scene=='check': return '買う前に見るのは、\n投資先と割合。'
+    return '袋を分けても、\n中身は重なる。'
 
 def base(unit, number):
-    im=Image.new('RGB',(W,H),BG); d=ImageDraw.Draw(im)
-    # Full-width bands, symmetric interior padding; no reserved right rail.
-    d.rectangle((0,48,W,120),fill=INK)
-    text(d,(W/2,84),'やけに金融リテラシーの高いずんだもん',35,'white',width=W-64)
-    lines(d,(W/2,206),heading(unit.scene),70,88,width=W-64)
-    roundbox(d,(PANEL_LEFT,355,PANEL_RIGHT,1014),'white',radius=32)
-    roundbox(d,(433,1117,PANEL_RIGHT,1304),'#E9EFDF',radius=26)
-    text(d,(735,1210),unit.note,39,INK,width=558)
+    im=Image.new('RGB',(W,H),BG);d=ImageDraw.Draw(im)
+    d.rectangle((0,42,W,111),fill=INK)
+    text(d,(540,76),'やけに金融リテラシーの高いずんだもん',32,'white',width=1000)
+    for i,line in enumerate(heading(unit.scene).split('\n')):
+        text(d,(62,200+i*92),line,72,INK,anchor='lm',width=956)
+    d.rectangle((62,349,172,357),fill=GREEN)
+    # No generic diagram panel or repeated speech bubble: each visual owns its shape.
     d.rectangle((0,1360,W,1507),fill=INK)
-    subtitles=SUBTITLE_LINES[number].split('\n')
-    lines(d,(W/2,1433-(len(subtitles)-1)*33),'\n'.join(subtitles),52,66,'white',width=W-72)
-    text(d,(W/2,1536),'VOICEVOX:ずんだもん ｜ 立ち絵：坂本アヒル',23,INK,width=W-64)
+    sub=SUBTITLE_LINES[number].split('\n')
+    lines(d,(540,1433-(len(sub)-1)*33),'\n'.join(sub),52,66,'white',width=1008)
+    text(d,(540,1536),'VOICEVOX:ずんだもん ｜ 立ち絵：坂本アヒル',23,INK,width=1016)
     return im
 
-def source_note(d):
-    text(d,(540,990),'資料：オルカン26/7・S&P500連動26/8・QQQ26/9/4',24,INK,width=976)
+def arrow(d,a,b,color=INK,width=5):
+    d.line((*a,*b),fill=color,width=width)
+    angle=math.atan2(b[1]-a[1],b[0]-a[0]);length=15
+    pts=[b,(b[0]-length*math.cos(angle-.55),b[1]-length*math.sin(angle-.55)),(b[0]-length*math.cos(angle+.55),b[1]-length*math.sin(angle+.55))]
+    d.polygon(pts,fill=color)
 
-def product_cards(d,scene,t):
-    labels=['オルカン','S&P500連動','QQQ']
-    scopes=['世界の株','米国の大型株','米ナスダックの\n大型・非金融']
-    ids=['ac','sp','qqq']
-    for i,x in enumerate((52,390,728)):
-        y=485-int(24*(1-ease((t-i*.08)/.45)))
-        selected=scene==ids[i]
-        fill='#E9EFDF' if selected else '#F7F7F2'
-        roundbox(d,(x,y,x+300,y+354),fill,outline=GREEN if selected else '#B9C4AE',radius=22)
-        text(d,(x+150,y+59),labels[i],42,INK,width=272)
-        d.line((x+24,y+108,x+276,y+108),fill='#CBD3C2',width=3)
-        lines(d,(x+150,y+188),scopes[i],37,63,INK,width=272)
-    if scene=='ac':
-        text(d,(540,901),'eMAXIS Slim 全世界株式（オール・カントリー）',29,INK,width=976)
-    elif scene=='sp':
-        text(d,(540,901),'例：MAXIS米国株式（S&P500）上場投信',30,INK,width=976)
-    elif scene=='qqq':
-        text(d,(540,901),'Invesco QQQ：Nasdaq-100に連動するETF',30,INK,width=976)
-    elif scene=='different':
-        text(d,(540,901),'投資対象も、各企業の組入比率も異なる',36,GREEN,width=976)
-    else:
-        text(d,(540,901),'S&P500連動の例：MAXIS米国株式（S&P500）上場投信',27,GREEN,width=976)
+def source_note(d,single=False):
+    value='出典：オルカン 2026年7月月報（一部を図示）' if single else '保有資料：オルカン26/7・S&P500連動26/8・QQQ26/9/4'
+    text(d,(540,1035),value,23,INK,width=980)
+
+def company(d,box,idx,size=32):
+    name,color=COMPANIES[idx];roundbox(d,box,color,radius=12)
+    text(d,((box[0]+box[2])/2,(box[1]+box[3])/2),name,size,'white',width=box[2]-box[0]-20)
+
+def takeaway(d,scene):
+    msg={
+        'cover':'名前を数える前に、\n中身を見るのだ。',
+        'intro':'買っているのは、\nその先の投資対象。',
+        'products':'別の商品名。\n投資先はどうだろう？',
+        'names':'この顔ぶれ、\nどの商品にも。',
+        'common':'同じ色は、\n同じ企業なのだ。',
+        'routes':'別々の商品から、\n同じ企業を持つ。',
+        'different':'一部が共通でも、\n全部が同じではない。',
+        'count':'本数だけで\n分散は決められない。',
+        'check':'投資先と、その割合。\n保有全体で確認する。',
+        'close':'見るのは、\n袋の数より中身。',
+    }[scene]
+    lines(d,(387,1168),msg,43,72,INK,width=680)
+
+def selection(d,t):
+    roundbox(d,(62,406,1018,1000),'#FFFFFF',radius=26)
+    text(d,(107,457),'購入候補',36,INK,anchor='lm',width=780)
+    text(d,(940,457),'3商品',30,GREEN,width=130)
+    for i,name in enumerate(FUND_LABELS):
+        y=576+i*137
+        if i: d.line((108,y-67,972,y-67),fill='#DDE3D9',width=2)
+        d.ellipse((108,y-24,156,y+24),fill=GREEN)
+        d.line((119,y,128,y+10,145,y-11),fill='white',width=5)
+        text(d,(194,y-9),name,51,INK,anchor='lm',width=725)
+        desc=['全世界株式','米国の大型株','Nasdaq-100に連動するETF'][i]
+        text(d,(194,y+41),desc,25,'#607568',anchor='lm',width=725)
+
+def pooling(d,t):
+    text(d,(540,430),'投資家のお金',36,INK,width=980)
+    for x in (240,440,640,840):
+        d.ellipse((x-37,477,x+37,551),fill='#EAD5A4',outline=GOLD,width=3)
+        text(d,(x,514),'円',35,INK,width=62)
+        arrow(d,(x,562),(540,662),'#9AAA99',4)
+    roundbox(d,(308,664,772,778),INK,radius=22)
+    text(d,(540,721),'投資信託',53,'white',width=420)
+    for x in (238,540,842):
+        arrow(d,(540,789),(x,874),GREEN,5)
+        d.rectangle((x-50,884,x+50,972),fill='#CCD9CC')
+        for dx in (-25,0,25):
+            for y in (902,928):d.rectangle((x+dx-5,y,x+dx+5,y+12),fill=INK)
+    text(d,(540,1018),'企業の株など、いろいろな投資対象へ',30,INK,width=980)
+
+def folders(d,scene,t):
+    opened=scene in ('names','common','different')
+    for i,x in enumerate((62,397,732)):
+        roundbox(d,(x+8,441,x+294,990),'#DDE5D9',radius=13)
+        roundbox(d,(x,420,x+286,977),'white',outline='#B5C3B0',radius=13)
+        d.rectangle((x,448,x+286,531),fill=INK)
+        text(d,(x+143,489),FUND_LABELS[i],37,'white',width=260)
+        if not opened:
+            text(d,(x+143,649),'運用レポート',34,INK,width=260)
+            for y,w in ((724,186),(755,158),(786,174)):
+                d.line((x+47,y,x+47+w,y),fill='#D0D9CB',width=7)
+            text(d,(x+143,899),'投資先を見る',30,GREEN,width=260)
+        else:
+            for j in range(3):
+                y=568+j*104
+                shown=scene!='names' or t>j*.32
+                if shown: company(d,(x+14,y,x+272,y+74),j,29)
+            d.line((x+27,895,x+259,895),fill='#D9E1D4',width=2)
+            detail=['全世界の株式へ','米国の大型株へ','Nasdaq-100へ'][i] if scene=='different' else 'ほかの保有企業も'
+            text(d,(x+143,936),detail,26,INK,width=258)
     source_note(d)
 
-def tick(d,x,y,active):
-    d.ellipse((x-27,y-27,x+27,y+27),fill=GREEN if active else '#E3E8DD')
-    if active:d.line((x-13,y,x-3,y+12,x+15,y-13),fill='white',width=7)
+def convergence(d,t):
+    for i,(x,name) in enumerate(zip((213,540,867),FUND_LABELS)):
+        text(d,(x,450),name,36,INK,width=294)
+        company(d,(x-139,510,x+139,587),0,31)
+        arrow(d,(x,601),(540,784),'#7C9C86',5)
+        u=(t*.40+i*.22)%1
+        px=x+(540-x)*u;py=611+(774-611)*u
+        d.ellipse((px-7,py-7,px+7,py+7),fill=GREEN)
+    roundbox(d,(346,657,734,714),BG,radius=10)
+    text(d,(540,685),'投資額の一部が',32,INK,width=360)
+    company(d,(183,795,897,924),0,67)
+    text(d,(540,979),'同じ企業への投資が重なる',38,INK,width=980)
+    source_note(d)
 
-def diagram(im,scene,t):
+def report(d,t):
+    # One sourced real row demonstrates WHERE to inspect names and weights.
+    d.polygon([(120,424),(960,424),(960,1001),(120,1001)],fill='#D7DED1')
+    d.rectangle((104,410,944,985),fill='white')
+    text(d,(146,461),'月次レポート',43,INK,anchor='lm',width=742)
+    text(d,(146,519),'オルカン｜2026年7月31日',29,INK,anchor='lm',width=742)
+    d.line((146,565,902,565),fill=INK,width=3)
+    text(d,(147,625),'組入銘柄',34,INK,anchor='lm',width=430)
+    text(d,(800,625),'比率',34,INK,width=172)
+    roundbox(d,(132,677,916,789),'#EBF2E5',outline=GREEN,radius=13)
+    text(d,(158,733),'NVIDIA',55,INK,anchor='lm',width=470)
+    text(d,(791,733),'4.4%',62,INK,width=210)
+    for y,w in ((827,636),(863,583),(899,620)):
+        d.line((150,y,150+w,y),fill='#E3E7DE',width=9)
+    arrow(d,(292,652),(292,691),GREEN,4)
+    arrow(d,(800,652),(800,691),GREEN,4)
+    source_note(d,True)
+
+def bags(d,t):
+    for i,x in enumerate((62,397,732)):
+        d.arc((x+74,420,x+212,595),180,360,fill=INK,width=7)
+        d.polygon([(x+19,502),(x+267,502),(x+286,915),(x,915)],fill='#E4EBD9',outline=INK,width=3)
+        text(d,(x+143,565),FUND_LABELS[i],36,INK,width=257)
+        for j in range(3):company(d,(x+20,631+j*84,x+266,691+j*84),j,27)
+        text(d,(x+143,890),'ほか',23,INK,width=250)
+    source_note(d)
+
+def diagram(im,scene,t,number):
     d=ImageDraw.Draw(im)
-    if scene in ('products','different'):
-        text(d,(540,405),'実際の投資対象で比べる',34,GREEN,width=976)
-        product_cards(d,scene,t)
-    elif scene in ('names','common'):
-        text(d,(540,405),'共通する保有企業の例',36,GREEN,width=976)
-        for x,label in zip((505,718,930),('オルカン','S&P500連動','QQQ')):
-            text(d,(x,492),label,31,INK,width=204)
-        d.line((60,537,1020,537),fill='#CDD5C4',width=3)
-        for i,company in enumerate(SOURCES['companies']):
-            y=604+i*132
-            roundbox(d,(52,y-49,1028,y+49),'#F0F3E8',radius=15)
-            text(d,(224,y),company['name'],36,INK,width=330)
-            for j,x in enumerate((505,718,930)):
-                present=company['ticker'] in SOURCES['funds'][j]['examples']
-                tick(d,x,y,present and (scene=='common' or t>i*.20+j*.07))
-        text(d,(540,939),'各資料で保有を確認。全銘柄の一致ではありません',29,INK,width=976)
-        source_note(d)
-    elif scene=='routes':
-        for x,label in zip((202,540,878),('オルカン','S&P500連動','QQQ')):
-            roundbox(d,(x-150,442,x+150,544),'#E9EFDF',radius=20)
-            text(d,(x,493),label,39,INK,width=276)
-            d.line((x,550,540,720),fill='#92A783',width=6)
-        roundbox(d,(332,588,748,645),'white',radius=12)
-        text(d,(540,615),'投資額の一部が',39,INK,width=396)
-        roundbox(d,(160,724,920,865),INK,radius=24)
-        text(d,(540,796),'エヌビディア',76,'white',width=712)
-        text(d,(540,928),'同じ企業への投資を重ねることになる',34,GREEN,width=976)
-        source_note(d)
-    elif scene in ('cover','intro','count'):
-        labels = ['1本目','2本目','3本目']
-        for i,x in enumerate((52,390,728)):
-            roundbox(d,(x,480,x+300,726),'#E9EFDF',outline=GREEN,radius=24)
-            text(d,(x+150,540),labels[i],46,INK,width=272)
-            text(d,(x+150,645),'中身は？',42,INK,width=272)
-        if scene=='cover':
-            text(d,(540,407),'商品を3本に増やしたら……',38,GREEN,width=976)
-            text(d,(540,858),'投資先まで増えた？',60,INK,width=976)
-        elif scene=='intro':
-            text(d,(540,407),'お金をまとめて、投資先へ',38,GREEN,width=976)
-            for x in (202,540,878):
-                d.line((x,738,540,816),fill='#92A783',width=5)
-            roundbox(d,(180,818,900,929),INK,radius=24)
-            text(d,(540,872),'同じ企業を含むことがある',44,'white',width=676)
-        else:
-            lines(d,(540,842),'3本でも、投資先は重なる',47,72,INK,width=976)
-            text(d,(540,937),'数えたいのは商品の数ではなく、中身',34,GREEN,width=976)
-    else:
-        text(d,(540,425),'月次レポートで確認',40,GREEN,width=976)
-        for i,(label,detail) in enumerate([
-            ('投資先','どの企業・地域などに投資している？'),
-            ('割合','各投資先に、どれくらい配分している？')]):
-            y=545+i*210
-            roundbox(d,(64,y-63,1016,y+91),'#E9EFDF',radius=24)
-            text(d,(222,y),label,58,INK,width=260)
-            text(d,(682,y),detail,30,INK,width=636)
-        text(d,(540,943),'商品をまたいで、中身の重なりを確かめる',34,GREEN,width=976)
+    if scene=='cover':selection(d,t)
+    elif scene=='intro' and number==2:pooling(d,t)
+    elif scene=='intro':folders(d,'products',t)
+    elif scene in ('products','names','common','different'):folders(d,scene,t)
+    elif scene in ('routes','count'):convergence(d,t)
+    elif scene=='check' and number==10:report(d,t)
+    elif scene=='check':convergence(d,t)
+    elif scene=='close':bags(d,t)
+    takeaway(d,scene)
 
 @lru_cache(None)
 def sprite(expr,mouth,eyes):
     p=PARTS/f'{expr}_{mouth}_{eyes}.png'
     if not p.exists(): p=PARTS/f'{expr}_{mouth}_open.png'
     if not p.exists(): p=PARTS/'normal_0_open.png'
-    return Image.open(p).convert('RGBA').resize((288,329),Image.Resampling.LANCZOS)
+    return Image.open(p).convert('RGBA').resize((258,295),Image.Resampling.LANCZOS)
 
 def frame(unit,number,time,voice,rate):
     im=base_cache[number].copy()
-    diagram(im,unit.scene,time)
+    diagram(im,unit.scene,time,number)
     a=int(max(0,time-.02)*rate); b=min(len(voice),a+int(rate*.10))
     rms=float(np.sqrt(np.mean(voice[a:b]**2))) if b>a else 0
     mouth=2 if rms>.055 else 1 if rms>.012 else 0
     eyes='closed' if 1.70 < time%3.6 < 1.84 else 'open'
     dy=round(4*math.sin(time*2))
-    im.paste(sprite(unit.expr,mouth,eyes),(80,1020+dy),sprite(unit.expr,mouth,eyes))
+    im.paste(sprite(unit.expr,mouth,eyes),(790,1055+dy),sprite(unit.expr,mouth,eyes))
     if np.any(np.asarray(im)[CONTENT_BOTTOM:] != np.array([247,245,236])):
         raise ValueError('Bottom UI reserve is not empty')
     if tuple(im.getpixel((W-1,1400))) != (24,61,50):
@@ -331,4 +376,24 @@ def main():
     (OUT/'render-report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
     print(f'[draw] COMPLETE {target} {cursor:.2f}s',flush=True)
 
-if __name__=='__main__': main()
+def preview():
+    import base64
+    OUT.mkdir(parents=True,exist_ok=True)
+    assets={str(FONT.relative_to(ROOT)):base64.b64encode(FONT.read_bytes()).decode()}
+    for expr in ('normal','smug','happy'):
+        for p in PARTS.glob(expr+'*.png'):
+            assets[str(p.relative_to(ROOT))]=base64.b64encode(p.read_bytes()).decode()
+    (OUT/'preview-assets.json').write_text(json.dumps(assets))
+    global base_cache
+    base_cache=[base(u,i) for i,u in enumerate(UNITS)]
+    sheet=Image.new('RGB',(1080,1440),'white')
+    for k,idx in enumerate((0,2,4,5,6,7,8,9,10,11,12,13)):
+        for t in (0,.15,.5,1.2):frame(UNITS[idx],idx,t,np.zeros(24000,dtype=np.float32),24000)
+        im=frame(UNITS[idx],idx,1.2,np.zeros(24000,dtype=np.float32),24000)
+        im.save(OUT/f'preview-{idx:02d}.png')
+        sheet.paste(im.resize((270,480)),((k%4)*270,(k//4)*480))
+    sheet.save(OUT/'storyboard-preview.jpg',quality=94)
+    print('Static storyboard ready for visual review',flush=True)
+
+if __name__=='__main__':
+    preview() if '--preview' in sys.argv else main()
