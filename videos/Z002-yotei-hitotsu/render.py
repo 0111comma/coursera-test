@@ -49,6 +49,7 @@ SCENES = {
                            disclaimer="※ 出典: セネカ『人生の短さについて』1.3・1.4・3.1"),
     "gisshiri": sz.calendar_pair("03_troubled", left=("月", "×"), right=("火", "×")),
     "tarinai": sz.thinking_loop("03_troubled"),
+    "iresugi": sz.calendar_one("04_surprised", "今週", "!", bubble="入れすぎ"),
     "hantei": sz.calendar_one("02_point", "今週", "?", bubble="入れたの誰?"),
     "joushi": sz.boss_sheet("04_surprised", "上司のせい?"),
     "watashi": sz.bubble_locked("04_surprised", "自分で入れた"),
@@ -84,6 +85,7 @@ SCENES = {
     "yonda": sz.ancient_person("05_happy", "『エセー』", "モンテーニュ"),
     "yameta": sz.calendar_one("05_happy", "職", "×", bubble="37歳で辞めた"),
     "chuui": sz.calendar_one("02_point", "今週", "×", bubble="あなたは1件"),
+    "mada": sz.calendar_pair("03_troubled", left=("来週", "×"), right=("再来週", "×")),
 
     # ---- 幕6 もう一文 → 動作 → 締め(8)
     "iu2": sz.ancient_person("02_point", "セネカ", "財産の話"),
@@ -93,6 +95,7 @@ SCENES = {
     "kesu1": sz.calendar_pair("03_troubled", left=("木", "×"), right=("金", "×")),
     "kimeru": sz.calendar_one("02_point", "今夜", "?", bubble="決める"),
     "kesu2": sz.calendar_one("02_point", "今週", "×", bubble="1件だけ消す"),
+    "ikken": sz.bubble_locked("02_point", "1件だけ"),
     "henshin": sz.memo_tag("02_point", "「欠席します」"),
     "owari": sz.go_home("05_happy"),
 }
@@ -128,9 +131,10 @@ UNITS = [
     U("toi", "今週のカレンダー、自分が出なくていい会議が1件ない?", cover=True, se="pop",
       speed=1.28, intonation=1.25, pad=0.06),
     U("gisshiri", "会議も予定も、時間がないんじゃなくて入れすぎでしょ。"),
+    U("iresugi", "入れすぎたの、誰?", **_S),
     U("hantei", "予定を入れたの、自分だよね。", **_S),
     U("joushi", "その予定を入れたのは上司? いいよって返したのは自分でしょ。", **_D),
-    U("toi2", "じゃあ、やめる1件はどう選ぶ? 西暦49年の本に答えが。"),
+    U("toi2", "じゃあ、やめる1件はどう選ぶ? 古代ローマの本に答えが。"),
 
     # ---- 幕2 誰が言った(8)。**宛先の職**が、視聴者の反論(自分がいないと回らない)への答え
     U("dashita", "その本、忙しすぎる役所の人に予定を手放せって言ってる。"),
@@ -158,6 +162,7 @@ UNITS = [
     U("yonda", "その一文を読んで、実際に仕事をやめた人がいるの。"),
     U("yameta", "フランスの役人モンテーニュ。37歳で裁判所の職を手放した人。"),
     U("chuui", "この人は仕事ごとやめたけど、あなたは1件でいい。", **_S),
+    U("mada", "会議はまだ入るよ。来週も、その次も。"),
 
     # ---- 幕6 もう一文 → 動作 → 締め(8)。**山は動作のカットに置く**
     U("iu2", "1件の選び方が、セネカのお金の話にあるの。", **_S),
@@ -167,6 +172,7 @@ UNITS = [
     U("kesu1", "あなたが一度もしゃべらない会議。それが人にあげた時間。"),
     U("kimeru", "その会議を消すかどうか、今夜決めるの。", **_S),
     U("kesu2", "会議を1件選んで、今週のうちに消す。", **_D),
+    U("ikken", "1件でいいの。", **_S),
     U("henshin", "消せない会議なら、「欠席します」の返事でいい。"),
     U("owari", "返事は一言でいい。1件ぶんの時間が自分に戻る。"),
 ]

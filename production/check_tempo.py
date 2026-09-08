@@ -150,8 +150,18 @@ def scene_parts(src: str) -> dict:
 
 
 def real_duration(vdir: Path) -> float | None:
+    """焼いた mp4 の実尺。**台本より古い mp4 は使わない**(2026-09-08)。
+
+    Z003 は47カットで焼いた mp4 が残ったまま台本を39カットに削ったので、
+    このゲートは**もう存在しない8カットぶんの尺**で「1カット3.30秒。
+    あと4カット要る」と言った。古い出荷物を真実として読むのは、
+    check_video のサムネや bake_status の完了判定と同じ型の間違い。
+    台本より古ければ字数からの推定に落とす。
+    """
     mp4 = next(iter(sorted((vdir / "output").glob("*.mp4"))), None)
     if mp4 is None:
+        return None
+    if mp4.stat().st_mtime < (vdir / "render.py").stat().st_mtime:
         return None
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                         "format=duration", "-of", "csv=p=0", str(mp4)],
