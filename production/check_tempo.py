@@ -33,6 +33,7 @@ S032 の render.py の3行目には、私自身がこう書いていた:
 
 免除: production/gate_exempt.txt に `動画ID:tempo:0  # 理由`
 """
+import importlib.util
 import re
 import subprocess
 import sys
@@ -41,11 +42,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 MAX_CUT_SEC = 2.4     # 平均。競合1.6〜1.8に対し、余裕を見てここを上限にする
+# チャンネル「ヤケに心理学に詳しいずんだもん」(ID が Z)は 3.0 秒まで(2026-09-04)。
+# ユーザー指摘「まだ全然日本語がAI感強い」。1カット2.4秒に収めるために字幕が
+# 見出し語の羅列(「直すか、決めるか。今日はどっち?」)になり、それがAI感の一因だった。
+# 話し言葉は1文がもう少し長い。2.4 はお金のチャンネルの競合実測から置いた値で、
+# 話し言葉を優先するこのチャンネルにはそのまま当てない
+MAX_CUT_SEC_Z = 3.0
 LONG_CUT_SEC = 4.5    # 1カットの上限。これ以上そのままの絵は出さない
 # 字数→秒。**7.4 は S032 1本だけを見た値で、2割ほど短く見積もっていた**(2026-08-24)。
 # 公開済み29本の実測(字数 ÷ mp4の尺)の中央値は 6.05 字/秒(範囲 4.71〜7.21)。
 # 短く見積もると「カットは足りている」と誤判定するので、中央値に直した。
 CHARS_PER_SEC = 6.05
+# チャンネル「ヤケに心理学に詳しいずんだもん」(Z 番台)の実測。
+# Z001 は 972字 / 112.185秒 = **8.66字/秒**で、6.05 を当てると尺を1.4倍に見積もる。
+# 長く見積もると「カットは足りている」と言えなくなり、**足りているのに足せと言う**ゲートになる。
+# 少しだけ辛い側(8.4)に置いて、焼いたあとの実測とずれても落とす側に倒す
+CHARS_PER_SEC_Z = 8.4
 
 
 def load_exempt(gate: str) -> set[str]:
@@ -61,13 +73,95 @@ def load_exempt(gate: str) -> set[str]:
     return out
 
 
-def units_of(src: str) -> list[tuple[str, str]]:
-    return re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
+def units_of(src: str, render_py=None) -> list[tuple[str, str]]:
+    """(場面, 字幕)の一覧。**render.py を実際に読み込んで UNITS を取る。**
+
+    2026-09-07: ここは `Unit("scene", "字幕"` の字面を正規表現で拾っていた。
+    Z002 が `def U(scene, sub, **kw)` の助け関数で Unit を作った瞬間、
+    **1件も拾えず、ユニット0本として黙って合格した**(40カット4.3秒/カットが素通り)。
+    台本の書き方を変えるとゲートが効かなくなるのは、ゲートの作りのほうが悪い。
+    読み込めないときだけ、昔の正規表現に落ちる。
+    """
+    err = None
+    if render_py is not None:
+        try:
+            spec = importlib.util.spec_from_file_location(f"tp_{Path(render_py).parent.name}", render_py)
+            mod = importlib.util.module_from_spec(spec)
+            sys.modules[spec.name] = mod
+            spec.loader.exec_module(mod)
+            us = getattr(mod, "UNITS", [])
+            if us:
+                return [(u.scene, u.subtitle.replace("【", "").replace("】", "")) for u in us]
+        except Exception as e:
+            err = e
+    got = re.findall(r'Unit\(\s*"([^"]+)",\s*"([^"]+)"', src)
+    if not got and err is not None:
+        # **黙って合格しない。**読めない render.py をユニット0本として [OK] にすると、
+        # 文法エラーのある台本がゲートを通り抜ける(2026-09-07 に実際に通した)。
+        raise RuntimeError(f"render.py を読めない: {err}")
+    return got
+
+
+def scene_parts(src: str) -> dict:
+    """SCENES の各キーが**どの部品をどのデータで**呼んでいるかを返す。
+
+    2026-08-30 retention/medium: このゲートは「SCENES の辞書キー名が変わったら
+    カット」で数えていた。だから同一の表を描く hyo_a/hyo_aru/hyo_n/hyo_g が
+    4カットに数えられ、63.0秒/22カットで [OK] を返していた。実測の絵の変化で
+    数えると 19カット=3.32秒/カット、最長カット12.8秒(基準の2.85倍)だった。
+    docstring の「絵が変わらなければカットではない」をゲート自身が
+    検出できていなかったということ。
+
+    **キー名ではなく部品の同一性で見る。**`sf.<関数名>(` の関数名と
+    第1・第2引数(table なら headers/rows のリテラル)が同じ連続ユニットは
+    1カットに畳む。引数まで含めて同一なら、絵は原理的に同じになる。
+    """
+    body = src[src.index("SCENES = {"):] if "SCENES = {" in src else ""
+    out = {}
+    for m in re.finditer(r'"([A-Za-z0-9_]+)"\s*:\s*s[a-z]\.([a-z_]+)\(', body):
+        key, fn = m.group(1), m.group(2)
+        # 呼び出しの丸括弧を数えて引数の本文を取り出す
+        i = m.end()
+        depth, start = 1, i
+        while i < len(body) and depth:
+            c = body[i]
+            if c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+            i += 1
+        args = body[start:i - 1]
+        # コメント行を落とし、最初の2引数(トップレベルのカンマ区切り)を取る
+        args = re.sub(r"#[^\n]*", "", args)
+        parts, depth, cur = [], 0, ""
+        for c in args:
+            if c in "([{":
+                depth += 1
+            elif c in ")]}":
+                depth -= 1
+            if c == "," and depth == 0:
+                parts.append(cur); cur = ""
+            else:
+                cur += c
+        parts.append(cur)
+        head = tuple(re.sub(r"\s+", "", x) for x in parts[:2])
+        out[key] = (fn,) + head
+    return out
 
 
 def real_duration(vdir: Path) -> float | None:
+    """焼いた mp4 の実尺。**台本より古い mp4 は使わない**(2026-09-08)。
+
+    Z003 は47カットで焼いた mp4 が残ったまま台本を39カットに削ったので、
+    このゲートは**もう存在しない8カットぶんの尺**で「1カット3.30秒。
+    あと4カット要る」と言った。古い出荷物を真実として読むのは、
+    check_video のサムネや bake_status の完了判定と同じ型の間違い。
+    台本より古ければ字数からの推定に落とす。
+    """
     mp4 = next(iter(sorted((vdir / "output").glob("*.mp4"))), None)
     if mp4 is None:
+        return None
+    if mp4.stat().st_mtime < (vdir / "render.py").stat().st_mtime:
         return None
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                         "format=duration", "-of", "csv=p=0", str(mp4)],
@@ -85,32 +179,39 @@ def check_video(vdir: Path):
     src = rp.read_text()
     if "use_landscape" in src:
         return []            # 長尺は check_long が別の基準で見る
-    units = units_of(src)
+    try:
+        units = units_of(src, rp)
+    except RuntimeError as e:
+        return [("(全体)", "台本を読めない", str(e))]
     if not units:
         return []
 
-    # 絵が変わる回数。同じ場面が続くユニットは1カット
+    # 絵が変わる回数。**同じ部品を同じデータで描く連続ユニットは1カット**
+    parts = scene_parts(src)
     cuts, prev = [], None
     for scene, sub in units:
-        if scene != prev:
+        sig = parts.get(scene, ("?", scene))
+        if sig != prev:
             cuts.append([sub])
         else:
             cuts[-1].append(sub)
-        prev = scene
+        prev = sig
 
     total = real_duration(vdir)
     estimated = total is None
     if estimated:
+        cps = CHARS_PER_SEC_Z if vdir.name.startswith("Z") else CHARS_PER_SEC
         total = sum(len(s.replace("【", "").replace("】", ""))
-                    for _, s in units) / CHARS_PER_SEC
+                    for _, s in units) / cps
 
     issues = []
     avg = total / len(cuts)
-    if avg > MAX_CUT_SEC:
-        need = int(total / MAX_CUT_SEC + 0.999)
+    limit = MAX_CUT_SEC_Z if vdir.name.startswith("Z") else MAX_CUT_SEC
+    if avg > limit:
+        need = int(total / limit + 0.999)
         issues.append(("(全体)", "カットが遅い",
                        f"{total:.1f}秒 / {len(cuts)}カット = "
-                       f"**1カット{avg:.2f}秒**。上限{MAX_CUT_SEC}秒。"
+                       f"**1カット{avg:.2f}秒**。上限{limit}秒。"
                        f"競合は1.6〜1.8秒。**あと{need - len(cuts)}カット要る**"
                        f"{'(尺は字数からの推定)' if estimated else ''}"))
 

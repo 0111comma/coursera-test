@@ -202,6 +202,17 @@ def compounds(text: str):
 
 
 def check_line(text: str, ok):
+    # yomi_ok.txt に「語:読み」で登録された読みも**正解の候補**として探す。
+    #
+    # 2026-09-07: ここは登録を `(surf, want) in ok` でしか見ていなかった。
+    # want は辞書が期待する読みなので、**このゲートが出す指示どおりに
+    # 「語:実際の読み」を書き足しても、いつまでも消えなかった**
+    # (「ヴォルテール:ボルテエル」— 辞書の期待は ブォルテエル)。
+    # 指示どおりに直したのに落ち続けるゲートは、指示か判定のどちらかが嘘なので直す。
+    ok_yomi: dict = {}
+    for w, y in ok:
+        if y:
+            ok_yomi.setdefault(w, set()).add(y)
     kana = loose(voicevox_kana(text))
     pos = 0
     bad = []
@@ -242,7 +253,7 @@ def check_line(text: str, ok):
                     continue
                 limit = len(kana)         # それでも読みが違う数字は窓を全開に
         hit = -1
-        for v in variants(want):
+        for v in list(variants(want)) + sorted(ok_yomi.get(surf, ())):
             i = kana.find(v, pos)
             if i != -1 and i <= limit and (hit == -1 or i < hit):
                 hit, want_hit = i, v

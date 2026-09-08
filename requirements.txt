@@ -1,0 +1,11 @@
+# 動画のレンダリングに要る Python パッケージ
+#   pip install -r requirements.txt
+# 別に必要なもの(pip では入らない):
+#   - ffmpeg          … 音声と動画の結合
+#   - VOICEVOX エンジン … bash production/setup_voicevox.sh(Linux)。
+#                         mac/Windows は VOICEVOX 本体を起動しておけばよい(127.0.0.1:50021)
+#   - 日本語フォント    … Noto Sans CJK JP 推奨(無ければ setup_fonts が名前で探す)
+matplotlib>=3.8
+numpy>=1.26
+Pillow>=10
+janome>=0.5      # check_goi.py(語の省略を見るゲート)が使う

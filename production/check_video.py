@@ -13,6 +13,7 @@ import sys
 import urllib.parse
 import urllib.request
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from shortlib import SPEED_SCALE, SUB_WRAP, wrap_plain  # noqa: E402
@@ -109,6 +110,77 @@ def _fp_lines(plain: str) -> int:
     return rows
 
 
+_SUB_FIG = None
+
+
+def _fp_rows_measured(plain: str, video_dir=None):
+    """**レンダラと同じ計算**で字幕の行数と下端を出す(2026-09-07)。
+
+    fplib._subtitle_wordpop が焼くときに使う _fit_rows をそのまま呼ぶ。
+    概算(_fp_lines)は「12字で折る」だけなので、実測幅で折る本番と
+    行数がずれる。ずれた分だけ、焼き始めてから止まる。
+
+    **測る前にテーマを張る。**級数(S.SUB_FS=84)と折り返し幅
+    (S.SUB_BLOCK_FIT=0.86)はテーマが決めるので、張らずに測ると
+    shortlib の既定値で数えることになり、3行の組を2行と数えてしまう。
+    テーマを張るのは render.py を import することなので、ここで行う
+    (VOICEVOX が動いていなくても測れるようにする。尺の推定と違って、
+    行数は音声が無くても決まる)。
+    """
+    global _SUB_FIG
+    import re as _re
+    import fplib as _F
+    import shortlib as _S
+    if _SUB_FIG is None:
+        if video_dir is not None and not getattr(_S, "_CV_THEME_LOADED", False):
+            try:
+                spec = importlib.util.spec_from_file_location(
+                    f"cvsub_{Path(video_dir).name}", Path(video_dir) / "render.py")
+                mod = importlib.util.module_from_spec(spec)
+                sys.modules[spec.name] = mod
+                spec.loader.exec_module(mod)
+            except Exception:
+                pass
+            _S._CV_THEME_LOADED = True
+        # **書体を必ず張ってから測る。**RocknRoll One が無いまま測ると
+        # 代替書体の字幅で数えることになり、本番と行数がずれる
+        _F._setup_font()
+        _SUB_FIG = _S.new_canvas()
+        _SUB_FIG.canvas.draw()
+    r = _SUB_FIG.canvas.get_renderer()
+    t = _re.sub(r"。\s*$", "", str(plain).rstrip())
+    fs, rows = _F._fit_rows(_SUB_FIG, r, _F._words(t), float(_S.SUB_FS))
+    step = _S.SUB_LINE_H * (fs / 40)
+    return len(rows), _S.SUBTITLE_Y - (len(rows) - 1) * step
+
+
+def _dup_dict_keys(render_py) -> list:
+    """render.py の辞書リテラルの中で、2回以上書かれている文字列キーを返す。
+
+    2026-09-07: Python の辞書リテラルは同じキーを2回書いてもエラーにならず、
+    **後ろが黙って勝つ**。Z001 は SCENES に "naze2" が2つあり、声が
+    「なんで残った?」と言うカットの絵が系譜図に差し替わったまま焼き上がっていた。
+    目で全カット見ないと気づけない欠陥なので、機械で見る。
+    """
+    import ast
+    from collections import Counter
+    try:
+        tree = ast.parse(Path(render_py).read_text())
+    except SyntaxError:
+        return []
+    out = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Dict):
+            continue
+        keys = [k.value for k in node.keys
+                if isinstance(k, ast.Constant) and isinstance(k.value, str)]
+        out += [f"{k}×{c}" for k, c in Counter(keys).items() if c > 1]
+    return out
+
+
+PRE = "--pre" in sys.argv     # 焼く前の検証(出荷物 mp4 を見ない)
+
+
 def main(video_dir: Path) -> int:
     fails, warns = [], []
 
@@ -141,8 +213,12 @@ def main(video_dir: Path) -> int:
     FIG_W = 1920 if LONG else 1080
     BLOCK_FIT = 0.86 if LONG else 0.70
     SUB_PT = 40 if LONG else 52
-    units = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
+    units = subtitles(video_dir / "render.py", src)
     check("render.py にユニット定義", len(units) > 0, f"{len(units)}ユニット")
+    dups = _dup_dict_keys(video_dir / "render.py")
+    check("SCENES などのキーが重複していない", not dups,
+          ("重複: " + " / ".join(dups) + "。**後ろの定義が黙って勝つので、声と絵がずれる**"
+           if dups else ""))
     total_chars = 0
     for u in units:
         plain = u.replace("【", "").replace("】", "")
@@ -161,16 +237,26 @@ def main(video_dir: Path) -> int:
         # wrap_plain(句読点だけで折る)で見積もると実際より長い行が出て、
         # 画面に収まっているものを「縮小しすぎ」と誤検出する(2026-08-24)。
         # S033 で3件の誤検出が出た(画素で測って収まっていることを確認済み)。
+        # **12字の概算ではなく、レンダラと同じ実測で数える**(2026-09-07)。
+        # 概算(_fp_lines)は3行までを通していたが、実際に描くのは
+        # fplib._subtitle_wordpop で、そこは **2行を超えると AssertionError で
+        # 焼くのを止める**。Z001 の3本(「変えられるものを…」「『提要』みたいな…」
+        # 「精神分析じゃ、患者は…」)がこのゲートを通ったまま、2時間焼いた
+        # あとの14カット目で落ちた。ゲートが見ていた行数と、焼く側が数える
+        # 行数が違っていたのが原因なので、**同じ関数で数える**。
         if not LONG and "fplib" in src:
             import fplib as _F
-            nline = max(1, len(_F._words(plain)) and
-                        len({i for i in range(1)}) and
-                        _fp_lines(plain))
+            nline, bottom = _fp_rows_measured(plain, video_dir)
+            if nline > _F.MAX_LINES or bottom < _F.SUB_BOTTOM_MIN:
+                check(f"字幕{_F.MAX_LINES}行以内(実測): {plain[:14]}…", False,
+                      f"{nline}行/下端{bottom:.3f}。**このまま焼くと render が止まる**")
+            continue_warn = (nline == _F.MAX_LINES)
         else:
             nline = len(wrap_plain(plain, WRAP))
-        if nline > (2 if LONG else 3):
-            check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
-        elif nline == 3:
+            if nline > (2 if LONG else 3):
+                check(f"字幕{2 if LONG else 3}行以内: {plain[:14]}…", False, f"{nline}行")
+            continue_warn = (nline == 3)
+        if continue_warn and not (not LONG and "fplib" in src):
             # 落とさないが、3行は冒頭など**必要なところだけ**にする
             warn(f"字幕3行: {plain[:14]}…", f"{nline}行。立ち絵との余白は90px")
     check("ユニット文長(全体)", True, f"合計{total_chars}字")
@@ -239,7 +325,14 @@ def main(video_dir: Path) -> int:
         else:
             check("推定尺", True, f"約{est / 60:.1f}分")
     else:
-        check("推定尺 55秒以内", est <= 55.5, f"約{est:.0f}秒")
+        # Z 番台(心理学チャンネル)は 60秒未満だけを見る(2026-09-04)。
+        # 55秒は作り手が置いた内部目標で、ユーザーは「長さはあなたが勝手に決めたルール。
+        # 60秒未満なら何でもいい」(2026-08-31)。分かりやすさのために語を足すと
+        # 55秒を超えるので、この内部目標が説明の省略を招いていた
+        # Z 番台は 3分(Shorts の上限)まで。2026-09-05 ユーザー「別に1分超えていいから」——
+        # 60秒に収めるために学び(誰が・なぜ残った・誰が評価した)を削っていた
+        limit = 179.5 if video_dir.name.startswith("Z") else 55.5
+        check(f"推定尺 {int(limit)}秒以内", est <= limit, f"約{est:.0f}秒")
     joined = "".join(units) + src
     bad = [w for w in FORBIDDEN if w in joined]
     check("禁止表現なし(戦略§6)", not bad, ",".join(bad))
@@ -304,6 +397,11 @@ def main(video_dir: Path) -> int:
         r"(助言|アドバイス)(では|でも)ありません|推奨(するもの|または否定するもの)?(では|でも)ありません", smd)))
 
     # 4. 出力mp4の機械検証
+    # --pre(焼く前)では飛ばす。まだ焼いていないものを見ても落ちるだけで、
+    # 焼く前に効くのは上の「字幕が2行に収まるか」の実測のほう。
+    if PRE:
+        print(f"\n結果: {len(fails)}件 FAIL(焼く前の検証。mp4 の検証は飛ばした)")
+        return 1 if fails else 0
     mp4 = video_dir / "output" / next((p.name for p in (video_dir / "output").glob("*.mp4")), "none.mp4")
     if mp4.exists():
         dur = float(subprocess.run(
@@ -316,7 +414,11 @@ def main(video_dir: Path) -> int:
             else:
                 check("尺", True, f"{dur / 60:.1f}分")
         else:
-            check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
+            # Z 番台は 3分まで(2026-09-05 ユーザー「別に1分超えていいから」。Shorts の上限)
+            if video_dir.name.startswith("Z"):
+                check("尺 3分未満", dur < 180, f"{dur:.1f}s")
+            else:
+                check("尺 60秒未満", dur < 60, f"{dur:.1f}s")
         vd = subprocess.run(["ffmpeg", "-i", str(mp4), "-af", "volumedetect", "-f", "null", "-"],
                             capture_output=True, text=True).stderr
         m = re.search(r"mean_volume: ([-\d.]+) dB", vd)
@@ -336,7 +438,37 @@ def main(video_dir: Path) -> int:
               "即切り0.15s(⑦/⑭)")
     else:
         check("output/*.mp4 存在", False)
-    check("thumbnail.png 存在", (video_dir / "output" / "thumbnail.png").exists(), "カバーフレーム書き出し")
+    thumb = video_dir / "output" / "thumbnail.png"
+    check("thumbnail.png 存在", thumb.exists(), "カバーフレーム書き出し")
+    # 2026-08-29 批評6周目: カバーを直したのに旧 thumbnail.png のまま出荷しかけた。
+    # サムネは render.py より新しくなければならない(`render.py --thumb` で即時更新可)
+    if thumb.exists():
+        check("thumbnail.png が render.py より新しい",
+              thumb.stat().st_mtime >= (video_dir / "render.py").stat().st_mtime,
+              "古いサムネ。python3 render.py --thumb か再レンダリングで更新")
+    # 常設UI(上部の帯)のピクセル一致(fpテーマの縦型のみ)。
+    # 帯のエッジがユニット切替で明滅していた(2026-08-29 批評6周目)。
+    # work/ のフレームが残っていればカバー以外の全フレームで上端領域を照合する
+    frames = sorted((video_dir / "output" / "work").glob("frame_*.png"))
+    if frames and "use_fp_theme" in src and not LONG:
+        try:
+            import numpy as _np
+            from PIL import Image as _Im
+            strip = None
+            same = True
+            for f in frames[:: max(1, len(frames) // 40)]:   # 等間隔サンプル
+                if f.name.endswith("_990.png"):
+                    continue        # カバーは全面構図なので対象外
+                a = _np.asarray(_Im.open(f).convert("RGB"))[:130]
+                if strip is None:
+                    strip = a
+                elif not _np.array_equal(strip, a):
+                    same = False
+                    break
+            check("常設帯の領域(y<130)が全ユニットで一致", same,
+                  "帯・注記ゾーンにドットや影が触れている")
+        except Exception as e:      # noqa: BLE001
+            warn("常設帯の照合をスキップ", str(e))
 
     print(f"\n結果: {'ALL PASS' if not fails else f'{len(fails)}件 FAIL'}")
     return 1 if fails else 0

@@ -73,6 +73,61 @@ def scene_values(painter):
     return vals
 
 
+def bars_label_offsets(painter):
+    """棒グラフの「棒の中心・値ラベルのink中心・カテゴリ名のink中心」のずれ(px)。
+
+    2026-08-30 consistency/high: 棒の値ラベルが棒の中心から**右に**ずれていた。
+    実測(棒/ラベルの各ink中心): 11 左棒 356 / ラベル 401(+45px=棒幅220pxの20%)、
+    13 左 356/389(+33)・右 723/766(+43)、18 左 356/371(+15)・右 723/744(+21)。
+    全て同方向にずれ、量だけばらついた。原因は big_number の
+    「中央揃えの基準は数字部分の中心」という規則が、対象物の上に載せる
+    ラベルにもそのまま適用され、単位のサイドベアリングぶんブロック全体が
+    右へ押し出されていたこと(単独ヒーロー数字には正しい規則だが、
+    棒のラベルには誤り)。いまは align_on="block" を渡している。
+
+    返り値: [(棒の中心px, 値ラベルのink中心px, カテゴリ名のink中心px), ...]
+    """
+    import numpy as np
+    fig = S.new_canvas(1.0)
+    painter(fig, 1.0)
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    # 棒(PathPatch)の中心
+    bars = []
+    for art in fig.artists:
+        if type(art).__name__ != "PathPatch":
+            continue
+        e = art.get_window_extent(renderer=r)
+        if e.width < 40 or e.height < 40:
+            continue
+        bars.append(((e.x0 + e.x1) / 2, e.y0, e.y1))
+    texts = []
+    for art in fig.texts:
+        if str(art.get_gid() or "").startswith(CHROME_GID):
+            continue
+        e = art.get_window_extent(renderer=r)
+        texts.append(((e.x0 + e.x1) / 2, (e.y0 + e.y1) / 2, e.x0, e.x1, art))
+    S.plt.close(fig)
+    out = []
+    for cx, y0, y1 in sorted(bars):
+        near = [t for t in texts if abs(t[0] - cx) < 180]
+        above = [t for t in near if t[1] > y1]
+        below = [t for t in near if t[1] < y0]
+        if not above or not below:
+            continue
+        # 同じ行にある文字を1つのラベルとしてまとめる
+        def ink_center(group):
+            g0 = min(t[2] for t in group)
+            g1 = max(t[3] for t in group)
+            return (g0 + g1) / 2
+        lab_y = min(t[1] for t in above)
+        lab = [t for t in above if abs(t[1] - lab_y) < 40]
+        cat_y = max(t[1] for t in below)
+        cat = [t for t in below if abs(t[1] - cat_y) < 40]
+        out.append((cx, ink_center(lab), ink_center(cat)))
+    return out
+
+
 def fmt(v):
     """図の数値を、字幕と見比べやすい形にして表示する。"""
     if isinstance(v, int):
@@ -123,6 +178,24 @@ def main():
         print(f"── {vdir.name} ──")
         for i, scene, sub, shown, mark in rows:
             print(f"  {i:>3} {scene:<10} {sub:<24} | {shown} {mark}")
+        # A1: 棒の中心と、その上の値ラベル・下のカテゴリ名の ink 中心が揃っているか
+        try:
+            mod = _load(vdir / "render.py")
+            scenes = getattr(mod, "SCENES", {})
+            src = (vdir / "render.py").read_text()
+            import re as _re
+            bar_keys = [m.group(1) for m in
+                        _re.finditer(r'"([A-Za-z0-9_]+)"\s*:\s*s[a-z]\.bars\(', src)]
+            for k in bar_keys:
+                for cx, lx, tx in bars_label_offsets(scenes[k]):
+                    if abs(lx - cx) > 3.0 or abs(tx - cx) > 3.0:
+                        fails += 1
+                        print(f"  [NG] A1 {k}: 棒の中心 {cx:.0f}px に対し "
+                              f"値ラベル {lx:.0f}px({lx - cx:+.0f}) / "
+                              f"カテゴリ名 {tx:.0f}px({tx - cx:+.0f})。"
+                              f"±3px 以内に揃えること")
+        except Exception as e:      # noqa: BLE001
+            print(f"  [--] A1 判定は走らなかった: {e}")
         if missing:
             fails += len(missing)
             print(f"  [NG] SCENES にないシーン名: {'、'.join(missing)}")

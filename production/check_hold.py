@@ -96,12 +96,28 @@ def check_video(vdir: Path):
     return issues
 
 
+def _exempt_all(gate="hold"):
+    """production/gate_exempt.txt の「<ID>:hold:*  # 理由」を読む(理由の無い行は無効。2026-09-04)。"""
+    f = Path(__file__).resolve().parent / "gate_exempt.txt"
+    out = set()
+    if f.exists():
+        for ln in f.read_text().splitlines():
+            body, _, reason = ln.partition("#")
+            parts = [x.strip() for x in body.strip().split(":")]
+            if len(parts) == 3 and parts[1] == gate and parts[2] == "*" and reason.strip():
+                out.add(parts[0])
+    return out
+
+
 def main():
     targets = [Path(a) for a in sys.argv[1:]] or sorted(
         p for p in (ROOT / "videos").iterdir()
         if (p / "render.py").exists() and p.name.startswith("S"))
     total = 0
     for vdir in targets:
+        if vdir.name.split("-")[0] in _exempt_all():
+            print(f"[--] {vdir.name} (gate_exempt)")
+            continue
         issues = check_video(vdir)
         if issues:
             total += len(issues)

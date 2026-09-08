@@ -27,6 +27,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
+from render_units import subtitles, strip_units, UnreadableRender  # noqa: E402
 
 PRODUCTION = Path(__file__).resolve().parent
 ROOT = PRODUCTION.parent
@@ -75,7 +76,10 @@ def explained(text, w):
             # 「持つあいだ払う手数料が、信託報酬なのだ」型(定義を先に言って名前を後に置く)
             rf"が[、]?{re.escape(w)}(な|だ|です|とい)",
             # 「信託報酬は、管理や運用にかかる費用。」型
-            rf"{re.escape(w)}は[、][^。]*(こと|費用|仕組み|お金|制度|手数料|税|割合)",
+            # 「食糧長官は、あなたの街ぜんぶの食べ物をあずかる人。」型を
+            # 数え落としていた(2026-09-08)。**役職・人を指す語は「〜人」「〜役」で
+            # 定義される**ので、モノの語だけを並べた一覧では拾えない
+            rf"{re.escape(w)}は[、][^。]*(こと|費用|仕組み|お金|制度|手数料|税|割合|人|役|係|職|担当)",
             rf"{re.escape(w)}[((]"]
     if any(re.search(p, text) for p in pats):
         return True
@@ -93,7 +97,7 @@ def check_video(vdir: Path, easy):
     if not rp.exists():
         return []
     src = rp.read_text()
-    subs = re.findall(r'Unit\(\s*"[^"]+",\s*"([^"]+)"', src)
+    subs = subtitles(vdir / "render.py", src)
     if not subs:
         return []
     # 視聴者が目にするのは字幕だけではない。図の中の文字も数える

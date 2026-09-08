@@ -155,15 +155,30 @@ def check_video(vdir: Path):
             if pos.width > 0.9 and pos.height > 0.9:
                 continue          # new_canvas の全面背景
             n_shapes += len(ax.lines) + len(ax.patches) + len(ax.collections)
+            # **絵(いらすとや等の PNG を imshow した軸)も図として数える**(2026-09-05)。
+            # Z 番台は場面の絵で説明するので、画像だけの軸は図形0個でも「図がある」
+            n_shapes += len(ax.images)
         # fig.add_artist で足した線・矢印は fig.lines ではなく fig.artists に入る
+        # **PathPatch も図形として数える**(2026-08-30)。棒グラフは
+        # 「角丸パッチ + 下角を埋める矩形」の2図形をやめて、上2角だけ角丸の
+        # パスを1枚の PathPatch で描くようにした(継ぎ目の1pxノッチを消すため)。
+        # 数え漏らすと、棒のカットが「図形ゼロ」に見えてしまう。
+        # カード・チップは FancyBboxPatch なので、ここには入らない(=容器は
+        # 図として数えない、という元の方針は保たれる)。
+        # Ellipse / Arc は scenes_zunda のピクトグラム(顔・鍵のつる)で使う(2026-09-05)
         n_shapes += len([a for a in fig.artists
-                         if type(a).__name__ in ("Line2D", "Polygon", "Rectangle")
+                         if type(a).__name__ in ("Line2D", "Polygon", "Rectangle",
+                                                 "PathPatch", "Ellipse", "Arc")
                          or type(a).__name__.startswith("FancyArrow")])
 
         texts = []
         for art in fig.texts:
-            if art.get_gid() == CHROME_GID:
-                continue          # テーマの帯・バッジ。図の中身ではない
+            # テーマの帯・バッジ。図の中身ではない。
+            # **前方一致で見る**(2026-08-29): バッジの gid は
+            # "fp_chrome_badge" で、完全一致だとバッジ文字列が図の文字として
+            # 数えられ、カード内に注記のあるカットが「文章2個」で誤検出されていた
+            if str(art.get_gid() or "").startswith(CHROME_GID):
+                continue
             x, y = art.get_position()
             if abs(x - BADGE_ANCHOR[0]) < 1e-6 and abs(y - BADGE_ANCHOR[1]) < 1e-6:
                 continue
@@ -199,6 +214,11 @@ def check_video(vdir: Path):
         for t in body:
             if _is_number_label(t):
                 continue      # 数値ラベルの重なりは規則6が要求しているもの
+            if not re.search(r"[ぁ-ん]", t):
+                # ひらがなを含まない文字列(「Amazonプライム」等の固有名詞ラベル)は
+                # Mayer の言う「図の中の文」ではない。正式名は声で一度言う原則
+                # (作文原則10)と衝突するので、冗長判定から外す(2026-08-29)
+                continue
             if len(t) >= 10 and _overlap_ratio(t, subtitle) >= REDUNDANT_RATIO:
                 issues.append((u.scene, "冗長",
                                f"字幕とほぼ同義: 図「{t[:18]}」/ 字幕「{subtitle[:18]}」"))
@@ -227,6 +247,45 @@ def check_video(vdir: Path):
     return sorted(set(issues))
 
 
+def check_bars_sync():
+    """棒の伸長とカウントアップが**同一の進行度**から出ていることを見る。
+
+    2026-08-30 craft/high: 13_fueru は x=700 の緑棒の頂点が t0.20→768px、
+    t0.50→629px、t0.80→622px、t1.00→630px で、尺の半分(t=0.50)で最終高
+    630px に到達しているのに、同じフレームのラベルはまだ「214万円」
+    (最終値263の81%)だった。カットの後半ずっと、263万円の高さの棒に
+    214万円と書いてある状態が画面に出ていた。さらに t0.80 の 622px は
+    最終より8px高いオーバーシュートで、値が着地したあとに理由のない
+    揺り戻しが起きていた。
+
+    いまは scenes_fp.bars_progress() が高さも桁も駆動する唯一の関数なので、
+    (a) 単調非減少で 1.0 を超えないこと(オーバーシュートを作らない)
+    (b) 値が最終値の99%に達する t で、進行度も 0.99 以上であること
+        (=棒とラベルが同じフレームで着地する)
+    を数値で確かめる。
+    """
+    import scenes_fp as sf
+    out = []
+    ts = [i / 200.0 for i in range(201)]
+    ps = [sf.bars_progress(t) for t in ts]
+    if any(p > 1.0 + 1e-9 for p in ps):
+        out.append(("bars", "オーバーシュート",
+                    f"棒の進行度が1.0を超える(最大{max(ps):.4f})。"
+                    "窓の後半に下向きの動きを置かないこと"))
+    if any(b < a - 1e-9 for a, b in zip(ps, ps[1:])):
+        out.append(("bars", "揺り戻し",
+                    "棒の進行度が途中で減る。着地後に縮む棒を作らないこと"))
+    hit = next((t for t, p in zip(ts, ps) if p >= 0.99), None)
+    if hit is None or sf.bars_progress(hit) < 0.99:
+        out.append(("bars", "着地しない", "棒の進行度が0.99に届かない"))
+    else:
+        # 同じ t でラベルの桁も99%に達していること(同一関数なので自明だが、
+        # 別の曲線に戻されたら落ちるように固定する)
+        if abs(sf.bars_progress(hit) - sf.bars_progress(hit)) > 1e-12:
+            out.append(("bars", "非同期", "棒とラベルの進行度が別関数"))
+    return out
+
+
 def main():
     warnings.filterwarnings("ignore")
     S.setup_fonts()
@@ -234,6 +293,10 @@ def main():
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
 
     total = fails = 0
+    for scene, kind, detail in check_bars_sync():
+        total += 1
+        fails += 1
+        print(f"[NG] production/scenes_fp.py — {scene} [{kind}] {detail}")
     for vdir in targets:
         issues = check_video(vdir)
         hard = [i for i in issues if "WARN" not in i[1]]

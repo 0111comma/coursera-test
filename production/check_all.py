@@ -24,8 +24,24 @@ ROOT = PRODUCTION.parent
 # tempo は縦型だけ見る(check_tempo が横型を自分で除外する)。
 # 「1カット1.6〜1.8秒」は競合の実測から出した基準なのに、**書いてあるだけで
 # 機械が見ていなかった**ので守られていなかった(S032が3.65秒。2026-08-24)。
-COMMON = ["zentei", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
-          "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "video"]
+#
+# kotoba / design は、批評パネル2回分の指摘を規則にした新しいゲート
+# (2026-08-30。docs/research/kotoba-rules.md と design-rules.md)。
+# パネル(サブエージェント8人×複数ラウンド)を毎本回すのは費用が見合わないので、
+# **パネルが見つけた欠陥のうち機械で見られるものは機械に見させる**。
+# 既存の公開済み動画は gate_exempt.txt で丸ごと外してある(触らない方針)。
+# shukka は**最後**に置く(2026-08-30)。出荷物(mp4・thumbnail.png)が
+# 描画コードより古くないか、強調枠の外に地の帯が露出していないか、
+# 図の下端と字幕が衝突していないかを、実際に焼いた画素で見る。
+# 「出荷物が旧デザインのまま」は2ラウンド連続で通っていた。
+# **modoshi は zentei の次に置く。**直したはずの文が尺詰めで元に戻っていたら、
+# そのあとのゲートを全部通っても「同じ指摘をもう一度買う」ことになる
+# (2026-09-07 日本語パネル4周目: 3周目の直し7件が巻き戻っていた)。
+# **user は zentei より前。**ユーザー本人の指摘を残したまま焼くのが、
+# このリポジトリでいちばん高くつく失敗(2026-09-07「ちゃんと俺からの指摘も貯めてね」)
+COMMON = ["user", "zentei", "modoshi", "koyuu", "toi", "hold", "tempo", "teinei", "flow", "figure", "overlap",
+          "ikko", "yomi", "ryakugo", "goi", "bunsho", "yougo", "yokkyu", "manabi", "teiyaku",
+          "kotoba", "honyaku", "design", "video", "shukka"]
 LONG_ONLY = ["long"]                       # 横型だけ
 
 
@@ -34,14 +50,25 @@ def is_long(vdir: Path) -> bool:
 
 
 def main():
-    targets = [Path(a) for a in sys.argv[1:]] or sorted(
+    # --pre: **焼く前**に走らせる版(2026-09-08)。
+    # 出荷物(mp4・thumbnail.png)を見るゲートは、まだ焼いていないので当然落ちる。
+    # 焼く前に意味があるのは「このまま焼くと render が止まる」側だけなので、
+    # shukka を外し、check_video に --pre を渡して mp4 の検証を飛ばす。
+    pre = "--pre" in sys.argv
+    argv = [a for a in sys.argv[1:] if a != "--pre"]
+    targets = [Path(a) for a in argv] or sorted(
         p for p in (ROOT / "videos").iterdir() if (p / "render.py").exists())
     bad = 0
     for vdir in targets:
         gates = COMMON + (LONG_ONLY if is_long(vdir) else [])
+        if pre:
+            gates = [g for g in gates if g != "shukka"]
         print(f"=== {vdir.name}")
         for g in gates:
-            r = subprocess.run([sys.executable, str(PRODUCTION / f"check_{g}.py"), str(vdir)],
+            cmd = [sys.executable, str(PRODUCTION / f"check_{g}.py"), str(vdir)]
+            if pre and g == "video":
+                cmd.append("--pre")
+            r = subprocess.run(cmd,
                                capture_output=True, text=True)
             last = [ln for ln in (r.stdout + r.stderr).splitlines() if ln.strip()]
             tail = last[-1] if last else ""
