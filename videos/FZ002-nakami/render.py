@@ -55,6 +55,32 @@ UNITS = [
     Unit('bags', '中身まで別物にはならないのだ。', '中身は同じなのだ', 'happy'),
 ]
 
+# Deliberate Japanese phrase breaks. Whitespace never changes narration words.
+SUBTITLE_LINES = [
+    '投資信託を3本買えば、\n分散になる？',
+    'ボクは、まず\n中身を見るのだ。',
+    '投資信託は、お金を\nまとめて運用する商品。',
+    '名前が違っても、\n投資先は重なることがある。',
+    'たとえば、この3つ。',
+    'どれも、投資先Xが半分、\nYが半分だとする。',
+    'これを、同じ金額ずつ買う。',
+    '全部合わせたら、\n割合はどうなる？',
+    'Xが半分。Yも半分。',
+    '商品は3つでも、\n中身の割合は同じなのだ。',
+    '3本がダメ、\nという話ではないのだ。',
+    '買う前に、運用の報告書で\n投資先と割合を見る。',
+    '袋を3つに分けても、',
+    '中身まで別物には\nならないのだ。',
+]
+THOUGHT_LINES = [
+    '本数だけで\n大丈夫？', 'まず中身を\n確認', 'お金を\nまとめて運用',
+    '名前が\n違っても…', '架空の例で\n比べる', 'どれも\n同じ割合',
+    '購入額も同じ', 'まとめて\nみると？', 'やっぱり\n半分ずつ',
+    '割合は\n変わらない', '本数だけで\n決めない', '投資先と\n割合を確認',
+    '袋は3つ\nだけど…', '中身は\n同じなのだ',
+]
+assert all(s.replace('\n','') == u.subtitle for s,u in zip(SUBTITLE_LINES,UNITS))
+
 @lru_cache(None)
 def font(size):
     return ImageFont.truetype(str(FONT), size)
@@ -111,11 +137,11 @@ def base(unit, number):
     text(d,(492,451),'商品名より、投資先を見る',32,GREEN,width=800)
     # Character and thought bubble occupy a separate stage below the diagram.
     roundbox(d,(552,1130,923,1348),'#E9EFDF',radius=30)
-    bubble=wrap(unit.note,43,315)
+    bubble=THOUGHT_LINES[number].split('\n')
     lines(d,(737,1192), '\n'.join(bubble),43,65,width=325)
     # Fixed narration zone: clear of mobile UI and diagram.
     roundbox(d,(64,1458,924,1724),INK,radius=30)
-    subtitles=wrap(unit.subtitle,58,782)
+    subtitles=SUBTITLE_LINES[number].split('\n')
     if len(subtitles)>3: raise ValueError('Subtitle exceeds three lines')
     y=1592-(len(subtitles)-1)*42
     lines(d,(492,y),'\n'.join(subtitles),58,84,'white',width=800)
