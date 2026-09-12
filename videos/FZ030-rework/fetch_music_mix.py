@@ -48,7 +48,7 @@ with wave.open(str(spoken),'w') as w:
 # Raw BGM remains only in the temporary runner. Persist only the narrated audiovisual-program mix.
 out=root/'audio'/'FZ030-mixed-dialogue.mp3'
 subprocess.run([FFMPEG,'-v','error','-y','-i',str(spoken),'-stream_loop','-1','-i',str(bgm),
- '-filter_complex',f'[0:a]volume=1.7,alimiter=limit=0.94:level=false[v];[1:a]atrim=0:{dur},asetpts=PTS-STARTPTS,loudnorm=I=-28:TP=-5:LRA=9,afade=t=in:d=0.25,afade=t=out:st={dur-.5}:d=.5[b];[v][b]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]',
+ '-filter_complex',f'[0:a]volume=1.7,alimiter=limit=0.94:level=false[v];[1:a]atrim=0:{dur},asetpts=PTS-STARTPTS,loudnorm=I=-28:TP=-5:LRA=9,afade=t=in:d=0.25,afade=t=out:st={dur-.5}:d=0.5[b];[v][b]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]',
  '-map','[a]','-ar','44100','-ac','2','-c:a','libmp3lame','-b:a','128k',str(out)],check=True)
 report={'song':'しゅわしゅわハニーレモン350ml','artist':'しゃろう','source':url,'license':'https://dova-s.jp/help/articles/license/','selected_track':2,'music_embedded_only':True,'duration':dur,'file_bytes':out.stat().st_size,'raw_audio_in_repository':False,'bed_target_lufs':-28}
 (root/'audio'/'music-source.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
