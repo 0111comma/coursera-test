@@ -1,0 +1,25 @@
+name: FZ030 fonts
+on:
+  push:
+    branches: [codex/fz030-short-rework-20260912]
+    paths: ['.github/workflows/fz030-fonts.yml']
+permissions:
+  contents: write
+jobs:
+  fonts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: pip install fonttools
+      - run: |
+          mkdir -p videos/FZ030-rework/assets/fonts
+          cat videos/FZ030-rework/script.json videos/FZ030-rework/font-extra.txt > /tmp/font-text.txt
+          pyftsubset assets/fonts/RocknRollOne.ttf --text-file=/tmp/font-text.txt --output-file=videos/FZ030-rework/assets/fonts/RocknRollOne.ttf
+          pyftsubset assets/fonts/MPLUSRounded1c-900.ttf --text-file=/tmp/font-text.txt --output-file=videos/FZ030-rework/assets/fonts/MPLUSRounded1c-900.ttf
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos/FZ030-rework/assets/fonts
+          git commit -m "Save Japanese typeface subsets for the revised short"
+          git push origin HEAD:codex/fz030-short-rework-20260912
