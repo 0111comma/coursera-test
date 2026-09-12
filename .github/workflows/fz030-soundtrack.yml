@@ -1,0 +1,26 @@
+name: FZ030 soundtrack
+on:
+  push:
+    branches: [codex/fz030-short-rework-20260912]
+    paths:
+      - videos/FZ030-rework/fetch_music_mix.py
+permissions:
+  contents: write
+jobs:
+  music:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4 numpy
+      - run: python videos/FZ030-rework/fetch_music_mix.py
+      - name: Save narrated mix only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add videos/FZ030-rework/audio/FZ030-mixed-dialogue.mp3 videos/FZ030-rework/audio/music-source.json
+          git commit -m "Save narrated soundtrack, without redistributing raw BGM"
+          git push

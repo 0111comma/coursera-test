@@ -1,0 +1,212 @@
+[
+  {
+    "id": 0,
+    "speaker": "Z",
+    "text": "家、買ったのだ！住宅ローンは安い変動金利なのだ！",
+    "speed": 1.26,
+    "start_frame": 0,
+    "end_frame": 127,
+    "audio_lead": 0,
+    "voice_seconds": 4.128
+  },
+  {
+    "id": 1,
+    "speaker": "M",
+    "text": "私は全期間固定。今の返済額は、あなたより高いわ。",
+    "speed": 1.26,
+    "start_frame": 127,
+    "end_frame": 243,
+    "audio_lead": 0,
+    "voice_seconds": 3.744
+  },
+  {
+    "id": 2,
+    "speaker": "Z",
+    "text": "その差額で、うちは映画館にするのだ！",
+    "speed": 1.26,
+    "start_frame": 243,
+    "end_frame": 328,
+    "audio_lead": 0,
+    "voice_seconds": 2.7306666666666666
+  },
+  {
+    "id": 3,
+    "speaker": "M",
+    "text": "金利が上がったときの予算は？",
+    "speed": 1.26,
+    "start_frame": 328,
+    "end_frame": 382,
+    "audio_lead": 0,
+    "voice_seconds": 1.6746666666666667
+  },
+  {
+    "id": 4,
+    "speaker": "Z",
+    "text": "その頃には給料も上がってるのだ！",
+    "speed": 1.26,
+    "start_frame": 382,
+    "end_frame": 449,
+    "audio_lead": 0,
+    "voice_seconds": 2.1333333333333333
+  },
+  {
+    "id": 5,
+    "speaker": "T",
+    "text": "５年後",
+    "speed": 1.26,
+    "start_frame": 449,
+    "end_frame": 471,
+    "audio_lead": 0,
+    "voice_seconds": 0.72
+  },
+  {
+    "id": 6,
+    "speaker": "M",
+    "text": "銀行から、返済額が変わるお知らせよ。",
+    "speed": 1.26,
+    "start_frame": 471,
+    "end_frame": 547,
+    "audio_lead": 0,
+    "voice_seconds": 2.4106666666666667
+  },
+  {
+    "id": 7,
+    "speaker": "Z",
+    "text": "毎月２万１千円増！？給料は増えてないのだ！",
+    "speed": 1.17,
+    "start_frame": 547,
+    "end_frame": 663,
+    "audio_lead": 0,
+    "voice_seconds": 3.7546666666666666
+  },
+  {
+    "id": 8,
+    "speaker": "M",
+    "text": "私は全期間固定だから、返済額は同じ。貯金は？",
+    "speed": 1.26,
+    "start_frame": 663,
+    "end_frame": 775,
+    "audio_lead": 0,
+    "voice_seconds": 3.616
+  },
+  {
+    "id": 9,
+    "speaker": "Z",
+    "text": "全部、テレビとスピーカーになったのだ…。",
+    "speed": 1.26,
+    "start_frame": 775,
+    "end_frame": 858,
+    "audio_lead": 0,
+    "voice_seconds": 2.6453333333333333
+  },
+  {
+    "id": 10,
+    "speaker": "Z",
+    "text": "引き落としは明日なのに、お金が足りないのだ！",
+    "speed": 1.26,
+    "start_frame": 858,
+    "end_frame": 948,
+    "audio_lead": 0,
+    "voice_seconds": 2.88
+  },
+  {
+    "id": 11,
+    "speaker": "M",
+    "text": "じゃあ、売って今月の不足を埋めよう。",
+    "speed": 1.26,
+    "start_frame": 948,
+    "end_frame": 1025,
+    "audio_lead": 0,
+    "voice_seconds": 2.453333333333333
+  },
+  {
+    "id": 12,
+    "speaker": "Z",
+    "text": "テレビはダメなのだ！この家の主役なのだ！",
+    "speed": 1.26,
+    "start_frame": 1025,
+    "end_frame": 1110,
+    "audio_lead": 0,
+    "voice_seconds": 2.7093333333333334
+  },
+  {
+    "id": 13,
+    "speaker": "M",
+    "text": "家の返済が先。増えるのは毎月だから、趣味代も減らすのよ。",
+    "speed": 1.26,
+    "start_frame": 1110,
+    "end_frame": 1232,
+    "audio_lead": 0,
+    "voice_seconds": 3.936
+  },
+  {
+    "id": 14,
+    "speaker": "T",
+    "text": "その日の夕方",
+    "speed": 1.26,
+    "start_frame": 1232,
+    "end_frame": 1250,
+    "audio_lead": 0,
+    "voice_seconds": 0.6
+  },
+  {
+    "id": 15,
+    "speaker": "Z",
+    "text": "３０万円のテレビが、買い取り５万円なのだ…。",
+    "speed": 1.17,
+    "start_frame": 1250,
+    "end_frame": 1355,
+    "audio_lead": 0,
+    "voice_seconds": 3.392
+  },
+  {
+    "id": 16,
+    "speaker": "M",
+    "text": "リモコンも一緒に渡してね。",
+    "speed": 1.26,
+    "start_frame": 1355,
+    "end_frame": 1401,
+    "audio_lead": 0,
+    "voice_seconds": 1.4293333333333333
+  },
+  {
+    "id": 17,
+    "speaker": "Z",
+    "text": "それだけは置いていってほしいのだ！",
+    "speed": 1.26,
+    "start_frame": 1401,
+    "end_frame": 1461,
+    "audio_lead": 0,
+    "voice_seconds": 1.8986666666666667
+  },
+  {
+    "id": 18,
+    "speaker": "M",
+    "text": "何をつけるつもり？",
+    "speed": 1.26,
+    "start_frame": 1461,
+    "end_frame": 1498,
+    "audio_lead": 0,
+    "voice_seconds": 1.12
+  },
+  {
+    "id": 19,
+    "speaker": "Z",
+    "text": "……何もないのだ。",
+    "speed": 1.26,
+    "start_frame": 1498,
+    "end_frame": 1541,
+    "audio_lead": 0.32,
+    "voice_seconds": 0.9813333333333333
+  },
+  {
+    "id": 20,
+    "speaker": "M",
+    "text": "こういうお金の失敗を減らしたい人は、いいねと登録を。",
+    "speed": 1.26,
+    "start_frame": 1541,
+    "end_frame": 1638,
+    "audio_lead": 0,
+    "voice_seconds": 3.1253333333333333
+  }
+]
