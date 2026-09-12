@@ -1,0 +1,19 @@
+//====================================================
+//	descript.txt
+//
+//	四国めたんとずんだもん シェル
+//	シェル定義ファイル
+//====================================================
+
+charset,Shift-JIS
+
+craftman,NightWork
+craftmanw,NightWork
+craftmanurl,https://nightwork.sakura.ne.jp/
+
+readme,readme.txt
+
+id,master
+name,master
+type,shell
+seriko.use_self_alpha,1

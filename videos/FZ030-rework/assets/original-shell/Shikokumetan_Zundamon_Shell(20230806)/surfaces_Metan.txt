@@ -1,0 +1,866 @@
+//******************************************************************************
+//	「四国めたん立ち絵素材2.1.psd」用surfaces.txt
+//
+//	By NightWork
+//
+//******************************************************************************
+
+charset,Shift-JIS
+
+descript
+{
+	version,1
+}
+
+
+
+//設計メモ
+//******************************************************************************
+//サーフェス一覧
+//	surface0	素
+//	surface1	照れ
+//	surface2	驚き
+//	surface3	不安
+//	surface4	落ち込み
+//	surface5	微笑み
+//	surface6	目閉じ
+//	surface7	怒り
+//	surface8	冷笑
+//	surface9	照れ怒り
+//	surface25	歌
+//
+//	汎用性を優先し最もポピュラーな ID の割り振りとする。
+//
+//******************************************************************************
+//共通アニメーション番号一覧
+//
+//	animation0	目 - 待機中
+//	animation1	目 - 目パチ
+//
+//	animation5	口 - 待機中
+//	animation6	口 - 口パク
+//
+//	表情パーツの手前に乗せる都合アニメーション扱いにする物
+//	animation10	前髪もみあげ
+//	animation11	記号など
+//
+//	目と口の表情は平時もアニメーションとして定義する。
+//	理由：「start,ID」「stop,ID」メゾットで他のアニメーション停止する（パーツを外す）ことができるため。
+//	そうしないとパーツが重なって表示される
+//	トリッキーな方法ではあるが要はPSDToolkitっぽく使う方法である。
+//
+//	これ以外は必要に応じて各サーフェスごとに定義する。
+//
+//******************************************************************************
+//surface100番台について
+//
+//	各animation定義から呼び出せるようにsurface100番台に表情パーツを割り当てておく。
+//
+//******************************************************************************
+
+
+
+//******************************************************************************
+// 四国めたん サーフェス定義
+// サンプルとして可読性を優先した、列挙・範囲指定はしない。
+// ただし、当たり判定のみまとめて書く
+// カスタマイズの参考用に無効化したアニメーション定義も残しておく。
+//******************************************************************************
+
+	//当たり判定（全サーフェス共通）
+	surface0-9,25
+	{
+		collision0,81,12,196,56,Head
+		collision1,99,46,186,130,Face
+		collision2,96,167,180,216,Bust
+	}
+
+
+	//素
+	surface0
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉ごきげん.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,100,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,121,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,120,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//照れ
+	surface1
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\抱える.png,0,0
+		element5,overlay,Metan\顔色\赤面.png,0,0
+		element6,overlay,Metan\眉\太眉こまり.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など
+		animation11.interval,runonce
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,104,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,131,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,130,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//驚き
+	surface2
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉こまり.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,107,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,3
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,130,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,131,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//不安
+	surface3
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\青ざめ.png,0,0
+		element6,overlay,Metan\眉\太眉こまり.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など
+		animation11.interval,runonce
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,104,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,131,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,122,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//落ち込み
+	surface4
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\青ざめ.png,0,0
+		element6,overlay,Metan\顔色\かげり.png,0,0
+		element7,overlay,Metan\眉\太眉こまり.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element10,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,104,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,131,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,127,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//微笑み
+	surface5
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉ごきげん.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,117,0,0,0
+
+
+		//目パチ（無効化）
+		animation1.interval,never
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,120,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,121,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//目閉じ
+	surface6
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉ごきげん.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,115,0,0,0
+
+
+		//目パチ（無効化）
+		animation1.interval,never
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,121,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,120,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//怒り
+	surface7
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉おこ.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,101,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,128,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,127,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//冷笑
+	surface8
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\口元に指.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉ごきげん.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,102,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,123,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,122,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//照れ怒り
+	surface9
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\普通.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\普通.png,0,0
+		element5,overlay,Metan\顔色\赤面.png,0,0
+		element6,overlay,Metan\眉\太眉おこ.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,101,0,0,0
+
+
+		//目パチ
+		animation1.interval,random,4
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,128,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,127,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+	//歌
+	surface25
+	{
+		//ベースレイヤ
+		element0,base,Metan\ツインドリル右.png,0,0
+		element1,overlay,Metan\ツインドリル左.png,0,0
+		element2,overlay,Metan\白ロリ服\体.png,0,0
+		element3,overlay,Metan\白ロリ服\右腕\指差す.png,0,0
+		element4,overlay,Metan\白ロリ服\左腕\マイク.png,0,0
+		element5,overlay,Metan\顔色\普通.png,0,0
+		element6,overlay,Metan\眉\太眉ごきげん.png,0,0
+		element7,overlay,Metan\頭部アクセサリ\髪留めフリル.png,0,0
+		element8,overlay,Metan\頭部アクセサリ\髪留めハート.png,0,0
+		element9,overlay,Metan\頭部アクセサリ\ヘッドドレス.png,0,0
+
+
+		//目パチ口パクの手前に固定表示アニメ
+		//前髪もみあげ
+		animation10.interval,runonce
+		animation10.pattern0,overlay,140,0,0,0
+
+		//記号など（無効化）
+		animation11.interval,never
+		animation11.pattern0,overlay,142,0,0,0
+
+
+		//アニメーション
+		//目 - 待機中
+		animation0.interval,runonce
+		animation0.pattern0,overlay,115,0,0,0
+
+
+		//目パチ（無効化）
+		animation1.interval,never
+		animation1.pattern0,stop,0
+		animation1.pattern1,overlay,114,0,0,0
+		animation1.pattern2,overlay,-1,50,0,0
+		animation1.pattern3,start,0
+
+
+		//口 - 待機中
+		animation5.interval,runonce
+		animation5.pattern0,overlay,120,0,0,0
+
+		//口パク
+		animation6.interval,talk,2
+		animation6.pattern0,stop,5
+		animation6.pattern1,overlay,121,0,0,0
+		animation6.pattern2,overlay,-1,100,0,0
+		animation6.pattern3,start,5
+	}
+
+
+
+//アニメーション用サーフェス
+	//目パーツ
+	surface100
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\普通目.png,0,0
+	}
+
+	surface101
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\普通目2.png,0,0
+	}
+
+	surface102
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\カメラ目線.png,0,0
+	}
+
+	surface103
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\カメラ目線2.png,0,0
+	}
+
+	surface104
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\目そらし.png,0,0
+	}
+
+	surface105
+	{
+		element0,base,Metan\目\目セット\普通白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\目そらし2.png,0,0
+	}
+
+	surface106
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\普通目.png,0,0
+	}
+
+	surface107
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\普通目2.png,0,0
+	}
+
+	surface108
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\カメラ目線.png,0,0
+	}
+
+	surface109
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\カメラ目線2.png,0,0
+	}
+
+	surface110
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\目そらし.png,0,0
+	}
+
+	surface111
+	{
+		element0,base,Metan\目\目セット\見開き白目.png,0,0
+		element1,overlay,Metan\目\目セット\黒目\目そらし2.png,0,0
+	}
+
+	surface112
+	{
+		element0,base,Metan\目\見上げ.png,0,0
+	}
+
+	surface113
+	{
+		element0,base,Metan\目\見上げ2.png,0,0
+	}
+
+	surface114
+	{
+		element0,base,Metan\目\目閉じ.png,0,0
+	}
+
+	surface115
+	{
+		element0,base,Metan\目\目閉じ2.png,0,0
+	}
+
+	surface116
+	{
+		element0,base,Metan\目\○○.png,0,0
+	}
+
+	surface117
+	{
+		element0,base,Metan\目\＞＜.png,0,0
+	}
+
+	surface118
+	{
+		element0,base,Metan\目\ぐるぐる.png,0,0
+	}
+
+
+	//口パーツ
+	surface120
+	{
+		element0,base,Metan\口\わあー.png,0,0
+	}
+
+	surface121
+	{
+		element0,base,Metan\口\ほほえみ.png,0,0
+	}
+
+	surface122
+	{
+		element0,base,Metan\口\▽.png,0,0
+	}
+
+	surface123
+	{
+		element0,base,Metan\口\にやり.png,0,0
+	}
+
+	surface124
+	{
+		element0,base,Metan\口\ぺろり.png,0,0
+	}
+
+	surface125
+	{
+		element0,base,Metan\口\お.png,0,0
+	}
+
+	surface126
+	{
+		element0,base,Metan\口\ゆ.png,0,0
+	}
+
+	surface127
+	{
+		element0,base,Metan\口\△.png,0,0
+	}
+
+	surface128
+	{
+		element0,base,Metan\口\む.png,0,0
+	}
+
+	surface129
+	{
+		element0,base,Metan\口\いー.png,0,0
+	}
+
+	surface130
+	{
+		element0,base,Metan\口\うえー.png,0,0
+	}
+
+	surface131
+	{
+		element0,base,Metan\口\んー.png,0,0
+	}
+
+	surface132
+	{
+		element0,base,Metan\口\もむー.png,0,0
+	}
+
+	surface133
+	{
+		element0,base,Metan\目\＞＜.png,0,0
+	}
+
+	surface134
+	{
+		element0,base,Metan\目\ぐるぐる.png,0,0
+	}
+
+
+	//前髪もみあげ
+	surface140
+	{
+		element0,base,Metan\前髪もみあげ.png,0,0
+	}
+
+	//記号など
+	surface141
+	{
+		element0,base,Metan\記号など\涙.png,0,0
+	}
+
+	surface142
+	{
+		element0,base,Metan\記号など\汗.png,0,0
+	}
