@@ -1,0 +1,173 @@
+[
+  {
+    "id": 0,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "家、買ったのだ！住宅ローンは安い変動金利なのだ！",
+    "seconds": 4.128,
+    "speaker_id": 3,
+    "sha256": "37dccfe17e8d81d18ff1fc8eabd08bab196b3cc035219a59d7967e519fc480ce"
+  },
+  {
+    "id": 1,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "私は全期間固定。今の返済額は、あなたより高いわ。",
+    "seconds": 3.744,
+    "speaker_id": 2,
+    "sha256": "a66685092953f039f3d86603feabb0e58c03eca0cf63f6d0e560fb3619e02fcd"
+  },
+  {
+    "id": 2,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "その差額で、うちは映画館にするのだ！",
+    "seconds": 2.7306666666666666,
+    "speaker_id": 3,
+    "sha256": "999c768bfab55a4ff3af828f8662f4f8aa761b0e1b5fe013854634353758dad4"
+  },
+  {
+    "id": 3,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "金利が上がったときの予算は？",
+    "seconds": 1.6746666666666667,
+    "speaker_id": 2,
+    "sha256": "8e74e8cb0fe00242eb9f985794c9b5ad7679be9130c84d5d4e0791f056506d46"
+  },
+  {
+    "id": 4,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "その頃には給料も上がってるのだ！",
+    "seconds": 2.1333333333333333,
+    "speaker_id": 3,
+    "sha256": "d0c8b00b00b99d2e9f42d8586442381a7cc0943a308fe6becac141d9cf353a40"
+  },
+  {
+    "id": 6,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "銀行から、返済額が変わるお知らせよ。",
+    "seconds": 2.4106666666666667,
+    "speaker_id": 2,
+    "sha256": "f0b6d1c79bc18f1c8030d47eeabdeaa271224b7a17083fe3669c78840bcb08bb"
+  },
+  {
+    "id": 7,
+    "speaker": "Z",
+    "speed": 1.17,
+    "text": "毎月２万１千円増！？給料は増えてないのだ！",
+    "seconds": 3.7546666666666666,
+    "speaker_id": 3,
+    "sha256": "2687e3b54234a8efe8a178620bf7ec9b1cf20bd17cef5757b072fdb91b2ff7ef"
+  },
+  {
+    "id": 8,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "私は全期間固定だから、返済額は同じ。貯金は？",
+    "seconds": 3.616,
+    "speaker_id": 2,
+    "sha256": "82268bae24c7f3c05571d9f8019fe0a53d59a668455ffdcb0a71c39837034ec9"
+  },
+  {
+    "id": 9,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "全部、テレビとスピーカーになったのだ…。",
+    "seconds": 2.6453333333333333,
+    "speaker_id": 3,
+    "sha256": "319d933c6b95d7f50f95dd46b107636601751dfe06c6762570dfb0168430f6ce"
+  },
+  {
+    "id": 10,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "引き落としは明日なのに、お金が足りないのだ！",
+    "seconds": 2.88,
+    "speaker_id": 3,
+    "sha256": "483a20ac67b75318eaaecd4203d9feda3bb0dc92c5e908c080f5d649f656acf7"
+  },
+  {
+    "id": 11,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "じゃあ、売って今月の不足を埋めよう。",
+    "seconds": 2.453333333333333,
+    "speaker_id": 2,
+    "sha256": "2e16e88de7056755317777e73a054bbb4826887129ac3ee191198606a61951be"
+  },
+  {
+    "id": 12,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "テレビはダメなのだ！この家の主役なのだ！",
+    "seconds": 2.7093333333333334,
+    "speaker_id": 3,
+    "sha256": "4d729113a1de03577f61b32e48125dd8c477b55fa6859bf307eb7a4333dff5bc"
+  },
+  {
+    "id": 13,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "家の返済が先。増えるのは毎月だから、趣味代も減らすのよ。",
+    "seconds": 3.936,
+    "speaker_id": 2,
+    "sha256": "c2ca0364ba9b861dd759793791306bf7ff3ffda179ba555f9f3b985d71f9a231"
+  },
+  {
+    "id": 15,
+    "speaker": "Z",
+    "speed": 1.17,
+    "text": "３０万円のテレビが、買い取り５万円なのだ…。",
+    "seconds": 3.392,
+    "speaker_id": 3,
+    "sha256": "bcb5ea771b8145edd379f56daddea0cbb9e2727343f545fa89db36ec49bf6eeb"
+  },
+  {
+    "id": 16,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "リモコンも一緒に渡してね。",
+    "seconds": 1.4293333333333333,
+    "speaker_id": 2,
+    "sha256": "cc4dd7762db2f2060635db271096ad97eb9aa307d22744599761588032ff2e94"
+  },
+  {
+    "id": 17,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "それだけは置いていってほしいのだ！",
+    "seconds": 1.8986666666666667,
+    "speaker_id": 3,
+    "sha256": "c5e1679e73acd045d14867853d9c09110ddac9ffc0602b78797989903d18b204"
+  },
+  {
+    "id": 18,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "何をつけるつもり？",
+    "seconds": 1.12,
+    "speaker_id": 2,
+    "sha256": "b2f301db86a8170e65efe8fded51023c425b18c20640f57451f68ff13d7f68d3"
+  },
+  {
+    "id": 19,
+    "speaker": "Z",
+    "speed": 1.26,
+    "text": "……何もないのだ。",
+    "seconds": 0.9813333333333333,
+    "speaker_id": 3,
+    "sha256": "daddde18ab8a354dfef5ea0c9627058378584eee12e3843e88a6fba9e38fdf28"
+  },
+  {
+    "id": 20,
+    "speaker": "M",
+    "speed": 1.26,
+    "text": "こういうお金の失敗を減らしたい人は、いいねと登録を。",
+    "seconds": 3.1253333333333333,
+    "speaker_id": 2,
+    "sha256": "5f571429ee196dd6017b6e1a5abd908be717efbcf848310de0ad87a90d9d4908"
+  }
+]
