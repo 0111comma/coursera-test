@@ -1,5 +1,7 @@
 from pathlib import Path
 import requests, subprocess, json, wave, numpy as np
+import imageio_ffmpeg
+FFMPEG=imageio_ffmpeg.get_ffmpeg_exe()
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 root=Path('videos/FZ030-rework')
@@ -26,7 +28,7 @@ dialogue=np.zeros(round(dur*rate),dtype=np.float64)
 for row in timeline:
     if row['speaker']=='T':continue
     wav=Path('/tmp')/f'fz030-{row["id"]}.wav'
-    subprocess.run(['ffmpeg','-v','error','-y','-i',str(root/'audio'/f'{row["id"]:02d}.flac'),'-ar',str(rate),'-ac','1',str(wav)],check=True)
+    subprocess.run([FFMPEG,'-v','error','-y','-i',str(root/'audio'/f'{row["id"]:02d}.flac'),'-ar',str(rate),'-ac','1',str(wav)],check=True)
     with wave.open(str(wav)) as w: voice=np.frombuffer(w.readframes(w.getnframes()),dtype=np.int16).astype(float)/32768
     at=round((row['start_frame']/30+row['audio_lead'])*rate)
     dialogue[at:at+len(voice)]+=voice
@@ -45,7 +47,7 @@ with wave.open(str(spoken),'w') as w:
     w.writeframes((np.clip(dialogue+fx,-.95,.95)*32767).astype(np.int16).tobytes())
 # Raw BGM remains only in the temporary runner. Persist only the narrated audiovisual-program mix.
 out=root/'audio'/'FZ030-mixed-dialogue.mp3'
-subprocess.run(['ffmpeg','-v','error','-y','-i',str(spoken),'-stream_loop','-1','-i',str(bgm),
+subprocess.run([FFMPEG,'-v','error','-y','-i',str(spoken),'-stream_loop','-1','-i',str(bgm),
  '-filter_complex',f'[0:a]volume=1.7,alimiter=limit=0.94:level=false[v];[1:a]atrim=0:{dur},asetpts=PTS-STARTPTS,loudnorm=I=-28:TP=-5:LRA=9,afade=t=in:d=0.25,afade=t=out:st={dur-.5}:d=.5[b];[v][b]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95:level=false[a]',
  '-map','[a]','-ar','44100','-ac','2','-c:a','libmp3lame','-b:a','128k',str(out)],check=True)
 report={'song':'しゅわしゅわハニーレモン350ml','artist':'しゃろう','source':url,'license':'https://dova-s.jp/help/articles/license/','selected_track':2,'music_embedded_only':True,'duration':dur,'file_bytes':out.stat().st_size,'raw_audio_in_repository':False,'bed_target_lufs':-28}

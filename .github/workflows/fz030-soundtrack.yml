@@ -12,10 +12,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            videos/FZ030-rework/audio
+            videos/FZ030-rework/timeline.json
+            videos/FZ030-rework/fetch_music_mix.py
+          sparse-checkout-cone-mode: false
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install requests beautifulsoup4 numpy
+      - run: pip install requests beautifulsoup4 numpy imageio-ffmpeg
       - run: python videos/FZ030-rework/fetch_music_mix.py
       - name: Save narrated mix only
         run: |
