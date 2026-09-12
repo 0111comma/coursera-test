@@ -1,0 +1,26 @@
+name: FZ030 original character parts
+on:
+  push:
+    branches: [codex/fz030-short-rework-20260912]
+    paths: ['.github/workflows/fz030-original-assets.yml']
+permissions:
+  contents: write
+jobs:
+  assets:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download permitted original artwork shell
+        run: |
+          mkdir -p videos/FZ030-rework/assets/original-shell
+          curl --fail --location --retry 2 --max-time 120 'https://nightwork.sakura.ne.jp/ukagaka/shell/Shikokumetan_Zundamon_Shellkit/Shikokumetan_Zundamon_Shell%2820230806%29.zip' -o /tmp/character-shell.zip
+          unzip -q /tmp/character-shell.zip -d videos/FZ030-rework/assets/original-shell
+          find videos/FZ030-rework/assets/original-shell -type f | head -30
+      - name: Preserve source parts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos/FZ030-rework/assets/original-shell
+          git commit -m "Preserve original Ahiru character parts and terms for FZ030"
+          git push origin HEAD:codex/fz030-short-rework-20260912
