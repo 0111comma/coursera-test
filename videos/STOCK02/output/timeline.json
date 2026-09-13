@@ -32,9 +32,9 @@
     "scene_start": 0.0,
     "start": 0.0,
     "start_frame": 0,
-    "end_frame": 78,
-    "duration": 2.6,
-    "frames": 78,
+    "end_frame": 77,
+    "duration": 2.566666666666667,
+    "frames": 77,
     "voice_file": "voice-00-9578a36421.wav",
     "donation_offset": null
   },
@@ -60,12 +60,12 @@
     "speed": 1.28,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 2.6,
-    "start": 2.6,
-    "start_frame": 78,
-    "end_frame": 110,
-    "duration": 1.0666666666666667,
-    "frames": 32,
+    "scene_start": 2.566666666666667,
+    "start": 2.566666666666667,
+    "start_frame": 77,
+    "end_frame": 108,
+    "duration": 1.0333333333333334,
+    "frames": 31,
     "voice_file": "voice-01-74bb344ede.wav",
     "donation_offset": null
   },
@@ -101,15 +101,15 @@
     "background": "morning",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.12,
+    "speed": 1.22,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 3.6666666666666665,
-    "start": 3.6666666666666665,
-    "start_frame": 110,
-    "end_frame": 259,
-    "duration": 4.966666666666667,
-    "frames": 149,
+    "scene_start": 3.6,
+    "start": 3.6,
+    "start_frame": 108,
+    "end_frame": 245,
+    "duration": 4.566666666666666,
+    "frames": 137,
     "voice_file": "voice-02-2e910e5ce7.wav",
     "donation_offset": null
   },
@@ -134,15 +134,15 @@
     "background": "morning",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.22,
+    "speed": 1.27,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 8.633333333333333,
-    "start": 8.633333333333333,
-    "start_frame": 259,
-    "end_frame": 316,
-    "duration": 1.9,
-    "frames": 57,
+    "scene_start": 8.166666666666666,
+    "start": 8.166666666666666,
+    "start_frame": 245,
+    "end_frame": 299,
+    "duration": 1.8,
+    "frames": 54,
     "voice_file": "voice-03-3afb85f00f.wav",
     "donation_offset": null
   },
@@ -174,18 +174,18 @@
     "speed": 1.32,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 10.533333333333333,
-    "start": 10.533333333333333,
-    "start_frame": 316,
-    "end_frame": 396,
-    "duration": 2.6666666666666665,
-    "frames": 80,
-    "voice_file": "voice-04-bd48472fa1.wav",
+    "scene_start": 9.966666666666667,
+    "start": 9.966666666666667,
+    "start_frame": 299,
+    "end_frame": 378,
+    "duration": 2.6333333333333333,
+    "frames": 79,
+    "voice_file": "voice-04-324baa2a10.wav",
     "donation_offset": null
   },
   {
-    "scene_id": "month",
-    "utterance_id": "month",
+    "scene_id": "downturn",
+    "utterance_id": "downturn",
     "speaker": 0,
     "text": "",
     "display_text": "",
@@ -200,29 +200,30 @@
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
     "kind": "time_cut",
-    "title": "１か月後",
-    "cut_duration": 0.55,
-    "scene_start": 13.2,
-    "start": 13.2,
-    "start_frame": 396,
-    "end_frame": 414,
-    "duration": 0.6,
-    "frames": 18,
+    "title": "相場が下がると…",
+    "cut_duration": 1.0,
+    "subtitle": "10％下落の仮定",
+    "scene_start": 12.6,
+    "start": 12.6,
+    "start_frame": 378,
+    "end_frame": 408,
+    "duration": 1.0,
+    "frames": 30,
     "voice_file": null
   },
   {
     "scene_id": "panic",
     "utterance_id": "panic",
     "speaker": 3,
-    "text": "２０％下がったのだ！もう全部売るのだ！",
-    "display_text": "２０％下がったのだ！もう全部売るのだ！",
+    "text": "１０％下がったのだ！もう全部売るのだ！",
+    "display_text": "１０％下がったのだ！もう全部売るのだ！",
     "caption": [
-      "２０％下がったのだ！",
+      "１０％下がったのだ！",
       "もう全部売るのだ！"
     ],
     "caption_pages": [
       [
-        "２０％下がったのだ！"
+        "１０％下がったのだ！"
       ],
       [
         "もう全部売るのだ！"
@@ -238,13 +239,13 @@
     "speed": 1.29,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 13.8,
-    "start": 13.8,
-    "start_frame": 414,
-    "end_frame": 498,
-    "duration": 2.8,
-    "frames": 84,
-    "voice_file": "voice-06-cfc2aa6ce8.wav",
+    "scene_start": 13.6,
+    "start": 13.6,
+    "start_frame": 408,
+    "end_frame": 489,
+    "duration": 2.7,
+    "frames": 81,
+    "voice_file": "voice-06-e91d3306de.wav",
     "donation_offset": null
   },
   {
@@ -266,64 +267,64 @@
     "kind": "time_cut",
     "title": "売却・入金後",
     "cut_duration": 0.45,
-    "scene_start": 16.6,
-    "start": 16.6,
-    "start_frame": 498,
-    "end_frame": 519,
-    "duration": 0.7,
-    "frames": 21,
+    "scene_start": 16.3,
+    "start": 16.3,
+    "start_frame": 489,
+    "end_frame": 503,
+    "duration": 0.4666666666666667,
+    "frames": 14,
     "voice_file": null
   },
   {
     "scene_id": "proceeds",
     "utterance_id": "proceeds",
     "speaker": 2,
-    "text": "３００万円が、２４０万円になったわね。",
-    "display_text": "３００万円が、２４０万円になったわね。",
+    "text": "３００万円が、２７０万円になったわね。",
+    "display_text": "３００万円が、２７０万円になったわね。",
     "caption": [
       "３００万円が、",
-      "２４０万円になったわね。"
+      "２７０万円になったわね。"
     ],
     "caption_pages": [
       [
         "３００万円が、"
       ],
       [
-        "２４０万円になったわね。"
+        "２７０万円になったわね。"
       ]
     ],
     "caption_cues": [
-      "ニヒャクヨンジュウ"
+      "ニヒャクナナジュウ"
     ],
     "camera": "wide",
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.12,
+    "speed": 1.2,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 17.3,
-    "start": 17.3,
-    "start_frame": 519,
-    "end_frame": 612,
-    "duration": 3.1,
-    "frames": 93,
-    "voice_file": "voice-08-8cbdaba578.wav",
+    "scene_start": 16.766666666666666,
+    "start": 16.766666666666666,
+    "start_frame": 503,
+    "end_frame": 590,
+    "duration": 2.9,
+    "frames": 87,
+    "voice_file": "voice-08-8b87e1ba09.wav",
     "donation_offset": null
   },
   {
     "scene_id": "relief",
     "utterance_id": "relief",
     "speaker": 3,
-    "text": "まだ２４０万円ある！助かったのだ！",
-    "display_text": "まだ２４０万円ある！助かったのだ！",
+    "text": "まだ２７０万円ある！助かったのだ！",
+    "display_text": "まだ２７０万円ある！助かったのだ！",
     "caption": [
-      "まだ２４０万円ある！",
+      "まだ２７０万円ある！",
       "助かったのだ！"
     ],
     "caption_pages": [
       [
-        "まだ２４０万円ある！"
+        "まだ２７０万円ある！"
       ],
       [
         "助かったのだ！"
@@ -339,13 +340,13 @@
     "speed": 1.28,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 20.4,
-    "start": 20.4,
-    "start_frame": 612,
-    "end_frame": 692,
+    "scene_start": 19.666666666666668,
+    "start": 19.666666666666668,
+    "start_frame": 590,
+    "end_frame": 670,
     "duration": 2.6666666666666665,
     "frames": 80,
-    "voice_file": "voice-09-51d0227808.wav",
+    "voice_file": "voice-09-098f709543.wav",
     "donation_offset": null
   },
   {
@@ -369,15 +370,15 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.12,
+    "speed": 1.23,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 23.066666666666666,
-    "start": 23.066666666666666,
-    "start_frame": 692,
-    "end_frame": 752,
-    "duration": 2.0,
-    "frames": 60,
+    "scene_start": 22.333333333333332,
+    "start": 22.333333333333332,
+    "start_frame": 670,
+    "end_frame": 725,
+    "duration": 1.8333333333333333,
+    "frames": 55,
     "voice_file": "voice-10-3f7a6ba555.wav",
     "donation_offset": null
   },
@@ -385,15 +386,15 @@
     "scene_id": "reveal",
     "utterance_id": "reveal",
     "speaker": 3,
-    "text": "残り４０万！？僕の１００万が！",
-    "display_text": "残り４０万！？僕の１００万が！",
+    "text": "残り７０万！？僕の１００万が！",
+    "display_text": "残り７０万！？僕の１００万が！",
     "caption": [
-      "残り４０万！？",
+      "残り７０万！？",
       "僕の１００万が！"
     ],
     "caption_pages": [
       [
-        "残り４０万！？"
+        "残り７０万！？"
       ],
       [
         "僕の１００万が！"
@@ -406,58 +407,58 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.12,
+    "speed": 1.22,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 25.066666666666666,
-    "start": 25.066666666666666,
-    "start_frame": 752,
-    "end_frame": 835,
-    "duration": 2.7666666666666666,
-    "frames": 83,
-    "voice_file": "voice-11-6cb040b57b.wav",
+    "scene_start": 24.166666666666668,
+    "start": 24.166666666666668,
+    "start_frame": 725,
+    "end_frame": 798,
+    "duration": 2.433333333333333,
+    "frames": 73,
+    "voice_file": "voice-11-589311dca2.wav",
     "donation_offset": null
   },
   {
     "scene_id": "lesson",
     "utterance_id": "lesson",
     "speaker": 2,
-    "text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
-    "display_text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "text": "オルカンは１０％下落。でも、あなたのお金は３０％減ったの。",
+    "display_text": "オルカンは１０％下落。でも、あなたのお金は３０％減ったの。",
     "caption": [
-      "オルカンは２０％下落。",
+      "オルカンは１０％下落。",
       "でも、あなたのお金は",
-      "６０％減ったの。"
+      "３０％減ったの。"
     ],
     "caption_pages": [
       [
-        "オルカンは２０％下落。"
+        "オルカンは１０％下落。"
       ],
       [
         "でも、あなたのお金は"
       ],
       [
-        "６０％減ったの。"
+        "３０％減ったの。"
       ]
     ],
     "caption_cues": [
       "デモ",
-      "ロクジュッパアセント"
+      "サンジュッパアセント"
     ],
     "camera": "wide",
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.12,
+    "speed": 1.21,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 27.833333333333332,
-    "start": 27.833333333333332,
-    "start_frame": 835,
-    "end_frame": 973,
-    "duration": 4.6,
-    "frames": 138,
-    "voice_file": "voice-12-3bed130b84.wav",
+    "scene_start": 26.6,
+    "start": 26.6,
+    "start_frame": 798,
+    "end_frame": 923,
+    "duration": 4.166666666666667,
+    "frames": 125,
+    "voice_file": "voice-12-2a96d6834c.wav",
     "donation_offset": null
   },
   {
@@ -484,12 +485,12 @@
     "speed": 1.3,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 32.43333333333333,
-    "start": 32.43333333333333,
-    "start_frame": 973,
-    "end_frame": 1033,
-    "duration": 2.0,
-    "frames": 60,
+    "scene_start": 30.766666666666666,
+    "start": 30.766666666666666,
+    "start_frame": 923,
+    "end_frame": 982,
+    "duration": 1.9666666666666666,
+    "frames": 59,
     "voice_file": "voice-13-59568e392d.wav",
     "donation_offset": null
   },
@@ -518,15 +519,15 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 0,
-    "speed": 1.22,
+    "speed": 1.26,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 34.43333333333333,
-    "start": 34.43333333333333,
-    "start_frame": 1033,
-    "end_frame": 1094,
-    "duration": 2.033333333333333,
-    "frames": 61,
+    "scene_start": 32.733333333333334,
+    "start": 32.733333333333334,
+    "start_frame": 982,
+    "end_frame": 1040,
+    "duration": 1.9333333333333333,
+    "frames": 58,
     "voice_file": "voice-14-fbb3659f0a.wav",
     "donation_offset": null
   },
@@ -558,10 +559,10 @@
     "speed": 1.3,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 36.46666666666667,
-    "start": 36.46666666666667,
-    "start_frame": 1094,
-    "end_frame": 1166,
+    "scene_start": 34.666666666666664,
+    "start": 34.666666666666664,
+    "start_frame": 1040,
+    "end_frame": 1112,
     "duration": 2.4,
     "frames": 72,
     "voice_file": "voice-15-badcb4ab84.wav",
@@ -588,15 +589,15 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 0,
-    "speed": 1.2,
+    "speed": 1.27,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 38.86666666666667,
-    "start": 38.86666666666667,
-    "start_frame": 1166,
-    "end_frame": 1218,
-    "duration": 1.7333333333333334,
-    "frames": 52,
+    "scene_start": 37.06666666666667,
+    "start": 37.06666666666667,
+    "start_frame": 1112,
+    "end_frame": 1160,
+    "duration": 1.6,
+    "frames": 48,
     "voice_file": "voice-16-6bd633ff8d.wav",
     "donation_offset": null
   },
@@ -622,12 +623,12 @@
     "speed": 1.15,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 40.6,
-    "start": 40.6,
-    "start_frame": 1218,
-    "end_frame": 1262,
-    "duration": 1.4666666666666666,
-    "frames": 44,
+    "scene_start": 38.666666666666664,
+    "start": 38.666666666666664,
+    "start_frame": 1160,
+    "end_frame": 1199,
+    "duration": 1.3,
+    "frames": 39,
     "voice_file": "voice-17-a6ebc33735.wav",
     "donation_offset": null
   },
@@ -635,33 +636,39 @@
     "scene_id": "cta",
     "utterance_id": "cta",
     "speaker": 2,
-    "text": "役に立ったら、いいねと登録を！",
-    "display_text": "役に立ったら、いいねと登録を！",
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
     "caption": [
-      "役に立ったら、",
-      "いいねと登録を！"
+      "お金の失敗を",
+      "減らしたい人は、",
+      "チャンネル登録を！"
     ],
     "caption_pages": [
       [
-        "役に立ったら、",
-        "いいねと登録を！"
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
       ]
     ],
-    "caption_cues": [],
+    "caption_cues": [
+      "チャンネル"
+    ],
     "camera": "wide",
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.32,
+    "speed": 1.26,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
-    "scene_start": 42.06666666666667,
-    "start": 42.06666666666667,
-    "start_frame": 1262,
-    "end_frame": 1311,
-    "duration": 1.6333333333333333,
-    "frames": 49,
-    "voice_file": "voice-18-d778f0e729.wav",
+    "scene_start": 39.96666666666667,
+    "start": 39.96666666666667,
+    "start_frame": 1199,
+    "end_frame": 1280,
+    "duration": 2.7,
+    "frames": 81,
+    "voice_file": "voice-18-0fde42ccb1.wav",
     "donation_offset": null
   }
 ]
