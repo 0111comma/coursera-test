@@ -1,0 +1,517 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "オルカンなら安心！借金して買い増すのだ！",
+    "display_text": "オルカンなら安心！借金して買い増すのだ！",
+    "caption": [
+      "オルカンなら安心！",
+      "借金して",
+      "買い増すのだ！"
+    ],
+    "caption_pages": [
+      [
+        "オルカンなら安心！"
+      ],
+      [
+        "借金して",
+        "買い増すのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "シャッキン"
+    ],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "doubt",
+    "utterance_id": "doubt",
+    "speaker": 2,
+    "text": "借金してまで？",
+    "display_text": "借金してまで？",
+    "caption": [
+      "借金してまで？"
+    ],
+    "caption_pages": [
+      [
+        "借金してまで？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 0,
+    "speed": 1.28,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "funding",
+    "utterance_id": "funding",
+    "speaker": 3,
+    "text": "自分の１００万円と、借りた２００万円！合わせて３００万円なのだ！",
+    "display_text": "自分の１００万円と、借りた２００万円！合わせて３００万円なのだ！",
+    "caption": [
+      "自分の１００万円と、",
+      "借りた２００万円！",
+      "合わせて",
+      "３００万円なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "自分の１００万円と、"
+      ],
+      [
+        "借りた２００万円！"
+      ],
+      [
+        "合わせて",
+        "３００万円なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "カリタ",
+      "アワセテ"
+    ],
+    "camera": "wide",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.22,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "warn",
+    "utterance_id": "warn",
+    "speaker": 2,
+    "text": "下がったら、損も大きくなるわよ。",
+    "display_text": "下がったら、損も大きくなるわよ。",
+    "caption": [
+      "下がったら、",
+      "損も大きくなるわよ。"
+    ],
+    "caption_pages": [
+      [
+        "下がったら、",
+        "損も大きくなるわよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.27,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "boast",
+    "utterance_id": "boast",
+    "speaker": 3,
+    "text": "世界中に投資してるのだ！大丈夫なのだ！",
+    "display_text": "世界中に投資してるのだ！大丈夫なのだ！",
+    "caption": [
+      "世界中に投資してるのだ！",
+      "大丈夫なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "世界中に投資してるのだ！"
+      ],
+      [
+        "大丈夫なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "ダイジョウブ"
+    ],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.32,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "month",
+    "utterance_id": "month",
+    "speaker": 0,
+    "text": "",
+    "display_text": "",
+    "caption": [],
+    "caption_pages": [],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "crash",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.0,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "kind": "time_cut",
+    "title": "１か月後",
+    "cut_duration": 0.55
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "２０％下がったのだ！もう全部売るのだ！",
+    "display_text": "２０％下がったのだ！もう全部売るのだ！",
+    "caption": [
+      "２０％下がったのだ！",
+      "もう全部売るのだ！"
+    ],
+    "caption_pages": [
+      [
+        "２０％下がったのだ！"
+      ],
+      [
+        "もう全部売るのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "モオ"
+    ],
+    "camera": "zclose",
+    "background": "crash",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.29,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "settled",
+    "utterance_id": "settled",
+    "speaker": 0,
+    "text": "",
+    "display_text": "",
+    "caption": [],
+    "caption_pages": [],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.0,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "kind": "time_cut",
+    "title": "売却・入金後",
+    "cut_duration": 0.45
+  },
+  {
+    "scene_id": "proceeds",
+    "utterance_id": "proceeds",
+    "speaker": 2,
+    "text": "３００万円が、２４０万円になったわね。",
+    "display_text": "３００万円が、２４０万円になったわね。",
+    "caption": [
+      "３００万円が、",
+      "２４０万円になったわね。"
+    ],
+    "caption_pages": [
+      [
+        "３００万円が、"
+      ],
+      [
+        "２４０万円になったわね。"
+      ]
+    ],
+    "caption_cues": [
+      "ニヒャクヨンジュウ"
+    ],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.2,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "relief",
+    "utterance_id": "relief",
+    "speaker": 3,
+    "text": "まだ２４０万円ある！助かったのだ！",
+    "display_text": "まだ２４０万円ある！助かったのだ！",
+    "caption": [
+      "まだ２４０万円ある！",
+      "助かったのだ！"
+    ],
+    "caption_pages": [
+      [
+        "まだ２４０万円ある！"
+      ],
+      [
+        "助かったのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "タスカッタ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.28,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "debt",
+    "utterance_id": "debt",
+    "speaker": 2,
+    "text": "借りた２００万円を返したら？",
+    "display_text": "借りた２００万円を返したら？",
+    "caption": [
+      "借りた２００万円を",
+      "返したら？"
+    ],
+    "caption_pages": [
+      [
+        "借りた２００万円を",
+        "返したら？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.23,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 3,
+    "text": "残り４０万！？僕の１００万が！",
+    "display_text": "残り４０万！？僕の１００万が！",
+    "caption": [
+      "残り４０万！？",
+      "僕の１００万が！"
+    ],
+    "caption_pages": [
+      [
+        "残り４０万！？"
+      ],
+      [
+        "僕の１００万が！"
+      ]
+    ],
+    "caption_cues": [
+      "ボクノ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.22,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "lesson",
+    "utterance_id": "lesson",
+    "speaker": 2,
+    "text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "display_text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "caption": [
+      "オルカンは２０％下落。",
+      "でも、あなたのお金は",
+      "６０％減ったの。"
+    ],
+    "caption_pages": [
+      [
+        "オルカンは２０％下落。"
+      ],
+      [
+        "でも、あなたのお金は"
+      ],
+      [
+        "６０％減ったの。"
+      ]
+    ],
+    "caption_cues": [
+      "デモ",
+      "ロクジュッパアセント"
+    ],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.21,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "bargain",
+    "utterance_id": "bargain",
+    "speaker": 3,
+    "text": "借金も一緒に減ってほしいのだ！",
+    "display_text": "借金も一緒に減ってほしいのだ！",
+    "caption": [
+      "借金も一緒に",
+      "減ってほしいのだ！"
+    ],
+    "caption_pages": [
+      [
+        "借金も一緒に",
+        "減ってほしいのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "interest",
+    "utterance_id": "interest",
+    "speaker": 2,
+    "text": "減らないわ。利息も別にかかるのよ。",
+    "display_text": "減らないわ。利息も別にかかるのよ。",
+    "caption": [
+      "減らないわ。",
+      "利息も別にかかるのよ。"
+    ],
+    "caption_pages": [
+      [
+        "減らないわ。"
+      ],
+      [
+        "利息も別にかかるのよ。"
+      ]
+    ],
+    "caption_cues": [
+      "リソク"
+    ],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 0,
+    "speed": 1.26,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "escape",
+    "utterance_id": "escape",
+    "speaker": 3,
+    "text": "画面を消すのだ！見なければ平気なのだ！",
+    "display_text": "画面を消すのだ！見なければ平気なのだ！",
+    "caption": [
+      "画面を消すのだ！",
+      "見なければ平気なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "画面を消すのだ！"
+      ],
+      [
+        "見なければ平気なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "ミナケレバ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "retort",
+    "utterance_id": "retort",
+    "speaker": 2,
+    "text": "返済日も消えると思ってる？",
+    "display_text": "返済日も消えると思ってる？",
+    "caption": [
+      "返済日も消えると",
+      "思ってる？"
+    ],
+    "caption_pages": [
+      [
+        "返済日も消えると",
+        "思ってる？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 0,
+    "speed": 1.27,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "……バイトを探すのだ。",
+    "display_text": "……バイトを探すのだ。",
+    "caption": [
+      "……バイトを探すのだ。"
+    ],
+    "caption_pages": [
+      [
+        "……バイトを探すのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.15,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "役に立ったら、いいねと登録を！",
+    "display_text": "役に立ったら、いいねと登録を！",
+    "caption": [
+      "役に立ったら、",
+      "いいねと登録を！"
+    ],
+    "caption_pages": [
+      [
+        "役に立ったら、",
+        "いいねと登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.32,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045
+  }
+]
