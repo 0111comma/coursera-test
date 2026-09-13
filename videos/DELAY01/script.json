@@ -65,13 +65,13 @@
     "background": "morning",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.26,
+    "speed": 1.1,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "じゃあ５５歳で、いくらになるか比べるわよ。",
         "style": "ノーマル",
-        "speed": 1.26,
+        "speed": 1.1,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -87,11 +87,11 @@
     "scene_id": "assume",
     "utterance_id": "assume",
     "speaker": 2,
-    "text": "年５％で増えると仮定してね。",
-    "display_text": "年５％で増えると仮定してね。",
+    "text": "年率５％で増えると仮定してね。",
+    "display_text": "年率５％で増えると仮定してね。",
     "caption_pages": [
       [
-        "年５％で増えると",
+        "年率５％で増えると",
         "仮定してね。"
       ]
     ],
@@ -100,13 +100,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.18,
+    "speed": 1.06,
     "tail_seconds": 0.055,
     "delivery": [
       {
-        "text": "年５％で増えると仮定してね。",
+        "text": "年率５％で増えると仮定してね。",
         "style": "ノーマル",
-        "speed": 1.18,
+        "speed": 1.06,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -135,13 +135,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.15,
-    "tail_seconds": 0.055,
+    "speed": 1.0,
+    "tail_seconds": 0.24,
     "delivery": [
       {
         "text": "３５歳から２０年で、約４０６万円。",
         "style": "ノーマル",
-        "speed": 1.15,
+        "speed": 1.0,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -208,13 +208,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.15,
-    "tail_seconds": 0.055,
+    "speed": 1.0,
+    "tail_seconds": 0.24,
     "delivery": [
       {
         "text": "４５歳からだと１０年。",
         "style": "ノーマル",
-        "speed": 1.15,
+        "speed": 1.0,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -224,7 +224,7 @@
       {
         "text": "約１５４万円。",
         "style": "ノーマル",
-        "speed": 1.15,
+        "speed": 1.0,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -310,13 +310,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.23,
-    "tail_seconds": 0.055,
+    "speed": 1.1,
+    "tail_seconds": 0.24,
     "delivery": [
       {
         "text": "早く始めた方は、",
         "style": "ノーマル",
-        "speed": 1.23,
+        "speed": 1.1,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -326,7 +326,7 @@
       {
         "text": "積み立てた元本も１２０万円多い。",
         "style": "ノーマル",
-        "speed": 1.23,
+        "speed": 1.1,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -342,12 +342,16 @@
     "scene_id": "time",
     "utterance_id": "time",
     "speaker": 2,
-    "text": "運用する時間にも差があるの。",
-    "display_text": "運用する時間にも差があるの。",
+    "text": "運用する時間にも差があるの。利益も、運用に回す計算よ。",
+    "display_text": "運用する時間にも差があるの。利益も、運用に回す計算よ。",
     "caption_pages": [
       [
         "運用する時間にも",
         "差があるの。"
+      ],
+      [
+        "利益も、",
+        "運用に回す計算よ。"
       ]
     ],
     "caption_cues": [],
@@ -355,13 +359,23 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.21,
+    "speed": 1.1,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "運用する時間にも差があるの。",
         "style": "ノーマル",
-        "speed": 1.21,
+        "speed": 1.1,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.06
+      },
+      {
+        "text": "利益も、運用に回す計算よ。",
+        "style": "ノーマル",
+        "speed": 1.1,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -481,13 +495,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.28,
+    "speed": 1.17,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "お金の失敗を減らしたい人は、",
         "style": "ノーマル",
-        "speed": 1.28,
+        "speed": 1.17,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -497,7 +511,7 @@
       {
         "text": "チャンネル登録を！",
         "style": "ノーマル",
-        "speed": 1.28,
+        "speed": 1.17,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,

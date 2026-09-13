@@ -154,13 +154,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.21,
-    "tail_seconds": 0.055,
+    "speed": 1.02,
+    "tail_seconds": 0.24,
     "delivery": [
       {
         "text": "３５歳、前月の給料３０万円の例ね。",
         "style": "ノーマル",
-        "speed": 1.21,
+        "speed": 1.02,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -192,13 +192,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.22,
+    "speed": 1.06,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "税金と保険料などで、",
         "style": "ノーマル",
-        "speed": 1.22,
+        "speed": 1.06,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -208,7 +208,7 @@
       {
         "text": "約９万１千円引かれるの。",
         "style": "ノーマル",
-        "speed": 1.22,
+        "speed": 1.06,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -224,14 +224,12 @@
     "scene_id": "tax",
     "utterance_id": "tax",
     "speaker": 3,
-    "text": "そんなに税金を取るのだ！？",
-    "display_text": "そんなに税金を取るのだ！？",
+    "text": "税金だけで９万円なのだ！？",
+    "display_text": "税金だけで９万円なのだ！？",
     "caption_pages": [
       [
-        "そんなに税金を"
-      ],
-      [
-        "取るのだ！？"
+        "税金だけで",
+        "９万円なのだ！？"
       ]
     ],
     "caption_cues": [],
@@ -243,18 +241,7 @@
     "tail_seconds": 0.055,
     "delivery": [
       {
-        "text": "そんなに税金を",
-        "style": "ツンツン",
-        "speed": 1.3,
-        "intonation": 1.32,
-        "pause": 0.12,
-        "lead": 0.018,
-        "tail": 0.023,
-        "gap": 0.035,
-        "pitch": 0.015
-      },
-      {
-        "text": "取るのだ！？",
+        "text": "税金だけで９万円なのだ！？",
         "style": "ツンツン",
         "speed": 1.3,
         "intonation": 1.32,
@@ -286,13 +273,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.18,
-    "tail_seconds": 0.055,
+    "speed": 1.02,
+    "tail_seconds": 0.24,
     "delivery": [
       {
         "text": "うち約７万３千円は、保険料などよ。",
         "style": "ノーマル",
-        "speed": 1.18,
+        "speed": 1.02,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -360,13 +347,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.25,
+    "speed": 1.12,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "賞与にもかかるのよ。",
         "style": "ノーマル",
-        "speed": 1.25,
+        "speed": 1.12,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -376,7 +363,7 @@
       {
         "text": "会社も別に保険料を負担してるわ。",
         "style": "ノーマル",
-        "speed": 1.25,
+        "speed": 1.12,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -404,13 +391,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.19,
+    "speed": 1.04,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "で、旅行代は４５万円。",
         "style": "ノーマル",
-        "speed": 1.19,
+        "speed": 1.04,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -583,13 +570,13 @@
     "background": "evening",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.28,
+    "speed": 1.17,
     "tail_seconds": 0.055,
     "delivery": [
       {
         "text": "お金の失敗を減らしたい人は、",
         "style": "ノーマル",
-        "speed": 1.28,
+        "speed": 1.17,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
@@ -599,7 +586,7 @@
       {
         "text": "チャンネル登録を！",
         "style": "ノーマル",
-        "speed": 1.28,
+        "speed": 1.17,
         "intonation": 1.2,
         "pause": 0.12,
         "lead": 0.018,
