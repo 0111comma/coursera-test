@@ -1,0 +1,55 @@
+name: Two finance shorts VOICEVOX
+on:
+  push:
+    branches: [codex/bonus-and-tsumitate-20260913]
+    paths: ['videos/BONUS01/script.json', 'videos/DELAY01/script.json', 'videos/finance_shorts/synthesize.py', 'videos/finance_shorts/performance.py', '.github/workflows/two-finance-audio.yml']
+permissions:
+  contents: write
+jobs:
+  audio:
+    if: contains(github.event.head_commit.message, '[two-finance-audio]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg p7zip-full
+          pip install numpy
+      - name: Start VOICEVOX
+        run: |
+          sudo mkdir -p /opt/voicevox
+          sudo chown -R "$USER:$USER" /opt/voicevox
+          bash production/setup_voicevox.sh
+      - name: Synthesize both shorts
+        run: |
+          FINANCE_PROJECT=videos/BONUS01 python videos/finance_shorts/synthesize.py
+          FINANCE_PROJECT=videos/DELAY01 python videos/finance_shorts/synthesize.py
+      - name: Compress narration losslessly
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          for code in ['BONUS01','DELAY01']:
+              for p in (Path('videos')/code/'output').glob('*.wav'):
+                  subprocess.run(['ffmpeg','-v','error','-y','-i',str(p),'-c:a','flac',str(p.with_suffix('.flac'))],check=True)
+                  p.unlink()
+          PY
+      - name: Preserve narration and phoneme timings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos/BONUS01/output videos/DELAY01/output
+          git commit -m "Preserve BONUS01 and DELAY01 VOICEVOX performances"
+          git push origin HEAD:codex/bonus-and-tsumitate-20260913
+      - uses: actions/upload-artifact@v4
+        with:
+          name: two-finance-audio
+          path: |
+            videos/BONUS01/output/
+            videos/DELAY01/output/
+          retention-days: 7

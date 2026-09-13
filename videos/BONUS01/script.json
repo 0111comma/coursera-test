@@ -1,0 +1,614 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "ボーナス５０万！４５万の旅行を予約したのだ！",
+    "display_text": "ボーナス５０万！４５万の旅行を予約したのだ！",
+    "caption_pages": [
+      [
+        "ボーナス５０万！"
+      ],
+      [
+        "４５万の旅行を",
+        "予約したのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.3,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "ボーナス５０万！",
+        "style": "ノーマル",
+        "speed": 1.3,
+        "intonation": 1.37,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035,
+        "pitch": 0.035
+      },
+      {
+        "text": "４５万の旅行を予約したのだ！",
+        "style": "ノーマル",
+        "speed": 1.3,
+        "intonation": 1.37,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "hook",
+    "fx": "cash"
+  },
+  {
+    "scene_id": "question",
+    "utterance_id": "question",
+    "speaker": 2,
+    "text": "手取りは見た？",
+    "display_text": "手取りは見た？",
+    "caption_pages": [
+      [
+        "手取りは見た？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.15,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "手取りは見た？",
+        "style": "ノーマル",
+        "speed": 1.15,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "question",
+    "fx": null
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "うわあっ！４０万９千円！？",
+    "display_text": "うわあっ！４０万９千円！？",
+    "caption_pages": [
+      [
+        "うわあっ！"
+      ],
+      [
+        "４０万９千円！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "うわあっ！",
+        "style": "ノーマル",
+        "speed": 1.03,
+        "intonation": 1.55,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.085,
+        "pitch": 0.065,
+        "volume": 1.16,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.24
+        }
+      },
+      {
+        "text": "４０万９千円！？",
+        "style": "なみだめ",
+        "speed": 1.12,
+        "intonation": 1.4,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.025
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact"
+  },
+  {
+    "scene_id": "conditions",
+    "utterance_id": "conditions",
+    "speaker": 2,
+    "text": "３５歳、前月の給料３０万円の例ね。",
+    "display_text": "３５歳、前月の給料３０万円の例ね。",
+    "caption_pages": [
+      [
+        "３５歳、前月の給料",
+        "３０万円の例ね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.21,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "３５歳、前月の給料３０万円の例ね。",
+        "style": "ノーマル",
+        "speed": 1.21,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "conditions",
+    "fx": null
+  },
+  {
+    "scene_id": "deductions",
+    "utterance_id": "deductions",
+    "speaker": 2,
+    "text": "税金と保険料などで、約９万１千円引かれるの。",
+    "display_text": "税金と保険料などで、約９万１千円引かれるの。",
+    "caption_pages": [
+      [
+        "税金と保険料などで、"
+      ],
+      [
+        "約９万１千円",
+        "引かれるの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.22,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "税金と保険料などで、",
+        "style": "ノーマル",
+        "speed": 1.22,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "約９万１千円引かれるの。",
+        "style": "ノーマル",
+        "speed": 1.22,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "deductions",
+    "fx": null
+  },
+  {
+    "scene_id": "tax",
+    "utterance_id": "tax",
+    "speaker": 3,
+    "text": "そんなに税金を取るのだ！？",
+    "display_text": "そんなに税金を取るのだ！？",
+    "caption_pages": [
+      [
+        "そんなに税金を"
+      ],
+      [
+        "取るのだ！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.3,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "そんなに税金を",
+        "style": "ツンツン",
+        "speed": 1.3,
+        "intonation": 1.32,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035,
+        "pitch": 0.015
+      },
+      {
+        "text": "取るのだ！？",
+        "style": "ツンツン",
+        "speed": 1.3,
+        "intonation": 1.32,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.015
+      }
+    ],
+    "emotion": "grumble",
+    "graphic": "tax",
+    "fx": null
+  },
+  {
+    "scene_id": "insurance",
+    "utterance_id": "insurance",
+    "speaker": 2,
+    "text": "うち約７万３千円は、保険料などよ。",
+    "display_text": "うち約７万３千円は、保険料などよ。",
+    "caption_pages": [
+      [
+        "うち約７万３千円は、",
+        "保険料などよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "うち約７万３千円は、保険料などよ。",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "insurance",
+    "fx": null
+  },
+  {
+    "scene_id": "again",
+    "utterance_id": "again",
+    "speaker": 3,
+    "text": "毎月払ってるのに、ボーナスからも！？",
+    "display_text": "毎月払ってるのに、ボーナスからも！？",
+    "caption_pages": [
+      [
+        "毎月払ってるのに、",
+        "ボーナスからも！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.27,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "毎月払ってるのに、ボーナスからも！？",
+        "style": "ツンツン",
+        "speed": 1.27,
+        "intonation": 1.32,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.015
+      }
+    ],
+    "emotion": "grumble",
+    "graphic": "again",
+    "fx": null
+  },
+  {
+    "scene_id": "also",
+    "utterance_id": "also",
+    "speaker": 2,
+    "text": "賞与にもかかるのよ。会社も別に保険料を負担してるわ。",
+    "display_text": "賞与にもかかるのよ。会社も別に保険料を負担してるわ。",
+    "caption_pages": [
+      [
+        "賞与にもかかるのよ。"
+      ],
+      [
+        "会社も別に",
+        "保険料を負担してるわ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.25,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "賞与にもかかるのよ。",
+        "style": "ノーマル",
+        "speed": 1.25,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "会社も別に保険料を負担してるわ。",
+        "style": "ノーマル",
+        "speed": 1.25,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "also",
+    "fx": null
+  },
+  {
+    "scene_id": "travel",
+    "utterance_id": "travel",
+    "speaker": 2,
+    "text": "で、旅行代は４５万円。",
+    "display_text": "で、旅行代は４５万円。",
+    "caption_pages": [
+      [
+        "で、旅行代は４５万円。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.19,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "で、旅行代は４５万円。",
+        "style": "ノーマル",
+        "speed": 1.19,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "travel",
+    "fx": "click"
+  },
+  {
+    "scene_id": "shortfall",
+    "utterance_id": "shortfall",
+    "speaker": 3,
+    "text": "あと４万円も足りないのだ……。",
+    "display_text": "あと４万円も足りないのだ……。",
+    "caption_pages": [
+      [
+        "あと４万円も"
+      ],
+      [
+        "足りないのだ……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.1,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "あと４万円も",
+        "style": "なみだめ",
+        "speed": 1.1,
+        "intonation": 1.4,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035,
+        "pitch": 0.025
+      },
+      {
+        "text": "足りないのだ……。",
+        "style": "なみだめ",
+        "speed": 1.1,
+        "intonation": 1.4,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": -0.035,
+        "contour": "fall",
+        "volume": 0.94
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "shortfall",
+    "fx": "down"
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "……残りは、給料から出すのだ。",
+    "display_text": "……残りは、給料から出すのだ。",
+    "caption_pages": [
+      [
+        "……残りは、"
+      ],
+      [
+        "給料から出すのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.22,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "……残りは、",
+        "style": "ヘロヘロ",
+        "speed": 1.01,
+        "intonation": 0.84,
+        "pause": 0.15,
+        "lead": 0.22,
+        "tail": 0.023,
+        "gap": 0.14,
+        "pitch": -0.045,
+        "volume": 0.87,
+        "contour": "fall"
+      },
+      {
+        "text": "給料から出すのだ。",
+        "style": "ヘロヘロ",
+        "speed": 1.01,
+        "intonation": 0.84,
+        "pause": 0.15,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": -0.045,
+        "volume": 0.87,
+        "contour": "fall",
+        "vowel_seconds": {
+          "-1": 0.18
+        }
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "生活費も残してね。",
+    "display_text": "生活費も残してね。",
+    "caption_pages": [
+      [
+        "生活費も残してね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.13,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "生活費も残してね。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.28,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.28,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.28,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": null
+  }
+]
