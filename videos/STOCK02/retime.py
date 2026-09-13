@@ -12,6 +12,7 @@ for i,s in enumerate(T):
         if not (O/f'query-{i:02}-original.json').exists():(O/f'query-{i:02}-original.json').write_text(qpath.read_text())
         q=json.loads((O/f'query-{i:02}-original.json').read_text())
         target=1.12 if i in [2,8,10,11,12] else 1.22 if i in [3,14] else 1.20 if i==16 else s['speed']
+        if q.get('timed_moras'):target=1.0
         tempo=target/q['speedScale'];src=O/Path(s['voice_file']).with_suffix('.flac')
         raw=subprocess.check_output(['ffmpeg','-v','error','-i',str(src),'-af',f'atempo={tempo:.10f}','-ar','24000','-ac','1','-f','s16le','-'])
         a=np.frombuffer(raw,np.int16).astype(float)/32768

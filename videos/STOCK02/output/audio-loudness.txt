@@ -5,13 +5,13 @@ Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/workspace/scratch/8bfeecdbf44a/stock2/
     compatible_brands: isomiso2avc1mp41
     title           : 借金でオルカンを買った結果｜STOCK02
     encoder         : Lavf60.16.100
-  Duration: 00:00:45.10, start: 0.000000, bitrate: 1158 kb/s
-  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 986 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
+  Duration: 00:00:49.70, start: 0.000000, bitrate: 1118 kb/s
+  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1080x1920, 945 kb/s, 30 fps, 30 tbr, 15360 tbn (default)
     Metadata:
       handler_name    : VideoHandler
       vendor_id       : [0][0][0][0]
       encoder         : Lavc60.31.102 libx264
-  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 164 kb/s (default)
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 163 kb/s (default)
     Metadata:
       handler_name    : SoundHandler
       vendor_id       : [0][0][0][0]
@@ -36,23 +36,24 @@ Output #0, null, to 'pipe:':
       handler_name    : SoundHandler
       vendor_id       : [0][0][0][0]
       encoder         : Lavc60.31.102 pcm_s16le
-frame=   81 fps= 73 q=-0.0 size=N/A time=00:00:02.66 bitrate=N/A speed=2.41x    
-frame=  294 fps=183 q=-0.0 size=N/A time=00:00:09.80 bitrate=N/A speed= 6.1x    
-frame=  541 fps=257 q=-0.0 size=N/A time=00:00:18.00 bitrate=N/A speed=8.54x    
-frame=  832 fps=319 q=-0.0 size=N/A time=00:00:27.70 bitrate=N/A speed=10.6x    
-frame= 1126 fps=362 q=-0.0 size=N/A time=00:00:37.50 bitrate=N/A speed=  12x    
-[out#0/null @ 0x5642f3f29840] video:633kB audio:33776kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
-frame= 1351 fps=377 q=-0.0 Lsize=N/A time=00:00:45.00 bitrate=N/A speed=12.5x    
-[Parsed_loudnorm_0 @ 0x5642f4042f40] 
+frame=   81 fps= 67 q=-0.0 size=N/A time=00:00:02.66 bitrate=N/A speed= 2.2x    
+frame=  268 fps=156 q=-0.0 size=N/A time=00:00:08.90 bitrate=N/A speed=5.19x    
+frame=  501 fps=226 q=-0.0 size=N/A time=00:00:16.70 bitrate=N/A speed=7.54x    
+frame=  742 fps=273 q=-0.0 size=N/A time=00:00:24.70 bitrate=N/A speed=9.08x    
+frame= 1014 fps=315 q=-0.0 size=N/A time=00:00:33.80 bitrate=N/A speed=10.5x    
+frame= 1302 fps=350 q=-0.0 size=N/A time=00:00:43.40 bitrate=N/A speed=11.7x    
+[out#0/null @ 0x55a093c67bc0] video:698kB audio:37264kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+frame= 1490 fps=361 q=-0.0 Lsize=N/A time=00:00:49.63 bitrate=N/A speed=  12x    
+[Parsed_loudnorm_0 @ 0x55a093d68440] 
 {
-	"input_i" : "-15.06",
-	"input_tp" : "-1.14",
-	"input_lra" : "2.10",
-	"input_thresh" : "-25.16",
-	"output_i" : "-15.31",
+	"input_i" : "-15.39",
+	"input_tp" : "-1.20",
+	"input_lra" : "4.30",
+	"input_thresh" : "-25.60",
+	"output_i" : "-15.58",
 	"output_tp" : "-1.30",
-	"output_lra" : "1.90",
-	"output_thresh" : "-25.41",
+	"output_lra" : "4.00",
+	"output_thresh" : "-25.78",
 	"normalization_type" : "dynamic",
-	"target_offset" : "-0.19"
+	"target_offset" : "0.08"
 }

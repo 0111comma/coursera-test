@@ -75,168 +75,184 @@
     "utterance": 6,
     "page": 0,
     "start_frame": 426,
-    "end_frame": 472,
-    "frame": 449,
-    "text": "１０％下がったのだ！"
+    "end_frame": 457,
+    "frame": 441,
+    "text": "うわあああ！"
   },
   {
     "utterance": 6,
     "page": 1,
-    "start_frame": 473,
-    "end_frame": 506,
-    "frame": 489,
-    "text": "もう全部売るのだ！"
+    "start_frame": 458,
+    "end_frame": 514,
+    "frame": 486,
+    "text": "１０％も下がってる！"
+  },
+  {
+    "utterance": 6,
+    "page": 2,
+    "start_frame": 515,
+    "end_frame": 535,
+    "frame": 525,
+    "text": "もう無理！"
+  },
+  {
+    "utterance": 6,
+    "page": 3,
+    "start_frame": 536,
+    "end_frame": 561,
+    "frame": 548,
+    "text": "全部売るのだ！"
   },
   {
     "utterance": 8,
     "page": 0,
-    "start_frame": 528,
-    "end_frame": 563,
-    "frame": 545,
+    "start_frame": 583,
+    "end_frame": 618,
+    "frame": 600,
     "text": "３００万円が、"
   },
   {
     "utterance": 8,
     "page": 1,
-    "start_frame": 564,
-    "end_frame": 620,
-    "frame": 592,
+    "start_frame": 619,
+    "end_frame": 675,
+    "frame": 647,
     "text": "２７０万円になったわね。"
   },
   {
     "utterance": 9,
     "page": 0,
-    "start_frame": 621,
-    "end_frame": 673,
-    "frame": 647,
+    "start_frame": 676,
+    "end_frame": 731,
+    "frame": 703,
     "text": "まだ２７０万円ある！"
   },
   {
     "utterance": 9,
     "page": 1,
-    "start_frame": 674,
-    "end_frame": 701,
-    "frame": 687,
+    "start_frame": 732,
+    "end_frame": 763,
+    "frame": 747,
     "text": "助かったのだ！"
   },
   {
     "utterance": 10,
     "page": 0,
-    "start_frame": 702,
-    "end_frame": 761,
-    "frame": 731,
+    "start_frame": 764,
+    "end_frame": 823,
+    "frame": 793,
     "text": "借りた２００万円を\n返したら？"
   },
   {
     "utterance": 11,
     "page": 0,
-    "start_frame": 762,
-    "end_frame": 800,
-    "frame": 781,
+    "start_frame": 824,
+    "end_frame": 875,
+    "frame": 849,
     "text": "残り７０万！？"
   },
   {
     "utterance": 11,
     "page": 1,
-    "start_frame": 801,
-    "end_frame": 844,
-    "frame": 822,
+    "start_frame": 876,
+    "end_frame": 922,
+    "frame": 899,
     "text": "僕の１００万が！"
   },
   {
     "utterance": 12,
     "page": 0,
-    "start_frame": 845,
-    "end_frame": 897,
-    "frame": 871,
+    "start_frame": 923,
+    "end_frame": 975,
+    "frame": 949,
     "text": "オルカンは１０％下落。"
   },
   {
     "utterance": 12,
     "page": 1,
-    "start_frame": 898,
-    "end_frame": 934,
-    "frame": 916,
+    "start_frame": 976,
+    "end_frame": 1012,
+    "frame": 994,
     "text": "でも、あなたのお金は"
   },
   {
     "utterance": 12,
     "page": 2,
-    "start_frame": 935,
-    "end_frame": 980,
-    "frame": 957,
+    "start_frame": 1013,
+    "end_frame": 1058,
+    "frame": 1035,
     "text": "３０％減ったの。"
   },
   {
     "utterance": 13,
     "page": 0,
-    "start_frame": 981,
-    "end_frame": 1040,
-    "frame": 1010,
+    "start_frame": 1059,
+    "end_frame": 1136,
+    "frame": 1097,
     "text": "借金も一緒に\n減ってほしいのだ！"
   },
   {
     "utterance": 14,
     "page": 0,
-    "start_frame": 1041,
-    "end_frame": 1060,
-    "frame": 1050,
+    "start_frame": 1137,
+    "end_frame": 1156,
+    "frame": 1146,
     "text": "減らないわ。"
   },
   {
     "utterance": 14,
     "page": 1,
-    "start_frame": 1061,
-    "end_frame": 1101,
-    "frame": 1081,
+    "start_frame": 1157,
+    "end_frame": 1197,
+    "frame": 1177,
     "text": "利息も別にかかるのよ。"
   },
   {
     "utterance": 15,
     "page": 0,
-    "start_frame": 1102,
-    "end_frame": 1133,
-    "frame": 1117,
+    "start_frame": 1198,
+    "end_frame": 1229,
+    "frame": 1213,
     "text": "画面を消すのだ！"
   },
   {
     "utterance": 15,
     "page": 1,
-    "start_frame": 1134,
-    "end_frame": 1173,
-    "frame": 1153,
+    "start_frame": 1230,
+    "end_frame": 1269,
+    "frame": 1249,
     "text": "見なければ平気なのだ！"
   },
   {
     "utterance": 16,
     "page": 0,
-    "start_frame": 1174,
-    "end_frame": 1225,
-    "frame": 1199,
+    "start_frame": 1270,
+    "end_frame": 1321,
+    "frame": 1295,
     "text": "返済日も消えると\n思ってる？"
   },
   {
     "utterance": 17,
     "page": 0,
-    "start_frame": 1226,
-    "end_frame": 1269,
-    "frame": 1247,
-    "text": "……バイトを探すのだ。"
+    "start_frame": 1322,
+    "end_frame": 1408,
+    "frame": 1365,
+    "text": "……バイトを、\n探すのだ……。"
   },
   {
     "utterance": 18,
     "page": 0,
-    "start_frame": 1270,
-    "end_frame": 1321,
-    "frame": 1295,
+    "start_frame": 1409,
+    "end_frame": 1460,
+    "frame": 1434,
     "text": "お金の失敗を\n減らしたい人は、"
   },
   {
     "utterance": 18,
     "page": 1,
-    "start_frame": 1322,
-    "end_frame": 1350,
-    "frame": 1336,
+    "start_frame": 1461,
+    "end_frame": 1489,
+    "frame": 1475,
     "text": "チャンネル登録を！"
   }
 ]

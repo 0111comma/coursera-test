@@ -30,6 +30,12 @@ def current(i):return bisect.bisect_right(START,min(N-1,max(0,i)))-1
 
 def mora_offset(idx,word):
     q=json.loads((O/f'query-{idx:02}.json').read_text());chars=[];times=[];t=q['prePhonemeLength']/q['speedScale']
+    if q.get('timed_moras'):
+        for m in q['timed_moras']:
+            for ch in m['text']:chars.append(ch);times.append(m['seconds'])
+        pos=''.join(chars).find(word)
+        if pos<0:raise ValueError((idx,word,''.join(chars)))
+        return times[pos]
     for a in q['accent_phrases']:
         for m in a['moras']:
             for ch in m['text']:chars.append(ch);times.append(t)
@@ -78,6 +84,7 @@ def caption(idx,page=0):
     if s.get('kind'):return im
     lines=s['caption_pages'][page];col=GREEN if s['speaker']==3 else ROSE
     size=64
+    if s['scene_id']=='panic' and page==0:size=90;col=RED
     while max(font(size).getlength(t) for t in lines)>944:size-=1
     assert size>=56,(idx,page,size)
     bottom=326 if len(lines)==2 else 252
@@ -201,8 +208,8 @@ def foreground(i):
             if who=='zunda' and sid in ['panic','reveal','bargain']:
                 strength=11 if sid!='bargain' else 5;x+=round(strength*math.sin(u*54)*(.75+.25*math.sin(u*5)))
                 y-=round(5*(.5+.5*math.sin(u*35)))
-            if who==('zunda' if s['speaker']==3 else 'maki') and u<.2:y-=round(8*math.sin(u*math.pi/.2))
-            if who=='zunda' and sid=='ending':y-=round(5*math.sin(min(1,u/.3)*math.pi))
+            if who==('zunda' if s['speaker']==3 else 'maki') and u<.2 and sid!='ending':y-=round(8*math.sin(u*math.pi/.2))
+            if who=='zunda' and sid=='ending':y+=round(9*min(1,u/.55))
             sd=ImageDraw.Draw(im);sx=x+pic.width*(.51 if who=='maki' else .39)
             sd.ellipse((sx-width*.20,1525,sx+width*.20,1544),fill=(25,26,31,48))
             im.alpha_composite(pic,(x,y))

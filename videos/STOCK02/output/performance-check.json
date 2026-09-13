@@ -1,0 +1,117 @@
+{
+  "beats": [
+    {
+      "scene": "panic",
+      "text": "うわあああ！",
+      "style": "ノーマル",
+      "style_id": 3,
+      "duration": 0.9813333333333333,
+      "active_rms_dbfs": -17.76,
+      "peak_dbfs": -7.55,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "panic",
+      "text": "１０％も下がってる！",
+      "style": "なみだめ",
+      "style_id": 76,
+      "duration": 1.856,
+      "active_rms_dbfs": -25.15,
+      "peak_dbfs": -11.56,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "panic",
+      "text": "もう無理！",
+      "style": "なみだめ",
+      "style_id": 76,
+      "duration": 0.6826666666666666,
+      "active_rms_dbfs": -27.8,
+      "peak_dbfs": -16.46,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "panic",
+      "text": "全部売るのだ！",
+      "style": "ツンツン",
+      "style_id": 7,
+      "duration": 0.8213333333333334,
+      "active_rms_dbfs": -25.0,
+      "peak_dbfs": -9.7,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "relief",
+      "text": "まだ２７０万円ある！",
+      "style": "ノーマル",
+      "style_id": 3,
+      "duration": 1.792,
+      "active_rms_dbfs": -22.12,
+      "peak_dbfs": -4.98,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "relief",
+      "text": "助かったのだ！",
+      "style": "ノーマル",
+      "style_id": 3,
+      "duration": 1.0026666666666666,
+      "active_rms_dbfs": -20.49,
+      "peak_dbfs": -4.74,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "reveal",
+      "text": "残り７０万！？",
+      "style": "なみだめ",
+      "style_id": 76,
+      "duration": 1.5253333333333334,
+      "active_rms_dbfs": -22.53,
+      "peak_dbfs": -9.84,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "reveal",
+      "text": "僕の１００万が！",
+      "style": "なみだめ",
+      "style_id": 76,
+      "duration": 1.3973333333333333,
+      "active_rms_dbfs": -24.17,
+      "peak_dbfs": -9.54,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "bargain",
+      "text": "借金も一緒に減ってほしいのだ！",
+      "style": "なみだめ",
+      "style_id": 76,
+      "duration": 2.506666666666667,
+      "active_rms_dbfs": -24.47,
+      "peak_dbfs": -5.9,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "ending",
+      "text": "……バイトを、",
+      "style": "ヘロヘロ",
+      "style_id": 75,
+      "duration": 1.3653333333333333,
+      "active_rms_dbfs": -27.13,
+      "peak_dbfs": -14.86,
+      "samples_at_full_scale": 0
+    },
+    {
+      "scene": "ending",
+      "text": "探すのだ……。",
+      "style": "ヘロヘロ",
+      "style_id": 75,
+      "duration": 1.2053333333333334,
+      "active_rms_dbfs": -28.96,
+      "peak_dbfs": -18.83,
+      "samples_at_full_scale": 0
+    }
+  ],
+  "no_pcm_clipping": true,
+  "shout_over_ending_db": 11.2,
+  "subjective_listening_review": false
+}

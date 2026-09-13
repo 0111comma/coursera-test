@@ -45,3 +45,7 @@
 ## 音楽
 
 [Fluffing a Duck / Kevin MacLeod](https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100768)。公式pieces.jsonで曲名、ISRC USUAN1100768、122 BPM、喜劇向けの説明を確認。[公式ライセンス案内](https://incompetech.com/music/royalty-free/licenses/)に基づき、CC BY 4.0のクレジットを概要欄へ記載。カット・ループ・音量調整を実施。前作のScheming Weaselとは別曲。競合動画の使用曲を実聴して特定したという主張はしない。
+
+## 声の演出
+
+[VOICEVOX公式のずんだもん](https://voicevox.hiroshiba.jp/product/zundamon/)および[公式Engine API](https://voicevox.github.io/voicevox_engine/api/)を参照。利用可能な声色は稼働中エンジンの`/speakers`で確認し、実使用IDを保存する。叫び・焦り・安堵・落胆で声設定を分ける。心理的な効果や視聴維持率の上昇を設定値だけで検証済みとはしない。

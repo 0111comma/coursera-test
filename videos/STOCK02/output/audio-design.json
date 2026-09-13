@@ -10,7 +10,7 @@
     31.1
   ],
   "crossfade_seconds": 0.14,
-  "music_db_below_active_voice": -14.09478092497265,
+  "music_db_below_active_voice": -14.337858336214932,
   "continuous_bgm": true,
   "sfx": "Original synthesized cues",
   "cues": [
@@ -40,40 +40,54 @@
       "peak_dbfs": -26
     },
     {
-      "seconds": 14.216,
+      "seconds": 14.215,
       "kind": "impact",
-      "peak_dbfs": -19
+      "peak_dbfs": -24
     },
     {
-      "seconds": 18.776,
+      "seconds": 20.609,
       "kind": "down",
       "peak_dbfs": -23
     },
     {
-      "seconds": 23.762,
+      "seconds": 25.828,
       "kind": "impact",
       "peak_dbfs": -23
     },
     {
-      "seconds": 25.807,
+      "seconds": 27.977,
       "kind": "impact",
       "peak_dbfs": -18
     },
     {
-      "seconds": 31.153,
+      "seconds": 33.753,
       "kind": "down",
       "peak_dbfs": -25
     },
     {
-      "seconds": 37.133,
+      "seconds": 40.333,
       "kind": "click",
       "peak_dbfs": -21
     },
     {
-      "seconds": 40.967,
-      "kind": "pop",
-      "peak_dbfs": -25
+      "seconds": 44.087,
+      "kind": "down",
+      "peak_dbfs": -31
     }
   ],
-  "pre_normalization_peak": 0.6704569592813983
+  "pre_normalization_peak": 0.5933016218700644,
+  "acting_ducks": [
+    {
+      "scene": "panic",
+      "gain_db": -2.0,
+      "start": 14.2,
+      "duration": 4.533333333333333
+    },
+    {
+      "scene": "ending",
+      "gain_db": -4.5,
+      "start": 44.06666666666667,
+      "duration": 2.9
+    }
+  ]
 }
