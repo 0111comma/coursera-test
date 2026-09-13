@@ -1,0 +1,138 @@
+[
+  {
+    "index": 0,
+    "old_speed": 1.3,
+    "new_speed": 1.3,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 1,
+    "old_speed": 1.28,
+    "new_speed": 1.28,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 2,
+    "old_speed": 1.22,
+    "new_speed": 1.12,
+    "atempo": 0.918032786885246,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 3,
+    "old_speed": 1.27,
+    "new_speed": 1.22,
+    "atempo": 0.9606299212598425,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 4,
+    "old_speed": 1.32,
+    "new_speed": 1.32,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 6,
+    "old_speed": 1.29,
+    "new_speed": 1.29,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 8,
+    "old_speed": 1.2,
+    "new_speed": 1.12,
+    "atempo": 0.9333333333333335,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 9,
+    "old_speed": 1.28,
+    "new_speed": 1.28,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 10,
+    "old_speed": 1.23,
+    "new_speed": 1.12,
+    "atempo": 0.910569105691057,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 11,
+    "old_speed": 1.22,
+    "new_speed": 1.12,
+    "atempo": 0.918032786885246,
+    "preserved_pitch": true,
+    "tail": 0.2
+  },
+  {
+    "index": 12,
+    "old_speed": 1.21,
+    "new_speed": 1.12,
+    "atempo": 0.9256198347107439,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 13,
+    "old_speed": 1.3,
+    "new_speed": 1.3,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 14,
+    "old_speed": 1.26,
+    "new_speed": 1.22,
+    "atempo": 0.9682539682539683,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 15,
+    "old_speed": 1.3,
+    "new_speed": 1.3,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 16,
+    "old_speed": 1.27,
+    "new_speed": 1.2,
+    "atempo": 0.9448818897637795,
+    "preserved_pitch": true,
+    "tail": 0.075
+  },
+  {
+    "index": 17,
+    "old_speed": 1.15,
+    "new_speed": 1.15,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.2
+  },
+  {
+    "index": 18,
+    "old_speed": 1.32,
+    "new_speed": 1.32,
+    "atempo": 1.0,
+    "preserved_pitch": true,
+    "tail": 0.075
+  }
+]

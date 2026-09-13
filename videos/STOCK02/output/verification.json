@@ -1,0 +1,37 @@
+{
+  "duration_seconds": 43.7,
+  "frames": 1311,
+  "resolution": [
+    1080,
+    1920
+  ],
+  "fps": 30,
+  "utterances": 17,
+  "caption_pages": 29,
+  "caption_full_text_match": true,
+  "continuous_decode_both_files": true,
+  "pts_step_1_30": true,
+  "boundaries": 31,
+  "boundary_frames_compared": 214,
+  "maximum_mean_pixel_error": 2.605590920781893,
+  "bottom_maximum_mean_pixel_error": 1.9061831275720165,
+  "bottom_no_foreground_asserted_during_every_rendered_frame": true,
+  "arithmetic": {
+    "purchase": 300,
+    "sale": 240.0,
+    "net": 40.0,
+    "loss_rate": 0.6
+  },
+  "files": {
+    "STOCK02-orukan-leverage.mp4": {
+      "size": 6492759,
+      "sha256": "af114082e10a5a7e8ae2d9ab7942acb8b685cf8e963dd06651fa779edbff4c73"
+    },
+    "STOCK02-mobile.mp4": {
+      "size": 2190604,
+      "sha256": "0b937dfcb38665edc7bf7a100c99ef4ee4c622a94f6879ab8860c70b9e2ea340"
+    }
+  },
+  "human_equivalent_listening_review": false,
+  "measured_retention_improvement": false
+}

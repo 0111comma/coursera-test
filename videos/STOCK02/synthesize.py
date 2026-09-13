@@ -25,6 +25,7 @@ def main():
             for a in q['accent_phrases']:
                 if a.get('pause_mora'):a['pause_mora']['vowel_length']=s.get('pause_seconds',.26)
             (O/f'query-{i:02}.json').write_text(json.dumps(q,ensure_ascii=False,indent=2))
+            (O/f'query-{i:02}-original.json').write_text(json.dumps(q,ensure_ascii=False,indent=2))
             p.write_bytes(req('/synthesis?speaker='+str(s['speaker']),json.dumps(q).encode()))
         with wave.open(str(p)) as f:a=np.frombuffer(f.readframes(f.getnframes()),np.int16).astype(float)/32768
         tail=s.get('tail_seconds',.08)
