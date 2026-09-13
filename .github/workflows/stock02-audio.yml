@@ -2,7 +2,7 @@ name: STOCK02 VOICEVOX
 on:
   push:
     branches: [codex/stock02-orukan-leverage-20260913]
-    paths: ['videos/STOCK02/script.json', 'videos/STOCK02/synthesize.py', '.github/workflows/stock02-audio.yml']
+    paths: ['videos/STOCK02/script.json', 'videos/STOCK02/synthesize.py', 'videos/STOCK02/performance.py', '.github/workflows/stock02-audio.yml']
 permissions:
   contents: write
 jobs:

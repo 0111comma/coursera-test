@@ -28,7 +28,11 @@
     "pose_m": 1,
     "speed": 1.3,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "voice_settings": {
+      "intonationScale": 1.32,
+      "pitchScale": 0.025
+    }
   },
   {
     "scene_id": "doubt",
@@ -141,7 +145,11 @@
     "pose_m": 1,
     "speed": 1.32,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "voice_settings": {
+      "intonationScale": 1.4,
+      "pitchScale": 0.035
+    }
   },
   {
     "scene_id": "downturn",
@@ -168,30 +176,82 @@
     "scene_id": "panic",
     "utterance_id": "panic",
     "speaker": 3,
-    "text": "１０％下がったのだ！もう全部売るのだ！",
-    "display_text": "１０％下がったのだ！もう全部売るのだ！",
+    "text": "うわあああ！１０％も下がってる！もう無理！全部売るのだ！",
+    "display_text": "うわあああ！１０％も下がってる！もう無理！全部売るのだ！",
     "caption": [
-      "１０％下がったのだ！",
-      "もう全部売るのだ！"
+      "うわあああ！",
+      "１０％も下がってる！",
+      "もう無理！",
+      "全部売るのだ！"
     ],
     "caption_pages": [
       [
-        "１０％下がったのだ！"
+        "うわあああ！"
       ],
       [
-        "もう全部売るのだ！"
+        "１０％も下がってる！"
+      ],
+      [
+        "もう無理！"
+      ],
+      [
+        "全部売るのだ！"
       ]
     ],
     "caption_cues": [
-      "モオ"
+      "ジュッパアセント",
+      "モオムリ",
+      "ゼンブ"
     ],
     "camera": "zclose",
     "background": "crash",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.29,
+    "speed": 1.0,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "delivery": [
+      {
+        "text": "うわあああ！",
+        "style": "ノーマル",
+        "speed": 1.03,
+        "intonation": 1.55,
+        "pitch": 0.065,
+        "volume": 1.17,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.28,
+          "-2": 0.15
+        },
+        "gap": 0.055
+      },
+      {
+        "text": "１０％も下がってる！",
+        "style": "なみだめ",
+        "speed": 1.34,
+        "intonation": 1.38,
+        "pitch": 0.035,
+        "volume": 1.02,
+        "gap": 0.04
+      },
+      {
+        "text": "もう無理！",
+        "style": "なみだめ",
+        "speed": 1.32,
+        "intonation": 1.45,
+        "pitch": 0.04,
+        "volume": 1.05,
+        "gap": 0.025
+      },
+      {
+        "text": "全部売るのだ！",
+        "style": "ツンツン",
+        "speed": 1.39,
+        "intonation": 1.4,
+        "pitch": 0.03,
+        "volume": 1.04
+      }
+    ]
   },
   {
     "scene_id": "settled",
@@ -267,9 +327,27 @@
     "background": "reckoning",
     "pose_z": 1,
     "pose_m": 1,
-    "speed": 1.28,
+    "speed": 1.0,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "delivery": [
+      {
+        "text": "まだ２７０万円ある！",
+        "style": "ノーマル",
+        "speed": 1.22,
+        "intonation": 1.33,
+        "pitch": 0.035,
+        "gap": 0.045
+      },
+      {
+        "text": "助かったのだ！",
+        "style": "ノーマル",
+        "speed": 1.17,
+        "intonation": 1.22,
+        "pitch": -0.005,
+        "contour": "fall"
+      }
+    ]
   },
   {
     "scene_id": "debt",
@@ -321,9 +399,31 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.22,
+    "speed": 1.0,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "delivery": [
+      {
+        "text": "残り７０万！？",
+        "style": "なみだめ",
+        "speed": 1.12,
+        "intonation": 1.46,
+        "pitch": 0.045,
+        "volume": 1.05,
+        "gap": 0.16
+      },
+      {
+        "text": "僕の１００万が！",
+        "style": "なみだめ",
+        "speed": 1.08,
+        "intonation": 1.27,
+        "pitch": -0.025,
+        "contour": "fall",
+        "vowel_seconds": {
+          "-1": 0.15
+        }
+      }
+    ]
   },
   {
     "scene_id": "lesson",
@@ -380,9 +480,19 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.3,
+    "speed": 1.0,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "delivery": [
+      {
+        "text": "借金も一緒に減ってほしいのだ！",
+        "style": "なみだめ",
+        "speed": 1.21,
+        "intonation": 1.3,
+        "pitch": -0.02,
+        "contour": "fall"
+      }
+    ]
   },
   {
     "scene_id": "interest",
@@ -471,14 +581,16 @@
     "scene_id": "ending",
     "utterance_id": "ending",
     "speaker": 3,
-    "text": "……バイトを探すのだ。",
-    "display_text": "……バイトを探すのだ。",
+    "text": "……バイトを、探すのだ……。",
+    "display_text": "……バイトを、探すのだ……。",
     "caption": [
-      "……バイトを探すのだ。"
+      "……バイトを、",
+      "探すのだ……。"
     ],
     "caption_pages": [
       [
-        "……バイトを探すのだ。"
+        "……バイトを、",
+        "探すのだ……。"
       ]
     ],
     "caption_cues": [],
@@ -486,9 +598,35 @@
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.15,
+    "speed": 1.0,
     "pause_seconds": 0.13,
-    "tail_seconds": 0.045
+    "tail_seconds": 0.045,
+    "delivery": [
+      {
+        "text": "……バイトを、",
+        "style": "ヘロヘロ",
+        "speed": 0.98,
+        "intonation": 0.85,
+        "pitch": -0.045,
+        "volume": 0.88,
+        "lead": 0.25,
+        "pause": 0.16,
+        "gap": 0.11
+      },
+      {
+        "text": "探すのだ……。",
+        "style": "ヘロヘロ",
+        "speed": 0.98,
+        "intonation": 0.8,
+        "pitch": -0.055,
+        "volume": 0.83,
+        "contour": "fall",
+        "vowel_seconds": {
+          "-1": 0.2
+        },
+        "tail": 0.08
+      }
+    ]
   },
   {
     "scene_id": "cta",

@@ -1,6 +1,7 @@
 from pathlib import Path
 import urllib.request, urllib.parse, json, hashlib, wave, math, subprocess
 import numpy as np
+from performance import synthesize_performance
 R=Path(__file__).resolve().parent
 O=R/'output';O.mkdir(exist_ok=True)
 def req(path,data=None):
@@ -24,13 +25,18 @@ def main():
             subprocess.run(['ffmpeg','-v','error','-y','-i',str(p.with_suffix('.flac')),str(p)],check=True)
             (O/f'query-{i:02}.json').write_text(original_query.read_text())
         if not p.exists():
-            q=json.loads(req('/audio_query?'+urllib.parse.urlencode({'text':s['text'],'speaker':s['speaker']}),b''))
-            q.update(speedScale=s['speed'],intonationScale=1.18,prePhonemeLength=.02,postPhonemeLength=.03,outputSamplingRate=24000)
-            for a in q['accent_phrases']:
-                if a.get('pause_mora'):a['pause_mora']['vowel_length']=s.get('pause_seconds',.26)
+            if s.get('delivery'):
+                audio,q=synthesize_performance(s,req,O)
+                writewav(p,audio)
+            else:
+                q=json.loads(req('/audio_query?'+urllib.parse.urlencode({'text':s['text'],'speaker':s['speaker']}),b''))
+                q.update(speedScale=s['speed'],intonationScale=1.18,prePhonemeLength=.02,postPhonemeLength=.03,outputSamplingRate=24000)
+                q.update(s.get('voice_settings',{}))
+                for a in q['accent_phrases']:
+                    if a.get('pause_mora'):a['pause_mora']['vowel_length']=s.get('pause_seconds',.26)
+                p.write_bytes(req('/synthesis?speaker='+str(s['speaker']),json.dumps(q).encode()))
             (O/f'query-{i:02}.json').write_text(json.dumps(q,ensure_ascii=False,indent=2))
             (O/f'query-{i:02}-original.json').write_text(json.dumps(q,ensure_ascii=False,indent=2))
-            p.write_bytes(req('/synthesis?speaker='+str(s['speaker']),json.dumps(q).encode()))
         with wave.open(str(p)) as f:a=np.frombuffer(f.readframes(f.getnframes()),np.int16).astype(float)/32768
         tail=s.get('tail_seconds',.08)
         frames=math.ceil((len(a)/24000+tail)*30);a=np.pad(a,(0,frames*800-len(a)))
