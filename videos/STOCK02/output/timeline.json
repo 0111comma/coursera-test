@@ -1,0 +1,667 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "オルカンなら安心！借金して買い増すのだ！",
+    "display_text": "オルカンなら安心！借金して買い増すのだ！",
+    "caption": [
+      "オルカンなら安心！",
+      "借金して",
+      "買い増すのだ！"
+    ],
+    "caption_pages": [
+      [
+        "オルカンなら安心！"
+      ],
+      [
+        "借金して",
+        "買い増すのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "シャッキン"
+    ],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 0.0,
+    "start": 0.0,
+    "start_frame": 0,
+    "end_frame": 77,
+    "duration": 2.566666666666667,
+    "frames": 77,
+    "voice_file": "voice-00-9578a36421.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "doubt",
+    "utterance_id": "doubt",
+    "speaker": 2,
+    "text": "借金してまで？",
+    "display_text": "借金してまで？",
+    "caption": [
+      "借金してまで？"
+    ],
+    "caption_pages": [
+      [
+        "借金してまで？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 0,
+    "speed": 1.28,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 2.566666666666667,
+    "start": 2.566666666666667,
+    "start_frame": 77,
+    "end_frame": 108,
+    "duration": 1.0333333333333334,
+    "frames": 31,
+    "voice_file": "voice-01-74bb344ede.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "funding",
+    "utterance_id": "funding",
+    "speaker": 3,
+    "text": "自分の１００万円と、借りた２００万円！合わせて３００万円なのだ！",
+    "display_text": "自分の１００万円と、借りた２００万円！合わせて３００万円なのだ！",
+    "caption": [
+      "自分の１００万円と、",
+      "借りた２００万円！",
+      "合わせて",
+      "３００万円なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "自分の１００万円と、"
+      ],
+      [
+        "借りた２００万円！"
+      ],
+      [
+        "合わせて",
+        "３００万円なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "カリタ",
+      "アワセテ"
+    ],
+    "camera": "wide",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.22,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 3.6,
+    "start": 3.6,
+    "start_frame": 108,
+    "end_frame": 245,
+    "duration": 4.566666666666666,
+    "frames": 137,
+    "voice_file": "voice-02-2e910e5ce7.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "warn",
+    "utterance_id": "warn",
+    "speaker": 2,
+    "text": "下がったら、損も大きくなるわよ。",
+    "display_text": "下がったら、損も大きくなるわよ。",
+    "caption": [
+      "下がったら、",
+      "損も大きくなるわよ。"
+    ],
+    "caption_pages": [
+      [
+        "下がったら、",
+        "損も大きくなるわよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.27,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 8.166666666666666,
+    "start": 8.166666666666666,
+    "start_frame": 245,
+    "end_frame": 299,
+    "duration": 1.8,
+    "frames": 54,
+    "voice_file": "voice-03-3afb85f00f.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "boast",
+    "utterance_id": "boast",
+    "speaker": 3,
+    "text": "世界中に投資してるのだ！大丈夫なのだ！",
+    "display_text": "世界中に投資してるのだ！大丈夫なのだ！",
+    "caption": [
+      "世界中に投資してるのだ！",
+      "大丈夫なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "世界中に投資してるのだ！"
+      ],
+      [
+        "大丈夫なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "ダイジョウブ"
+    ],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.32,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 9.966666666666667,
+    "start": 9.966666666666667,
+    "start_frame": 299,
+    "end_frame": 378,
+    "duration": 2.6333333333333333,
+    "frames": 79,
+    "voice_file": "voice-04-bd48472fa1.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "month",
+    "utterance_id": "month",
+    "speaker": 0,
+    "text": "",
+    "display_text": "",
+    "caption": [],
+    "caption_pages": [],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "crash",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.0,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "kind": "time_cut",
+    "title": "１か月後",
+    "cut_duration": 0.55,
+    "scene_start": 12.6,
+    "start": 12.6,
+    "start_frame": 378,
+    "end_frame": 394,
+    "duration": 0.5333333333333333,
+    "frames": 16,
+    "voice_file": null
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "２０％下がったのだ！もう全部売るのだ！",
+    "display_text": "２０％下がったのだ！もう全部売るのだ！",
+    "caption": [
+      "２０％下がったのだ！",
+      "もう全部売るのだ！"
+    ],
+    "caption_pages": [
+      [
+        "２０％下がったのだ！"
+      ],
+      [
+        "もう全部売るのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "モオ"
+    ],
+    "camera": "zclose",
+    "background": "crash",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.29,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 13.133333333333333,
+    "start": 13.133333333333333,
+    "start_frame": 394,
+    "end_frame": 477,
+    "duration": 2.7666666666666666,
+    "frames": 83,
+    "voice_file": "voice-06-cfc2aa6ce8.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "settled",
+    "utterance_id": "settled",
+    "speaker": 0,
+    "text": "",
+    "display_text": "",
+    "caption": [],
+    "caption_pages": [],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.0,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "kind": "time_cut",
+    "title": "売却・入金後",
+    "cut_duration": 0.45,
+    "scene_start": 15.9,
+    "start": 15.9,
+    "start_frame": 477,
+    "end_frame": 491,
+    "duration": 0.4666666666666667,
+    "frames": 14,
+    "voice_file": null
+  },
+  {
+    "scene_id": "proceeds",
+    "utterance_id": "proceeds",
+    "speaker": 2,
+    "text": "３００万円が、２４０万円になったわね。",
+    "display_text": "３００万円が、２４０万円になったわね。",
+    "caption": [
+      "３００万円が、",
+      "２４０万円になったわね。"
+    ],
+    "caption_pages": [
+      [
+        "３００万円が、"
+      ],
+      [
+        "２４０万円になったわね。"
+      ]
+    ],
+    "caption_cues": [
+      "ニヒャクヨンジュウ"
+    ],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.2,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 16.366666666666667,
+    "start": 16.366666666666667,
+    "start_frame": 491,
+    "end_frame": 577,
+    "duration": 2.8666666666666667,
+    "frames": 86,
+    "voice_file": "voice-08-8cbdaba578.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "relief",
+    "utterance_id": "relief",
+    "speaker": 3,
+    "text": "まだ２４０万円ある！助かったのだ！",
+    "display_text": "まだ２４０万円ある！助かったのだ！",
+    "caption": [
+      "まだ２４０万円ある！",
+      "助かったのだ！"
+    ],
+    "caption_pages": [
+      [
+        "まだ２４０万円ある！"
+      ],
+      [
+        "助かったのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "タスカッタ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.28,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 19.233333333333334,
+    "start": 19.233333333333334,
+    "start_frame": 577,
+    "end_frame": 656,
+    "duration": 2.6333333333333333,
+    "frames": 79,
+    "voice_file": "voice-09-51d0227808.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "debt",
+    "utterance_id": "debt",
+    "speaker": 2,
+    "text": "借りた２００万円を返したら？",
+    "display_text": "借りた２００万円を返したら？",
+    "caption": [
+      "借りた２００万円を",
+      "返したら？"
+    ],
+    "caption_pages": [
+      [
+        "借りた２００万円を",
+        "返したら？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.23,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 21.866666666666667,
+    "start": 21.866666666666667,
+    "start_frame": 656,
+    "end_frame": 711,
+    "duration": 1.8333333333333333,
+    "frames": 55,
+    "voice_file": "voice-10-3f7a6ba555.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 3,
+    "text": "残り４０万！？僕の１００万が！",
+    "display_text": "残り４０万！？僕の１００万が！",
+    "caption": [
+      "残り４０万！？",
+      "僕の１００万が！"
+    ],
+    "caption_pages": [
+      [
+        "残り４０万！？"
+      ],
+      [
+        "僕の１００万が！"
+      ]
+    ],
+    "caption_cues": [
+      "ボクノ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.22,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 23.7,
+    "start": 23.7,
+    "start_frame": 711,
+    "end_frame": 784,
+    "duration": 2.433333333333333,
+    "frames": 73,
+    "voice_file": "voice-11-6cb040b57b.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "lesson",
+    "utterance_id": "lesson",
+    "speaker": 2,
+    "text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "display_text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "caption": [
+      "オルカンは２０％下落。",
+      "でも、あなたのお金は",
+      "６０％減ったの。"
+    ],
+    "caption_pages": [
+      [
+        "オルカンは２０％下落。"
+      ],
+      [
+        "でも、あなたのお金は"
+      ],
+      [
+        "６０％減ったの。"
+      ]
+    ],
+    "caption_cues": [
+      "デモ",
+      "ロクジュッパアセント"
+    ],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.21,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 26.133333333333333,
+    "start": 26.133333333333333,
+    "start_frame": 784,
+    "end_frame": 911,
+    "duration": 4.233333333333333,
+    "frames": 127,
+    "voice_file": "voice-12-3bed130b84.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "bargain",
+    "utterance_id": "bargain",
+    "speaker": 3,
+    "text": "借金も一緒に減ってほしいのだ！",
+    "display_text": "借金も一緒に減ってほしいのだ！",
+    "caption": [
+      "借金も一緒に",
+      "減ってほしいのだ！"
+    ],
+    "caption_pages": [
+      [
+        "借金も一緒に",
+        "減ってほしいのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 30.366666666666667,
+    "start": 30.366666666666667,
+    "start_frame": 911,
+    "end_frame": 970,
+    "duration": 1.9666666666666666,
+    "frames": 59,
+    "voice_file": "voice-13-59568e392d.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "interest",
+    "utterance_id": "interest",
+    "speaker": 2,
+    "text": "減らないわ。利息も別にかかるのよ。",
+    "display_text": "減らないわ。利息も別にかかるのよ。",
+    "caption": [
+      "減らないわ。",
+      "利息も別にかかるのよ。"
+    ],
+    "caption_pages": [
+      [
+        "減らないわ。"
+      ],
+      [
+        "利息も別にかかるのよ。"
+      ]
+    ],
+    "caption_cues": [
+      "リソク"
+    ],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 0,
+    "speed": 1.26,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 32.333333333333336,
+    "start": 32.333333333333336,
+    "start_frame": 970,
+    "end_frame": 1028,
+    "duration": 1.9333333333333333,
+    "frames": 58,
+    "voice_file": "voice-14-fbb3659f0a.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "escape",
+    "utterance_id": "escape",
+    "speaker": 3,
+    "text": "画面を消すのだ！見なければ平気なのだ！",
+    "display_text": "画面を消すのだ！見なければ平気なのだ！",
+    "caption": [
+      "画面を消すのだ！",
+      "見なければ平気なのだ！"
+    ],
+    "caption_pages": [
+      [
+        "画面を消すのだ！"
+      ],
+      [
+        "見なければ平気なのだ！"
+      ]
+    ],
+    "caption_cues": [
+      "ミナケレバ"
+    ],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.3,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 34.266666666666666,
+    "start": 34.266666666666666,
+    "start_frame": 1028,
+    "end_frame": 1100,
+    "duration": 2.4,
+    "frames": 72,
+    "voice_file": "voice-15-badcb4ab84.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "retort",
+    "utterance_id": "retort",
+    "speaker": 2,
+    "text": "返済日も消えると思ってる？",
+    "display_text": "返済日も消えると思ってる？",
+    "caption": [
+      "返済日も消えると",
+      "思ってる？"
+    ],
+    "caption_pages": [
+      [
+        "返済日も消えると",
+        "思ってる？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 0,
+    "speed": 1.27,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 36.666666666666664,
+    "start": 36.666666666666664,
+    "start_frame": 1100,
+    "end_frame": 1148,
+    "duration": 1.6,
+    "frames": 48,
+    "voice_file": "voice-16-6bd633ff8d.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "……バイトを探すのだ。",
+    "display_text": "……バイトを探すのだ。",
+    "caption": [
+      "……バイトを探すのだ。"
+    ],
+    "caption_pages": [
+      [
+        "……バイトを探すのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.15,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 38.266666666666666,
+    "start": 38.266666666666666,
+    "start_frame": 1148,
+    "end_frame": 1187,
+    "duration": 1.3,
+    "frames": 39,
+    "voice_file": "voice-17-a6ebc33735.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "役に立ったら、いいねと登録を！",
+    "display_text": "役に立ったら、いいねと登録を！",
+    "caption": [
+      "役に立ったら、",
+      "いいねと登録を！"
+    ],
+    "caption_pages": [
+      [
+        "役に立ったら、",
+        "いいねと登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "reckoning",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.32,
+    "pause_seconds": 0.13,
+    "tail_seconds": 0.045,
+    "scene_start": 39.56666666666667,
+    "start": 39.56666666666667,
+    "start_frame": 1187,
+    "end_frame": 1235,
+    "duration": 1.6,
+    "frames": 48,
+    "voice_file": "voice-18-d778f0e729.wav",
+    "donation_offset": null
+  }
+]
