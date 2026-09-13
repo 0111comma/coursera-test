@@ -144,8 +144,8 @@
     "tail_seconds": 0.045
   },
   {
-    "scene_id": "month",
-    "utterance_id": "month",
+    "scene_id": "downturn",
+    "utterance_id": "downturn",
     "speaker": 0,
     "text": "",
     "display_text": "",
@@ -160,22 +160,23 @@
     "pause_seconds": 0.13,
     "tail_seconds": 0.045,
     "kind": "time_cut",
-    "title": "１か月後",
-    "cut_duration": 0.55
+    "title": "相場が下がると…",
+    "cut_duration": 1.0,
+    "subtitle": "10％下落の仮定"
   },
   {
     "scene_id": "panic",
     "utterance_id": "panic",
     "speaker": 3,
-    "text": "２０％下がったのだ！もう全部売るのだ！",
-    "display_text": "２０％下がったのだ！もう全部売るのだ！",
+    "text": "１０％下がったのだ！もう全部売るのだ！",
+    "display_text": "１０％下がったのだ！もう全部売るのだ！",
     "caption": [
-      "２０％下がったのだ！",
+      "１０％下がったのだ！",
       "もう全部売るのだ！"
     ],
     "caption_pages": [
       [
-        "２０％下がったのだ！"
+        "１０％下がったのだ！"
       ],
       [
         "もう全部売るのだ！"
@@ -216,22 +217,22 @@
     "scene_id": "proceeds",
     "utterance_id": "proceeds",
     "speaker": 2,
-    "text": "３００万円が、２４０万円になったわね。",
-    "display_text": "３００万円が、２４０万円になったわね。",
+    "text": "３００万円が、２７０万円になったわね。",
+    "display_text": "３００万円が、２７０万円になったわね。",
     "caption": [
       "３００万円が、",
-      "２４０万円になったわね。"
+      "２７０万円になったわね。"
     ],
     "caption_pages": [
       [
         "３００万円が、"
       ],
       [
-        "２４０万円になったわね。"
+        "２７０万円になったわね。"
       ]
     ],
     "caption_cues": [
-      "ニヒャクヨンジュウ"
+      "ニヒャクナナジュウ"
     ],
     "camera": "wide",
     "background": "reckoning",
@@ -245,15 +246,15 @@
     "scene_id": "relief",
     "utterance_id": "relief",
     "speaker": 3,
-    "text": "まだ２４０万円ある！助かったのだ！",
-    "display_text": "まだ２４０万円ある！助かったのだ！",
+    "text": "まだ２７０万円ある！助かったのだ！",
+    "display_text": "まだ２７０万円ある！助かったのだ！",
     "caption": [
-      "まだ２４０万円ある！",
+      "まだ２７０万円ある！",
       "助かったのだ！"
     ],
     "caption_pages": [
       [
-        "まだ２４０万円ある！"
+        "まだ２７０万円ある！"
       ],
       [
         "助かったのだ！"
@@ -299,15 +300,15 @@
     "scene_id": "reveal",
     "utterance_id": "reveal",
     "speaker": 3,
-    "text": "残り４０万！？僕の１００万が！",
-    "display_text": "残り４０万！？僕の１００万が！",
+    "text": "残り７０万！？僕の１００万が！",
+    "display_text": "残り７０万！？僕の１００万が！",
     "caption": [
-      "残り４０万！？",
+      "残り７０万！？",
       "僕の１００万が！"
     ],
     "caption_pages": [
       [
-        "残り４０万！？"
+        "残り７０万！？"
       ],
       [
         "僕の１００万が！"
@@ -328,27 +329,27 @@
     "scene_id": "lesson",
     "utterance_id": "lesson",
     "speaker": 2,
-    "text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
-    "display_text": "オルカンは２０％下落。でも、あなたのお金は６０％減ったの。",
+    "text": "オルカンは１０％下落。でも、あなたのお金は３０％減ったの。",
+    "display_text": "オルカンは１０％下落。でも、あなたのお金は３０％減ったの。",
     "caption": [
-      "オルカンは２０％下落。",
+      "オルカンは１０％下落。",
       "でも、あなたのお金は",
-      "６０％減ったの。"
+      "３０％減ったの。"
     ],
     "caption_pages": [
       [
-        "オルカンは２０％下落。"
+        "オルカンは１０％下落。"
       ],
       [
         "でも、あなたのお金は"
       ],
       [
-        "６０％減ったの。"
+        "３０％減ったの。"
       ]
     ],
     "caption_cues": [
       "デモ",
-      "ロクジュッパアセント"
+      "サンジュッパアセント"
     ],
     "camera": "wide",
     "background": "reckoning",
@@ -493,24 +494,30 @@
     "scene_id": "cta",
     "utterance_id": "cta",
     "speaker": 2,
-    "text": "役に立ったら、いいねと登録を！",
-    "display_text": "役に立ったら、いいねと登録を！",
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
     "caption": [
-      "役に立ったら、",
-      "いいねと登録を！"
+      "お金の失敗を",
+      "減らしたい人は、",
+      "チャンネル登録を！"
     ],
     "caption_pages": [
       [
-        "役に立ったら、",
-        "いいねと登録を！"
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
       ]
     ],
-    "caption_cues": [],
+    "caption_cues": [
+      "チャンネル"
+    ],
     "camera": "wide",
     "background": "reckoning",
     "pose_z": 2,
     "pose_m": 1,
-    "speed": 1.32,
+    "speed": 1.26,
     "pause_seconds": 0.13,
     "tail_seconds": 0.045
   }

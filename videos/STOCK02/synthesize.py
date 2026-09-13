@@ -1,5 +1,5 @@
 from pathlib import Path
-import urllib.request, urllib.parse, json, hashlib, wave, math
+import urllib.request, urllib.parse, json, hashlib, wave, math, subprocess
 import numpy as np
 R=Path(__file__).resolve().parent
 O=R/'output';O.mkdir(exist_ok=True)
@@ -19,6 +19,10 @@ def main():
             print(i,'time cut',s['scene_id'],s['duration'],flush=True);continue
         key=hashlib.sha256(json.dumps(s,ensure_ascii=False).encode()).hexdigest()[:10]
         p=O/f'voice-{i:02}-{key}.wav'
+        original_query=O/f'query-{i:02}-original.json'
+        if p.with_suffix('.flac').exists() and original_query.exists():
+            subprocess.run(['ffmpeg','-v','error','-y','-i',str(p.with_suffix('.flac')),str(p)],check=True)
+            (O/f'query-{i:02}.json').write_text(original_query.read_text())
         if not p.exists():
             q=json.loads(req('/audio_query?'+urllib.parse.urlencode({'text':s['text'],'speaker':s['speaker']}),b''))
             q.update(speedScale=s['speed'],intonationScale=1.18,prePhonemeLength=.02,postPhonemeLength=.03,outputSamplingRate=24000)
