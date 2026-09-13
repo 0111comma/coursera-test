@@ -27,12 +27,12 @@ def add(t,kind,db):
 r=json.loads((O/'reveal-times.json').read_text())['amount_offsets']
 add(.08,'pop',-23)
 for key in ['fund_own','fund_debt','fund_total']:add(by['funding']['start']+r[key],'cash',-25)
-add(by['month']['start'],'swoosh',-26)
+add(by['downturn']['start'],'swoosh',-26)
 add(by['panic']['start']+r['crash'],'impact',-19)
 add(by['proceeds']['start']+r['proceeds'],'down',-23)
 add(by['debt']['start']+r['debt'],'impact',-23)
 add(by['reveal']['start']+r['net'],'impact',-18)
-add(by['lesson']['start']+r['sixty'],'down',-25)
+add(by['lesson']['start']+r['thirty'],'down',-25)
 add(by['escape']['start']+.40,'click',-21)
 add(by['ending']['start']+.1,'pop',-25)
 music[:240]*=np.linspace(0,1,240)[:,None];music[-960:]*=np.linspace(1,0,960)[:,None]

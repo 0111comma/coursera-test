@@ -43,11 +43,11 @@ REVEALS={
     'fund_own':mora_offset(2,'ヒャクマン'),
     'fund_debt':mora_offset(2,'ニヒャクマン'),
     'fund_total':mora_offset(2,'サンビャクマン'),
-    'crash':mora_offset(6,'ニジュッパアセント'),
-    'proceeds':mora_offset(8,'ニヒャクヨンジュウ'),
+    'crash':mora_offset(6,'ジュッパアセント'),
+    'proceeds':mora_offset(8,'ニヒャクナナジュウ'),
     'debt':mora_offset(10,'ニヒャクマン'),
-    'net':mora_offset(11,'ヨンジュウマン'),
-    'sixty':mora_offset(12,'ロクジュッパアセント'),
+    'net':mora_offset(11,'ナナジュウマン'),
+    'thirty':mora_offset(12,'サンジュッパアセント'),
 }
 (O/'reveal-times.json').write_text(json.dumps({'page_starts':PAGE_STARTS,'amount_offsets':REVEALS},indent=2))
 
@@ -105,7 +105,7 @@ def phone(d,x,y,w=250,h=430,screen='loss',progress=1):
         pts=[(x+28,y+155),(x+72,y+174),(x+100,y+155),(x+138,y+236),(x+170,y+221),(x+w-30,y+283)]
         n=min(len(pts),max(2,round(len(pts)*progress)))
         d.line(pts[:n],fill=RED,width=8)
-        if progress>.85:text(d,(x+w/2,y+344),'−20%',43,RED,role='number',maxw=w-22)
+        if progress>.85:text(d,(x+w/2,y+344),'−10%',43,RED,role='number',maxw=w-22)
     elif screen=='jobs':
         text(d,(x+w/2,y+80),'求人',46,maxw=w-30)
         for k in range(3):
@@ -117,6 +117,7 @@ def graphics(idx,step):
     s=S[idx];sid=s['scene_id'];u=step/30;im=Image.new('RGBA',(W,H));d=ImageDraw.Draw(im)
     if s.get('kind'):
         text(d,(540,750),s['title'],88,WHITE)
+        if s.get('subtitle'):text(d,(540,918),s['subtitle'],47,WHITE)
         d.line((240,843,840,843),fill='#656775',width=5)
         d.line((240,843,240+600*ease(u,.48),843),fill=GOLD,width=8)
         return im
@@ -137,13 +138,13 @@ def graphics(idx,step):
         card(d,(70,380,1010,625));text(d,(540,423),'売却代金',35)
         text(d,(270,513),'300万円',55,maxw=375);arrow(d,535,513)
         if u>=REVEALS['proceeds']:
-            text(d,(806,513),'240万円',55,RED,maxw=375)
+            text(d,(806,513),'270万円',55,RED,maxw=375)
             q=ease(u-REVEALS['proceeds']);d.rounded_rectangle((145,571,935,592),7,fill='#ded9d4')
-            d.rounded_rectangle((145,571,145+790*(1-.2*q),592),7,fill=RED)
+            d.rounded_rectangle((145,571,145+790*(1-.1*q),592),7,fill=RED)
         note(d,665)
     elif sid=='relief':
         card(d,(50,557,412,816));text(d,(231,612),'売却代金',34,maxw=330)
-        text(d,(231,715),'240',76,GREEN,role='number',maxw=340);text(d,(340,780),'万円',34,maxw=110)
+        text(d,(231,715),'270',76,GREEN,role='number',maxw=340);text(d,(340,780),'万円',34,maxw=110)
     elif sid=='debt':
         card(d,(646,548,1033,823));text(d,(840,603),'借金',42,maxw=330)
         if u>=REVEALS['debt']:text(d,(840,692),'200',83,DEBT,role='number',maxw=340)
@@ -152,7 +153,7 @@ def graphics(idx,step):
         card(d,(40,524,430,873));text(d,(235,578),'借金を引くと',31,maxw=370)
         if u>=REVEALS['net']:
             age=u-REVEALS['net'];size=110+round(13*math.exp(-age*7)*math.sin(min(1,age/.32)*math.pi))
-            text(d,(225,704),'40',size,RED,role='number',maxw=350)
+            text(d,(225,704),'70',size,RED,role='number',maxw=350)
             text(d,(346,790),'万円',39,maxw=120)
         text(d,(235,851),'利息等は別',26,maxw=350)
     elif sid=='lesson':
@@ -160,11 +161,11 @@ def graphics(idx,step):
         text(d,(83,431),'オルカン',37,anchor='lm',maxw=350)
         text(d,(83,535),'自己資金',37,anchor='lm',maxw=350)
         d.rounded_rectangle((400,414,870,450),8,fill='#e7e1db');d.rounded_rectangle((400,518,870,554),8,fill='#e7e1db')
-        d.rounded_rectangle((400,414,400+470*.8,450),8,fill='#6d96b1')
-        text(d,(947,431),'−20%',35,RED,role='number',maxw=140)
-        if u>=REVEALS['sixty']:
-            q=ease(u-REVEALS['sixty'],.58);d.rounded_rectangle((400,518,400+470*(1-.6*q),554),8,fill=RED)
-            text(d,(947,535),'−60%',35,RED,role='number',maxw=140)
+        d.rounded_rectangle((400,414,400+470*.9,450),8,fill='#6d96b1')
+        text(d,(947,431),'−10%',35,RED,role='number',maxw=140)
+        if u>=REVEALS['thirty']:
+            q=ease(u-REVEALS['thirty'],.58);d.rounded_rectangle((400,518,400+470*(1-.3*q),554),8,fill=RED)
+            text(d,(947,535),'−30%',35,RED,role='number',maxw=140)
         else:d.rounded_rectangle((400,518,870,554),8,fill=MINT)
         text(d,(540,597),'借金を差し引いて比較',28)
         note(d,672)

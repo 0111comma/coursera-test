@@ -10,7 +10,7 @@
     31.1
   ],
   "crossfade_seconds": 0.14,
-  "music_db_below_active_voice": -14.124923239719529,
+  "music_db_below_active_voice": -14.09478092497265,
   "continuous_bgm": true,
   "sfx": "Original synthesized cues",
   "cues": [
@@ -40,40 +40,40 @@
       "peak_dbfs": -26
     },
     {
-      "seconds": 13.816,
+      "seconds": 14.216,
       "kind": "impact",
       "peak_dbfs": -19
     },
     {
-      "seconds": 18.476,
+      "seconds": 18.776,
       "kind": "down",
       "peak_dbfs": -23
     },
     {
-      "seconds": 23.428,
+      "seconds": 23.762,
       "kind": "impact",
       "peak_dbfs": -23
     },
     {
-      "seconds": 25.51,
+      "seconds": 25.807,
       "kind": "impact",
       "peak_dbfs": -18
     },
     {
-      "seconds": 30.918,
+      "seconds": 31.153,
       "kind": "down",
       "peak_dbfs": -25
     },
     {
-      "seconds": 36.867,
+      "seconds": 37.133,
       "kind": "click",
       "peak_dbfs": -21
     },
     {
-      "seconds": 40.7,
+      "seconds": 40.967,
       "kind": "pop",
       "peak_dbfs": -25
     }
   ],
-  "pre_normalization_peak": 0.649488068042026
+  "pre_normalization_peak": 0.6704569592813983
 }

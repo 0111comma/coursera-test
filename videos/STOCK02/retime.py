@@ -5,7 +5,7 @@ R=Path(__file__).resolve().parent;O=R/'output'
 T=json.loads((O/'timeline.json').read_text());report=[];parts=[];cursor=0
 for i,s in enumerate(T):
     if s.get('kind'):
-        frames=18 if s['scene_id']=='month' else 21
+        frames=round(s.get('cut_duration',.7)*30) if s['scene_id']=='downturn' else 21
         a=np.zeros(frames*800)
     else:
         qpath=O/f'query-{i:02}.json';q=json.loads(qpath.read_text())
