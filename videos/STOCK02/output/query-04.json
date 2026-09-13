@@ -227,8 +227,8 @@
     }
   ],
   "speedScale": 1.32,
-  "pitchScale": 0.0,
-  "intonationScale": 1.18,
+  "pitchScale": 0.035,
+  "intonationScale": 1.4,
   "volumeScale": 1.0,
   "prePhonemeLength": 0.02,
   "postPhonemeLength": 0.03,
