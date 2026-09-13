@@ -1,0 +1,608 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "月１万の積立？１０年後でいいのだ！",
+    "display_text": "月１万の積立？１０年後でいいのだ！",
+    "caption_pages": [
+      [
+        "月１万の積立？"
+      ],
+      [
+        "１０年後でいいのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.29,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "月１万の積立？",
+        "style": "ノーマル",
+        "speed": 1.29,
+        "intonation": 1.37,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035,
+        "pitch": 0.035
+      },
+      {
+        "text": "１０年後でいいのだ！",
+        "style": "ノーマル",
+        "speed": 1.29,
+        "intonation": 1.37,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "hook",
+    "fx": "pop",
+    "scene_start": 0.0,
+    "start": 0.0,
+    "start_frame": 0,
+    "end_frame": 80,
+    "duration": 2.6666666666666665,
+    "frames": 80,
+    "voice_file": "voice-00-b3ea67df0b.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "compare",
+    "utterance_id": "compare",
+    "speaker": 2,
+    "text": "じゃあ５５歳で、いくらになるか比べるわよ。",
+    "display_text": "じゃあ５５歳で、いくらになるか比べるわよ。",
+    "caption_pages": [
+      [
+        "じゃあ５５歳で、",
+        "いくらになるか比べるわよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "morning",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.26,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "じゃあ５５歳で、いくらになるか比べるわよ。",
+        "style": "ノーマル",
+        "speed": 1.26,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "compare",
+    "fx": null,
+    "scene_start": 2.6666666666666665,
+    "start": 2.6666666666666665,
+    "start_frame": 80,
+    "end_frame": 154,
+    "duration": 2.466666666666667,
+    "frames": 74,
+    "voice_file": "voice-01-c0fbb12b7e.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "assume",
+    "utterance_id": "assume",
+    "speaker": 2,
+    "text": "年５％で増えると仮定してね。",
+    "display_text": "年５％で増えると仮定してね。",
+    "caption_pages": [
+      [
+        "年５％で増えると",
+        "仮定してね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "年５％で増えると仮定してね。",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "assume",
+    "fx": null,
+    "scene_start": 5.133333333333334,
+    "start": 5.133333333333334,
+    "start_frame": 154,
+    "end_frame": 216,
+    "duration": 2.066666666666667,
+    "frames": 62,
+    "voice_file": "voice-02-49e03b1694.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "early",
+    "utterance_id": "early",
+    "speaker": 2,
+    "text": "３５歳から２０年で、約４０６万円。",
+    "display_text": "３５歳から２０年で、約４０６万円。",
+    "caption_pages": [
+      [
+        "３５歳から２０年で、",
+        "約４０６万円。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.15,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "３５歳から２０年で、約４０６万円。",
+        "style": "ノーマル",
+        "speed": 1.15,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "early",
+    "fx": "cash",
+    "scene_start": 7.2,
+    "start": 7.2,
+    "start_frame": 216,
+    "end_frame": 308,
+    "duration": 3.066666666666667,
+    "frames": 92,
+    "voice_file": "voice-03-6989d13ea6.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "surprise",
+    "utterance_id": "surprise",
+    "speaker": 3,
+    "text": "月１万で、４００万超えるのだ！？",
+    "display_text": "月１万で、４００万超えるのだ！？",
+    "caption_pages": [
+      [
+        "月１万で、",
+        "４００万超えるのだ！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.23,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "月１万で、４００万超えるのだ！？",
+        "style": "なみだめ",
+        "speed": 1.23,
+        "intonation": 1.4,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.025
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "surprise",
+    "fx": null,
+    "scene_start": 10.266666666666667,
+    "start": 10.266666666666667,
+    "start_frame": 308,
+    "end_frame": 393,
+    "duration": 2.8333333333333335,
+    "frames": 85,
+    "voice_file": "voice-04-5efe391a77.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "late",
+    "utterance_id": "late",
+    "speaker": 2,
+    "text": "４５歳からだと１０年。約１５４万円。",
+    "display_text": "４５歳からだと１０年。約１５４万円。",
+    "caption_pages": [
+      [
+        "４５歳からだと１０年。"
+      ],
+      [
+        "約１５４万円。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.15,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "４５歳からだと１０年。",
+        "style": "ノーマル",
+        "speed": 1.15,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "約１５４万円。",
+        "style": "ノーマル",
+        "speed": 1.15,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "late",
+    "fx": "cash",
+    "scene_start": 13.1,
+    "start": 13.1,
+    "start_frame": 393,
+    "end_frame": 485,
+    "duration": 3.066666666666667,
+    "frames": 92,
+    "voice_file": "voice-05-eb98e3558f.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "うわあっ！２５０万も違うのだ！？",
+    "display_text": "うわあっ！２５０万も違うのだ！？",
+    "caption_pages": [
+      [
+        "うわあっ！"
+      ],
+      [
+        "２５０万も違うのだ！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "うわあっ！",
+        "style": "ノーマル",
+        "speed": 1.03,
+        "intonation": 1.55,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.085,
+        "pitch": 0.065,
+        "volume": 1.16,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.24
+        }
+      },
+      {
+        "text": "２５０万も違うのだ！？",
+        "style": "なみだめ",
+        "speed": 1.18,
+        "intonation": 1.4,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": 0.025
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact",
+    "scene_start": 16.166666666666668,
+    "start": 16.166666666666668,
+    "start_frame": 485,
+    "end_frame": 579,
+    "duration": 3.1333333333333333,
+    "frames": 94,
+    "voice_file": "voice-06-67dd2325e7.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "principal",
+    "utterance_id": "principal",
+    "speaker": 2,
+    "text": "早く始めた方は、積み立てた元本も１２０万円多い。",
+    "display_text": "早く始めた方は、積み立てた元本も１２０万円多い。",
+    "caption_pages": [
+      [
+        "早く始めた方は、"
+      ],
+      [
+        "積み立てた元本も",
+        "１２０万円多い。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.23,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "早く始めた方は、",
+        "style": "ノーマル",
+        "speed": 1.23,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "積み立てた元本も１２０万円多い。",
+        "style": "ノーマル",
+        "speed": 1.23,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "principal",
+    "fx": null,
+    "scene_start": 19.3,
+    "start": 19.3,
+    "start_frame": 579,
+    "end_frame": 683,
+    "duration": 3.466666666666667,
+    "frames": 104,
+    "voice_file": "voice-07-aa73f89153.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "time",
+    "utterance_id": "time",
+    "speaker": 2,
+    "text": "運用する時間にも差があるの。",
+    "display_text": "運用する時間にも差があるの。",
+    "caption_pages": [
+      [
+        "運用する時間にも",
+        "差があるの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.21,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "運用する時間にも差があるの。",
+        "style": "ノーマル",
+        "speed": 1.21,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "time",
+    "fx": null,
+    "scene_start": 22.766666666666666,
+    "start": 22.766666666666666,
+    "start_frame": 683,
+    "end_frame": 734,
+    "duration": 1.7,
+    "frames": 51,
+    "voice_file": "voice-08-872792a6ff.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "……「そのうち」って言うの、やめるのだ。",
+    "display_text": "……「そのうち」って言うの、やめるのだ。",
+    "caption_pages": [
+      [
+        "……「そのうち」って"
+      ],
+      [
+        "言うの、やめるのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "evening",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.22,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "……「そのうち」って",
+        "style": "ヘロヘロ",
+        "speed": 1.01,
+        "intonation": 0.84,
+        "pause": 0.15,
+        "lead": 0.2,
+        "tail": 0.023,
+        "gap": 0.1,
+        "pitch": -0.045,
+        "volume": 0.87,
+        "contour": "fall"
+      },
+      {
+        "text": "言うの、やめるのだ。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.06,
+        "pause": 0.15,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0,
+        "pitch": -0.025,
+        "volume": 0.91,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null,
+    "scene_start": 24.466666666666665,
+    "start": 24.466666666666665,
+    "start_frame": 734,
+    "end_frame": 843,
+    "duration": 3.6333333333333333,
+    "frames": 109,
+    "voice_file": "voice-09-e8638bb4e8.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "生活費を残して、続けられる額からね。",
+    "display_text": "生活費を残して、続けられる額からね。",
+    "caption_pages": [
+      [
+        "生活費を残して、",
+        "続けられる額からね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "生活費を残して、続けられる額からね。",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": null,
+    "scene_start": 28.1,
+    "start": 28.1,
+    "start_frame": 843,
+    "end_frame": 918,
+    "duration": 2.5,
+    "frames": 75,
+    "voice_file": "voice-10-be92ecf570.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "evening",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.28,
+    "tail_seconds": 0.055,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.28,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0.035
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.28,
+        "intonation": 1.2,
+        "pause": 0.12,
+        "lead": 0.018,
+        "tail": 0.023,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": null,
+    "scene_start": 30.6,
+    "start": 30.6,
+    "start_frame": 918,
+    "end_frame": 996,
+    "duration": 2.6,
+    "frames": 78,
+    "voice_file": "voice-11-ebcac6fbad.wav",
+    "donation_offset": null
+  }
+]

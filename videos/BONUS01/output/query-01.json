@@ -1,0 +1,186 @@
+{
+  "speedScale": 1.0,
+  "intonationScale": 1.0,
+  "prePhonemeLength": 0.0,
+  "postPhonemeLength": 0.0,
+  "outputSamplingRate": 24000,
+  "accent_phrases": [
+    {
+      "moras": [
+        {
+          "text": "テ",
+          "consonant": "t",
+          "consonant_length": 0.06133430451154709,
+          "vowel": "e",
+          "vowel_length": 0.06401441246271133,
+          "pitch": 5.563286304473877
+        },
+        {
+          "text": "ド",
+          "consonant": "d",
+          "consonant_length": 0.05844222754240036,
+          "vowel": "o",
+          "vowel_length": 0.07614891231060028,
+          "pitch": 5.687171936035156
+        },
+        {
+          "text": "リ",
+          "consonant": "r",
+          "consonant_length": 0.038563065230846405,
+          "vowel": "i",
+          "vowel_length": 0.06679710745811462,
+          "pitch": 5.869108200073242
+        },
+        {
+          "text": "ワ",
+          "consonant": "w",
+          "consonant_length": 0.04763127118349075,
+          "vowel": "a",
+          "vowel_length": 0.08976998925209045,
+          "pitch": 5.915464401245117
+        }
+      ],
+      "accent": 4,
+      "pause_mora": null,
+      "is_interrogative": false
+    },
+    {
+      "moras": [
+        {
+          "text": "ミ",
+          "consonant": "m",
+          "consonant_length": 0.06188315153121948,
+          "vowel": "i",
+          "vowel_length": 0.06300463527441025,
+          "pitch": 5.920292854309082
+        },
+        {
+          "text": "タ",
+          "consonant": "t",
+          "consonant_length": 0.0584586039185524,
+          "vowel": "a",
+          "vowel_length": 0.1318998634815216,
+          "pitch": 5.7439284324646
+        }
+      ],
+      "accent": 1,
+      "pause_mora": null,
+      "is_interrogative": true
+    }
+  ],
+  "kana": "テドリワ'/ミ'タ？",
+  "timed_moras": [
+    {
+      "text": "テ",
+      "seconds": 0.018
+    },
+    {
+      "text": "ド",
+      "seconds": 0.12699888432544212
+    },
+    {
+      "text": "リ",
+      "seconds": 0.24403465811066008
+    },
+    {
+      "text": "ワ",
+      "seconds": 0.33565219957932185
+    },
+    {
+      "text": "ミ",
+      "seconds": 0.4551315564798273
+    },
+    {
+      "text": "タ",
+      "seconds": 0.5637296319629835
+    }
+  ],
+  "performance_segments": [
+    {
+      "text": "手取りは見た？",
+      "style": "ノーマル",
+      "style_id": 2,
+      "start": 0.0,
+      "duration": 0.7466666666666667,
+      "gap_after": 0.0,
+      "query": {
+        "accent_phrases": [
+          {
+            "moras": [
+              {
+                "text": "テ",
+                "consonant": "t",
+                "consonant_length": 0.06133430451154709,
+                "vowel": "e",
+                "vowel_length": 0.06401441246271133,
+                "pitch": 5.563286304473877
+              },
+              {
+                "text": "ド",
+                "consonant": "d",
+                "consonant_length": 0.05844222754240036,
+                "vowel": "o",
+                "vowel_length": 0.07614891231060028,
+                "pitch": 5.687171936035156
+              },
+              {
+                "text": "リ",
+                "consonant": "r",
+                "consonant_length": 0.038563065230846405,
+                "vowel": "i",
+                "vowel_length": 0.06679710745811462,
+                "pitch": 5.869108200073242
+              },
+              {
+                "text": "ワ",
+                "consonant": "w",
+                "consonant_length": 0.04763127118349075,
+                "vowel": "a",
+                "vowel_length": 0.08976998925209045,
+                "pitch": 5.915464401245117
+              }
+            ],
+            "accent": 4,
+            "pause_mora": null,
+            "is_interrogative": false
+          },
+          {
+            "moras": [
+              {
+                "text": "ミ",
+                "consonant": "m",
+                "consonant_length": 0.06188315153121948,
+                "vowel": "i",
+                "vowel_length": 0.06300463527441025,
+                "pitch": 5.920292854309082
+              },
+              {
+                "text": "タ",
+                "consonant": "t",
+                "consonant_length": 0.0584586039185524,
+                "vowel": "a",
+                "vowel_length": 0.1318998634815216,
+                "pitch": 5.7439284324646
+              }
+            ],
+            "accent": 1,
+            "pause_mora": null,
+            "is_interrogative": true
+          }
+        ],
+        "speedScale": 1.15,
+        "pitchScale": 0,
+        "intonationScale": 1.2,
+        "volumeScale": 1,
+        "prePhonemeLength": 0.020699999999999996,
+        "postPhonemeLength": 0.026449999999999998,
+        "pauseLength": null,
+        "pauseLengthScale": 1.0,
+        "outputSamplingRate": 24000,
+        "outputStereo": false,
+        "kana": "テドリワ'/ミ'タ？"
+      }
+    }
+  ],
+  "alignment_only": true
+}
