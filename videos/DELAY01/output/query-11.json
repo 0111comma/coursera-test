@@ -257,103 +257,103 @@
     },
     {
       "text": "カ",
-      "seconds": 0.09998898867703974
+      "seconds": 0.10769735513385545
     },
     {
       "text": "ネ",
-      "seconds": 0.20658847906813027
+      "seconds": 0.22431901983521943
     },
     {
       "text": "ノ",
-      "seconds": 0.29701941793970765
+      "seconds": 0.32325201278874
     },
     {
       "text": "シ",
-      "seconds": 0.3957874866500497
+      "seconds": 0.43130596830090906
     },
     {
       "text": "ッ",
-      "seconds": 0.5315542654898018
+      "seconds": 0.5798371451512361
     },
     {
       "text": "パ",
-      "seconds": 0.5792406763248146
+      "seconds": 0.6320068937570621
     },
     {
       "text": "イ",
-      "seconds": 0.7004944633990526
+      "seconds": 0.7646606095305875
     },
     {
       "text": "オ",
-      "seconds": 0.7597186454404146
+      "seconds": 0.8294528770630176
     },
     {
       "text": "ヘ",
-      "seconds": 0.8376999900974333
+      "seconds": 0.9147658011322347
     },
     {
       "text": "ラ",
-      "seconds": 0.9352931080684066
+      "seconds": 1.0215343404509063
     },
     {
       "text": "シ",
-      "seconds": 1.0230111581222154
+      "seconds": 1.1174993866636203
     },
     {
       "text": "タ",
-      "seconds": 1.0908656634455547
+      "seconds": 1.1917333753934274
     },
     {
       "text": "イ",
-      "seconds": 1.2106245148060844
+      "seconds": 1.3227516059416993
     },
     {
       "text": "ヒ",
-      "seconds": 1.2691232256656513
+      "seconds": 1.386750195600029
     },
     {
       "text": "ト",
-      "seconds": 1.341315521585755
+      "seconds": 1.4657298013929632
     },
     {
       "text": "ワ",
-      "seconds": 1.4426666192775592
+      "seconds": 1.5766096347651934
     },
     {
       "text": "チャ",
-      "seconds": 1.6743333333333335
+      "seconds": 1.8343333333333334
     },
     {
       "text": "ン",
-      "seconds": 1.819093120114257
+      "seconds": 1.9927030145979336
     },
     {
       "text": "ネ",
-      "seconds": 1.86703391588976
+      "seconds": 2.0451510646771163
     },
     {
       "text": "ル",
-      "seconds": 1.9586611502499631
+      "seconds": 2.145392825344689
     },
     {
       "text": "ト",
-      "seconds": 2.049674287966763
+      "seconds": 2.244962753787
     },
     {
       "text": "オ",
-      "seconds": 2.153169691858192
+      "seconds": 2.358188494796427
     },
     {
       "text": "ロ",
-      "seconds": 2.2143296395124246
+      "seconds": 2.425098522999348
     },
     {
       "text": "ク",
-      "seconds": 2.309208673953389
+      "seconds": 2.5288978085415996
     },
     {
       "text": "オ",
-      "seconds": 2.4022789751806606
+      "seconds": 2.6307183090295547
     }
   ],
   "performance_segments": [
@@ -362,7 +362,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 1.6213333333333333,
+      "duration": 1.7813333333333334,
       "gap_after": 0.035,
       "query": {
         "accent_phrases": [
@@ -531,12 +531,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.28,
+        "speedScale": 1.17,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.023039999999999998,
-        "postPhonemeLength": 0.02944,
+        "prePhonemeLength": 0.02106,
+        "postPhonemeLength": 0.026909999999999996,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,
@@ -548,8 +548,8 @@
       "text": "チャンネル登録を！",
       "style": "ノーマル",
       "style_id": 2,
-      "start": 1.6563333333333334,
-      "duration": 0.8746666666666667,
+      "start": 1.8163333333333334,
+      "duration": 0.9813333333333333,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -633,12 +633,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.28,
+        "speedScale": 1.17,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.023039999999999998,
-        "postPhonemeLength": 0.02944,
+        "prePhonemeLength": 0.02106,
+        "postPhonemeLength": 0.026909999999999996,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

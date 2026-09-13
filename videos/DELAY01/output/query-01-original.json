@@ -100,7 +100,7 @@
         "consonant": null,
         "consonant_length": null,
         "vowel": "pau",
-        "vowel_length": 0.1512,
+        "vowel_length": 0.132,
         "pitch": 0.0
       },
       "is_interrogative": false
@@ -239,87 +239,87 @@
     },
     {
       "text": "ア",
-      "seconds": 0.13823626338867914
+      "seconds": 0.15572517442703246
     },
     {
       "text": "ゴ",
-      "seconds": 0.21863040511948723
+      "seconds": 0.2478130095005035
     },
     {
       "text": "ジュ",
-      "seconds": 0.33982598397845315
+      "seconds": 0.3866370361935008
     },
     {
       "text": "ウ",
-      "seconds": 0.4626063604619768
+      "seconds": 0.5272763765291734
     },
     {
       "text": "ゴ",
-      "seconds": 0.5199734244024943
+      "seconds": 0.5929877406792207
     },
     {
       "text": "サ",
-      "seconds": 0.6156354259820211
+      "seconds": 0.7025642152157696
     },
     {
       "text": "イ",
-      "seconds": 0.7608068490255446
+      "seconds": 0.8688514816110784
     },
     {
       "text": "デ",
-      "seconds": 0.8113884208637571
+      "seconds": 0.9267903729893944
     },
     {
       "text": "イ",
-      "seconds": 1.0842166104524855
+      "seconds": 1.2218481174273923
     },
     {
       "text": "ク",
-      "seconds": 1.1631848529728632
+      "seconds": 1.3123026497689159
     },
     {
       "text": "ラ",
-      "seconds": 1.259144357418257
+      "seconds": 1.4222199003154579
     },
     {
       "text": "ニ",
-      "seconds": 1.348267145541452
+      "seconds": 1.5243060030747542
     },
     {
       "text": "ナ",
-      "seconds": 1.4252191190364814
+      "seconds": 1.6124509908963331
     },
     {
       "text": "ル",
-      "seconds": 1.5296356119489858
+      "seconds": 1.7320553373233836
     },
     {
       "text": "カ",
-      "seconds": 1.6096605833243756
+      "seconds": 1.8237203045351935
     },
     {
       "text": "ク",
-      "seconds": 1.7057569951448175
+      "seconds": 1.9337943762567906
     },
     {
       "text": "ラ",
-      "seconds": 1.7818727060125934
+      "seconds": 2.0209814632507883
     },
     {
       "text": "ベ",
-      "seconds": 1.8741653850428641
+      "seconds": 2.1266985319581893
     },
     {
       "text": "ル",
-      "seconds": 1.9644547138223571
+      "seconds": 2.2301208540146993
     },
     {
       "text": "ワ",
-      "seconds": 2.04977578258609
+      "seconds": 2.327852260053157
     },
     {
       "text": "ヨ",
-      "seconds": 2.17230067511305
+      "seconds": 2.4681989551294925
     }
   ],
   "performance_segments": [
@@ -328,7 +328,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 2.3893333333333335,
+      "duration": 2.6986666666666665,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -427,7 +427,7 @@
               "consonant": null,
               "consonant_length": null,
               "vowel": "pau",
-              "vowel_length": 0.1512,
+              "vowel_length": 0.132,
               "pitch": 0.0
             },
             "is_interrogative": false
@@ -558,12 +558,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.26,
+        "speedScale": 1.1,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.02268,
-        "postPhonemeLength": 0.02898,
+        "prePhonemeLength": 0.0198,
+        "postPhonemeLength": 0.025300000000000003,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

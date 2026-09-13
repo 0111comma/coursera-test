@@ -22,7 +22,7 @@
         "consonant": null,
         "consonant_length": null,
         "vowel": "pau",
-        "vowel_length": 0.14279999999999998,
+        "vowel_length": 0.1248,
         "pitch": 0.0
       },
       "is_interrogative": false
@@ -177,63 +177,63 @@
     },
     {
       "text": "リョ",
-      "seconds": 0.3377918454037995
+      "seconds": 0.3666079769524244
     },
     {
       "text": "コ",
-      "seconds": 0.46897156957417974
+      "seconds": 0.5167078536473788
     },
     {
       "text": "オ",
-      "seconds": 0.5876307057492873
+      "seconds": 0.6524812883092808
     },
     {
       "text": "ダ",
-      "seconds": 0.6522362115262937
+      "seconds": 0.7264048958810477
     },
     {
       "text": "イ",
-      "seconds": 0.7737885396280209
+      "seconds": 0.8654888097666779
     },
     {
       "text": "ワ",
-      "seconds": 0.8328737662379482
+      "seconds": 0.9330959440607293
     },
     {
       "text": "ヨ",
-      "seconds": 0.9529328352022572
+      "seconds": 1.0704712248948907
     },
     {
       "text": "ン",
-      "seconds": 1.1078154420411888
+      "seconds": 1.247692669258668
     },
     {
       "text": "ジュ",
-      "seconds": 1.1660886304979565
+      "seconds": 1.314370644512085
     },
     {
       "text": "ウ",
-      "seconds": 1.2761904305029317
+      "seconds": 1.44035251182547
     },
     {
       "text": "ゴ",
-      "seconds": 1.3402217782605597
+      "seconds": 1.5136191501250635
     },
     {
       "text": "マ",
-      "seconds": 1.4465362164914108
+      "seconds": 1.6352674015622874
     },
     {
       "text": "ン",
-      "seconds": 1.6133247634703374
+      "seconds": 1.8261119889708668
     },
     {
       "text": "エ",
-      "seconds": 1.6915054024027176
+      "seconds": 1.9155686815954174
     },
     {
       "text": "ン",
-      "seconds": 1.7981480042734068
+      "seconds": 2.0375924279666866
     }
   ],
   "performance_segments": [
@@ -242,7 +242,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 1.856,
+      "duration": 2.1013333333333333,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -263,7 +263,7 @@
               "consonant": null,
               "consonant_length": null,
               "vowel": "pau",
-              "vowel_length": 0.14279999999999998,
+              "vowel_length": 0.1248,
               "pitch": 0.0
             },
             "is_interrogative": false
@@ -410,12 +410,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.19,
+        "speedScale": 1.04,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.021419999999999998,
-        "postPhonemeLength": 0.02737,
+        "prePhonemeLength": 0.01872,
+        "postPhonemeLength": 0.02392,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

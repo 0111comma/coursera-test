@@ -310,119 +310,119 @@
     },
     {
       "text": "オ",
-      "seconds": 0.1758392744064331
+      "seconds": 0.1941599044714655
     },
     {
       "text": "ヨ",
-      "seconds": 0.2501800172328949
+      "seconds": 0.2771294835188559
     },
     {
       "text": "ニ",
-      "seconds": 0.3510301463603973
+      "seconds": 0.38968543120580057
     },
     {
       "text": "モ",
-      "seconds": 0.43609952259063717
+      "seconds": 0.4846289314627647
     },
     {
       "text": "カ",
-      "seconds": 0.5389939122200011
+      "seconds": 0.5994664198883941
     },
     {
       "text": "カ",
-      "seconds": 0.6347949557304382
+      "seconds": 0.7063872273777211
     },
     {
       "text": "ル",
-      "seconds": 0.7280343942642211
+      "seconds": 0.8104491007413182
     },
     {
       "text": "ノ",
-      "seconds": 0.8078749947547912
+      "seconds": 0.8995569137888294
     },
     {
       "text": "ヨ",
-      "seconds": 0.9196923069953917
+      "seconds": 1.0243530212002139
     },
     {
       "text": "カ",
-      "seconds": 1.173
+      "seconds": 1.301
     },
     {
       "text": "イ",
-      "seconds": 1.3195060889720918
+      "seconds": 1.464511260013495
     },
     {
       "text": "シャ",
-      "seconds": 1.3704097728729248
+      "seconds": 1.5213234072242463
     },
     {
       "text": "モ",
-      "seconds": 1.4903965334892273
+      "seconds": 1.6552372025549411
     },
     {
       "text": "ベ",
-      "seconds": 1.5864959042072297
+      "seconds": 1.7624909645169973
     },
     {
       "text": "ツ",
-      "seconds": 1.6925777714252472
+      "seconds": 1.8808859056085345
     },
     {
       "text": "ニ",
-      "seconds": 1.7891009073257447
+      "seconds": 1.988612619783197
     },
     {
       "text": "ホ",
-      "seconds": 1.8925990324020385
+      "seconds": 2.1041239200915607
     },
     {
       "text": "ケ",
-      "seconds": 2.0065862874984743
+      "seconds": 2.2313418387259754
     },
     {
       "text": "ン",
-      "seconds": 2.1569978396892546
+      "seconds": 2.3992118746531856
     },
     {
       "text": "リョ",
-      "seconds": 2.2092198054790497
+      "seconds": 2.4574953186150106
     },
     {
       "text": "オ",
-      "seconds": 2.311687241077423
+      "seconds": 2.571856295845338
     },
     {
       "text": "オ",
-      "seconds": 2.378586224794388
+      "seconds": 2.6465203401723074
     },
     {
       "text": "フ",
-      "seconds": 2.4613718967437745
+      "seconds": 2.738915063330105
     },
     {
       "text": "タ",
-      "seconds": 2.5370710353851322
+      "seconds": 2.8234007091351914
     },
     {
       "text": "ン",
-      "seconds": 2.677567950963974
+      "seconds": 2.980205302415149
     },
     {
       "text": "シ",
-      "seconds": 2.7249059717655184
+      "seconds": 3.0330379149168722
     },
     {
       "text": "テ",
-      "seconds": 2.787602775871754
+      "seconds": 3.103012026642582
     },
     {
       "text": "ル",
-      "seconds": 2.8906510646939276
+      "seconds": 3.2180212775601866
     },
     {
       "text": "ワ",
-      "seconds": 2.9746508236527447
+      "seconds": 3.311771008541009
     }
   ],
   "performance_segments": [
@@ -431,7 +431,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 1.12,
+      "duration": 1.248,
       "gap_after": 0.035,
       "query": {
         "accent_phrases": [
@@ -537,12 +537,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.25,
+        "speedScale": 1.12,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.0225,
-        "postPhonemeLength": 0.028749999999999998,
+        "prePhonemeLength": 0.02016,
+        "postPhonemeLength": 0.02576,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,
@@ -554,8 +554,8 @@
       "text": "会社も別に保険料を負担してるわ。",
       "style": "ノーマル",
       "style_id": 2,
-      "start": 1.155,
-      "duration": 2.005333333333333,
+      "start": 1.283,
+      "duration": 2.2506666666666666,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -755,12 +755,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.25,
+        "speedScale": 1.12,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.0225,
-        "postPhonemeLength": 0.028749999999999998,
+        "prePhonemeLength": 0.02016,
+        "postPhonemeLength": 0.02576,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

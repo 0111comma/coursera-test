@@ -77,7 +77,7 @@
         "consonant": null,
         "consonant_length": null,
         "vowel": "pau",
-        "vowel_length": 0.1452,
+        "vowel_length": 0.1224,
         "pitch": 0.0
       },
       "is_interrogative": false
@@ -294,111 +294,111 @@
     },
     {
       "text": "ン",
-      "seconds": 0.1969690295526804
+      "seconds": 0.2303063978026895
     },
     {
       "text": "ジュ",
-      "seconds": 0.26136500724485096
+      "seconds": 0.30669770467281343
     },
     {
       "text": "ウ",
-      "seconds": 0.3725431928201155
+      "seconds": 0.4385855522669998
     },
     {
       "text": "ゴ",
-      "seconds": 0.43384603426870233
+      "seconds": 0.5113075504560096
     },
     {
       "text": "サ",
-      "seconds": 0.5348913255545719
+      "seconds": 0.6311750038441489
     },
     {
       "text": "イ",
-      "seconds": 0.6917278389536645
+      "seconds": 0.8172261618960137
     },
     {
       "text": "ゼ",
-      "seconds": 0.8913222129029676
+      "seconds": 1.0316469388358733
     },
     {
       "text": "ン",
-      "seconds": 1.0438402527954953
+      "seconds": 1.2125752018456366
     },
     {
       "text": "ゲ",
-      "seconds": 1.0895028354550196
+      "seconds": 1.266743559706445
     },
     {
       "text": "ツ",
-      "seconds": 1.2025193378787395
+      "seconds": 1.400812155718897
     },
     {
       "text": "ノ",
-      "seconds": 1.2949661542403796
+      "seconds": 1.5104794574812348
     },
     {
       "text": "キュ",
-      "seconds": 1.4215961543331461
+      "seconds": 1.660697398767752
     },
     {
       "text": "ウ",
-      "seconds": 1.5612794053790984
+      "seconds": 1.826400078930107
     },
     {
       "text": "リョ",
-      "seconds": 1.6191649549105938
+      "seconds": 1.8950682308253122
     },
     {
       "text": "オ",
-      "seconds": 1.7289199872292764
+      "seconds": 2.0252678279876712
     },
     {
       "text": "サ",
-      "seconds": 1.7896291651843994
+      "seconds": 2.097285578306984
     },
     {
       "text": "ン",
-      "seconds": 1.95223129498466
+      "seconds": 2.2901763401288617
     },
     {
       "text": "ジュ",
-      "seconds": 2.010760931814998
+      "seconds": 2.359608556368772
     },
     {
       "text": "ウ",
-      "seconds": 2.11640404411978
+      "seconds": 2.484930287632288
     },
     {
       "text": "マ",
-      "seconds": 2.176148310312555
+      "seconds": 2.555803387723717
     },
     {
       "text": "ン",
-      "seconds": 2.346045168110162
+      "seconds": 2.7573476994248
     },
     {
       "text": "エ",
-      "seconds": 2.411788838839728
+      "seconds": 2.8353377401922266
     },
     {
       "text": "ン",
-      "seconds": 2.5035081645023722
+      "seconds": 2.9441420382822265
     },
     {
       "text": "ノ",
-      "seconds": 2.5504964024902375
+      "seconds": 2.9998829872678314
     },
     {
       "text": "レ",
-      "seconds": 2.645713190780198
+      "seconds": 3.112836236121608
     },
     {
       "text": "エ",
-      "seconds": 2.7463311758750724
+      "seconds": 3.2321967870674886
     },
     {
       "text": "ネ",
-      "seconds": 2.81195362996858
+      "seconds": 3.3100430316293945
     }
   ],
   "performance_segments": [
@@ -407,7 +407,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 2.997333333333333,
+      "duration": 3.541333333333333,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -483,7 +483,7 @@
               "consonant": null,
               "consonant_length": null,
               "vowel": "pau",
-              "vowel_length": 0.1452,
+              "vowel_length": 0.1224,
               "pitch": 0.0
             },
             "is_interrogative": false
@@ -692,12 +692,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.21,
+        "speedScale": 1.02,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.021779999999999997,
-        "postPhonemeLength": 0.027829999999999997,
+        "prePhonemeLength": 0.018359999999999998,
+        "postPhonemeLength": 0.02346,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

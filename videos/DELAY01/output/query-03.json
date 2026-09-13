@@ -148,7 +148,7 @@
         "consonant": null,
         "consonant_length": null,
         "vowel": "pau",
-        "vowel_length": 0.13799999999999998,
+        "vowel_length": 0.12,
         "pitch": 0.0
       },
       "is_interrogative": false
@@ -279,107 +279,107 @@
     },
     {
       "text": "ン",
-      "seconds": 0.20630654413803765
+      "seconds": 0.23455252575874327
     },
     {
       "text": "ジュ",
-      "seconds": 0.2740623119706693
+      "seconds": 0.3124716587662697
     },
     {
       "text": "ウ",
-      "seconds": 0.39104109853246943
+      "seconds": 0.4469972633123398
     },
     {
       "text": "ゴ",
-      "seconds": 0.4554703052251236
+      "seconds": 0.5210908510088921
     },
     {
       "text": "サ",
-      "seconds": 0.5638692752796671
+      "seconds": 0.6457496665716171
     },
     {
       "text": "イ",
-      "seconds": 0.7131303715291231
+      "seconds": 0.8173999272584915
     },
     {
       "text": "カ",
-      "seconds": 0.7760497666545536
+      "seconds": 0.8897572316527367
     },
     {
       "text": "ラ",
-      "seconds": 0.8884301585321841
+      "seconds": 1.0189946823120117
     },
     {
       "text": "ニ",
-      "seconds": 0.979321373672589
+      "seconds": 1.1235195797234774
     },
     {
       "text": "ジュ",
-      "seconds": 1.0924763991754989
+      "seconds": 1.2536478590518236
     },
     {
       "text": "ウ",
-      "seconds": 1.2329035493316858
+      "seconds": 1.4151390817314387
     },
     {
       "text": "ネ",
-      "seconds": 1.285211050119089
+      "seconds": 1.4752927076369524
     },
     {
       "text": "ン",
-      "seconds": 1.428992011103941
+      "seconds": 1.6406408127695322
     },
     {
       "text": "デ",
-      "seconds": 1.4810331957469816
+      "seconds": 1.7004881751090288
     },
     {
       "text": "ヤ",
-      "seconds": 1.7622126942328786
+      "seconds": 2.00584459836781
     },
     {
       "text": "ク",
-      "seconds": 1.8908110953128858
+      "seconds": 2.1537327596098184
     },
     {
       "text": "ヨ",
-      "seconds": 2.006943204374417
+      "seconds": 2.2872846850305795
     },
     {
       "text": "ン",
-      "seconds": 2.1442038901707403
+      "seconds": 2.445134473696351
     },
     {
       "text": "ヒャ",
-      "seconds": 2.2013558750800466
+      "seconds": 2.5108592563420533
     },
     {
       "text": "ク",
-      "seconds": 2.3142765701050347
+      "seconds": 2.6407180556207894
     },
     {
       "text": "ロ",
-      "seconds": 2.3992178147487024
+      "seconds": 2.738400486961007
     },
     {
       "text": "ク",
-      "seconds": 2.5020498599928365
+      "seconds": 2.856657338991761
     },
     {
       "text": "マ",
-      "seconds": 2.594042457209982
+      "seconds": 2.962448825791478
     },
     {
       "text": "ン",
-      "seconds": 2.7690002301698153
+      "seconds": 3.1636502646952867
     },
     {
       "text": "エ",
-      "seconds": 2.850109252486541
+      "seconds": 3.256925640359521
     },
     {
       "text": "ン",
-      "seconds": 2.960025283847167
+      "seconds": 3.383329076424241
     }
   ],
   "performance_segments": [
@@ -388,7 +388,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 2.997333333333333,
+      "duration": 3.466666666666667,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -535,7 +535,7 @@
               "consonant": null,
               "consonant_length": null,
               "vowel": "pau",
-              "vowel_length": 0.13799999999999998,
+              "vowel_length": 0.12,
               "pitch": 0.0
             },
             "is_interrogative": false
@@ -658,12 +658,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.15,
+        "speedScale": 1.0,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.020699999999999996,
-        "postPhonemeLength": 0.026449999999999998,
+        "prePhonemeLength": 0.018,
+        "postPhonemeLength": 0.023,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,

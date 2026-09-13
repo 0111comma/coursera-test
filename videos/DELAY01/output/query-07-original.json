@@ -326,127 +326,127 @@
     },
     {
       "text": "ヤ",
-      "seconds": 0.1196150342255104
+      "seconds": 0.13162408372488887
     },
     {
       "text": "ク",
-      "seconds": 0.2401574809977679
+      "seconds": 0.2664124560247768
     },
     {
       "text": "ハ",
-      "seconds": 0.32241528897944505
+      "seconds": 0.35839164131337947
     },
     {
       "text": "ジ",
-      "seconds": 0.44250347445844634
+      "seconds": 0.49267206689444454
     },
     {
       "text": "メ",
-      "seconds": 0.5325112309998613
+      "seconds": 0.5933171037543904
     },
     {
       "text": "タ",
-      "seconds": 0.6373862031630384
+      "seconds": 0.7105863908095793
     },
     {
       "text": "ホ",
-      "seconds": 0.7325299296068951
+      "seconds": 0.8169743758331646
     },
     {
       "text": "オ",
-      "seconds": 0.860327751764437
+      "seconds": 0.9598755769729614
     },
     {
       "text": "ワ",
-      "seconds": 0.9251494445083587
+      "seconds": 1.032358015222983
     },
     {
       "text": "ツ",
-      "seconds": 1.1943333333333332
+      "seconds": 1.3116666666666668
     },
     {
       "text": "ミ",
-      "seconds": 1.2932002845081856
+      "seconds": 1.422217893889456
     },
     {
       "text": "タ",
-      "seconds": 1.3947800768817342
+      "seconds": 1.5358025708162424
     },
     {
       "text": "テ",
-      "seconds": 1.4881518614233993
+      "seconds": 1.6402092026219224
     },
     {
       "text": "タ",
-      "seconds": 1.5727276237747532
+      "seconds": 1.7347802823420726
     },
     {
       "text": "ガ",
-      "seconds": 1.6756970645198976
+      "seconds": 1.8499188388116432
     },
     {
       "text": "ン",
-      "seconds": 1.8125014998311917
+      "seconds": 2.002891071023363
     },
     {
       "text": "ポ",
-      "seconds": 1.8749101372986305
+      "seconds": 2.0726752747369535
     },
     {
       "text": "ン",
-      "seconds": 1.9999894606621285
+      "seconds": 2.2125366999525014
     },
     {
       "text": "モ",
-      "seconds": 2.047847368633844
+      "seconds": 2.266050542502692
     },
     {
       "text": "ヒャ",
-      "seconds": 2.140359271371268
+      "seconds": 2.369495670109084
     },
     {
       "text": "ク",
-      "seconds": 2.2583729123429555
+      "seconds": 2.501456377741062
     },
     {
       "text": "ニ",
-      "seconds": 2.35139057018311
+      "seconds": 2.605467031507781
     },
     {
       "text": "ジュ",
-      "seconds": 2.4609349060097356
+      "seconds": 2.727957516113917
     },
     {
       "text": "ウ",
-      "seconds": 2.5856235584825034
+      "seconds": 2.8673821002425566
     },
     {
       "text": "マ",
-      "seconds": 2.64353418958284
+      "seconds": 2.9321367150183875
     },
     {
       "text": "ン",
-      "seconds": 2.8103978227057107
+      "seconds": 3.118720595692143
     },
     {
       "text": "エ",
-      "seconds": 2.8818247035014917
+      "seconds": 3.1985888351274254
     },
     {
       "text": "ン",
-      "seconds": 2.975295290010731
+      "seconds": 3.3031059454968474
     },
     {
       "text": "オ",
-      "seconds": 3.044994980846963
+      "seconds": 3.3810428725228157
     },
     {
       "text": "オ",
-      "seconds": 3.1459627595122264
+      "seconds": 3.4939432068485194
     },
     {
       "text": "イ",
-      "seconds": 3.2354944966420893
+      "seconds": 3.5940559674573658
     }
   ],
   "performance_segments": [
@@ -455,7 +455,7 @@
       "style": "ノーマル",
       "style_id": 2,
       "start": 0.0,
-      "duration": 1.1413333333333333,
+      "duration": 1.2586666666666666,
       "gap_after": 0.035,
       "query": {
         "accent_phrases": [
@@ -554,12 +554,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.23,
+        "speedScale": 1.1,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.022139999999999996,
-        "postPhonemeLength": 0.02829,
+        "prePhonemeLength": 0.0198,
+        "postPhonemeLength": 0.025300000000000003,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,
@@ -571,8 +571,8 @@
       "text": "積み立てた元本も１２０万円多い。",
       "style": "ノーマル",
       "style_id": 2,
-      "start": 1.1763333333333332,
-      "duration": 2.208,
+      "start": 1.2936666666666667,
+      "duration": 2.453333333333333,
       "gap_after": 0.0,
       "query": {
         "accent_phrases": [
@@ -795,12 +795,12 @@
             "is_interrogative": false
           }
         ],
-        "speedScale": 1.23,
+        "speedScale": 1.1,
         "pitchScale": 0,
         "intonationScale": 1.2,
         "volumeScale": 1,
-        "prePhonemeLength": 0.022139999999999996,
-        "postPhonemeLength": 0.02829,
+        "prePhonemeLength": 0.0198,
+        "postPhonemeLength": 0.025300000000000003,
         "pauseLength": null,
         "pauseLengthScale": 1.0,
         "outputSamplingRate": 24000,
