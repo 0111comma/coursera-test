@@ -1,0 +1,92 @@
+[
+  {
+    "name": "四国めたん",
+    "speaker_uuid": "7ffcb7ce-00ec-4bdc-82cd-45a8889e43ff",
+    "styles": [
+      {
+        "name": "ノーマル",
+        "id": 2,
+        "type": "talk"
+      },
+      {
+        "name": "あまあま",
+        "id": 0,
+        "type": "talk"
+      },
+      {
+        "name": "ツンツン",
+        "id": 6,
+        "type": "talk"
+      },
+      {
+        "name": "セクシー",
+        "id": 4,
+        "type": "talk"
+      },
+      {
+        "name": "ささやき",
+        "id": 36,
+        "type": "talk"
+      },
+      {
+        "name": "ヒソヒソ",
+        "id": 37,
+        "type": "talk"
+      }
+    ],
+    "version": "0.16.1",
+    "supported_features": {
+      "permitted_synthesis_morphing": "SELF_ONLY"
+    }
+  },
+  {
+    "name": "ずんだもん",
+    "speaker_uuid": "388f246b-8c41-4ac1-8e2d-5d79f3ff56d9",
+    "styles": [
+      {
+        "name": "ノーマル",
+        "id": 3,
+        "type": "talk"
+      },
+      {
+        "name": "あまあま",
+        "id": 1,
+        "type": "talk"
+      },
+      {
+        "name": "ツンツン",
+        "id": 7,
+        "type": "talk"
+      },
+      {
+        "name": "セクシー",
+        "id": 5,
+        "type": "talk"
+      },
+      {
+        "name": "ささやき",
+        "id": 22,
+        "type": "talk"
+      },
+      {
+        "name": "ヒソヒソ",
+        "id": 38,
+        "type": "talk"
+      },
+      {
+        "name": "ヘロヘロ",
+        "id": 75,
+        "type": "talk"
+      },
+      {
+        "name": "なみだめ",
+        "id": 76,
+        "type": "talk"
+      }
+    ],
+    "version": "0.16.1",
+    "supported_features": {
+      "permitted_synthesis_morphing": "SELF_ONLY"
+    }
+  }
+]
