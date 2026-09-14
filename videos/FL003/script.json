@@ -1,0 +1,494 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "送料５００円！？もったいないのだ！",
+    "display_text": "送料５００円！？もったいないのだ！",
+    "caption_pages": [
+      [
+        "送料５００円！？"
+      ],
+      [
+        "もったいないのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "shopping",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.25,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "送料５００円！？",
+        "style": "ツンツン",
+        "speed": 1.25,
+        "intonation": 1.35,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.04,
+        "pitch": 0.02
+      },
+      {
+        "text": "もったいないのだ！",
+        "style": "ツンツン",
+        "speed": 1.25,
+        "intonation": 1.35,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.02
+      }
+    ],
+    "emotion": "grumble",
+    "graphic": "hook",
+    "fx": "pop"
+  },
+  {
+    "scene_id": "cart",
+    "utterance_id": "cart",
+    "speaker": 2,
+    "text": "商品４千円と合わせて、４千５百円ね。",
+    "display_text": "商品４千円と合わせて、４千５百円ね。",
+    "caption_pages": [
+      [
+        "商品４千円と合わせて、"
+      ],
+      [
+        "４千５百円ね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "shopping",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.08,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "商品４千円と合わせて、",
+        "style": "ノーマル",
+        "speed": 1.08,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.04
+      },
+      {
+        "text": "４千５百円ね。",
+        "style": "ノーマル",
+        "speed": 1.08,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cart",
+    "fx": null
+  },
+  {
+    "scene_id": "threshold",
+    "utterance_id": "threshold",
+    "speaker": 3,
+    "text": "５千円で送料無料？あと千円、何か買うのだ！",
+    "display_text": "５千円で送料無料？あと千円、何か買うのだ！",
+    "caption_pages": [
+      [
+        "５千円で送料無料？"
+      ],
+      [
+        "あと千円、何か買うのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "shopping",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.24,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "５千円で送料無料？",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.04,
+        "pitch": 0.035
+      },
+      {
+        "text": "あと千円、何か買うのだ！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "threshold",
+    "fx": null
+  },
+  {
+    "scene_id": "extra",
+    "utterance_id": "extra",
+    "speaker": 3,
+    "text": "この置物で、送料ゼロなのだ！",
+    "display_text": "この置物で、送料ゼロなのだ！",
+    "caption_pages": [
+      [
+        "この置物で、",
+        "送料ゼロなのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "shopping",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.25,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "この置物で、送料ゼロなのだ！",
+        "style": "ノーマル",
+        "speed": 1.25,
+        "intonation": 1.4,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "extra",
+    "fx": "cash"
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 2,
+    "text": "でも支払いは、５千円に増えてるわよ。",
+    "display_text": "でも支払いは、５千円に増えてるわよ。",
+    "caption_pages": [
+      [
+        "でも支払いは、",
+        "５千円に増えてるわよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "realization",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.1,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "でも支払いは、５千円に増えてるわよ。",
+        "style": "ノーマル",
+        "speed": 1.1,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "reveal",
+    "fx": "click"
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "ええっ！？高くなってるのだ！？",
+    "display_text": "ええっ！？高くなってるのだ！？",
+    "caption_pages": [
+      [
+        "ええっ！？"
+      ],
+      [
+        "高くなってるのだ！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "realization",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "ええっ！？",
+        "style": "ノーマル",
+        "speed": 1.0,
+        "intonation": 1.5,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.12,
+        "pitch": 0.06,
+        "volume": 1.1,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.2
+        }
+      },
+      {
+        "text": "高くなってるのだ！？",
+        "style": "なみだめ",
+        "speed": 1.16,
+        "intonation": 1.35,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.02
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact"
+  },
+  {
+    "scene_id": "difference",
+    "utterance_id": "difference",
+    "speaker": 2,
+    "text": "送料ありより、５００円多く払ってるの。",
+    "display_text": "送料ありより、５００円多く払ってるの。",
+    "caption_pages": [
+      [
+        "送料ありより、",
+        "５００円多く払ってるの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "realization",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.1,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "送料ありより、５００円多く払ってるの。",
+        "style": "ノーマル",
+        "speed": 1.1,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "difference",
+    "fx": "pop"
+  },
+  {
+    "scene_id": "question",
+    "utterance_id": "question",
+    "speaker": 2,
+    "text": "その置物、欲しかったの？",
+    "display_text": "その置物、欲しかったの？",
+    "caption_pages": [
+      [
+        "その置物、欲しかったの？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "mclose",
+    "background": "realization",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.15,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "その置物、欲しかったの？",
+        "style": "ノーマル",
+        "speed": 1.15,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "question",
+    "fx": null
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "……いや。送料を消したかっただけなのだ。",
+    "display_text": "……いや。送料を消したかっただけなのだ。",
+    "caption_pages": [
+      [
+        "……いや。"
+      ],
+      [
+        "送料を",
+        "消したかっただけなのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "realization",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.17,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "……いや。",
+        "style": "ヘロヘロ",
+        "speed": 1.02,
+        "intonation": 0.9,
+        "pause": 0.11,
+        "lead": 0.16,
+        "tail": 0.025,
+        "gap": 0.15,
+        "pitch": -0.045,
+        "volume": 0.89,
+        "contour": "fall"
+      },
+      {
+        "text": "送料を消したかっただけなのだ。",
+        "style": "ヘロヘロ",
+        "speed": 1.02,
+        "intonation": 0.9,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": -0.045,
+        "volume": 0.89,
+        "contour": "fall",
+        "vowel_seconds": {
+          "-1": 0.16
+        }
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "買う予定の物ならアリ。不要なら、送料を払う方が安いわ。",
+    "display_text": "買う予定の物ならアリ。不要なら、送料を払う方が安いわ。",
+    "caption_pages": [
+      [
+        "買う予定の物ならアリ。"
+      ],
+      [
+        "不要なら、送料を",
+        "払う方が安いわ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "realization",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.14,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "買う予定の物ならアリ。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.04
+      },
+      {
+        "text": "不要なら、送料を払う方が安いわ。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "realization",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.04
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.11,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": null
+  }
+]

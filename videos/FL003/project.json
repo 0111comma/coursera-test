@@ -1,0 +1,14 @@
+{
+  "code": "FL003",
+  "title": "送料500円をケチって、いらない物を1,000円買ったずんだもん",
+  "slug": "free-shipping",
+  "theme": "shipping",
+  "bgm": "Fluffing a Duck",
+  "bgm_file": "bgm.ogg",
+  "bgm_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100768",
+  "bgm_bpm": 122,
+  "bgm_clip_seconds": [
+    0,
+    60
+  ]
+}
