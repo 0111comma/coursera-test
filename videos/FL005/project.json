@@ -2,5 +2,14 @@
   "code": "FL005",
   "title": "NISAなのに、配当20万円から税金4万円！？",
   "slug": "nisa-dividend",
-  "theme": "nisa"
+  "theme": "nisa",
+  "bgm": "Scheming Weasel (faster version)",
+  "bgm_file": "bgm.ogg",
+  "bgm_bpm": 168,
+  "bgm_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100085",
+  "bgm_clip_seconds": [
+    0,
+    60
+  ],
+  "bgm_original_sha256": "f2f20d0737560a2dec0d82119810757326b1eec7eae211f2d3e056e9754834a9"
 }

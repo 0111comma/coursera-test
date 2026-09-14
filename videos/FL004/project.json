@@ -2,5 +2,14 @@
   "code": "FL004",
   "title": "年利5％の外貨預金なのに、100万円が94.5万円に！？",
   "slug": "foreign-deposit",
-  "theme": "fx"
+  "theme": "fx",
+  "bgm": "Monkeys Spinning Monkeys",
+  "bgm_file": "bgm.ogg",
+  "bgm_bpm": 144,
+  "bgm_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1400011",
+  "bgm_clip_seconds": [
+    0,
+    60
+  ],
+  "bgm_original_sha256": "a5bb345c23849ad0786aa0bc5157a9f2d4039660fe00282e55754d475f36dc14"
 }
