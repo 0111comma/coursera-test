@@ -1,0 +1,525 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "外貨預金で年５％！？１００万円、預けるのだ！",
+    "display_text": "外貨預金で年５％！？１００万円、預けるのだ！",
+    "caption_pages": [
+      [
+        "外貨預金で年５％！？"
+      ],
+      [
+        "１００万円、預けるのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.24,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "外貨預金で年５％！？",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045,
+        "pitch": 0.035
+      },
+      {
+        "text": "１００万円、預けるのだ！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "hook",
+    "fx": "pop"
+  },
+  {
+    "scene_id": "setup",
+    "utterance_id": "setup",
+    "speaker": 2,
+    "text": "仮に１ドル１５０円で、ドルに替えたとするわね。",
+    "display_text": "仮に１ドル１５０円で、ドルに替えたとするわね。",
+    "caption_pages": [
+      [
+        "仮に１ドル１５０円で、"
+      ],
+      [
+        "ドルに替えたとするわね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "仮に１ドル１５０円で、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "ドルに替えたとするわね。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "setup",
+    "fx": null
+  },
+  {
+    "scene_id": "interest",
+    "utterance_id": "interest",
+    "speaker": 2,
+    "text": "１年後、利息が５％つくと、７千ドルになるわ。",
+    "display_text": "１年後、利息が５％つくと、７千ドルになるわ。",
+    "caption_pages": [
+      [
+        "１年後、利息が５％つくと、"
+      ],
+      [
+        "７千ドルになるわ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "１年後、利息が５％つくと、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "７千ドルになるわ。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "interest",
+    "fx": "cash"
+  },
+  {
+    "scene_id": "happy",
+    "utterance_id": "happy",
+    "speaker": 3,
+    "text": "よし！円に戻すのだ！",
+    "display_text": "よし！円に戻すのだ！",
+    "caption_pages": [
+      [
+        "よし！円に戻すのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.24,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "よし！円に戻すのだ！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "happy",
+    "fx": null
+  },
+  {
+    "scene_id": "rate",
+    "utterance_id": "rate",
+    "speaker": 2,
+    "text": "でも、１ドル１３５円に円高になっていたら？",
+    "display_text": "でも、１ドル１３５円に円高になっていたら？",
+    "caption_pages": [
+      [
+        "でも、１ドル１３５円に"
+      ],
+      [
+        "円高になっていたら？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bank",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "でも、１ドル１３５円に",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "円高になっていたら？",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "rate",
+    "fx": "click"
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 2,
+    "text": "円に戻すと、９４万５千円。",
+    "display_text": "円に戻すと、９４万５千円。",
+    "caption_pages": [
+      [
+        "円に戻すと、"
+      ],
+      [
+        "９４万５千円。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bank",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "円に戻すと、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "９４万５千円。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "reveal",
+    "fx": "impact"
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "うわぁぁっ！利息がついたのに、減ってるのだ！？",
+    "display_text": "うわぁぁっ！利息がついたのに、減ってるのだ！？",
+    "caption_pages": [
+      [
+        "うわぁぁっ！"
+      ],
+      [
+        "利息がついたのに、",
+        "減ってるのだ！？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "bank",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.03,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "うわぁぁっ！",
+        "style": "ノーマル",
+        "speed": 1.03,
+        "intonation": 1.5,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.1,
+        "pitch": 0.06,
+        "volume": 1.08,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.18
+        }
+      },
+      {
+        "text": "利息がついたのに、減ってるのだ！？",
+        "style": "なみだめ",
+        "speed": 1.15,
+        "intonation": 1.35,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.02
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact"
+  },
+  {
+    "scene_id": "explain",
+    "utterance_id": "explain",
+    "speaker": 2,
+    "text": "ドルは増えても、円に替えるときの価値が下がったの。",
+    "display_text": "ドルは増えても、円に替えるときの価値が下がったの。",
+    "caption_pages": [
+      [
+        "ドルは増えても、"
+      ],
+      [
+        "円に替えるときの価値が",
+        "下がったの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bank",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "ドルは増えても、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "円に替えるときの価値が下がったの。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "explain",
+    "fx": null
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "預金って聞いて、安心しきってたのだ……。",
+    "display_text": "預金って聞いて、安心しきってたのだ……。",
+    "caption_pages": [
+      [
+        "預金って聞いて、"
+      ],
+      [
+        "安心しきってたのだ……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "bank",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.06,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "預金って聞いて、",
+        "style": "ヘロヘロ",
+        "speed": 1.06,
+        "intonation": 0.91,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045,
+        "pitch": -0.04,
+        "volume": 0.9,
+        "contour": "fall"
+      },
+      {
+        "text": "安心しきってたのだ……。",
+        "style": "ヘロヘロ",
+        "speed": 1.06,
+        "intonation": 0.91,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": -0.04,
+        "volume": 0.9,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "外貨預金は金利だけでなく、為替の変動も確認してね。",
+    "display_text": "外貨預金は金利だけでなく、為替の変動も確認してね。",
+    "caption_pages": [
+      [
+        "外貨預金は金利だけでなく、"
+      ],
+      [
+        "為替の変動も確認してね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bank",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "外貨預金は金利だけでなく、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "為替の変動も確認してね。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bank",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": null
+  }
+]

@@ -1,0 +1,502 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "NISAで日本株の配当２０万円！旅行に使うのだ！",
+    "display_text": "NISAで日本株の配当２０万円！旅行に使うのだ！",
+    "caption_pages": [
+      [
+        "NISAで日本株の配当２０万円！"
+      ],
+      [
+        "旅行に使うのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.24,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "NISAで日本株の配当２０万円！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045,
+        "pitch": 0.035
+      },
+      {
+        "text": "旅行に使うのだ！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.035
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "hook",
+    "fx": "cash"
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 2,
+    "text": "銀行への入金は、１５万９３７０円ね。",
+    "display_text": "銀行への入金は、１５万９３７０円ね。",
+    "caption_pages": [
+      [
+        "銀行への入金は、"
+      ],
+      [
+        "１５万９３７０円ね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "銀行への入金は、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "１５万９３７０円ね。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "reveal",
+    "fx": "click"
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "うわぁぁっ！４万円も引かれてるのだ！",
+    "display_text": "うわぁぁっ！４万円も引かれてるのだ！",
+    "caption_pages": [
+      [
+        "うわぁぁっ！"
+      ],
+      [
+        "４万円も引かれてるのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "desk",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.03,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "うわぁぁっ！",
+        "style": "ノーマル",
+        "speed": 1.03,
+        "intonation": 1.5,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.1,
+        "pitch": 0.06,
+        "volume": 1.08,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.18
+        }
+      },
+      {
+        "text": "４万円も引かれてるのだ！",
+        "style": "なみだめ",
+        "speed": 1.15,
+        "intonation": 1.35,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": 0.02
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact"
+  },
+  {
+    "scene_id": "question",
+    "utterance_id": "question",
+    "speaker": 2,
+    "text": "配当、銀行口座に直接受け取る設定にしてない？",
+    "display_text": "配当、銀行口座に直接受け取る設定にしてない？",
+    "caption_pages": [
+      [
+        "配当、銀行口座に"
+      ],
+      [
+        "直接受け取る設定に",
+        "してない？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "配当、銀行口座に",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "直接受け取る設定にしてない？",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "question",
+    "fx": null
+  },
+  {
+    "scene_id": "admit",
+    "utterance_id": "admit",
+    "speaker": 3,
+    "text": "え？銀行じゃダメなのだ？",
+    "display_text": "え？銀行じゃダメなのだ？",
+    "caption_pages": [
+      [
+        "え？銀行じゃダメなのだ？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "desk",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "え？銀行じゃダメなのだ？",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "admit",
+    "fx": null
+  },
+  {
+    "scene_id": "rule",
+    "utterance_id": "rule",
+    "speaker": 2,
+    "text": "日本株の配当は、受取方法を間違えると、NISAでも課税されるの。",
+    "display_text": "日本株の配当は、受取方法を間違えると、NISAでも課税されるの。",
+    "caption_pages": [
+      [
+        "日本株の配当は、"
+      ],
+      [
+        "受取方法を間違えると、"
+      ],
+      [
+        "NISAでも課税されるの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "settings",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "日本株の配当は、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "受取方法を間違えると、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "NISAでも課税されるの。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "rule",
+    "fx": null
+  },
+  {
+    "scene_id": "setting",
+    "utterance_id": "setting",
+    "speaker": 2,
+    "text": "非課税にするには、株式数比例配分方式。証券口座で受け取る設定よ。",
+    "display_text": "非課税にするには、株式数比例配分方式。証券口座で受け取る設定よ。",
+    "caption_pages": [
+      [
+        "非課税にするには、"
+      ],
+      [
+        "株式数比例配分方式。"
+      ],
+      [
+        "証券口座で受け取る設定よ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "settings",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "非課税にするには、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "株式数比例配分方式。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "証券口座で受け取る設定よ。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "setting",
+    "fx": "pop"
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "名前、長っ……。そこまで見てなかったのだ。",
+    "display_text": "名前、長っ……。そこまで見てなかったのだ。",
+    "caption_pages": [
+      [
+        "名前、長っ……。"
+      ],
+      [
+        "そこまで見てなかったのだ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "settings",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.06,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "名前、長っ……。",
+        "style": "ヘロヘロ",
+        "speed": 1.06,
+        "intonation": 0.91,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045,
+        "pitch": -0.04,
+        "volume": 0.9,
+        "contour": "fall"
+      },
+      {
+        "text": "そこまで見てなかったのだ。",
+        "style": "ヘロヘロ",
+        "speed": 1.06,
+        "intonation": 0.91,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0,
+        "pitch": -0.04,
+        "volume": 0.9,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "配当の権利が決まる前に、証券会社の設定を確認してね。",
+    "display_text": "配当の権利が決まる前に、証券会社の設定を確認してね。",
+    "caption_pages": [
+      [
+        "配当の権利が決まる前に、"
+      ],
+      [
+        "証券会社の設定を確認してね。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "settings",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.12,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "配当の権利が決まる前に、",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "証券会社の設定を確認してね。",
+        "style": "ノーマル",
+        "speed": 1.12,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を",
+        "減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "settings",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.18,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0.045
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.18,
+        "intonation": 1.22,
+        "pause": 0.1,
+        "lead": 0.018,
+        "tail": 0.025,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": null
+  }
+]
