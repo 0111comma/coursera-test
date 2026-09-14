@@ -19,7 +19,7 @@ def synthesize_performance(scene, request, output):
     chunks=[]; cursor=0; beats=[]; timed=[]; phrases=[]
     for beat in scene['delivery']:
         speaker=style_id(beat.get('style','ノーマル'),request,output,scene['speaker'])
-        q=json.loads(request('/audio_query?'+urllib.parse.urlencode({'text':beat['text'],'speaker':speaker}),b''))
+        q=json.loads(request('/audio_query?'+urllib.parse.urlencode({'text':beat.get('tts_text',beat['text']),'speaker':speaker}),b''))
         speed=beat.get('speed',1.2)
         q.update(speedScale=speed, intonationScale=beat.get('intonation',1.2), pitchScale=beat.get('pitch',0), volumeScale=beat.get('volume',1), prePhonemeLength=beat.get('lead',.02)*speed, postPhonemeLength=beat.get('tail',.03)*speed, outputSamplingRate=24000)
         for phrase in q['accent_phrases']:

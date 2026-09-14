@@ -30,7 +30,8 @@
         "lead": 0.018,
         "tail": 0.025,
         "gap": 0.045,
-        "pitch": 0.035
+        "pitch": 0.035,
+        "tts_text": "ニーサで日本株の配当２０万円！"
       },
       {
         "text": "旅行に使うのだ！",
@@ -284,7 +285,8 @@
         "pause": 0.1,
         "lead": 0.018,
         "tail": 0.025,
-        "gap": 0
+        "gap": 0,
+        "tts_text": "ニーサでも課税されるの。"
       }
     ],
     "emotion": "normal",
@@ -384,7 +386,8 @@
         "gap": 0.045,
         "pitch": -0.04,
         "volume": 0.9,
-        "contour": "fall"
+        "contour": "fall",
+        "tts_text": "名前、ながっ……。"
       },
       {
         "text": "そこまで見てなかったのだ。",
