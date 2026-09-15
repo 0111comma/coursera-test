@@ -1,0 +1,50 @@
+name: FL006 VOICEVOX
+on:
+  push:
+    branches: [codex/fl006-short-sleeper-20260915]
+    paths: ['videos/FL006/script.json', 'videos/FL006/engine/synthesize.py', 'videos/FL006/engine/performance.py', '.github/workflows/fl006-audio.yml']
+permissions:
+  contents: write
+jobs:
+  audio:
+    if: contains(github.event.head_commit.message, '[fl006-audio]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg p7zip-full
+          pip install numpy
+      - name: Start VOICEVOX
+        run: |
+          sudo mkdir -p /opt/voicevox
+          sudo chown -R "$USER:$USER" /opt/voicevox
+          bash production/setup_voicevox.sh
+      - name: Synthesize FL006
+        run: FINANCE_PROJECT=videos/FL006 python videos/FL006/engine/synthesize.py
+      - name: Compress narration losslessly
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+          for p in Path('videos/FL006/output').glob('*.wav'):
+              subprocess.run(['ffmpeg','-v','error','-y','-i',str(p),'-c:a','flac',str(p.with_suffix('.flac'))],check=True)
+              p.unlink()
+          PY
+      - name: Preserve narration and phoneme timings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add videos/FL006/output
+          git commit -m "Preserve FL006 VOICEVOX performance"
+          git push origin HEAD:codex/fl006-short-sleeper-20260915
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fl006-audio
+          path: videos/FL006/output/
+          retention-days: 14
