@@ -1,0 +1,710 @@
+[
+  {
+    "scene_id": "hook",
+    "utterance_id": "hook",
+    "speaker": 3,
+    "text": "睡眠４時間で、副業するのだ！",
+    "display_text": "睡眠４時間で、副業するのだ！",
+    "caption_pages": [
+      [
+        "睡眠４時間で、"
+      ],
+      [
+        "副業するのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "night",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "睡眠４時間で、",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.42,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05,
+        "pitch": 0.03
+      },
+      {
+        "text": "副業するのだ！",
+        "style": "ノーマル",
+        "speed": 1.24,
+        "intonation": 1.42,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": 0.03
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "hook",
+    "fx": "pop",
+    "scene_start": 0.0,
+    "start": 0.0,
+    "start_frame": 0,
+    "end_frame": 73,
+    "duration": 2.433333333333333,
+    "frames": 73,
+    "voice_file": "voice-00-3a98c63b16.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "question",
+    "utterance_id": "question",
+    "speaker": 2,
+    "text": "ショートスリーパーに、なったつもり？",
+    "display_text": "ショートスリーパーに、なったつもり？",
+    "caption_pages": [
+      [
+        "ショートスリーパーに、"
+      ],
+      [
+        "なったつもり？"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "night",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "ショートスリーパーに、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "なったつもり？",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "question",
+    "fx": null,
+    "scene_start": 2.433333333333333,
+    "start": 2.433333333333333,
+    "start_frame": 73,
+    "end_frame": 131,
+    "duration": 1.9333333333333333,
+    "frames": 58,
+    "voice_file": "voice-01-d241030b69.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "plan",
+    "utterance_id": "plan",
+    "speaker": 3,
+    "text": "余った時間で、月９万円なのだ！",
+    "display_text": "余った時間で、月９万円なのだ！",
+    "caption_pages": [
+      [
+        "余った時間で、"
+      ],
+      [
+        "月９万円なのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "night",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "余った時間で、",
+        "style": "ノーマル",
+        "speed": 1.23,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05,
+        "pitch": 0.025
+      },
+      {
+        "text": "月９万円なのだ！",
+        "style": "ノーマル",
+        "speed": 1.23,
+        "intonation": 1.4,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": 0.025
+      }
+    ],
+    "emotion": "happy",
+    "graphic": "plan",
+    "fx": "cash",
+    "scene_start": 4.366666666666666,
+    "start": 4.366666666666666,
+    "start_frame": 131,
+    "end_frame": 209,
+    "duration": 2.6,
+    "frames": 78,
+    "voice_file": "voice-02-1ff89b5279.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "days_later",
+    "kind": "time_cut",
+    "cut_duration": 0.6,
+    "camera": "wide",
+    "background": "dawn",
+    "emotion": "normal",
+    "text": "",
+    "display_text": "",
+    "caption_pages": [],
+    "label": "数日後",
+    "fx": "swoosh",
+    "scene_start": 6.966666666666667,
+    "start": 6.966666666666667,
+    "start_frame": 209,
+    "end_frame": 227,
+    "duration": 0.6,
+    "frames": 18,
+    "voice_file": null
+  },
+  {
+    "scene_id": "sleepy",
+    "utterance_id": "sleepy",
+    "speaker": 3,
+    "text": "やっと、終わったのだ……。",
+    "display_text": "やっと、終わったのだ……。",
+    "caption_pages": [
+      [
+        "やっと、終わったのだ……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "dawn",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "やっと、終わったのだ……。",
+        "style": "ヘロヘロ",
+        "speed": 1.0,
+        "intonation": 0.84,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": -0.045,
+        "volume": 0.93,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "sleepy",
+    "fx": null,
+    "scene_start": 7.566666666666666,
+    "start": 7.566666666666666,
+    "start_frame": 227,
+    "end_frame": 297,
+    "duration": 2.3333333333333335,
+    "frames": 70,
+    "voice_file": "voice-04-69b84fd965.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "panic",
+    "utterance_id": "panic",
+    "speaker": 3,
+    "text": "うわぁぁっ！納品したの、別のファイルなのだ！",
+    "display_text": "うわぁぁっ！納品したの、別のファイルなのだ！",
+    "caption_pages": [
+      [
+        "うわぁぁっ！"
+      ],
+      [
+        "納品したの、",
+        "別のファイルなのだ！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "dawn",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "うわぁぁっ！",
+        "style": "ノーマル",
+        "speed": 1.01,
+        "intonation": 1.5,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.11,
+        "pitch": 0.065,
+        "volume": 1.08,
+        "contour": "shout",
+        "vowel_seconds": {
+          "-1": 0.17
+        }
+      },
+      {
+        "text": "納品したの、別のファイルなのだ！",
+        "style": "なみだめ",
+        "speed": 1.2,
+        "intonation": 1.38,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": 0.02
+      }
+    ],
+    "emotion": "shock",
+    "graphic": "panic",
+    "fx": "impact",
+    "scene_start": 9.9,
+    "start": 9.9,
+    "start_frame": 297,
+    "end_frame": 408,
+    "duration": 3.7,
+    "frames": 111,
+    "voice_file": "voice-05-ff5f91fa93.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "cost",
+    "utterance_id": "cost",
+    "speaker": 2,
+    "text": "３千円の仕事に、やり直し込みで４時間。",
+    "display_text": "３千円の仕事に、やり直し込みで４時間。",
+    "caption_pages": [
+      [
+        "３千円の仕事に、"
+      ],
+      [
+        "やり直し込みで４時間。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "dawn",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "３千円の仕事に、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "やり直し込みで４時間。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cost",
+    "fx": "click",
+    "scene_start": 13.6,
+    "start": 13.6,
+    "start_frame": 408,
+    "end_frame": 490,
+    "duration": 2.7333333333333334,
+    "frames": 82,
+    "voice_file": "voice-06-6e10ed16bf.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "reveal",
+    "utterance_id": "reveal",
+    "speaker": 3,
+    "text": "時給、７５０円……。",
+    "display_text": "時給、７５０円……。",
+    "caption_pages": [
+      [
+        "時給、７５０円……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "dawn",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "時給、７５０円……。",
+        "style": "ヘロヘロ",
+        "speed": 1.03,
+        "intonation": 0.9,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": -0.04,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "reveal",
+    "fx": "down",
+    "scene_start": 16.333333333333332,
+    "start": 16.333333333333332,
+    "start_frame": 490,
+    "end_frame": 576,
+    "duration": 2.8666666666666667,
+    "frames": 86,
+    "voice_file": "voice-07-313b1c43cd.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "science",
+    "utterance_id": "science",
+    "speaker": 2,
+    "text": "睡眠不足は、作業の遅れやミスにつながるの。",
+    "display_text": "睡眠不足は、作業の遅れやミスにつながるの。",
+    "caption_pages": [
+      [
+        "睡眠不足は、"
+      ],
+      [
+        "作業の遅れやミスに",
+        "つながるの。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "dawn",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "睡眠不足は、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "作業の遅れやミスにつながるの。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "science",
+    "fx": null,
+    "scene_start": 19.2,
+    "start": 19.2,
+    "start_frame": 576,
+    "end_frame": 664,
+    "duration": 2.933333333333333,
+    "frames": 88,
+    "voice_file": "voice-08-27f0ccdba6.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "difference",
+    "utterance_id": "difference",
+    "speaker": 2,
+    "text": "生まれつき短い睡眠で足りる人とは、違うのよ。",
+    "display_text": "生まれつき短い睡眠で足りる人とは、違うのよ。",
+    "caption_pages": [
+      [
+        "生まれつき短い睡眠で",
+        "足りる人とは、"
+      ],
+      [
+        "違うのよ。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "dawn",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "生まれつき短い睡眠で足りる人とは、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "違うのよ。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "difference",
+    "fx": null,
+    "scene_start": 22.133333333333333,
+    "start": 22.133333333333333,
+    "start_frame": 664,
+    "end_frame": 756,
+    "duration": 3.066666666666667,
+    "frames": 92,
+    "voice_file": "voice-09-fa72d4f209.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "realize",
+    "utterance_id": "realize",
+    "speaker": 3,
+    "text": "気合じゃ、なれないのだ……。",
+    "display_text": "気合じゃ、なれないのだ……。",
+    "caption_pages": [
+      [
+        "気合じゃ、なれないのだ……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "dawn",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "気合じゃ、なれないのだ……。",
+        "style": "ヘロヘロ",
+        "speed": 1.05,
+        "intonation": 0.9,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": -0.04,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "realize",
+    "fx": null,
+    "scene_start": 25.2,
+    "start": 25.2,
+    "start_frame": 756,
+    "end_frame": 829,
+    "duration": 2.433333333333333,
+    "frames": 73,
+    "voice_file": "voice-10-e1b1f117cb.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "advice",
+    "utterance_id": "advice",
+    "speaker": 2,
+    "text": "副業は、やり直しも含めた時間で、時給を計算して。",
+    "display_text": "副業は、やり直しも含めた時間で、時給を計算して。",
+    "caption_pages": [
+      [
+        "副業は、やり直しも",
+        "含めた時間で、"
+      ],
+      [
+        "時給を計算して。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bedroom",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "副業は、やり直しも含めた時間で、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "時給を計算して。",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "advice",
+    "fx": "pop",
+    "scene_start": 27.633333333333333,
+    "start": 27.633333333333333,
+    "start_frame": 829,
+    "end_frame": 938,
+    "duration": 3.6333333333333333,
+    "frames": 109,
+    "voice_file": "voice-11-093d176f5f.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "ending",
+    "utterance_id": "ending",
+    "speaker": 3,
+    "text": "まず寝るのだ……。",
+    "display_text": "まず寝るのだ……。",
+    "caption_pages": [
+      [
+        "まず寝るのだ……。"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "zclose",
+    "background": "bedroom",
+    "pose_z": 2,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "まず寝るのだ……。",
+        "style": "ささやき",
+        "speed": 1.02,
+        "intonation": 0.88,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0,
+        "pitch": -0.03,
+        "volume": 1.0,
+        "contour": "fall"
+      }
+    ],
+    "emotion": "tired",
+    "graphic": "ending",
+    "fx": null,
+    "scene_start": 31.266666666666666,
+    "start": 31.266666666666666,
+    "start_frame": 938,
+    "end_frame": 965,
+    "duration": 0.9,
+    "frames": 27,
+    "voice_file": "voice-12-167a072287.wav",
+    "donation_offset": null
+  },
+  {
+    "scene_id": "cta",
+    "utterance_id": "cta",
+    "speaker": 2,
+    "text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "display_text": "お金の失敗を減らしたい人は、チャンネル登録を！",
+    "caption_pages": [
+      [
+        "お金の失敗を減らしたい人は、"
+      ],
+      [
+        "チャンネル登録を！"
+      ]
+    ],
+    "caption_cues": [],
+    "camera": "wide",
+    "background": "bedroom",
+    "pose_z": 1,
+    "pose_m": 1,
+    "speed": 1.16,
+    "tail_seconds": 0.08,
+    "delivery": [
+      {
+        "text": "お金の失敗を減らしたい人は、",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0.05
+      },
+      {
+        "text": "チャンネル登録を！",
+        "style": "ノーマル",
+        "speed": 1.14,
+        "intonation": 1.23,
+        "pause": 0.1,
+        "lead": 0.02,
+        "tail": 0.03,
+        "gap": 0
+      }
+    ],
+    "emotion": "normal",
+    "graphic": "cta",
+    "fx": "pop",
+    "scene_start": 32.166666666666664,
+    "start": 32.166666666666664,
+    "start_frame": 965,
+    "end_frame": 1055,
+    "duration": 3.0,
+    "frames": 90,
+    "voice_file": "voice-13-7b15a83e7e.wav",
+    "donation_offset": null
+  }
+]
