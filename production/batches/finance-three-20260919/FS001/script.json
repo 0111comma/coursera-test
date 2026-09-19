@@ -1,0 +1,501 @@
+[
+  {
+    "id": 0,
+    "scene_id": "intro",
+    "speaker": 3,
+    "text": "やばすぎる、ふるさと納税の返礼品三選！",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "やばすぎる！",
+        "ふるさと納税の返礼品３選"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "やばすぎる、ふるさと納税の返礼品三選！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05,
+        "contour": "shout"
+      }
+    ],
+    "gift": "manhole"
+  },
+  {
+    "id": 1,
+    "scene_id": "manhole_price",
+    "speaker": 2,
+    "text": "寄付三十万円で、マンホールのふた！",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "寄付30万円で",
+        "マンホールのふた！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "寄付三十万円で、マンホールのふた！",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "manhole",
+    "number": 1
+  },
+  {
+    "id": 2,
+    "scene_id": "manhole_react",
+    "speaker": 3,
+    "text": "ミニチュアじゃないのだ？",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "ミニチュアじゃないのだ？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "ミニチュアじゃないのだ？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05,
+        "contour": "shout"
+      }
+    ],
+    "gift": "manhole",
+    "number": 1
+  },
+  {
+    "id": 3,
+    "scene_id": "manhole_fact",
+    "speaker": 2,
+    "text": "王寺町で使われている、実物のふたよ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "王寺町で使われている",
+        "実物のふたよ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "王寺町で使われている、実物のふたよ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "manhole",
+    "number": 1
+  },
+  {
+    "id": 4,
+    "scene_id": "manhole_joke",
+    "speaker": 3,
+    "text": "欲しいけど、うちに穴がないのだ！",
+    "pose": "troubled",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "欲しいけど、",
+        "うちに穴がないのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "欲しいけど、うちに穴がないのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "manhole",
+    "number": 1
+  },
+  {
+    "id": 5,
+    "scene_id": "manhole_reply",
+    "speaker": 2,
+    "text": "飾ればいいのよ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "飾ればいいのよ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "飾ればいいのよ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "manhole",
+    "number": 1
+  },
+  {
+    "id": 6,
+    "scene_id": "porsche_price",
+    "speaker": 2,
+    "text": "寄付八百三十四万円で、ポルシェの体験施設を半日貸切！",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "寄付834万円で"
+      ],
+      [
+        "ポルシェの体験施設を",
+        "半日貸切！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "寄付八百三十四万円で、",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      },
+      {
+        "text": "ポルシェの体験施設を半日貸切！",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "porsche",
+    "number": 2
+  },
+  {
+    "id": 7,
+    "scene_id": "porsche_react",
+    "speaker": 3,
+    "text": "ポルシェが一台もらえるのだ？",
+    "pose": "happy",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "ポルシェが",
+        "１台もらえるのだ？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "ポルシェが一台もらえるのだ？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "porsche",
+    "number": 2
+  },
+  {
+    "id": 8,
+    "scene_id": "porsche_fact",
+    "speaker": 2,
+    "text": "車じゃなくて、施設の貸切。コースや建物を四時間使えて、運転体験も十回分。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "車じゃなくて、施設の貸切。"
+      ],
+      [
+        "コースや建物を４時間",
+        "運転体験も10回分"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "車じゃなくて、施設の貸切。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      },
+      {
+        "text": "コースや建物を四時間使えて、運転体験も十回分。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "porsche",
+    "number": 2
+  },
+  {
+    "id": 9,
+    "scene_id": "porsche_joke",
+    "speaker": 3,
+    "text": "友達を呼ぶ前に、この寄付ができる友達を探すのだ。",
+    "pose": "troubled",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "友達を呼ぶ前に、",
+        "この寄付ができる友達を探すのだ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "友達を呼ぶ前に、この寄付ができる友達を探すのだ。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "porsche",
+    "number": 2
+  },
+  {
+    "id": 10,
+    "scene_id": "sword_price",
+    "speaker": 2,
+    "text": "寄付千六百万円で、オーダーメイドの日本刀！",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "寄付1,600万円で",
+        "オーダーメイドの日本刀！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "寄付千六百万円で、オーダーメイドの日本刀！",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "sword",
+    "number": 3
+  },
+  {
+    "id": 11,
+    "scene_id": "sword_react",
+    "speaker": 3,
+    "text": "肉を頼むサイトで、刀まで鍛えてくれるのだ！？",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "肉を頼むサイトで、",
+        "刀まで鍛えてくれるのだ!?"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "肉を頼むサイトで、刀まで鍛えてくれるのだ！？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05,
+        "contour": "shout"
+      }
+    ],
+    "gift": "sword",
+    "number": 3
+  },
+  {
+    "id": 12,
+    "scene_id": "sword_fact",
+    "speaker": 2,
+    "text": "刀の形や刃紋も相談できる、外装付きの太刀。完成まで、一年から二年ほど。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "刀の形や刃紋も相談できる",
+        "外装付きの太刀"
+      ],
+      [
+        "完成まで、１〜２年ほど。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "刀の形や刃紋も相談できる、外装付きの太刀。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      },
+      {
+        "text": "完成まで、一年から二年ほど。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "sword",
+    "number": 3
+  },
+  {
+    "id": 13,
+    "scene_id": "sword_joke",
+    "speaker": 3,
+    "text": "ふるさと納税して、翌年も刀を待つのだ！？",
+    "pose": "panic",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "ふるさと納税して、",
+        "翌年も刀を待つのだ!?"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "ふるさと納税して、翌年も刀を待つのだ！？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05,
+        "contour": "shout"
+      }
+    ],
+    "gift": "sword",
+    "number": 3
+  },
+  {
+    "id": 14,
+    "scene_id": "limit",
+    "speaker": 2,
+    "text": "自己負担が二千円で済む寄付額には、人それぞれ上限があるわよ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "自己負担が2,000円で済む寄付額には",
+        "人それぞれ上限があるわよ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "自己負担が二千円で済む寄付額には、人それぞれ上限があるわよ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "sword",
+    "number": 3
+  },
+  {
+    "id": 15,
+    "scene_id": "cta",
+    "speaker": 3,
+    "text": "この三つ、どれなら欲しい？コメントで教えてなのだ！",
+    "pose": "happy",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "この３つ、どれなら欲しい？"
+      ],
+      [
+        "コメントで教えてなのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "この三つ、どれなら欲しい？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      },
+      {
+        "text": "コメントで教えてなのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.25,
+        "pitch": 0,
+        "pause": 0.13,
+        "lead": 0.03,
+        "tail": 0.05
+      }
+    ],
+    "gift": "manhole"
+  }
+]
