@@ -1,0 +1,587 @@
+[
+  {
+    "id": 0,
+    "scene_id": "intro",
+    "speaker": 3,
+    "text": "勤務時間と残業代クイズ！",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "勤務時間と残業代クイズ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "勤務時間と残業代クイズ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 1
+  },
+  {
+    "id": 1,
+    "scene_id": "q1",
+    "speaker": 2,
+    "text": "会社で制服に着替える決まり。打刻前の着替えも、労働時間に入る？",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "会社で制服に",
+        "着替える決まり。"
+      ],
+      [
+        "打刻前の着替えも、",
+        "労働時間に入る？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "会社で制服に着替える決まり。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "打刻前の着替えも、労働時間に入る？",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 1
+  },
+  {
+    "id": 2,
+    "scene_id": "q1",
+    "question": 1,
+    "kind": "pause",
+    "cut_duration": 2.4
+  },
+  {
+    "id": 3,
+    "scene_id": "a1",
+    "speaker": 2,
+    "text": "A、入るわ。職場での着替えが義務なら、打刻前でも労働時間よ。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "A、入るわ。"
+      ],
+      [
+        "職場での着替えが義務なら、",
+        "打刻前でも労働時間よ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "A、入るわ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "職場での着替えが義務なら、打刻前でも労働時間よ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 1
+  },
+  {
+    "id": 4,
+    "scene_id": "r1",
+    "speaker": 3,
+    "text": "打刻したら仕事開始、とは限らないのだ！",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "打刻したら仕事開始、",
+        "とは限らないのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "打刻したら仕事開始、とは限らないのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "question": 1
+  },
+  {
+    "id": 5,
+    "scene_id": "q2",
+    "speaker": 2,
+    "text": "休みの日に出張先へ移動。移動中の仕事はなし。移動手段も、過ごし方も自由。この移動は、法律上の労働時間になる？",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "休みの日に",
+        "出張先へ移動。"
+      ],
+      [
+        "移動中の仕事はなし。"
+      ],
+      [
+        "移動手段も、",
+        "過ごし方も自由。"
+      ],
+      [
+        "この移動は、法律上の",
+        "労働時間になる？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "休みの日に出張先へ移動。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "移動中の仕事はなし。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "移動手段も、過ごし方も自由。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "この移動は、法律上の労働時間になる？",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 2
+  },
+  {
+    "id": 6,
+    "scene_id": "q2",
+    "question": 2,
+    "kind": "pause",
+    "cut_duration": 2.4
+  },
+  {
+    "id": 7,
+    "scene_id": "a2",
+    "speaker": 2,
+    "text": "B、原則ならないわ。自由に使える移動時間は、出張でも自動的に労働時間にはならないの。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "B、原則ならないわ。"
+      ],
+      [
+        "自由に使える移動時間は、",
+        "出張でも自動的に",
+        "労働時間にはならないの。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "B、原則ならないわ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "自由に使える移動時間は、出張でも自動的に労働時間にはならないの。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 2
+  },
+  {
+    "id": 8,
+    "scene_id": "r2",
+    "speaker": 3,
+    "text": "出張なら全部そうだと思ってたのだ。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "出張なら全部そうだと",
+        "思ってたのだ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "出張なら全部そうだと思ってたのだ。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 2
+  },
+  {
+    "id": 9,
+    "scene_id": "q3",
+    "speaker": 2,
+    "text": "家族の人数に関係なく、全員に同じ額の家族手当。残業代の計算に、この手当も含める？",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "家族の人数に関係なく、",
+        "全員に同じ額の家族手当。"
+      ],
+      [
+        "残業代の計算に、",
+        "この手当も含める？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "家族の人数に関係なく、全員に同じ額の家族手当。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "残業代の計算に、この手当も含める？",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 3
+  },
+  {
+    "id": 10,
+    "scene_id": "q3",
+    "question": 3,
+    "kind": "pause",
+    "cut_duration": 2.4
+  },
+  {
+    "id": 11,
+    "scene_id": "a3",
+    "speaker": 2,
+    "text": "B、含めるわ。名前が家族手当でも、一律に払うなら計算に入るの。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "B、含めるわ。"
+      ],
+      [
+        "名前が家族手当でも、",
+        "一律に払うなら計算に入るの。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "B、含めるわ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "名前が家族手当でも、一律に払うなら計算に入るの。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 3
+  },
+  {
+    "id": 12,
+    "scene_id": "r3",
+    "speaker": 3,
+    "text": "給料明細、名前だけ見てたのだ！",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "給料明細、",
+        "名前だけ見てたのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "給料明細、名前だけ見てたのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "question": 3
+  },
+  {
+    "id": 13,
+    "scene_id": "q4",
+    "speaker": 2,
+    "text": "残業時間を月ごとに合計。三十分未満は切り捨て、三十分以上は一時間に切り上げ。この計算は認められる？",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "残業時間を",
+        "月ごとに合計。"
+      ],
+      [
+        "30分未満は切り捨て、",
+        "30分以上は１時間に切り上げ。"
+      ],
+      [
+        "この計算は認められる？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "残業時間を月ごとに合計。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "三十分未満は切り捨て、三十分以上は一時間に切り上げ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "この計算は認められる？",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 4
+  },
+  {
+    "id": 14,
+    "scene_id": "q4",
+    "question": 4,
+    "kind": "pause",
+    "cut_duration": 2.4
+  },
+  {
+    "id": 15,
+    "scene_id": "a4",
+    "speaker": 2,
+    "text": "A、認められるわ。月の合計には、この例外があるの。一日ごとの切り捨てはダメよ。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "A、認められるわ。"
+      ],
+      [
+        "月の合計には、",
+        "この例外があるの。"
+      ],
+      [
+        "１日ごとの",
+        "切り捨てはダメよ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "A、認められるわ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "月の合計には、この例外があるの。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "一日ごとの切り捨てはダメよ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "question": 4
+  },
+  {
+    "id": 16,
+    "scene_id": "r4",
+    "speaker": 3,
+    "text": "切り捨ては全部ダメだと思ったのだ！",
+    "pose": "panic",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "切り捨ては全部ダメだと",
+        "思ったのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "切り捨ては全部ダメだと思ったのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "question": 4
+  },
+  {
+    "id": 17,
+    "scene_id": "cta",
+    "speaker": 3,
+    "text": "何問わかった？一番迷った問題も、コメントで教えてほしいのだ！",
+    "pose": "happy",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "何問わかった？"
+      ],
+      [
+        "一番迷った問題も、",
+        "コメントで教えてほしいのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "何問わかった？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "一番迷った問題も、コメントで教えてほしいのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "question": 4
+  }
+]

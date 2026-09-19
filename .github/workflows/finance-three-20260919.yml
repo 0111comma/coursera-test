@@ -1,0 +1,45 @@
+name: Finance three video voices 20260919
+on:
+  push:
+    branches: [codex/finance-three-20260919]
+    paths: ['production/batches/finance-three-20260919/**', '.github/workflows/finance-three-20260919.yml']
+permissions:
+  contents: read
+jobs:
+  voices:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            production/setup_voicevox.sh
+            production/batches/finance-three-20260919
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install audio dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg p7zip-full
+          python -m pip install numpy
+          sudo mkdir -p /opt/voicevox
+          sudo chown -R "$USER:$USER" /opt/voicevox
+      - uses: actions/cache@v4
+        with:
+          path: /opt/voicevox
+          key: voicevox-engine-linux-cpu-x64-0.25.2
+      - name: Start VOICEVOX
+        run: bash production/setup_voicevox.sh
+      - name: Synthesize video dialogue
+        run: |
+          python production/batches/finance-three-20260919/run.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: finance-three-voices
+          path: |
+            production/batches/finance-three-20260919/*/output/**
+            production/batches/finance-three-20260919/photos/**
+          retention-days: 30
+          if-no-files-found: error

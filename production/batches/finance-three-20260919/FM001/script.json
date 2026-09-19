@@ -1,0 +1,605 @@
+[
+  {
+    "id": 0,
+    "scene_id": "opening",
+    "speaker": 3,
+    "text": "家のローンは、これから申し込むのだ！",
+    "pose": "happy",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "家のローンは、",
+        "これから申し込むのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "家のローンは、これから申し込むのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "bg": "home.png",
+    "camera": "solo",
+    "overlay": [
+      "住宅ローンの申込前"
+    ]
+  },
+  {
+    "id": 1,
+    "scene_id": "car_first",
+    "speaker": 3,
+    "text": "その前に、車をローンで買っちゃったのだ！",
+    "pose": "smug",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "その前に、車をローンで",
+        "買っちゃったのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "その前に、車をローンで買っちゃったのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "bg": "home.png",
+    "overlay": [
+      "車は購入済み",
+      "月４万円"
+    ]
+  },
+  {
+    "id": 2,
+    "scene_id": "reaction",
+    "speaker": 2,
+    "text": "先に？",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "先に？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "先に？",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png"
+  },
+  {
+    "id": 3,
+    "scene_id": "dream",
+    "speaker": 3,
+    "text": "この家なら駐車場も広い！だから車も大きくしたのだ！",
+    "pose": "happy",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "この家なら",
+        "駐車場も広い！"
+      ],
+      [
+        "だから車も",
+        "大きくしたのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "この家なら駐車場も広い！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      },
+      {
+        "text": "だから車も大きくしたのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "bg": "home.png"
+  },
+  {
+    "id": 4,
+    "scene_id": "not_yet",
+    "speaker": 2,
+    "text": "まだ買ってない家の話でしょ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "まだ買ってない",
+        "家の話でしょ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "まだ買ってない家の話でしょ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png"
+  },
+  {
+    "id": 5,
+    "scene_id": "separate",
+    "speaker": 3,
+    "text": "でも月四万円！家の返済とは別なのだ！",
+    "pose": "smug",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "でも月四万円！"
+      ],
+      [
+        "家の返済とは",
+        "別なのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "でも月四万円！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      },
+      {
+        "text": "家の返済とは別なのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "bg": "home.png",
+    "camera": "solo",
+    "overlay": [
+      "家と車は別！…？"
+    ]
+  },
+  {
+    "id": 6,
+    "scene_id": "combined",
+    "speaker": 2,
+    "text": "審査では、その車の返済も合計するのよ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "審査では、その車の返済も",
+        "合計するのよ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "審査では、その車の返済も合計するのよ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "overlay": [
+      "住宅＋車",
+      "まとめて審査"
+    ]
+  },
+  {
+    "id": 7,
+    "scene_id": "shock",
+    "speaker": 3,
+    "text": "えっ、家の審査なのに？",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "えっ、家の審査なのに？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "えっ、家の審査なのに？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "camera": "solo"
+  },
+  {
+    "id": 8,
+    "scene_id": "example",
+    "speaker": 2,
+    "text": "例えばこの条件。年収四百五十万円、家の返済が月十一万円。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "例えばこの条件。"
+      ],
+      [
+        "年収450万円、",
+        "家の返済が月11万円。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "例えばこの条件。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "年収四百五十万円、家の返済が月十一万円。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "chart": "before"
+  },
+  {
+    "id": 9,
+    "scene_id": "forty",
+    "speaker": 2,
+    "text": "車の月四万円も足すと、年収の四十パーセントを返済に使う計算よ。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "車の月４万円も足すと、",
+        "年収の40％を返済に使う計算よ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "車の月四万円も足すと、年収の四十パーセントを返済に使う計算よ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "chart": "after"
+  },
+  {
+    "id": 10,
+    "scene_id": "limit",
+    "speaker": 2,
+    "text": "フラット三十五なら、この年収の基準は三十五パーセント以下。",
+    "pose": "surprised",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "フラット35なら、",
+        "この年収の基準は35％以下。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "フラット三十五なら、この年収の基準は三十五パーセント以下。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "chart": "limit"
+  },
+  {
+    "id": 11,
+    "scene_id": "realization",
+    "speaker": 3,
+    "text": "車のせいで、希望した額を借りられないってこと？",
+    "pose": "panic",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "車のせいで、希望した額を",
+        "借りられないってこと？"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "車のせいで、希望した額を借りられないってこと？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "camera": "solo"
+  },
+  {
+    "id": 12,
+    "scene_id": "resolve",
+    "speaker": 2,
+    "text": "この条件ではね。借入額や、車のローンを見直す必要があるわ。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "この条件ではね。"
+      ],
+      [
+        "借入額や、車のローンを",
+        "見直す必要があるわ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "この条件ではね。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "借入額や、車のローンを見直す必要があるわ。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "home.png",
+    "overlay": [
+      "この条件では予算を見直し"
+    ]
+  },
+  {
+    "id": 13,
+    "scene_id": "debt",
+    "speaker": 3,
+    "text": "家は見送り……。車の支払いは始まったのだ。",
+    "pose": "troubled",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "家は見送り……。"
+      ],
+      [
+        "車の支払いは",
+        "始まったのだ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "家は見送り……。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "車の支払いは始まったのだ。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "parking.png"
+  },
+  {
+    "id": 14,
+    "scene_id": "parking",
+    "speaker": 3,
+    "text": "しかも今の駐車場、車が高くて入らないのだ！",
+    "pose": "panic",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "しかも今の駐車場、",
+        "車が高くて入らないのだ！"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "しかも今の駐車場、車が高くて入らないのだ！",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07,
+        "contour": "shout"
+      }
+    ],
+    "bg": "parking.png",
+    "camera": "solo",
+    "overlay": [
+      "今の機械式駐車場",
+      "高さ制限で入らない"
+    ]
+  },
+  {
+    "id": 15,
+    "scene_id": "rent",
+    "speaker": 2,
+    "text": "別の駐車場も借りないとね。",
+    "pose": "normal",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "別の駐車場も借りないとね。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "別の駐車場も借りないとね。",
+        "style": "ノーマル",
+        "speed": 1.13,
+        "intonation": 1.1,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "parking.png"
+  },
+  {
+    "id": 16,
+    "scene_id": "punchline",
+    "speaker": 3,
+    "text": "家は買えないのに、駐車場代だけ増えたのだ……。",
+    "pose": "troubled",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "家は買えないのに、",
+        "駐車場代だけ増えたのだ……。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "家は買えないのに、駐車場代だけ増えたのだ……。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "parking.png",
+    "camera": "solo",
+    "overlay": [
+      "車のローン＋駐車場代"
+    ]
+  },
+  {
+    "id": 17,
+    "scene_id": "cta",
+    "speaker": 3,
+    "text": "家と車、先に買うならどっち？コメントで教えてほしいのだ。",
+    "pose": "troubled",
+    "tail_seconds": 0.1,
+    "caption_pages": [
+      [
+        "家と車、先に買うならどっち？"
+      ],
+      [
+        "コメントで",
+        "教えてほしいのだ。"
+      ]
+    ],
+    "delivery": [
+      {
+        "text": "家と車、先に買うならどっち？",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      },
+      {
+        "text": "コメントで教えてほしいのだ。",
+        "style": "ノーマル",
+        "speed": 1.16,
+        "intonation": 1.24,
+        "pitch": 0,
+        "pause": 0.12,
+        "lead": 0.04,
+        "tail": 0.07
+      }
+    ],
+    "bg": "parking.png",
+    "camera": "solo"
+  }
+]
